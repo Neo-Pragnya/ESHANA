@@ -137,7 +137,7 @@ def main() -> int:
         raise SystemExit(f"{BIN} not found: run `cargo build --release -p eshana-cli` (or set ESHANA_BIN)")
     files = {name: render(obj) for name, obj in build().items()}
     if check:
-        bad = [n for n, text in files.items() if not (dest / n).exists() or (dest / n).read_text(encoding="utf-8") != text]
+        bad = [n for n, text in files.items() if not (dest / n).exists() or not same_json((dest / n).read_text(encoding="utf-8"), text)]
         if bad:
             print("demo data drifted from the real CLI: " + ", ".join(bad) + "\nrun `make demo` and commit the result", file=sys.stderr)
             return 1
@@ -148,6 +148,44 @@ def main() -> int:
         (dest / name).write_text(text, encoding="utf-8")
     print(f"wrote {len(files)} files to {dest}")
     return 0
+
+
+ISO = re.compile(r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$")
+DMS = re.compile(r"(\d+)°(\d+)′(\d+)″")
+
+
+def close_strings(x: str, y: str) -> bool:
+    """A rounded label may flip by one unit across platforms: allow 2 ms in a UTC timestamp, 1″ in a d°m′s″ label."""
+    import datetime as dt
+    if ISO.match(x) and ISO.match(y):
+        t = lambda s: dt.datetime.fromisoformat(s.replace("Z", "+00:00"))  # noqa: E731
+        return abs((t(x) - t(y)).total_seconds()) <= 0.002
+    mx, my = DMS.findall(x), DMS.findall(y)
+    if mx and len(mx) == len(my) and DMS.sub("", x) == DMS.sub("", y):
+        sec = lambda m: int(m[0]) * 3600 + int(m[1]) * 60 + int(m[2])  # noqa: E731
+        return all(abs(sec(a) - sec(b)) <= 1 for a, b in zip(mx, my))
+    return False
+
+
+def same_json(a: str, b: str, rel: float = 1e-9) -> bool:
+    """Equal JSON, with floats compared to a relative 1e-9: platform maths libraries differ in the last bits, which is
+    not drift. Strings, keys, structure and integers must match exactly."""
+    def eq(x, y) -> bool:
+        if isinstance(x, bool) or isinstance(y, bool):
+            return x is y
+        if isinstance(x, float) or isinstance(y, float):
+            return isinstance(x, (int, float)) and isinstance(y, (int, float)) and abs(x - y) <= rel * max(1.0, abs(x), abs(y))
+        if isinstance(x, dict) and isinstance(y, dict):
+            return x.keys() == y.keys() and all(eq(x[k], y[k]) for k in x)
+        if isinstance(x, list) and isinstance(y, list):
+            return len(x) == len(y) and all(eq(i, j) for i, j in zip(x, y))
+        if isinstance(x, str) and isinstance(y, str) and x != y:
+            return close_strings(x, y)
+        return x == y
+    try:
+        return eq(json.loads(a), json.loads(b))
+    except ValueError:
+        return a == b
 
 
 if __name__ == "__main__":
