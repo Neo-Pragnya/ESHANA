@@ -114,6 +114,18 @@ acceptance-wheel: build-release wheel
 	ln -sf $(CURDIR)/target/release/eshana $(ACCEPTANCE_VENV)/bin/eshana
 	ACCEPTANCE_BIN_DIR=$(CURDIR)/$(ACCEPTANCE_VENV)/bin $(ACCEPTANCE_VENV)/bin/python -m pytest acceptance -n auto -p no:cacheprovider $(ACCEPTANCE_ARGS)
 
+# Real-Chrome journeys (Node 22+, Chrome; CHROME=/path overrides). Studio: the generated chart app. Site: website/dist.
+JOURNEY_SHOTS ?=
+studio-journeys: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv --release
+	mkdir -p target/journeys
+	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
+	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
+	  --partner "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777" -o target/journeys/studio.html
+	node acceptance/studio/journeys.mjs target/journeys/studio.html $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/studio)
+site-journeys:
+	node acceptance/site/journeys.mjs website/dist --base $${SITE_BASE:-/} $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/site)
+
 # ── supply chain ─────────────────────────────────────────────────────────────────────────────────────────────
 deny:
 	cargo deny check

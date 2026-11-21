@@ -75,7 +75,7 @@ def test_unknown_time_lists_refusals():
 
 def test_sections_filter_and_unknown_section():
     chart = ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", dasha=True)
-    html = chart.to_html(sections=["summary", "dasha"])
+    html = chart.to_html(sections=["overview", "dasha"])
     assert 'id="dasha"' in html and 'id="chakra"' not in html
     with pytest.raises(ValueError):
         chart.to_html(sections=["horoscope"])
@@ -138,7 +138,7 @@ def test_ephemeris_and_ingresses():
 
 def test_rulesets_are_yaml_and_listed():
     packs = {p["file"] for p in ChartEngine.rulesets()["packs"]}
-    assert packs == {"vedic-core.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml"}
+    assert packs == {"vedic-core.yaml", "bala.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml"}
 
 
 def test_features_are_vedic_only():

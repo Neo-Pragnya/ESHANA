@@ -421,41 +421,45 @@ def bodygraph_svg(hd: Dict[str, Any]) -> str:
 # ── HTML sections ───────────────────────────────────────────────────────────────────────────────────────────────────
 # ── the chart studio page ───────────────────────────────────────────────────────────────────────────────────────
 SECTION_TITLES = {
-    "summary": "Birth data",
+    "overview": "Overview",
     "chakra": "Panchang chakra",
-    "charts": "Rāśi and varga charts (South and North Indian)",
-    "planets": "Grahas and bhāvas",
-    "nakshatra": "Nakshatra ruler",
+    "charts": "Charts (South and North Indian)",
     "vargas": "Divisional charts (vargas)",
-    "panchanga": "Pañcāṅga of the birth moment",
-    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
-    "strength": "Strength and relationships",
+    "planets": "Grahas",
+    "planet": "Graha",
+    "houses": "Bhāvas",
+    "house": "Bhāva",
+    "aspects": "Aspects",
+    "strength": "Strength (ṣaḍbala, bhāva bala, viṃśopaka)",
     "ashtakavarga": "Aṣṭakavarga",
-    "kp": "KP (Krishnamurti Paddhati)",
-    "jaimini": "Jaimini: kārakas and ārūḍhas",
+    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
+    "panchanga": "Pañcāṅga",
+    "special": "Lagnas and special points",
     "yogas": "Yogas and doshas",
+    "kp": "KP (Krishnamurti Paddhati)",
+    "nadi": "Nadi direction matrix",
+    "energetics": "AstroEnergetics",
     "transits": "Transits",
     "progressions": "Progressions",
     "western": "Western chart (tropical)",
-    "human_design": "Human Design",
+    "human-design": "Human Design",
     "numerology": "Numerology",
     "matching": "Compatibility (Ashtakoota)",
-    "attributes": "Other derived attributes",
-    "provenance": "Provenance",
-    "raw": "Raw data",
+    "data": "Provenance and data",
 }
 SECTIONS = tuple(SECTION_TITLES)
-TOC_NAMES = {"summary": "Birth", "chakra": "Chakra", "charts": "Charts", "planets": "Grahas", "nakshatra": "Nakshatras",
-             "vargas": "Vargas", "panchanga": "Pañcāṅga", "dasha": "Daśā", "strength": "Strength",
-             "ashtakavarga": "Aṣṭakavarga", "kp": "KP", "jaimini": "Jaimini", "yogas": "Yogas", "transits": "Transits",
-             "progressions": "Progressions", "western": "Western", "human_design": "Human Design",
-             "numerology": "Numerology", "matching": "Matching", "attributes": "Other", "provenance": "Provenance",
-             "raw": "JSON"}
-ASSETS = ("report-core.js", "report-wheel.js", "report-sections.js")
+ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js")
 
 
 def _asset(name: str) -> str:
     return resources.files("eshana").joinpath(f"assets/{name}").read_text(encoding="utf-8")
+
+
+def _energetics() -> Optional[Dict[str, Any]]:
+    try:
+        return json.loads(resources.files("eshana").joinpath("data/astro_energetics.json").read_text(encoding="utf-8"))
+    except Exception:  # pragma: no cover - data file is part of the wheel
+        return None
 
 
 def _kind(env: Dict[str, Any]) -> Optional[str]:
@@ -470,56 +474,62 @@ def _kind(env: Dict[str, Any]) -> Optional[str]:
     return None
 
 
+BRAND = ('<svg class="sigil" viewBox="0 0 24 24" aria-hidden="true"><circle class="core" cx="12" cy="12" r="3.2"/>'
+         '<g class="spin"><ellipse cx="12" cy="12" rx="9.5" ry="4" class="ring"/><circle cx="21.5" cy="12" r="1.5" class="sat"/></g>'
+         '<g class="spin rev"><ellipse cx="12" cy="12" rx="4" ry="9.5" class="ring"/><circle cx="12" cy="2.5" r="1.2" class="sat"/></g></svg>')
+
+
 def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart report",
                 subject: Optional[Dict[str, Any]] = None, sections: Optional[Iterable[str]] = None,
                 theme: str = "auto", transits: Optional[Dict[str, Any]] = None,
                 progressions: Optional[Dict[str, Any]] = None, reference_utc: Optional[str] = None,
                 errors: Optional[Dict[str, str]] = None, defaults: Optional[Dict[str, Any]] = None) -> str:
-    """Render engine envelopes as one self-contained, interactive HTML chart studio.
+    """Render engine envelopes as ESHANA Studio: one self-contained, multi-page, animated HTML app.
 
     ``envelopes`` maps labels to envelopes; their kinds are recognised from the envelopes themselves. ``transits`` and
-    ``progressions`` are ``ephemeris`` envelopes (rows of longitudes). ``sections`` limits the page to names in
-    :data:`SECTIONS`; ``defaults`` presets viewer settings (icons, chart style, layers). Everything renders in the
-    browser from the embedded data; nothing is fetched.
+    ``progressions`` are ``ephemeris`` envelopes. ``sections`` limits the app to pages named in :data:`SECTIONS`;
+    ``defaults`` presets viewer settings (icons, chart style, chakra centre, layers). Everything renders in the browser
+    from the embedded data; nothing is fetched.
     """
     want = list(sections or SECTIONS)
     unknown = set(want) - set(SECTIONS)
     if unknown:
         raise ValueError(f"unknown sections: {', '.join(sorted(unknown))}; choose from {', '.join(SECTIONS)}")
+    if "planets" in want and "planet" not in want:
+        want.append("planet")
+    if "houses" in want and "house" not in want:
+        want.append("house")
     by_kind: Dict[str, Dict[str, Any]] = {}
     for env in envelopes.values():
         k = _kind(env)
         if k and k not in by_kind:
             by_kind[k] = env
     data = {
-        "envelopes": by_kind,
-        "subject": subject or {},
-        "reference_utc": reference_utc,
-        "transits": transits,
-        "progressions": progressions,
-        "nakshatra_reference": _nak_reference(),
-        "defaults": defaults or {},
-        "generator": "eshana.report",
+        "envelopes": by_kind, "subject": subject or {}, "title": title, "theme": theme if theme in ("light", "dark") else None,
+        "reference_utc": reference_utc, "transits": transits, "progressions": progressions,
+        "nakshatra_reference": _nak_reference(), "energetics": _energetics(), "errors": errors or None,
+        "defaults": defaults or {}, "pages": want, "generator": "eshana.report",
     }
     first = next(iter(by_kind.values()), {})
     version = (first.get("provenance") or {}).get("engine_version", "")
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     shells = "".join(
-        f'<section class="card" id="{sid}"><h2>{_esc(SECTION_TITLES[sid])}</h2><div class="body">'
-        f'<noscript><p class="note">This section is drawn in the browser; enable JavaScript to see it. The data is in the '
-        f'Raw data section of the file.</p></noscript></div></section>'
+        f'<section class="page" id="{sid}" hidden aria-labelledby="h-{sid}"><h2 class="sr" id="h-{sid}">{_esc(SECTION_TITLES[sid])}</h2>'
+        f'<div class="body"><noscript><p class="note">ESHANA Studio draws this page in the browser; enable JavaScript. '
+        f'The data is embedded in the file.</p></noscript></div></section>'
         for sid in SECTIONS if sid in want)
-    toc = "".join(f'<a href="#{s}">{TOC_NAMES[s]}</a>' for s in SECTIONS if s in want)
     err_html = ""
     if errors:
         items = "".join(f"<li><b>{_esc(k)}</b>: {_esc(v)}</li>" for k, v in errors.items())
-        err_html = (f'<section class="card" id="not-computed"><h2>Not computed</h2><p class="lead">These were refused '
-                    f'by the engine, so they are left out rather than guessed.</p><ul class="warn">{items}</ul></section>')
+        err_html = (f'<div class="card" id="not-computed"><h3>Not computed</h3><p class="note">These were refused by the '
+                    f'engine, so they are left out rather than guessed.</p><ul class="warn">{items}</ul></div>')
     sub = " · ".join(str(x) for x in ((subject or {}).get("name"), (subject or {}).get("local"),
                                       (subject or {}).get("place_label")) if x)
-    theme_attr = f' data-theme="{theme}"' if theme in ("light", "dark") else ""
     generated = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     js = "\n".join(_asset(n) for n in ASSETS)
+    js = js.replace("const sigil = (name, cls = '') => `<svg class=\"sigil ${cls}\" viewBox=\"0 0 24 24\" aria-hidden=\"true\">${SIGIL[name] || SIGIL.overview}</svg>`;",
+                    "const sigil = (name, cls = '') => `<svg class=\"sigil ${cls}\" viewBox=\"0 0 24 24\" aria-hidden=\"true\">${SIGIL[name] || SIGIL[String(name).replace('-', '_')] || SIGIL.overview}</svg>`;")
+    theme_attr = f' data-theme="{theme}" data-mode="{theme}"' if theme in ("light", "dark") else ' data-mode="dark"'
     return f"""<!doctype html>
 <html lang="en"{theme_attr}>
 <head>
@@ -527,26 +537,35 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="ESHANA {_esc(version)}">
 <title>{_esc(title)}</title>
-<style>{_asset("report.css")}</style>
+<style>{_asset("studio.css")}
+.sr{{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}</style>
 </head>
 <body>
-<header class="top"><div><h1>{_esc(title)}</h1><div class="sub">{_esc(sub)}</div></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="app">
+<header class="topbar">
+<button class="btn" id="menu" type="button" aria-label="Menu">☰</button>
+<a class="brand" href="#/overview">{BRAND}ESHANA</a>
+<span class="who">{_esc(title)}{(' · ' + _esc(sub)) if sub else ''}</span>
 <div class="tools">
-<button class="btn" id="settings" type="button">⚙ Show and style</button>
-<button class="btn" id="theme" type="button">◐ Theme</button>
-<button class="btn" id="print" type="button">⎙ Print / PDF</button>
-<button class="btn" id="svg" type="button">⤓ Chakra SVG</button>
-<button class="btn" id="json" type="button">⤓ Export JSON</button>
-<button class="btn" id="copy" type="button">⧉ Copy summary</button>
-</div></header>
-<nav class="toc" aria-label="Sections">{toc}</nav>
+<button class="btn" id="search" type="button" title="Jump to a page, graha or bhāva">⌕ <span class="t">Jump</span> <kbd>⌘K</kbd></button>
+<button class="btn" id="settings" type="button">⚙ <span class="t">Show and style</span></button>
+<button class="btn" id="theme" type="button">◐ <span class="t">Theme</span></button>
+<button class="btn" id="print" type="button">⎙ <span class="t">Print</span></button>
+<button class="btn" id="json" type="button">⤓ <span class="t">JSON</span></button>
+<button class="btn" id="copy" type="button">⧉ <span class="t">Copy summary</span></button>
+</div>
+</header>
+<nav class="side" aria-label="Pages"></nav>
 <main>
 {err_html}{shells}
 </main>
-<aside class="drawer" id="drawer" aria-label="Show and style"></aside>
 <footer>Generated {generated} by ESHANA {_esc(version)} (Extensible Spatiotemporal Hypersystem for Astroinformatics,
 Natural Cycles &amp; Associations). Open source, Apache-2.0. Every value comes from the engine and is labelled calculated
-or tradition_rule; chart markers follow {MARKER_RULES}. This file is self-contained and makes no network requests.</footer>
+or tradition_rule; chart markers follow {MARKER_RULES}, Nadi links report.nadi@0.1. Self-contained; no network requests.</footer>
+</div>
+<div id="palette" hidden role="dialog" aria-label="Jump to"><div class="box"><input placeholder="Jump to a page, graha or bhāva…" aria-label="Search"><ul></ul></div></div>
+<aside class="drawer" id="drawer" aria-label="Show and style"></aside>
 <script type="application/json" id="eshana-data">{data_json}</script>
 <script>{js}</script>
 </body>
@@ -555,7 +574,7 @@ or tradition_rule; chart markers follow {MARKER_RULES}. This file is self-contai
 
 
 # ── running the engine ─────────────────────────────────────────────────────────────────────────────────────────────
-ALL_DIVISIONS = (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
+ALL_DIVISIONS = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
 
 
 def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lahiri", houses: str = "whole_sign",
@@ -684,6 +703,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
     p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
+    p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Panchang chakra")
     p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p
@@ -694,7 +714,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     a = _parser().parse_args(argv)
     sections = a.sections.split(",") if a.sections else None
-    defaults = {k: v for k, v in {"icons": a.icons, "chart": a.chart_style}.items() if v}
+    defaults = {k: v for k, v in {"icons": a.icons, "chart": a.chart_style, "centre": a.centre}.items() if v}
     try:
         if a.from_json:
             envs = {}

@@ -121,7 +121,7 @@ pub struct ChartRequest {
 }
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 9] = [
+pub const FEATURES: [&str; 15] = [
     "panchanga",
     "strength",
     "relationships",
@@ -131,6 +131,12 @@ pub const FEATURES: [&str; 9] = [
     "kp",
     "yogas",
     "sade_sati",
+    "shadbala",
+    "bhava_bala",
+    "vimshopaka",
+    "special_points",
+    "aspects",
+    "bhava_chalit",
 ];
 
 /// An ephemeris table request.
@@ -543,6 +549,14 @@ impl Engine {
         };
         let mut positions = vec![];
         let mut pos_by_body: BTreeMap<String, (f64, f64)> = BTreeMap::new(); // id -> (zodiac lon, speed)
+        let mut equ_by_body: BTreeMap<String, (f64, f64, f64)> = BTreeMap::new(); // id -> (RA, dec, ecl. latitude)
+        let eps_true = eshana_core::rad(frames::true_obliquity_deg(t));
+        let equatorial = |lam: f64, beta: f64| -> (f64, f64) {
+            let (l, b) = (eshana_core::rad(lam), eshana_core::rad(beta));
+            let ra = (l.sin() * eps_true.cos() - b.tan() * eps_true.sin()).atan2(l.cos());
+            let dec = (b.sin() * eps_true.cos() + b.cos() * eps_true.sin() * l.sin()).asin();
+            (norm360(eshana_core::deg(ra)), eshana_core::deg(dec))
+        };
         for b in &wanted {
             let p = provider.position(inst.jd_tt, *b)?;
             let lon = zodiac_lon(p.longitude_deg, &cfg, t);
@@ -553,6 +567,10 @@ impl Engine {
             o.insert("longitude_deg".into(), json!(lon));
             o.insert("tropical_longitude_deg".into(), json!(p.longitude_deg));
             o.insert("latitude_deg".into(), json!(p.latitude_deg));
+            let (ra, dec) = equatorial(p.longitude_deg, p.latitude_deg);
+            o.insert("right_ascension_deg".into(), json!(ra));
+            o.insert("declination_deg".into(), json!(dec));
+            equ_by_body.insert(b.id().into(), (ra, dec, p.latitude_deg));
             o.insert("distance_au".into(), json!(p.distance_au));
             o.insert("speed_deg_per_day".into(), json!(p.speed_deg_per_day));
             o.insert("retrograde".into(), json!(p.is_retrograde()));
@@ -571,6 +589,8 @@ impl Engine {
                     "id": "south_node", "body": "south_node", "epistemic": Epistemic::Calculated,
                     "derived_from": b.id(), "longitude_deg": south,
                     "tropical_longitude_deg": norm360(p.longitude_deg + 180.0), "latitude_deg": 0.0,
+                    "right_ascension_deg": equatorial(norm360(p.longitude_deg + 180.0), 0.0).0,
+                    "declination_deg": equatorial(norm360(p.longitude_deg + 180.0), 0.0).1,
                     "speed_deg_per_day": p.speed_deg_per_day, "retrograde": p.is_retrograde(),
                     "sign": sign_value(south, system == Some("vedic")),
                 }));
@@ -783,7 +803,8 @@ impl Engine {
                             "vedic.parashari",
                             vedic::RULESET,
                             Epistemic::TraditionRule,
-                            json!({"division": d, "rashi": RASHIS[s], "index": s}),
+                            json!({"division": d, "rashi": RASHIS[s], "index": s,
+                                   "degree_in_varga": (norm360(*lon) % 30.0 * f64::from(*d)) % 30.0}),
                             std::slice::from_ref(id),
                         ));
                     }
@@ -814,7 +835,8 @@ impl Engine {
                             "vedic.parashari",
                             vedic::RULESET,
                             Epistemic::TraditionRule,
-                            json!({"division": d, "rashi": RASHIS[s], "index": s}),
+                            json!({"division": d, "rashi": RASHIS[s], "index": s,
+                                   "degree_in_varga": (norm360(a) % 30.0 * f64::from(*d)) % 30.0}),
                             &["houses".into()],
                         ));
                     }
@@ -871,6 +893,7 @@ impl Engine {
                         inst,
                         r,
                         &pos_by_body,
+                        &equ_by_body,
                         (asc_lon, mc_lon, angles),
                         hw,
                         reference_jd,
@@ -943,6 +966,7 @@ impl Engine {
         inst: &Instant,
         r: &ChartRequest,
         pos_by_body: &BTreeMap<String, (f64, f64)>,
+        equ: &BTreeMap<String, (f64, f64, f64)>,
         (asc, mc, angles): (Option<f64>, Option<f64>, Option<(f64, f64)>),
         hw: f64,
         reference_jd: Option<f64>,
@@ -950,7 +974,7 @@ impl Engine {
         warnings: &mut Vec<Value>,
         rulesets: &mut Vec<String>,
     ) -> Result<()> {
-        use crate::{events, jyotish, packs, panchanga};
+        use crate::{bala, events, jyotish, packs, panchanga, vedic};
         let vc = jyotish::VChart::from_positions(pos_by_body, asc, mc);
         let core = packs::core();
         let core_rule = packs::rule_id(&core.id, &core.version);
@@ -1051,11 +1075,17 @@ impl Engine {
         });
         let ayan = cfg.ayanamsha.expect("vedic charts are sidereal");
         let mut day_lord: Option<String> = None;
-        if feats.contains("panchanga") || feats.contains("kp") {
+        let mut pc_value: Option<Value> = None;
+        if feats.contains("panchanga")
+            || feats.contains("kp")
+            || feats.contains("shadbala")
+            || feats.contains("bhava_bala")
+        {
             match site {
                 Some(site) => {
                     let pc = panchanga::panchanga(provider, inst, site, ayan, None)?;
                     day_lord = pc["vara"]["lord"].as_str().map(String::from);
+                    pc_value = Some(pc.clone());
                     if feats.contains("panchanga") {
                         let pk = packs::panchanga();
                         let rule = packs::rule_id(&pk.id, &pk.version);
@@ -1099,6 +1129,147 @@ impl Engine {
                 jyotish::yogas(&vc),
                 &["positions", "houses"],
             );
+        }
+        let need_shad = feats.contains("shadbala") || feats.contains("bhava_bala");
+        if need_shad
+            || feats.contains("vimshopaka")
+            || feats.contains("special_points")
+            || feats.contains("aspects")
+            || feats.contains("bhava_chalit")
+        {
+            let bp = packs::bala();
+            let bala_rule = packs::rule_id(&bp.id, &bp.version);
+            rulesets.push(bala_rule.clone());
+            if need_shad {
+                let mut sky = bala::Sky {
+                    jd: inst.jd_ut,
+                    vara_lord: day_lord.clone(),
+                    ..Default::default()
+                };
+                for (id, (_, dec, lat)) in equ {
+                    let key = match id.as_str() {
+                        "mean_node" | "true_node" => "rahu",
+                        "south_node" => "ketu",
+                        o => o,
+                    };
+                    sky.decl.insert(key.into(), *dec);
+                    sky.ecl_lat.insert(key.into(), *lat);
+                }
+                if let Some(pc) = &pc_value {
+                    let jd = |v: &Value| v["jd_ut"].as_f64();
+                    if let (Some(a), Some(b), Some(c)) =
+                        (jd(&pc["sunrise"]), jd(&pc["sunset"]), jd(&pc["next_sunrise"]))
+                    {
+                        sky.day = Some((a, b, c));
+                    }
+                    sky.hora_lord = pc["horas"]
+                        .as_array()
+                        .and_then(|h| h.iter().find(|x| x["current"] == true))
+                        .and_then(|x| x["lord"].as_str())
+                        .map(String::from);
+                }
+                if let (Some(pl), Some(&(ra_sun, _, _))) = (r.place.as_ref(), equ.get("sun")) {
+                    let last = astro::local_apparent_sidereal_deg(inst.gmst_deg(), pl.longitude, inst.t_tt());
+                    sky.sun_hour_angle = Some(eshana_core::norm180(last - ra_sun));
+                }
+                if let Some(site) = site {
+                    // abda and masa lords: weekday lords on the local dates of the Sun's last entries into Mesha and
+                    // into its current sign (convention named in bala.yaml)
+                    let ing =
+                        events::ingresses(provider, Body::Sun, inst.jd_ut - 400.0, inst.jd_ut, Some(ayan))
+                            .unwrap_or_default();
+                    let wd = |jd: f64| {
+                        ((jd + site.offset_s / 86_400.0 + 1.5).floor() as i64).rem_euclid(7) as usize
+                    };
+                    let lord_of_day = |jd: f64| packs::panchanga().varas[wd(jd)].lord.clone();
+                    if let Some(e) = ing
+                        .iter()
+                        .rev()
+                        .find(|e| e["to_sign"] == 0)
+                        .and_then(|e| e["jd_ut"].as_f64())
+                    {
+                        sky.abda_lord = Some(lord_of_day(e));
+                    }
+                    if let Some(e) = ing.last().and_then(|e| e["jd_ut"].as_f64()) {
+                        sky.masa_lord = Some(lord_of_day(e));
+                    }
+                }
+                let shad = bala::shadbala(&vc, &sky);
+                if feats.contains("bhava_bala") {
+                    match bala::bhava_bala(&vc, &shad) {
+                        Some(bb) => push("vedic.bhava_bala", &bala_rule, bb, &["positions", "houses"]),
+                        None => need("bhava bala", "the bhavas need an exact birth time and place"),
+                    }
+                }
+                if feats.contains("shadbala") {
+                    let mut v = shad;
+                    v["sky"] = json!({"vara_lord": sky.vara_lord, "hora_lord": sky.hora_lord, "abda_lord": sky.abda_lord,
+                                      "masa_lord": sky.masa_lord, "sun_hour_angle_deg": sky.sun_hour_angle});
+                    push(
+                        "vedic.shadbala",
+                        &bala_rule,
+                        v,
+                        &["positions", "houses", "panchanga"],
+                    );
+                }
+            }
+            if feats.contains("vimshopaka") {
+                push(
+                    "vedic.vimshopaka",
+                    &bala_rule,
+                    bala::vimshopaka(&vc),
+                    &["positions"],
+                );
+            }
+            if feats.contains("special_points") {
+                push(
+                    "vedic.special_points",
+                    &core_rule,
+                    bala::special_points(&vc),
+                    &["positions", "houses"],
+                );
+            }
+            if feats.contains("aspects") {
+                let mut d9 = vc.clone();
+                for (g, l) in &vc.lon {
+                    if let Ok(s) = vedic::divisional_sign(*l, 9) {
+                        d9.lon.insert(g.clone(), s as f64 * 30.0 + 15.0);
+                    }
+                }
+                push(
+                    "vedic.aspects",
+                    &bala_rule,
+                    json!({"d1": bala::aspect_matrix(&vc),
+                    "d9": bala::aspect_matrix(&d9),
+                    "note": "fraction: whole-sign graha drishti (3rd/10th 1/4, 5th/9th 1/2, 4th/8th 3/4, 7th and special aspects full); virupa: sputa drishti of D1 longitudes (D9: sign centres)"}),
+                    &["positions"],
+                );
+            }
+            if feats.contains("bhava_chalit") {
+                match (asc, mc) {
+                    (Some(a), Some(m)) if hw == 0.0 => {
+                        let madhya = bala::bhava_madhyas(a, m);
+                        let mut cusps = [0.0; 12];
+                        for (k, v) in cusps.iter_mut().enumerate() {
+                            let prev = madhya[(k + 11) % 12];
+                            *v = norm360(prev + norm360(madhya[k] - prev) / 2.0);
+                        }
+                        let placed: BTreeMap<String, usize> = vc
+                            .lon
+                            .iter()
+                            .map(|(g, l)| (g.clone(), astro::house_of(*l, &cusps)))
+                            .collect();
+                        push(
+                            "vedic.bhava_chalit",
+                            &core_rule,
+                            json!({"system": "sripati", "bhava_madhya": madhya,
+                            "bhava_sandhi": cusps, "grahas": placed}),
+                            &["positions", "houses"],
+                        );
+                    }
+                    _ => need("bhava chalit", "it needs an exact birth time and place"),
+                }
+            }
         }
         if feats.contains("sade_sati") {
             let moon = vc

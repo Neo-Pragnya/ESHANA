@@ -98,7 +98,7 @@ def test_houses_match_swiss(provider, spk, row, system, zodiac, hs, code):
 
 
 # ── 2. categorical agreement with values re-derived from the Swiss longitudes ─────────────────────────────────────
-WIDTH = {1: 30.0, 2: 15.0, 3: 10.0, 4: 7.5, 7: 30.0 / 7.0, 9: 10.0 / 3.0, 10: 3.0, 12: 2.5, 16: 30 / 16, 20: 1.5,
+WIDTH = {1: 30.0, 2: 15.0, 3: 10.0, 4: 7.5, 5: 6.0, 6: 5.0, 7: 30.0 / 7.0, 8: 3.75, 9: 10.0 / 3.0, 10: 3.0, 12: 2.5, 16: 30 / 16, 20: 1.5,
          24: 1.25, 27: 30 / 27, 30: 1.0, 40: 0.75, 45: 30 / 45, 60: 0.5}  # D30's unequal parts end on whole degrees
 
 

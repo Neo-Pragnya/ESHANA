@@ -14,15 +14,15 @@
     "from": "attr:vedic.moon.rashi",
     "kind": "uses_rule",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
-    "to": "rule:vedic.parashari@0.2"
+    "rule_version": "vedic.parashari@0.3",
+    "to": "rule:vedic.parashari@0.3"
    },
    {
     "epistemic": "tradition_rule",
-    "from": "rule:vedic.parashari@0.2",
+    "from": "rule:vedic.parashari@0.3",
     "kind": "cites",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "source:parashari"
    },
    {
@@ -30,7 +30,7 @@
     "from": "attr:vedic.moon.rashi",
     "kind": "derived_from",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "pos:moon"
    },
    {
@@ -38,7 +38,7 @@
     "from": "attr:vedic.moon.rashi",
     "kind": "classified_as",
     "relation_class": "traditional_correspondence",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "concept:vedic.parashari:meena"
    },
    {
@@ -46,15 +46,15 @@
     "from": "attr:vedic.moon.nakshatra",
     "kind": "uses_rule",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
-    "to": "rule:vedic.parashari@0.2"
+    "rule_version": "vedic.parashari@0.3",
+    "to": "rule:vedic.parashari@0.3"
    },
    {
     "epistemic": "tradition_rule",
-    "from": "rule:vedic.parashari@0.2",
+    "from": "rule:vedic.parashari@0.3",
     "kind": "cites",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "source:parashari"
    },
    {
@@ -62,7 +62,7 @@
     "from": "attr:vedic.moon.nakshatra",
     "kind": "derived_from",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "pos:moon"
    },
    {
@@ -70,7 +70,7 @@
     "from": "attr:vedic.moon.nakshatra",
     "kind": "classified_as",
     "relation_class": "traditional_correspondence",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "concept:vedic.parashari:revati"
    },
    {
@@ -78,15 +78,15 @@
     "from": "attr:vedic.moon.d9",
     "kind": "uses_rule",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
-    "to": "rule:vedic.parashari@0.2"
+    "rule_version": "vedic.parashari@0.3",
+    "to": "rule:vedic.parashari@0.3"
    },
    {
     "epistemic": "tradition_rule",
-    "from": "rule:vedic.parashari@0.2",
+    "from": "rule:vedic.parashari@0.3",
     "kind": "cites",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "source:parashari"
    },
    {
@@ -94,7 +94,7 @@
     "from": "attr:vedic.moon.d9",
     "kind": "derived_from",
     "relation_class": "computational",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "pos:moon"
    },
    {
@@ -102,7 +102,7 @@
     "from": "attr:vedic.moon.d9",
     "kind": "classified_as",
     "relation_class": "traditional_correspondence",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "to": "concept:vedic.parashari:meena"
    }
   ],
@@ -151,8 +151,8 @@
      "tradition_id": "vedic.parashari"
     },
     "epistemic": "tradition_rule",
-    "id": "rule:vedic.parashari@0.2",
-    "label": "vedic.parashari@0.2",
+    "id": "rule:vedic.parashari@0.3",
+    "label": "vedic.parashari@0.3",
     "type": "rule"
    },
    {
@@ -191,6 +191,7 @@
    },
    {
     "data": {
+     "degree_in_varga": 19.11660882746537,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -209,14 +210,14 @@
    "causal",
    "hypothesized"
   ],
-  "schema_version": "0.2.0"
+  "schema_version": "0.3.0"
  },
  "mermaid": [
   "flowchart LR",
   "  n0[\"1992-05-28T14:35:00Z\"]:::calculated",
   "  n1[\"moon 28°47′27″ Meena\"]:::calculated",
   "  n2[\"vedic.moon.rashi = Meena\"]:::tradition_rule",
-  "  n3[\"vedic.parashari@0.2\"]:::tradition_rule",
+  "  n3[\"vedic.parashari@0.3\"]:::tradition_rule",
   "  n4[\"Parashari conventions as widely published  Brihat Parashara Hora Shastra tradition ; implemented independently from standard tables\"]:::tradition_rule",
   "  n5[\"Meena\"]:::tradition_rule",
   "  n6[\"vedic.moon.nakshatra = Revati\"]:::tradition_rule",

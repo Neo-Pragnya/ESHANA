@@ -1,5 +1,5 @@
 ---
-import Glyph from "../components/Glyph.astro";
+import Sigil from "../components/Sigil.astro";
 import Layout from "../components/Layout.astro";
 const base = import.meta.env.BASE_URL;
 ---
@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL;
 <Layout title="Not found">
   <section class="hero" style="text-align:center">
     <div class="hero-content" style="margin:0 auto">
-      <Glyph shapes="circle star hex flower blob" tint="coral" class="glyph" auto={1600} />
+      <Sigil name="comet" tint="lilac" class="glyph" live />
       <p class="eyebrow">404</p>
       <h1><span data-rise>Nothing here</span></h1>
       <p class="lede" style="margin:0 auto">The page moved, or never existed.</p>

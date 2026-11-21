@@ -7,7 +7,7 @@ Feature: Vedic features from data-driven rule packs
     And the output contains "vedic.ashtakavarga@0.2"
     And the output contains "vedic.yogas@0.2"
     And the output contains "vedic.panchanga@0.2"
-    And the output contains "vedic.core@0.2"
+    And the output contains "vedic.core@0.3"
     And the output contains "pratyantardashas"
     And the output contains "pranadasha"
     And the output contains "starting_yogini"

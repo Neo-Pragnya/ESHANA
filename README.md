@@ -54,9 +54,9 @@ $ eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --
   dignity, graha and rāśi drishti, aṣṭakavarga, Jaimini kārakas and ārūḍhas, KP sub-lords and significators, 18 yogas
   and 6 doshas, Sāḍe Sātī ([guide](docs/guides/vedic-features.md)); **pañcāṅga** with rise/set, horā, choghaḍiyā and
   special lagnas ([guide](docs/guides/panchanga.md)); **aṣṭakūṭa matching** ([guide](docs/guides/matching.md)).
-- **Chart studio** (`eshana-report`, `Chart.to_html()`): one offline, interactive HTML file. It has the Panchang Chakra
-  with every point placed, layers for drishti, transits and more, South and North Indian charts for every varga,
-  textured planet icons, daśā timelines and a BodyGraph
+- **ESHANA Studio** (`eshana-report`, `Chart.to_html()`): one offline HTML file that works as a multi-page app. It
+  has the Panchang Chakra with a South or North Indian chart in its centre, a page per graha and per bhāva, aspects
+  in virūpas, ṣaḍbala and viṃśopaka, 19 vargas with degrees, a Nadi direction matrix, daśā timelines and a BodyGraph
   ([guide](docs/guides/html-report.md), [example](examples/reports/example-birth-chart.html)).
 - **Birth-chart accuracy suite**: 44 reference charts against the Swiss Ephemeris, the Lahiri definition and a recorded
   ProKerala chart, PyJHora special lagnas, Swiss rise/set and ingresses, plus an independent re-derivation of every

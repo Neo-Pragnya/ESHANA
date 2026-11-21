@@ -8,27 +8,27 @@
   "fagan_bradley"
  ],
  "capabilities": 22,
- "doc_pages": 53,
+ "doc_pages": 55,
  "error_codes": 11,
  "expansion": "Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations",
  "python_tests": 33,
  "reference_charts": 44,
  "rulesets": [
-  "vedic.parashari@0.2",
+  "vedic.parashari@0.3",
   "western.basic@0.1",
   "human_design.basic@0.1",
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 120,
+ "rust_tests": 125,
  "scenarios": 98,
- "tasks": 125,
+ "tasks": 134,
  "tasks_by_status": {
-  "implemented": 3,
-  "proposed": 50,
+  "implemented": 4,
+  "proposed": 49,
   "released": 1,
-  "verified": 71
+  "verified": 80
  },
  "tzdb_version": "2026f",
- "version": "0.2.0"
+ "version": "0.3.0"
 }

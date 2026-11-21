@@ -1,4 +1,4 @@
-//! Vedic rule pack `vedic.parashari@0.2`: nakshatra and pada, divisional charts and Vimśottarī daśā.
+//! Vedic rule pack `vedic.parashari@0.3`: nakshatra and pada, divisional charts and Vimśottarī daśā.
 //!
 //! Every function takes a **sidereal** longitude. Divisional-chart conventions and the daśā year length are
 //! school-specific; the rule version names the exact convention implemented here.
@@ -8,7 +8,7 @@ use eshana_time::Instant;
 use serde_json::{json, Value};
 
 /// Rule pack id and version for everything in this module.
-pub const RULESET: &str = "vedic.parashari@0.2";
+pub const RULESET: &str = "vedic.parashari@0.3";
 
 /// The 27 nakshatras, index 0 = Aśvinī.
 pub const NAKSHATRAS: [&str; 27] = [
@@ -90,12 +90,14 @@ pub fn nakshatra_of(sidereal_lon: f64) -> Nakshatra {
 }
 
 /// Divisions implemented by [`divisional_sign`].
-pub const DIVISIONS: [u32; 16] = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60];
+pub const DIVISIONS: [u32; 19] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60];
 
 /// Divisional (varga) sign index 0–11 for a sidereal longitude, Parāśara conventions (BPHS ch. 6–7).
 ///
-/// Implemented: D1, D2 (horā: Leo/Cancer), D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30 (unequal
-/// triṃśāṃśa), D40, D45, D60. Starting signs depend on the sign's odd/even parity, modality or element exactly
+/// Implemented: D1, D2 (horā: Leo/Cancer), D3, D4, D5 (pañcāṃśa: 6° parts, odd signs Mesha, Kumbha, Dhanu,
+/// Mithuna, Tula; even signs Vṛṣabha, Kanyā, Mīna, Makara, Vṛścika), D6 (ṣaṣṭhāṃśa: odd from Mesha, even from
+/// Tula), D7, D8 (aṣṭāṃśa: movable from Mesha, fixed from Dhanu, dual from Siṃha), D9, D10, D12, D16, D20, D24,
+/// D27, D30 (unequal triṃśāṃśa), D40, D45, D60. Starting signs depend on the sign's odd/even parity, modality or element exactly
 /// as written below.
 ///
 /// # Errors
@@ -120,6 +122,17 @@ pub fn divisional_sign(sidereal_lon: f64, d: u32) -> Result<usize> {
         }
         3 => (s + 4 * part(3)) % 12,
         4 => (s + 3 * part(4)) % 12,
+        5 => {
+            let odd_signs = [0, 10, 8, 2, 6];
+            let even_signs = [1, 5, 11, 9, 7];
+            if odd {
+                odd_signs[part(5)]
+            } else {
+                even_signs[part(5)]
+            }
+        }
+        6 => (if odd { 0 } else { 6 } + part(6)) % 12,
+        8 => (by_modality(0, 8, 4) + part(8)) % 12,
         7 => (if odd { s } else { s + 6 } + part(7)) % 12,
         9 => (((lon * 9.0 / 30.0).floor() as usize) % 12).min(11),
         10 => (if odd { s } else { s + 8 } + part(10)) % 12,
@@ -444,7 +457,7 @@ mod tests {
         for lon in [0.0, 45.0, 123.4, 359.9] {
             assert_eq!(divisional_sign(lon, 1).unwrap(), (lon / 30.0) as usize);
         }
-        assert_eq!(divisional_sign(10.0, 5).unwrap_err().code(), "ESH-RULES");
+        assert_eq!(divisional_sign(10.0, 11).unwrap_err().code(), "ESH-RULES");
         assert_eq!(divisional_sign(10.0, 150).unwrap_err().code(), "ESH-RULES");
     }
 

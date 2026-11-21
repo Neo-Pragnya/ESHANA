@@ -17,7 +17,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 11.9840244634008,
@@ -32,7 +32,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 9,
@@ -49,7 +49,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 9,
@@ -62,9 +62,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 11.9840244634008,
      "division": 1,
      "index": 4,
      "rashi": "Simha"
@@ -76,9 +77,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 17.8562201706072,
      "division": 9,
      "index": 3,
      "rashi": "Karka"
@@ -90,7 +92,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 23.523404860373432,
@@ -105,7 +107,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 26,
@@ -122,7 +124,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 4,
@@ -135,9 +137,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 23.523404860373432,
      "division": 1,
      "index": 11,
      "rashi": "Meena"
@@ -149,9 +152,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 1.7106437433608903,
      "division": 9,
      "index": 10,
      "rashi": "Kumbha"
@@ -163,7 +167,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 8.181562684104506,
@@ -178,7 +182,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 18,
@@ -195,7 +199,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -208,9 +212,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 8.181562684104506,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -222,9 +227,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 13.634064156940553,
      "division": 9,
      "index": 2,
      "rashi": "Mithuna"
@@ -236,7 +242,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 9.959426406081839,
@@ -251,7 +257,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 2,
@@ -268,7 +274,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -281,9 +287,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 9.959426406081839,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -295,9 +302,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 29.634837654736543,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -309,7 +317,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 28.79073431416282,
@@ -324,7 +332,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 26,
@@ -341,7 +349,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 4,
@@ -354,9 +362,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 28.79073431416282,
      "division": 1,
      "index": 11,
      "rashi": "Meena"
@@ -368,9 +377,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 19.11660882746537,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -382,7 +392,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 24.834954352249497,
@@ -397,7 +407,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 19,
@@ -414,7 +424,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -427,9 +437,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 24.834954352249497,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -441,9 +452,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 13.514589170245472,
      "division": 9,
      "index": 7,
      "rashi": "Vrishchika"
@@ -455,7 +467,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 27.362520131533813,
@@ -470,7 +482,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 15,
@@ -487,7 +499,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 11,
@@ -500,9 +512,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 27.362520131533813,
      "division": 1,
      "index": 6,
      "rashi": "Tula"
@@ -514,9 +527,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 6.262681183804318,
      "division": 9,
      "index": 2,
      "rashi": "Mithuna"
@@ -528,7 +542,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 24.65592687232163,
@@ -543,7 +557,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 22,
@@ -560,7 +574,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 2,
@@ -573,9 +587,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 24.65592687232163,
      "division": 1,
      "index": 9,
      "rashi": "Makara"
@@ -587,9 +602,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 11.903341850894662,
      "division": 9,
      "index": 4,
      "rashi": "Simha"
@@ -601,7 +617,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 8.181562684104506,
@@ -616,7 +632,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 5,
@@ -633,7 +649,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 7,
@@ -646,9 +662,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 8.181562684104506,
      "division": 1,
      "index": 2,
      "rashi": "Mithuna"
@@ -660,9 +677,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 13.634064156940553,
      "division": 9,
      "index": 8,
      "rashi": "Dhanu"
@@ -674,7 +692,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 13.74600268263739,
@@ -689,7 +707,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 3,
@@ -706,7 +724,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -719,9 +737,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 13.74600268263739,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -733,9 +752,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 3.714024143736509,
      "division": 9,
      "index": 1,
      "rashi": "Vrishabha"
@@ -747,7 +767,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 23.741651801979174,
@@ -762,7 +782,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 19,
@@ -779,7 +799,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -792,9 +812,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 23.741651801979174,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -806,9 +827,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 3.674866217812564,
      "division": 9,
      "index": 7,
      "rashi": "Vrishchika"
@@ -820,7 +842,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 9.381787741338165,
@@ -835,7 +857,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 2,
@@ -852,7 +874,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.bhava",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -865,9 +887,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 9.381787741338165,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -879,9 +902,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 24.436089672043494,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -893,7 +917,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.rashi",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 2.4274640841052246,
@@ -908,7 +932,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.nakshatra",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 18,
@@ -923,9 +947,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.d1",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 2.4274640841052246,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -937,9 +962,10 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.d9",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
+     "degree_in_varga": 21.84717675694702,
      "division": 9,
      "index": 0,
      "rashi": "Mesha"
@@ -951,7 +977,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.dasha.vimshottari",
-    "rule_version": "vedic.parashari@0.2",
+    "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
      "balance_at_birth_years": 1.541813749442431,
@@ -1615,12 +1641,14 @@
   "positions": [
    {
     "body": "sun",
+    "declination_deg": 21.56264940217525,
     "distance_au": 1.0135706713792172,
     "epistemic": "calculated",
     "id": "sun",
     "latitude_deg": 9.933349262700162e-05,
     "longitude_deg": 43.74600268263739,
     "retrograde": false,
+    "right_ascension_deg": 65.7037268479436,
     "sign": {
      "degree_in_sign": 13.74600268263739,
      "dms": "13°44′46″",
@@ -1632,12 +1660,14 @@
    },
    {
     "body": "moon",
+    "declination_deg": 13.289905882635837,
     "distance_au": 0.002591507423835422,
     "epistemic": "calculated",
     "id": "moon",
     "latitude_deg": 4.870928262187989,
     "longitude_deg": 358.7907343141628,
     "retrograde": false,
+    "right_ascension_deg": 18.993082567771356,
     "sign": {
      "degree_in_sign": 28.79073431416282,
      "dms": "28°47′27″",
@@ -1649,12 +1679,14 @@
    },
    {
     "body": "mercury",
+    "declination_deg": 20.98485547010574,
     "distance_au": 1.316988728387818,
     "epistemic": "calculated",
     "id": "mercury",
     "latitude_deg": 0.09116027105463557,
     "longitude_deg": 39.95942640608184,
     "retrograde": false,
+    "right_ascension_deg": 61.68652049516397,
     "sign": {
      "degree_in_sign": 9.959426406081839,
      "dms": "9°57′34″",
@@ -1666,12 +1698,14 @@
    },
    {
     "body": "venus",
+    "declination_deg": 20.317967277853672,
     "distance_au": 1.728411991962447,
     "epistemic": "calculated",
     "id": "venus",
     "latitude_deg": -0.4762325852459695,
     "longitude_deg": 39.381787741338165,
     "retrograde": false,
+    "right_ascension_deg": 61.19579510049961,
     "sign": {
      "degree_in_sign": 9.381787741338165,
      "dms": "9°22′54″",
@@ -1683,12 +1717,14 @@
    },
    {
     "body": "mars",
+    "declination_deg": 5.574808840786884,
     "distance_au": 1.7900954418236459,
     "epistemic": "calculated",
     "id": "mars",
     "latitude_deg": -1.3101359471413407,
     "longitude_deg": 353.52340486037343,
     "retrograde": false,
+    "right_ascension_deg": 16.431735076080532,
     "sign": {
      "degree_in_sign": 23.523404860373432,
      "dms": "23°31′24″",
@@ -1700,12 +1736,14 @@
    },
    {
     "body": "jupiter",
+    "declination_deg": 10.529730697104922,
     "distance_au": 5.357975134541703,
     "epistemic": "calculated",
     "id": "jupiter",
     "latitude_deg": 1.207504753172154,
     "longitude_deg": 131.9840244634008,
     "retrograde": false,
+    "right_ascension_deg": 157.98660732499638,
     "sign": {
      "degree_in_sign": 11.9840244634008,
      "dms": "11°59′02″",
@@ -1717,12 +1755,14 @@
    },
    {
     "body": "saturn",
+    "declination_deg": -16.121678151897694,
     "distance_au": 9.538438030390635,
     "epistemic": "calculated",
     "id": "saturn",
     "latitude_deg": -0.8531693687490985,
     "longitude_deg": 294.65592687232163,
     "retrograde": true,
+    "right_ascension_deg": 321.119851725387,
     "sign": {
      "degree_in_sign": 24.65592687232163,
      "dms": "24°39′21″",
@@ -1734,12 +1774,14 @@
    },
    {
     "body": "uranus",
+    "declination_deg": -22.71404814533901,
     "distance_au": 18.74567999551951,
     "epistemic": "calculated",
     "id": "uranus",
     "latitude_deg": -0.4218154318774697,
     "longitude_deg": 263.7416518019792,
     "retrograde": true,
+    "right_ascension_deg": 289.0217651528712,
     "sign": {
      "degree_in_sign": 23.741651801979174,
      "dms": "23°44′30″",
@@ -1751,12 +1793,14 @@
    },
    {
     "body": "neptune",
+    "declination_deg": -21.406951851435526,
     "distance_au": 29.41636383158728,
     "epistemic": "calculated",
     "id": "neptune",
     "latitude_deg": 0.7503433661967562,
     "longitude_deg": 264.8349543522495,
     "retrograde": true,
+    "right_ascension_deg": 290.0228343356729,
     "sign": {
      "degree_in_sign": 24.834954352249497,
      "dms": "24°50′06″",
@@ -1768,12 +1812,14 @@
    },
    {
     "body": "pluto",
+    "declination_deg": -3.311009755076954,
     "distance_au": 28.756187081382524,
     "epistemic": "calculated",
     "id": "pluto",
     "latitude_deg": 15.230661362563705,
     "longitude_deg": 207.3625201315338,
     "retrograde": true,
+    "right_ascension_deg": 232.64990949766025,
     "sign": {
      "degree_in_sign": 27.362520131533813,
      "dms": "27°21′45″",
@@ -1785,12 +1831,14 @@
    },
    {
     "body": "mean_node",
+    "declination_deg": -23.426092019430623,
     "distance_au": null,
     "epistemic": "calculated",
     "id": "mean_node",
     "latitude_deg": 0.0,
     "longitude_deg": 248.1815626841045,
     "retrograde": true,
+    "right_ascension_deg": 272.11109800508217,
     "sign": {
      "degree_in_sign": 8.181562684104506,
      "dms": "8°10′54″",
@@ -1802,12 +1850,14 @@
    },
    {
     "body": "south_node",
+    "declination_deg": 23.426092019430623,
     "derived_from": "mean_node",
     "epistemic": "calculated",
     "id": "south_node",
     "latitude_deg": 0.0,
     "longitude_deg": 68.1815626841045,
     "retrograde": true,
+    "right_ascension_deg": 92.1110980050822,
     "sign": {
      "degree_in_sign": 8.181562684104506,
      "dms": "8°10′54″",
@@ -1826,19 +1876,19 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.2.0",
+   "engine_version": "0.3.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
    "provider_version": "0.1.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
-    "vedic.parashari@0.2"
+    "vedic.parashari@0.3"
    ],
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "warnings": []
  },
  "western": {
@@ -2550,12 +2600,14 @@
   "positions": [
    {
     "body": "sun",
+    "declination_deg": 21.56264940217525,
     "distance_au": 1.0135706713792172,
     "epistemic": "calculated",
     "id": "sun",
     "latitude_deg": 9.933349262700162e-05,
     "longitude_deg": 67.50145864076367,
     "retrograde": false,
+    "right_ascension_deg": 65.7037268479436,
     "sign": {
      "degree_in_sign": 7.501458640763673,
      "dms": "7°30′05″",
@@ -2567,12 +2619,14 @@
    },
    {
     "body": "moon",
+    "declination_deg": 13.289905882635837,
     "distance_au": 0.002591507423835422,
     "epistemic": "calculated",
     "id": "moon",
     "latitude_deg": 4.870928262187989,
     "longitude_deg": 22.546190272289095,
     "retrograde": false,
+    "right_ascension_deg": 18.993082567771356,
     "sign": {
      "degree_in_sign": 22.546190272289095,
      "dms": "22°32′46″",
@@ -2584,12 +2638,14 @@
    },
    {
     "body": "mercury",
+    "declination_deg": 20.98485547010574,
     "distance_au": 1.316988728387818,
     "epistemic": "calculated",
     "id": "mercury",
     "latitude_deg": 0.09116027105463557,
     "longitude_deg": 63.71488236420813,
     "retrograde": false,
+    "right_ascension_deg": 61.68652049516397,
     "sign": {
      "degree_in_sign": 3.7148823642081297,
      "dms": "3°42′54″",
@@ -2601,12 +2657,14 @@
    },
    {
     "body": "venus",
+    "declination_deg": 20.317967277853672,
     "distance_au": 1.728411991962447,
     "epistemic": "calculated",
     "id": "venus",
     "latitude_deg": -0.4762325852459695,
     "longitude_deg": 63.137243699464456,
     "retrograde": false,
+    "right_ascension_deg": 61.19579510049961,
     "sign": {
      "degree_in_sign": 3.137243699464456,
      "dms": "3°08′14″",
@@ -2618,12 +2676,14 @@
    },
    {
     "body": "mars",
+    "declination_deg": 5.574808840786884,
     "distance_au": 1.7900954418236459,
     "epistemic": "calculated",
     "id": "mars",
     "latitude_deg": -1.3101359471413407,
     "longitude_deg": 17.278860818499712,
     "retrograde": false,
+    "right_ascension_deg": 16.431735076080532,
     "sign": {
      "degree_in_sign": 17.278860818499712,
      "dms": "17°16′44″",
@@ -2635,12 +2695,14 @@
    },
    {
     "body": "jupiter",
+    "declination_deg": 10.529730697104922,
     "distance_au": 5.357975134541703,
     "epistemic": "calculated",
     "id": "jupiter",
     "latitude_deg": 1.207504753172154,
     "longitude_deg": 155.73948042152708,
     "retrograde": false,
+    "right_ascension_deg": 157.98660732499638,
     "sign": {
      "degree_in_sign": 5.739480421527077,
      "dms": "5°44′22″",
@@ -2652,12 +2714,14 @@
    },
    {
     "body": "saturn",
+    "declination_deg": -16.121678151897694,
     "distance_au": 9.538438030390635,
     "epistemic": "calculated",
     "id": "saturn",
     "latitude_deg": -0.8531693687490985,
     "longitude_deg": 318.4113828304479,
     "retrograde": true,
+    "right_ascension_deg": 321.119851725387,
     "sign": {
      "degree_in_sign": 18.411382830447906,
      "dms": "18°24′41″",
@@ -2669,12 +2733,14 @@
    },
    {
     "body": "uranus",
+    "declination_deg": -22.71404814533901,
     "distance_au": 18.74567999551951,
     "epistemic": "calculated",
     "id": "uranus",
     "latitude_deg": -0.4218154318774697,
     "longitude_deg": 287.49710776010545,
     "retrograde": true,
+    "right_ascension_deg": 289.0217651528712,
     "sign": {
      "degree_in_sign": 17.49710776010545,
      "dms": "17°29′50″",
@@ -2686,12 +2752,14 @@
    },
    {
     "body": "neptune",
+    "declination_deg": -21.406951851435526,
     "distance_au": 29.41636383158728,
     "epistemic": "calculated",
     "id": "neptune",
     "latitude_deg": 0.7503433661967562,
     "longitude_deg": 288.5904103103758,
     "retrograde": true,
+    "right_ascension_deg": 290.0228343356729,
     "sign": {
      "degree_in_sign": 18.590410310375773,
      "dms": "18°35′25″",
@@ -2703,12 +2771,14 @@
    },
    {
     "body": "pluto",
+    "declination_deg": -3.311009755076954,
     "distance_au": 28.756187081382524,
     "epistemic": "calculated",
     "id": "pluto",
     "latitude_deg": 15.230661362563705,
     "longitude_deg": 231.1179760896601,
     "retrograde": true,
+    "right_ascension_deg": 232.64990949766025,
     "sign": {
      "degree_in_sign": 21.11797608966009,
      "dms": "21°07′05″",
@@ -2720,12 +2790,14 @@
    },
    {
     "body": "mean_node",
+    "declination_deg": -23.426092019430623,
     "distance_au": null,
     "epistemic": "calculated",
     "id": "mean_node",
     "latitude_deg": 0.0,
     "longitude_deg": 271.9370186422308,
     "retrograde": true,
+    "right_ascension_deg": 272.11109800508217,
     "sign": {
      "degree_in_sign": 1.9370186422307825,
      "dms": "1°56′13″",
@@ -2737,12 +2809,14 @@
    },
    {
     "body": "south_node",
+    "declination_deg": 23.426092019430623,
     "derived_from": "mean_node",
     "epistemic": "calculated",
     "id": "south_node",
     "latitude_deg": 0.0,
     "longitude_deg": 91.93701864223078,
     "retrograde": true,
+    "right_ascension_deg": 92.1110980050822,
     "sign": {
      "degree_in_sign": 1.9370186422307825,
      "dms": "1°56′13″",
@@ -2760,7 +2834,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.2.0",
+   "engine_version": "0.3.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -2771,7 +2845,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "warnings": []
  }
 }

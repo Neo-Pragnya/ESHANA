@@ -35,10 +35,10 @@ Feature: Self-contained HTML chart reports
 
   Scenario: Saved CLI envelopes render without recomputing
     Given I have run "eshana chart vedic --date 1996-12-07 --time 10:34 --tz Asia/Kolkata --lat 13.0878 --lon 80.2785 --divisions 9 --dasha --compact > vedic.json"
-    When I run "eshana-report --from-json vedic.json --sections summary,chakra,dasha -o out.html"
+    When I run "eshana-report --from-json vedic.json --sections overview,chakra,dasha -o out.html"
     Then it succeeds
     And the file "out.html" contains "Vimśottarī daśā"
-    And the file "out.html" does not contain "Western chart (tropical)"
+    And the file "out.html" does not contain "h-western"
 
   Scenario: A partner adds the compatibility section
     When I run "eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.61 --lon 77.21 --partner 1992-08-20,09:15,Asia/Kolkata,19.08,72.88 --reference 2026-11-21T00:00:00Z --transit-days 0 -o pair.html"

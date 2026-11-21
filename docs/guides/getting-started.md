@@ -34,10 +34,10 @@ The output is one JSON envelope. The parts to look at:
   "positions": [ { "id": "moon", "longitude_deg": 358.79, "sign": { "name": "Meena", "dms": "28°47′27″" },
                   "epistemic": "calculated", "speed_deg_per_day": 12.97, "retrograde": false } ],
   "houses": { "ascendant": { "sign": { "name": "Dhanu", "dms": "2°25′39″" } } },
-  "derived_attributes": [ { "id": "vedic.moon.nakshatra", "rule_version": "vedic.parashari@0.2",
+  "derived_attributes": [ { "id": "vedic.moon.nakshatra", "rule_version": "vedic.parashari@0.3",
                             "epistemic": "tradition_rule", "value": { "name": "Revati", "pada": 4, "lord": "Mercury" } } ],
   "interpretations": [],
-  "provenance": { "rulesets": ["ayanamsha-lahiri@0.1", "vedic.parashari@0.2"], "assumptions": ["…"] }
+  "provenance": { "rulesets": ["ayanamsha-lahiri@0.1", "vedic.parashari@0.3"], "assumptions": ["…"] }
 }
 ```
 

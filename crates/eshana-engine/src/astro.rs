@@ -117,6 +117,33 @@ pub fn houses(system: HouseSystem, lst_deg: f64, lat_deg: f64, t: f64) -> Result
                 *v = norm360(asc + 30.0 * i as f64);
             }
         }
+        HouseSystem::Porphyry | HouseSystem::Sripati => {
+            let ic = norm360(mc + 180.0);
+            let dsc = norm360(asc + 180.0);
+            let tri = |from: f64, to: f64, k: f64| norm360(from + norm360(to - from) * k / 3.0);
+            let p = [
+                asc,
+                tri(asc, ic, 1.0),
+                tri(asc, ic, 2.0),
+                ic,
+                tri(ic, dsc, 1.0),
+                tri(ic, dsc, 2.0),
+                dsc,
+                tri(dsc, mc, 1.0),
+                tri(dsc, mc, 2.0),
+                mc,
+                tri(mc, asc, 1.0),
+                tri(mc, asc, 2.0),
+            ];
+            if system == HouseSystem::Porphyry {
+                c = p;
+            } else {
+                for (k, v) in c.iter_mut().enumerate() {
+                    let prev = p[(k + 11) % 12];
+                    *v = norm360(prev + norm360(p[k] - prev) / 2.0);
+                }
+            }
+        }
         HouseSystem::Placidus => {
             let eps_deg = true_obliquity_deg(t);
             if lat_deg.abs() >= 90.0 - eps_deg {

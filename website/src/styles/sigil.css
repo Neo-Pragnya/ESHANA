@@ -1,0 +1,53 @@
+/* ESHANA sigils (src/components/Sigil.astro): thin celestial line work in the tint colour with a gold bindu.
+   Parts move on hover/focus of the enclosing link, card or heading, or always with .sg-live. */
+.sigil { color: var(--kc, var(--lilac)); overflow: visible; }
+.sigil * { vector-effect: non-scaling-stroke; transform-box: view-box; transform-origin: 24px 24px; }
+.sigil :is(.sg-orbit, .sg-ring, .sg-tri, .sg-spoke, .sg-link, .sg-tail, .sg-tick, .sg-halo) {
+  fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.sigil .sg-b { opacity: .55; }
+.sigil .sg-halo { opacity: .18; stroke-width: 1; }
+.sigil .sg-tick { opacity: .5; }
+.sigil .sg-key { stroke-width: 2.2; }
+.sigil .sg-dash { stroke-dasharray: 2 4; opacity: .5; }
+.sigil :is(.sg-bindu, .sg-rider) { fill: #f5c451; filter: drop-shadow(0 0 2px rgb(245 196 81 / 70%)); }
+.sigil .sg-rider.sg-b { fill: currentColor; filter: none; }
+.sigil .sg-star { fill: currentColor; transform-origin: center; transform-box: fill-box; }
+.sigil .sg-tri { fill: var(--kc-soft, transparent); fill-opacity: .55; }
+.sigil .sg-moon { fill: #f5c451; opacity: .92; }
+.sigil .sg-shadow { fill: var(--surface, #fff); transition: transform .9s cubic-bezier(.3, .7, .2, 1); }
+.sigil .sg-link { stroke-dasharray: 60; stroke-dashoffset: 0; opacity: .7; }
+.sigil .sg-tail { stroke-dasharray: 40; opacity: .8; }
+
+/* ---- motion: woken by an ancestor, or always on .sg-live ---- */
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-spin,
+.sigil.sg-live .sg-spin { animation: sg-turn 6s linear infinite; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-spin-rev,
+.sigil.sg-live .sg-spin-rev { animation: sg-turn 9s linear infinite reverse; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-ring:is(.sg-r1, .sg-r2, .sg-r3) {
+  animation: sg-ripple 1.6s ease-out infinite;
+}
+.sigil .sg-r2 { animation-delay: .25s !important; }
+.sigil .sg-r3 { animation-delay: .5s !important; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-link { animation: sg-draw 1.4s ease-in-out infinite alternate; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-star,
+.sigil.sg-live .sg-star { animation: sg-twinkle 1.2s ease-in-out infinite; animation-delay: calc(var(--i) * .16s); }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-shadow,
+.sigil.sg-live .sg-shadow { transform: translate(14px, -6px); }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-tail,
+.sigil.sg-live .sg-tail { animation: sg-draw 1.1s linear infinite; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-head,
+.sigil.sg-live .sg-head { animation: sg-pulse 1.1s ease-in-out infinite; transform-origin: 33px 15px; }
+:is(a, button, summary, .card, .cap, .sidebar-heading, .brand, .sg-wake):is(:hover, :focus-visible) .sigil .sg-bindu,
+.sigil.sg-live .sg-bindu { animation: sg-pulse 1.8s ease-in-out infinite; }
+.sigil.sg-live .sg-halo { animation: sg-ripple 3.2s ease-out infinite; }
+
+@keyframes sg-turn { to { transform: rotate(360deg); } }
+@keyframes sg-ripple { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.18); } }
+@keyframes sg-draw { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+@keyframes sg-twinkle { 0%, 100% { transform: scale(1) rotate(0); opacity: 1; } 50% { transform: scale(.55) rotate(45deg); opacity: .6; } }
+@keyframes sg-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sigil * { animation: none !important; transition: none !important; }
+}

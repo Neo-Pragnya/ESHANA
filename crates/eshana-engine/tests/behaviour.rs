@@ -193,7 +193,7 @@ fn every_derived_attribute_names_its_rule_and_epistemic_layer() {
         .as_array()
         .unwrap()
         .iter()
-        .any(|x| x == "vedic.parashari@0.2"));
+        .any(|x| x == "vedic.parashari@0.3"));
     assert!(r["provenance"]["rulesets"]
         .as_array()
         .unwrap()

@@ -5,6 +5,39 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-21
+
+### Added
+- **ESHANA Studio**: `eshana-report` now writes a multi-page, hash-routed app with 24 pages. There is one page per
+  graha and per bhāva, a ⌘K command palette, a settings drawer, a starfield and animated sigil icons. Pages animate
+  in and the address keeps the page.
+- The Panchang chakra can hold a **South Indian** or **North Indian** chart in its centre, or the orbit lanes
+  (`--centre`).
+- South and North Indian charts are redrawn with degrees, nakshatras and **translucent aspect marks** (for example
+  `Ju*` in the house Jupiter aspects).
+- **Graha pages**: declination, aspects cast and received in virūpas, yogas, ṣaḍbala, viṃśopaka, vargas with
+  degrees, Nadi links.
+- **Nadi direction matrix** with degrees and links (`report.nadi@0.1`); **AstroEnergetics** page.
+- **Strength** (`vedic.bala@0.3`, `bala.yaml`): ṣaḍbala with named conventions, bhāva bala, viṃśopaka (four
+  schemes), sputa drishti matrices for D1 and D9.
+- **Special points**: yogi, avayogi, duplicate yogi, dagdha rāśis, Indu lagna, 64th navāṃśa, 22nd dreshkāṇa, kartari,
+  graha yuddha, functional nature.
+- Vargas **D5, D6, D8** (19 in all) and `degree_in_varga`.
+- **Sripati** (bhāva chalit) and **Porphyry** houses; declination and right ascension for every body.
+- Accuracy: a published reference-software chart (positions, declinations, special lagnas, special points). D5, D6
+  and D8 are re-derived independently.
+- Real-Chrome journeys for the studio (`make studio-journeys`) and the website (`make site-journeys`), run in CI.
+- Website: a universe hero (parallax stars, nebulae, a 27-nakshatra ecliptic plexus that answers the cursor, grahas
+  riding the band, shooting stars), an ambient sky on every page, and ESHANA's own sigil icons.
+
+### Changed
+- Rule packs: `vedic.parashari@0.3`, `vedic.core@0.3`. The Sun's required rūpas are 6.5.
+- Report section ids are now page ids (`overview`, `chakra`, `charts`, `planets`, ...); `summary` became `overview`.
+
+### Known gaps
+- Ṣaḍbala totals are within about 60 virūpas of reference software (`VED-14`). Iṣṭa and kaṣṭa phala are not yet
+  computed.
+
 ## [0.2.0] - 2026-11-21
 
 ### Added

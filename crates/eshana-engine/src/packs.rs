@@ -7,12 +7,13 @@ use std::collections::BTreeMap;
 use std::sync::OnceLock;
 
 /// Raw YAML of every built-in pack, by file name. Exposed so tools can print or diff them.
-pub const SOURCES: [(&str, &str); 5] = [
+pub const SOURCES: [(&str, &str); 6] = [
     ("vedic-core.yaml", include_str!("../rulesets/vedic-core.yaml")),
     ("ashtakavarga.yaml", include_str!("../rulesets/ashtakavarga.yaml")),
     ("panchanga.yaml", include_str!("../rulesets/panchanga.yaml")),
     ("matching.yaml", include_str!("../rulesets/matching.yaml")),
     ("yogas.yaml", include_str!("../rulesets/yogas.yaml")),
+    ("bala.yaml", include_str!("../rulesets/bala.yaml")),
 ];
 
 fn parse<T: for<'de> Deserialize<'de>>(name: &str) -> T {
@@ -107,6 +108,92 @@ pub struct VedicCore {
     pub dig_bala_strong_point: BTreeMap<String, String>,
     /// Natural strength.
     pub naisargika_bala: BTreeMap<String, f64>,
+    /// Kalas for the Indu lagna.
+    pub indu_kalas: BTreeMap<String, u32>,
+    /// Yogi point offset from Sun + Moon.
+    pub yogi_offset_deg: f64,
+    /// Avayogi point offset from the yogi point.
+    pub avayogi_offset_deg: f64,
+    /// Dagdha rashis by tithi number in the paksha.
+    pub dagdha_rashi_by_tithi: BTreeMap<u32, Vec<usize>>,
+    /// Natural benefics.
+    pub natural_benefics: Vec<String>,
+    /// Natural malefics.
+    pub natural_malefics: Vec<String>,
+    /// Functional nature by house ownership.
+    pub functional: Functional,
+}
+
+/// Functional nature by the houses a graha owns from the lagna.
+#[derive(Debug, Clone, Deserialize)]
+pub struct Functional {
+    /// Houses whose lords are functional benefics.
+    pub benefic_houses: Vec<usize>,
+    /// Houses whose lords are functional malefics.
+    pub malefic_houses: Vec<usize>,
+    /// Neutral houses.
+    pub neutral_houses: Vec<usize>,
+}
+
+/// One vimshopaka scheme: division -> weight.
+pub type Scheme = BTreeMap<u32, f64>;
+
+/// Vimshopaka tables.
+#[derive(Debug, Clone, Deserialize)]
+pub struct Vimshopaka {
+    /// Points by dignity.
+    pub points: BTreeMap<String, f64>,
+    /// Schemes by name.
+    pub schemes: BTreeMap<String, Scheme>,
+}
+
+/// `bala.yaml`.
+#[derive(Debug, Clone, Deserialize)]
+pub struct Bala {
+    /// Pack id.
+    pub id: String,
+    /// Pack version.
+    pub version: String,
+    /// Named conventions.
+    pub conventions: BTreeMap<String, String>,
+    /// Minimum rupas.
+    pub required_rupas: BTreeMap<String, f64>,
+    /// Saptavarga divisions.
+    pub saptavarga_divisions: Vec<u32>,
+    /// Saptavarga points.
+    pub saptavarga_points: BTreeMap<String, f64>,
+    /// Grahas strong in even signs.
+    pub odd_even_females: Vec<String>,
+    /// Kendradi points.
+    pub kendradi_points: BTreeMap<String, f64>,
+    /// Drekkana gender.
+    pub drekkana_gender: BTreeMap<String, String>,
+    /// Tribhaga lords.
+    pub tribhaga: BTreeMap<String, Vec<String>>,
+    /// Day-strong grahas.
+    pub day_strong: Vec<String>,
+    /// Night-strong grahas.
+    pub night_strong: Vec<String>,
+    /// Paksha benefics.
+    pub paksha_benefics: Vec<String>,
+    /// Strong in northern declination.
+    pub ayana_north_strong: Vec<String>,
+    /// Strong in southern declination.
+    pub ayana_south_strong: Vec<String>,
+    /// Chesta points by motion state.
+    pub chesta_points: BTreeMap<String, f64>,
+    /// Mean daily motion.
+    pub mean_daily_motion: BTreeMap<String, f64>,
+    /// Drik benefics.
+    pub drik_benefics: Vec<String>,
+    /// Drik malefics.
+    pub drik_malefics: Vec<String>,
+    /// Bhava dig strong house by sign nature.
+    pub bhava_dig_strong_house: BTreeMap<String, usize>,
+    /// Sign nature (with 15-degree splits).
+    pub sign_nature: Vec<VashyaGroup>,
+    /// Vimshopaka tables.
+    pub vimshopaka: Vimshopaka,
 }
 
 // ── ashtakavarga ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -386,6 +473,11 @@ pub fn matching() -> &'static Matching {
     static P: OnceLock<Matching> = OnceLock::new();
     P.get_or_init(|| parse("matching.yaml"))
 }
+/// `bala.yaml`, parsed once.
+pub fn bala() -> &'static Bala {
+    static P: OnceLock<Bala> = OnceLock::new();
+    P.get_or_init(|| parse("bala.yaml"))
+}
 /// `yogas.yaml`, parsed once.
 pub fn yogas() -> &'static Yogas {
     static P: OnceLock<Yogas> = OnceLock::new();
@@ -433,5 +525,14 @@ pub fn validate() -> Result<()> {
         return bad(format!("matching: maxima sum to {max}, expected 36"));
     }
     let _ = yogas();
+    let b = bala();
+    for (name, scheme) in &b.vimshopaka.schemes {
+        let total: f64 = scheme.values().sum();
+        if (total - 20.0).abs() > 1e-9 {
+            return bad(format!(
+                "bala: vimshopaka scheme {name} weighs {total}, expected 20"
+            ));
+        }
+    }
     Ok(())
 }

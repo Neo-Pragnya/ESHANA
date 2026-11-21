@@ -106,13 +106,13 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.2.0",
+   "engine_version": "0.3.0",
    "provider": null,
    "rulesets": [
     "numerology.chaldean@0.1"
    ]
   },
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "warnings": []
  },
  "pythagorean": {
@@ -267,13 +267,13 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.2.0",
+   "engine_version": "0.3.0",
    "provider": null,
    "rulesets": [
     "numerology.pythagorean@0.1"
    ]
   },
-  "schema_version": "0.2.0",
+  "schema_version": "0.3.0",
   "warnings": []
  }
 }

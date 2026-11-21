@@ -126,5 +126,87 @@
       },
       "tolerance_arcmin": 3
     }
+  ],
+  "parashara_light_charts": [
+    {
+      "id": "parashara-light-ramana-1879",
+      "source": "Parashara's Light output for this chart, supplied by the project owner as a screenshot (2026-11-21)",
+      "printed_input": "Sri Ramana Maharishi, Tue 30-12-1879 01:00:00, Madurai, India, timezone 5:21:00 east, latitude 09N56, longitude 78E07, Lahiri",
+      "date": "1879-12-30",
+      "time": "01:00",
+      "utc_offset_minutes": 321,
+      "lat": 9.9333,
+      "lon": 78.1167,
+      "assumptions": [
+        "latitude and longitude printed to the minute (9°56' N, 78°07' E)",
+        "Rahu printed at 23:20 Sg matches the true node, so the true node is compared"
+      ],
+      "printed": {
+        "longitudes": {
+          "lagna": "Vi 28:43:11",
+          "sun": "Sg 15:35:35",
+          "moon": "Ge 28:19:55",
+          "mars": "Ar 21:58:07",
+          "mercury": "Sc 23:06:27",
+          "jupiter": "Aq 16:29:10",
+          "venus": "Sc 00:28:34",
+          "saturn": "Pi 17:03:15",
+          "true_node": "Sg 23:20:32"
+        },
+        "declinations": {
+          "sun": "-23:14",
+          "moon": "21:26",
+          "mars": "17:45",
+          "mercury": "-20:41",
+          "jupiter": "-09:23",
+          "venus": "-15:46",
+          "saturn": "01:23"
+        },
+        "ayanamsha": "22:11:09",
+        "yogi_point": "Ge 17:15:20",
+        "yogi": "rahu",
+        "avayogi": "venus",
+        "duplicate_yogi": "mercury",
+        "dagdha_rashis": [
+          8,
+          11
+        ],
+        "indu_lagna": 2,
+        "tithi": "krishna dwitiya",
+        "yoga": "Indra",
+        "karana": "Taitila",
+        "drekkana_22nd": {
+          "lagna": 8,
+          "moon": 5
+        },
+        "special_lagnas": {
+          "bhava_lagna": "Vi 22:51:43",
+          "hora_lagna": "Cn 00:55:05",
+          "ghati_lagna": "Li 25:05:08"
+        },
+        "special_lagna_conventions": {
+          "sunrise": "centre_unrefracted",
+          "special_lagna_sun": "sunrise"
+        },
+        "shadbala_virupa": {
+          "sun": 342,
+          "moon": 538,
+          "mars": 443,
+          "mercury": 397,
+          "jupiter": 452,
+          "venus": 402,
+          "saturn": 397
+        },
+        "shadbala_ratio": {
+          "sun": 0.88,
+          "moon": 1.49,
+          "mars": 1.48,
+          "mercury": 0.95,
+          "jupiter": 1.16,
+          "venus": 1.22,
+          "saturn": 1.32
+        }
+      }
+    }
   ]
 }

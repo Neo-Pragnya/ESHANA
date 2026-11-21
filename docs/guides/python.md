@@ -22,7 +22,7 @@ western = engine.western_chart(ctx, zodiac="tropical", houses="whole_sign")
 assert vedic.provenance and western.provenance
 vedic.position("moon")["sign"]["name"]                 # 'Meena'
 vedic.attribute("vedic.moon.nakshatra")["name"]        # 'Revati'
-vedic.attribute_full("vedic.moon.d9")["rule_version"]  # 'vedic.parashari@0.2'
+vedic.attribute_full("vedic.moon.d9")["rule_version"]  # 'vedic.parashari@0.3'
 ```
 
 `vedic_chart` **requires** `ayanamsha`. Calling it without one is a Python `TypeError`; passing `zodiac="sidereal"`

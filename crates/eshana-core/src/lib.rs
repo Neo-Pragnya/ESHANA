@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Version of the output contract (the JSON envelope). Bumped independently of the engine version.
-pub const SCHEMA_VERSION: &str = "0.2.0";
+pub const SCHEMA_VERSION: &str = "0.3.0";
 
 /// Canonical expansion of the acronym. One expansion everywhere; never vary it between manifests and docs.
 pub const EXPANSION: &str =
@@ -328,6 +328,10 @@ pub enum HouseSystem {
     Equal,
     /// Placidus semi-arc houses; undefined beyond the polar circles.
     Placidus,
+    /// Porphyry: each quadrant between the angles trisected in ecliptic longitude.
+    Porphyry,
+    /// Śrīpati (bhāva chalit): cusps are the midpoints between Porphyry cusps, which become bhāva madhyas.
+    Sripati,
 }
 
 impl HouseSystem {
@@ -338,6 +342,8 @@ impl HouseSystem {
             HouseSystem::WholeSign => "whole_sign",
             HouseSystem::Equal => "equal",
             HouseSystem::Placidus => "placidus",
+            HouseSystem::Porphyry => "porphyry",
+            HouseSystem::Sripati => "sripati",
         }
     }
 
@@ -350,6 +356,8 @@ impl HouseSystem {
             "whole_sign" => Ok(HouseSystem::WholeSign),
             "equal" => Ok(HouseSystem::Equal),
             "placidus" => Ok(HouseSystem::Placidus),
+            "porphyry" => Ok(HouseSystem::Porphyry),
+            "sripati" | "bhava_chalit" => Ok(HouseSystem::Sripati),
             other => Err(EshanaError::Input(format!("unknown house system '{other}'"))),
         }
     }

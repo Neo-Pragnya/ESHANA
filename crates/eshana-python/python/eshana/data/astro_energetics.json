@@ -1,0 +1,368 @@
+{
+ "source": "AstroEnergetics framework from the author's presentation (Astrology/Presentation): houses, energy bands, body regions, chakras. Reference for reading, not computed by ESHANA.",
+ "epistemic": "tradition_rule",
+ "houses": {
+  "1": {
+   "names": "Tanu/Moorti/Anga/Vapuh/Kalpa/Aadya Bhava",
+   "tag": "Ascendant (Lagna)",
+   "karakas": "Sun/Moon/Mercury",
+   "significations": "Self, body, path through life, nature, intelligence, strengths and weaknesses, outer personality, appearance, tolerance, fame & eminence, soul, conduct, habits, aspiration, physique, health/well-being, hair",
+   "body": "Head, brain, face, cerebrum, eyes, upper jaw, carotid arteries",
+   "dimension": "Self · body · identity",
+   "question": "How do I show up in the world, and what does my body need?",
+   "quadrant": "self",
+   "trikona": "dharma",
+   "zodiac_body": "Head"
+  },
+  "2": {
+   "names": "Dhana/Kutumbha/Swa/Kosha/Artha Bhava",
+   "tag": null,
+   "karakas": "Jupiter/Venus/Mercury",
+   "significations": "Income, wealth, family life, food/drink, speech, teeth, source of death, status, higher education, accumulated wealth, face, habits, domestic pleasure, means of livelihood, eyesight",
+   "body": "Right eye, throat, neck, mouth, teeth, larynx, ears, lower jaws, thyroid gland",
+   "dimension": "Wealth · speech · values",
+   "question": "What do I truly value, and how do I speak?",
+   "quadrant": "self",
+   "trikona": "artha",
+   "zodiac_body": "Mouth, ENT, throat"
+  },
+  "3": {
+   "names": "Sahaja/Bhratri/Dushchikya/Sahottha Bhava",
+   "tag": null,
+   "karakas": "Mars/Sun/Moon",
+   "significations": "Competition, skills, courage, siblings, upadesha, leadership, communication, short distance travel, writing, talents, relatives, illness, neighbours, temperament",
+   "body": "Ears, shoulders, arms, hands, right ear, nerves, trachea, fingers, sympathetic nervous system",
+   "dimension": "Courage · skills · siblings",
+   "question": "Where am I taking brave small steps, and with whom?",
+   "quadrant": "family",
+   "trikona": "kama",
+   "zodiac_body": "Hands, arms, lungs"
+  },
+  "4": {
+   "names": "Bandhu/Sukha/Suhrita/Griha/Paataala/Hibuka/Veshma Bhava",
+   "tag": null,
+   "karakas": "Moon/Venus/Jupiter",
+   "significations": "Mother, emotional life, home, immovable assets, vehicles, academic degrees, property, close relatives, mental peace, marital happiness, mother country, conveyance, parents, inner life, emotions",
+   "body": "Breast, chest, lungs, stomach, elbow joint, diaphragm, esophagus, taste, left side of the body",
+   "dimension": "Home · mother · inner peace",
+   "question": "Do I feel at home, inside and out?",
+   "quadrant": "family",
+   "trikona": "moksha",
+   "zodiac_body": "Heart & breast"
+  },
+  "5": {
+   "names": "Putra/Sutra/Dhee/Buddhi/Vidya/Vaak/Tanaya Bhava",
+   "tag": null,
+   "karakas": "Jupiter/Sun/Mercury",
+   "significations": "Children, creativity, spiritual practice, education, mind, heart, mantra, knowledge, power, vision, intelligence, emotions, higher education or education, poorva punya, progeny sons, future of children, hobbies",
+   "body": "Belly, heart, spine, liver, spleen, vena cava, spinal cord, back, thymus gland",
+   "dimension": "Creativity · children · joy",
+   "question": "What do I create, or play at, just for the joy of it?",
+   "quadrant": "family",
+   "trikona": "dharma",
+   "zodiac_body": "Stomach & upper abdomen"
+  },
+  "6": {
+   "names": "Shatru/Ari/Ripuh/Dweshi/Vairi/Kshata Bhava",
+   "tag": null,
+   "karakas": "Mars/Saturn/Jupiter",
+   "significations": "Health (illness & diseases), litigation, digestion, power over enemies, suffering, wounds, loans & debts, difficulties & disappointments, animosity, secret help, servants, subordinates",
+   "body": "Digestive system, kidney, large intestine, colon, uterus, anus, parasympathetic nervous system",
+   "dimension": "Health · service · daily work",
+   "question": "Which daily habits keep me well and useful?",
+   "quadrant": "social",
+   "trikona": "artha",
+   "zodiac_body": "Intestines & lower abdomen"
+  },
+  "7": {
+   "names": "Yuvati/Kalatra/Patni/Jaayaa/Dyoona/Yaamitra/Asta/Smara/Mada/Kaama/Madana Bhava",
+   "tag": "Descendant",
+   "karakas": "Venus/Mars/Jupiter",
+   "significations": "Spouse, partnership, business, trade, pleasures, sex life, reproduction & genitals, spouse’s love, marital & conjugal pleasures, marriage, business & personal relationships",
+   "body": "Private parts, glands, buttocks, lower back, renal system, adrenals, lower spine, uterus, organs of procreation",
+   "dimension": "Partnership · marriage",
+   "question": "Who are my mirrors in partnership?",
+   "quadrant": "social",
+   "trikona": "kama",
+   "zodiac_body": "Pelvis & reproduction"
+  },
+  "8": {
+   "names": "Ayu/Randhra/Mrityu/Marana/Chiddra/Yaamya/Ni-Dhana/Layapada Bhava",
+   "tag": null,
+   "karakas": "Saturn/Mars/Jupiter",
+   "significations": "Partner’s resources, sudden events, inheritance, career change, sexual attractiveness, occult science, rebirth, longevity, debts, shelter, healing, major transformations, sexual desires, moksha",
+   "body": "Scrotum, pelvis, seminal vesicles, sex organs, ovaries, prostate gland, organs of procreation, kidneys, private parts, glands, buttocks, lower back",
+   "dimension": "Transformation · hidden depths",
+   "question": "What am I ready to transform or let go of?",
+   "quadrant": "social",
+   "trikona": "moksha",
+   "zodiac_body": "Hips, genitals & waist"
+  },
+  "9": {
+   "names": "Dharma/Bhagya/Guru/Tapa/Subha/Maarga Bhava",
+   "tag": null,
+   "karakas": "Jupiter/Sun/Mercury",
+   "significations": "Higher education, luck, pilgrimage, guru, spiritual development, fortune, father, superiors, dharma, shrine, long journey, prosperity, fame, spirituality",
+   "body": "Hips, thighs, arterial system, nerves",
+   "dimension": "Dharma · fortune · teachers",
+   "question": "What do I believe, and who are my teachers?",
+   "quadrant": "work",
+   "trikona": "dharma",
+   "zodiac_body": "Thighs"
+  },
+  "10": {
+   "names": "Karma/Ajna/Maana/Aaspada/Ga-Gana/Vyoma/Meshurana/Madhya/Vyapara Bhava",
+   "tag": null,
+   "karakas": "Sun/Saturn/Mars",
+   "significations": "Career, success, fame, reputation, father, conduct, focus, profession, character, authority, social position, status, achievements, dignity, employment, respect for ancestors, dream fulfilment, sky themes",
+   "body": "Knees, joints, bones, hamstrings",
+   "dimension": "Career · status · karma",
+   "question": "What is my work in the world?",
+   "quadrant": "work",
+   "trikona": "artha",
+   "zodiac_body": "Knees"
+  },
+  "11": {
+   "names": "Aaya/Labha/Aagama/Praapti Bhava",
+   "tag": null,
+   "karakas": "Jupiter/Venus/Mercury",
+   "significations": "Eldest sibling, winnings, social life, income, gains, friends, social image, growth, profit, ability to earn money",
+   "body": "Calves, left ear, legs, ankles, circulatory system",
+   "dimension": "Gains · friends · dreams",
+   "question": "Which communities and dreams lift me?",
+   "quadrant": "work",
+   "trikona": "kama",
+   "zodiac_body": "Calves, ankles"
+  },
+  "12": {
+   "names": "Vyaya/Moksha/Rippha/Praantya/Antima/Rishpa Bhava",
+   "tag": null,
+   "karakas": "Saturn/Jupiter/Mars",
+   "significations": "Enlightenment, imprisonment, expenses, losses, sleep, foreign visits/residence, extravagance, marital & conjugal pleasures, dreams, arbitrator, grief, restrictions, intuition, moksha",
+   "body": "Left eye, lymphatic system, teeth, feet, toes",
+   "dimension": "Rest · release · moksha",
+   "question": "Where do I rest, retreat and surrender?",
+   "quadrant": "self",
+   "trikona": "moksha",
+   "zodiac_body": "Feet"
+  }
+ },
+ "quadrants": {
+  "self": {
+   "name": "Personal (Self)",
+   "houses": [
+    12,
+    1,
+    2
+   ],
+   "lean": "Introvert",
+   "colour": "#5aa0ff"
+  },
+  "family": {
+   "name": "Family (Life)",
+   "houses": [
+    3,
+    4,
+    5
+   ],
+   "lean": "Life",
+   "colour": "#3fbf6a"
+  },
+  "social": {
+   "name": "Social (Others)",
+   "houses": [
+    6,
+    7,
+    8
+   ],
+   "lean": "Extrovert",
+   "colour": "#ff7a5a"
+  },
+  "work": {
+   "name": "Profession (Work)",
+   "houses": [
+    9,
+    10,
+    11
+   ],
+   "lean": "Work",
+   "colour": "#e0b020"
+  }
+ },
+ "trikonas": {
+  "dharma": {
+   "name": "Dharma · purpose",
+   "houses": [
+    1,
+    5,
+    9
+   ],
+   "colour": "#ff9772"
+  },
+  "artha": {
+   "name": "Artha · wealth",
+   "houses": [
+    2,
+    6,
+    10
+   ],
+   "colour": "#8ccf78"
+  },
+  "kama": {
+   "name": "Kama · desire",
+   "houses": [
+    3,
+    7,
+    11
+   ],
+   "colour": "#f0cf55"
+  },
+  "moksha": {
+   "name": "Moksha · liberation",
+   "houses": [
+    4,
+    8,
+    12
+   ],
+   "colour": "#7cb1ef"
+  }
+ },
+ "energy_bands": {
+  "hot": {
+   "t": "gives and expands energy",
+   "c": "#ff8a3d"
+  },
+  "warm": {
+   "t": "keeps energy flowing",
+   "c": "#2fbf8f"
+  },
+  "cold": {
+   "t": "restrains and disciplines energy",
+   "c": "#5aa0ff"
+  },
+  "rahu": {
+   "t": "amplifies desire and illusion",
+   "c": "#a08cff"
+  },
+  "ketu": {
+   "t": "reduces attachment and illusion",
+   "c": "#c79a7a"
+  }
+ },
+ "graha_band": {
+  "sun": "hot",
+  "moon": "warm",
+  "mars": "warm",
+  "mercury": "hot",
+  "jupiter": "warm",
+  "venus": "hot",
+  "saturn": "cold",
+  "rahu": "rahu",
+  "ketu": "ketu"
+ },
+ "give": {
+  "sun": 1,
+  "mercury": 0.72,
+  "venus": 0.8,
+  "moon": 0.38,
+  "mars": 0.28,
+  "jupiter": 0.16,
+  "saturn": -0.55,
+  "rahu": 0,
+  "ketu": 0
+ },
+ "temperature_k": {
+  "sun": 5772,
+  "mercury": 700,
+  "venus": 735,
+  "moon": 250,
+  "mars": 210,
+  "jupiter": 165,
+  "saturn": 134,
+  "uranus": 76,
+  "neptune": 72,
+  "pluto": 44
+ },
+ "chakras": {
+  "sahasrara": {
+   "name": "Sahasrara",
+   "english": "Crown",
+   "colour": "#9b59d0",
+   "principle": "Connects to higher dimensions, spirit"
+  },
+  "ajna": {
+   "name": "Ajna",
+   "english": "Third eye",
+   "colour": "#5b4dd6",
+   "principle": "Perception and ideology"
+  },
+  "vishuddha": {
+   "name": "Vishuddha",
+   "english": "Throat",
+   "colour": "#2fa8e0",
+   "principle": "Communication and influence"
+  },
+  "anahata": {
+   "name": "Anahata",
+   "english": "Heart",
+   "colour": "#3fb04f",
+   "principle": "Love and compassion energy"
+  },
+  "manipura": {
+   "name": "Manipura",
+   "english": "Solar plexus",
+   "colour": "#e8b400",
+   "principle": "Self-confidence and power"
+  },
+  "svadhisthana": {
+   "name": "Svadhisthana",
+   "english": "Sacral",
+   "colour": "#f08a24",
+   "principle": "Attraction and emotion"
+  },
+  "muladhara": {
+   "name": "Mooladhara",
+   "english": "Root",
+   "colour": "#e0322f",
+   "principle": "Grounding and stability"
+  }
+ },
+ "elements": {
+  "fire": {
+   "trikona": "dharma",
+   "direction": "east",
+   "houses": [
+    1,
+    5,
+    9
+   ]
+  },
+  "earth": {
+   "trikona": "artha",
+   "direction": "south",
+   "houses": [
+    2,
+    6,
+    10
+   ]
+  },
+  "air": {
+   "trikona": "kama",
+   "direction": "west",
+   "houses": [
+    3,
+    7,
+    11
+   ]
+  },
+  "water": {
+   "trikona": "moksha",
+   "direction": "north",
+   "houses": [
+    4,
+    8,
+    12
+   ]
+  }
+ }
+}
