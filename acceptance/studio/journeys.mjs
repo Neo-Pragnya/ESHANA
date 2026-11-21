@@ -492,6 +492,8 @@ await journey("concentric squares are even: inner birth chart, outer band of twe
   return "12 equal inner boxes; even outer sectors";
 });
 
+// ── journeys: maitri (add new journeys for this workstream above this line) ──
+
 await journey("additional aspects (retrograde shadow, parivartana) are off by default and appear everywhere when switched on", async () => {
   await go("#/chakra", 1500);
   const off = await evaluate(`document.querySelectorAll('#chakra .extramark').length`);
@@ -515,6 +517,8 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   return `${on.data} additional aspects (${on.kinds}); ${on.marks} marks; table and planet page`;
 });
 
+// ── journeys: dashas (add new journeys for this workstream above this line) ──
+
 await journey("the command palette jumps to a bhāva", async () => {
   await go("#/overview", 800);
   await send("Input.dispatchKeyEvent", { type: "keyDown", key: "k", code: "KeyK", modifiers: 4, windowsVirtualKeyCode: 75 });
@@ -528,6 +532,8 @@ await journey("the command palette jumps to a bhāva", async () => {
   return "⌘K → Bhāva 7";
 });
 
+// ── journeys: auxiliary (add new journeys for this workstream above this line) ──
+
 await journey("theme toggles and is remembered", async () => {
   const before = await evaluate(`document.documentElement.dataset.mode`);
   await evaluate(`document.getElementById('theme').click()`);
@@ -538,6 +544,8 @@ await journey("theme toggles and is remembered", async () => {
   await evaluate(`document.getElementById('theme').click()`);
   return `${before} → ${after}`;
 });
+
+// ── journeys: chakras (add new journeys for this workstream above this line) ──
 
 await viewport(390, 844, true);
 await journey("phone width has no horizontal scroll", async () => {
@@ -551,6 +559,8 @@ await journey("phone width has no horizontal scroll", async () => {
   expect(!bad.length, bad.join(", "));
   return "6 pages fit 390 px";
 });
+
+// ── journeys: annual (add new journeys for this workstream above this line) ──
 
 ws.close(); chrome.kill(); server.close();
 const failed = results.filter((r) => !r.ok);

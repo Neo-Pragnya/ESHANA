@@ -1,0 +1,2 @@
+/* ESHANA Studio: Maitri and dignities. Maitri tables (natural, temporal, compound) for the nine grahas, the nakshatra spatial matrix, dignities in the 16 divisions. Pages register with page(); data comes from the engine (val('vedic.…')). */
+page('maitri', () => 'Maitri and dignities', 'Grahas & bhāvas', (b) => put(b, pageHead('maitri', 'Maitri and dignities', 'Being built.'), note('This page is being built.')), { blurb: 'maitri and dignities' }); // placeholder: replace

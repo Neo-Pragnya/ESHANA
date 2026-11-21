@@ -1,0 +1,2 @@
+/* ESHANA Studio: Auxiliary analysis. Sahams, avakahaḍā chakra, male and female rāśis, mṛtyu bhāga, ghāta chakra, vedhasthāna, jīva and deha, śodhana. Pages register with page(); data comes from the engine (val('vedic.…')). */
+page('aux', () => 'Auxiliary', 'Analysis', (b) => put(b, pageHead('aux', 'Auxiliary', 'Being built.'), note('This page is being built.')), { blurb: 'auxiliary' }); // placeholder: replace

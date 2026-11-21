@@ -121,7 +121,7 @@ pub struct ChartRequest {
 }
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 16] = [
+pub const FEATURES: [&str; 21] = [
     "panchanga",
     "strength",
     "relationships",
@@ -138,6 +138,11 @@ pub const FEATURES: [&str; 16] = [
     "aspects",
     "bhava_chalit",
     "upagrahas",
+    "maitri",
+    "dashas_extended",
+    "auxiliary",
+    "chakras",
+    "annual",
 ];
 
 /// An ephemeris table request.
@@ -1092,6 +1097,9 @@ impl Engine {
             || feats.contains("shadbala")
             || feats.contains("bhava_bala")
             || feats.contains("upagrahas")
+            || feats.contains("auxiliary")
+            || feats.contains("chakras")
+            || feats.contains("annual")
         {
             match site {
                 Some(site) => {
@@ -1374,6 +1382,37 @@ impl Engine {
                     v["note"] = json!("range clipped to the provider's limits");
                 }
                 push("vedic.sade_sati", &core_rule, v, &["moon", "saturn"]);
+            }
+        }
+        // analysis modules (crate::analysis): each returns its own attributes with their rule ids
+        {
+            use crate::analysis::{AnalysisCtx, Compute};
+            let actx = AnalysisCtx {
+                vc: &vc,
+                provider,
+                inst,
+                place: r.place.as_ref().map(|p| (p.latitude, p.longitude)),
+                offset_s: inst.civil_offset_s.map(f64::from),
+                ayanamsha: ayan,
+                panchanga: pc_value.as_ref(),
+                reference_jd,
+                equ,
+            };
+            let modules: [(&str, Compute); 5] = [
+                ("maitri", crate::maitri::compute),
+                ("dashas_extended", crate::dashas_ext::compute),
+                ("auxiliary", crate::auxiliary::compute),
+                ("chakras", crate::chakras::compute),
+                ("annual", crate::annual::compute),
+            ];
+            for (feat, f) in modules {
+                if feats.contains(feat) {
+                    for d in f(&actx)? {
+                        rulesets.push(d.rule.clone());
+                        let from: Vec<&str> = d.from.iter().map(String::as_str).collect();
+                        push(&d.id, &d.rule, d.value, &from);
+                    }
+                }
             }
         }
         for m in omitted {
