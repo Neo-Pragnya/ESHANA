@@ -377,3 +377,61 @@ a:hover .bm-node{transform:scale(1.12)}
 .extramark{text-decoration:underline dotted;text-underline-offset:2px}
 .aflow .af.extra{stroke-dasharray:2 6;stroke-width:2.2;opacity:.85}
 .aflow .af-target.extra{opacity:.15}
+
+/* ── auxiliary ── */
+.aux-tabs .tabs{flex-wrap:wrap}
+.aux-pane{animation:aux-in .4s cubic-bezier(.2,.8,.2,1) both}
+.aux-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:14px}
+.aux-sq{width:100%;max-width:420px;height:auto;display:block;margin:auto}
+.aux-cell{animation:aux-in .5s ease both;animation-delay:calc(var(--i) * 35ms)}
+.aux-cell.hot .cellbg,.aux-cell:hover .cellbg{fill:var(--chip2)}
+.aux-sn{fill:var(--ink);font-weight:650;transition:fill .2s}
+.aux-sn.hot{fill:var(--accent);font-weight:850}
+.aux-row{cursor:default;transition:background .2s}
+.aux-row.hot,.aux-vrow:hover,.aux-srow:hover{background:var(--chip2)}
+.aux-srow{cursor:pointer}
+.aux-f{font-size:12px;color:var(--muted)}
+.aux-mini{font-size:10.5px;padding:0 7px;margin-left:6px}
+.aux-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:10px}
+.aux-tile{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--chip);display:flex;flex-direction:column;gap:3px;
+  animation:aux-pop .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 45ms);transition:transform .2s,border-color .2s}
+.aux-tile:hover{transform:translateY(-2px);border-color:var(--accent)}
+.aux-tile small{color:var(--muted);font-size:11.5px}.aux-tile b{font-size:15px}
+.aux-tile.hit{border-color:var(--bad)}
+.aux-chips{display:flex;flex-wrap:wrap;gap:8px}
+.aux-pop{animation:aux-pop .4s ease both;animation-delay:calc(var(--i) * 50ms)}
+.aux-strip{width:100%;height:auto;display:block}
+.aux-sg rect{stroke:var(--line);stroke-width:1;animation:aux-in .4s ease both;animation-delay:calc(var(--i) * 40ms)}
+.aux-sg.m rect{fill:rgb(79 140 255 / 16%)}.aux-sg.f rect{fill:rgb(232 90 140 / 16%)}
+.aux-sg text{fill:var(--ink)}
+.aux-sg:hover rect{stroke:var(--accent);stroke-width:2}
+.aux-mb{width:100%;height:auto;display:block}
+.aux-grid-l{stroke:var(--line);stroke-dasharray:2 4}
+.aux-mbrow{animation:aux-in .45s ease both;animation-delay:calc(var(--i) * 50ms)}
+.aux-mbrow text{fill:var(--ink)}
+.aux-gap{stroke:var(--accent2);stroke-width:4;stroke-linecap:round;opacity:.55;stroke-dasharray:600;stroke-dashoffset:600;animation:aux-draw .9s ease forwards;animation-delay:calc(var(--i) * 60ms + .2s)}
+.aux-mbmark{fill:var(--bad);opacity:.85}
+.aux-pt{stroke:var(--ink);stroke-width:1}
+.aux-mbrow.near .aux-gap{stroke:var(--bad);opacity:.9}
+.aux-mbrow:hover .aux-pt{stroke-width:2.5}
+.aux-houses{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px}
+@media (max-width:640px){.aux-houses{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.aux-house{border:1px solid var(--line);border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;gap:2px;min-height:62px;
+  animation:aux-pop .4s ease both;animation-delay:calc(var(--i) * 35ms);transition:background .2s,border-color .2s}
+.aux-house small{color:var(--muted);font-size:10.5px}.aux-house span{font-size:12px}.aux-house b{font-size:12px;min-height:1em}
+.aux-house.fav{background:rgb(74 208 138 / 18%);border-color:var(--good)}
+.aux-house.vedha{background:rgb(255 107 107 / 18%);border-color:var(--bad)}
+.aux-house.at{box-shadow:0 0 0 2px var(--accent) inset}
+.aux-seq{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.aux-step{border:1px solid var(--line);border-radius:12px;padding:8px 10px;min-width:78px;display:flex;flex-direction:column;gap:2px;background:var(--chip);
+  animation:aux-pop .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 80ms)}
+.aux-step small{color:var(--muted);font-size:11px}.aux-step span{font-size:12px;color:var(--muted)}
+.aux-step.key{border-color:var(--accent);background:var(--chip2)}
+.aux-steps td,.aux-steps th{text-align:center;padding:4px 6px}
+.aux-n{animation:aux-pop .35s ease both;animation-delay:calc(var(--i) * 25ms)}
+.aux-n.cut{background:rgb(255 107 107 / 16%);font-weight:800}
+.aux-mul{color:var(--muted);font-size:11.5px}
+@keyframes aux-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes aux-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+@keyframes aux-draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.aux-pane,.aux-cell,.aux-tile,.aux-pop,.aux-sg rect,.aux-mbrow,.aux-gap,.aux-house,.aux-step,.aux-n{animation:none!important;stroke-dashoffset:0}}
