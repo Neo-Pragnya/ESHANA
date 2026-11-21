@@ -584,6 +584,47 @@ await journey("the command palette jumps to a bhāva", async () => {
   return "⌘K → Bhāva 7";
 });
 
+await journey("auxiliary analysis: eight tabs, 37 sahams on the chart, hover links a row to its sign, every tab draws", async () => {
+  await go("#/aux", 1200);
+  const first = await evaluate(`(() => { const sec = document.querySelector('section.page#aux');
+    return { tabs: sec.querySelectorAll('.aux-tabs .tab').length, rows: sec.querySelectorAll('tr.aux-row').length,
+             cells: sec.querySelectorAll('.aux-cell').length, marks: sec.querySelectorAll('.aux-sn').length }; })()`);
+  expect(first.tabs === 8, `${first.tabs} tabs`);
+  expect(first.rows === 37 && first.marks === 37 && first.cells === 12, JSON.stringify(first));
+  const linked = await evaluate(`(() => { const tr = document.querySelector('#aux tr.aux-row'); tr.dispatchEvent(new MouseEvent('mouseenter'));
+    const hot = document.querySelector('#aux .aux-cell.hot'); const ok = hot && +hot.dataset.sign === +tr.dataset.sign;
+    tr.dispatchEvent(new MouseEvent('mouseleave')); return !!ok && !document.querySelector('#aux .aux-cell.hot'); })()`);
+  expect(linked, "hovering a saham row did not light its sign");
+  const counts = {};
+  for (const t of ["avakahada", "gender", "mrityu", "ghata", "vedha", "jiva", "shodhana"]) {
+    await go("#/aux/" + t, 700);
+    const r = await evaluate(`(() => { const sec = document.querySelector('section.page#aux'); const pane = sec.querySelector('.aux-pane');
+      return { tab: pane && pane.dataset.tab, err: /could not be drawn|not available/.test(sec.innerText), tiles: sec.querySelectorAll('.aux-tile').length,
+               mb: sec.querySelectorAll('.aux-mbrow').length, houses: sec.querySelectorAll('.aux-house').length, steps: sec.querySelectorAll('.aux-step').length,
+               srows: sec.querySelectorAll('tr.aux-srow').length, chips: sec.querySelectorAll('.aux-chips .chip').length }; })()`);
+    expect(r.tab === t && !r.err, `${t}: ${JSON.stringify(r)}`);
+    counts[t] = r;
+  }
+  expect(counts.avakahada.tiles === 11, "avakahaḍā tiles " + counts.avakahada.tiles);
+  expect(counts.gender.chips === 10, "male/female chips " + counts.gender.chips);
+  expect(counts.mrityu.mb === 10, "mṛtyu bhāga rows " + counts.mrityu.mb);
+  expect(counts.ghata.tiles === 8, "ghāta tiles " + counts.ghata.tiles);
+  expect(counts.vedha.houses === 12, "vedha houses " + counts.vedha.houses);
+  expect(counts.jiva.steps === 9, "jīva/deha steps " + counts.jiva.steps);
+  expect(counts.shodhana.srows === 8, "śodhana rows " + counts.shodhana.srows);
+  // click a śodhana row: the reduction table switches to that aṣṭakavarga
+  const sw = await evaluate(`(() => { const tr = [...document.querySelectorAll('#aux tr.aux-srow')].find(r => r.dataset.g === 'lagna'); tr.click();
+    return [...document.querySelectorAll('#aux h3')].map(x => x.textContent).join(' / '); })()`);
+  expect(/Reduction of the Lagna/.test(sw), "śodhana row click did not switch: " + sw);
+  // vedhasthāna: hovering a graha lights its favourable houses
+  await go("#/aux/vedha", 700);
+  const lit = await evaluate(`(() => { const tr = document.querySelector('#aux tr.aux-vrow'); tr.dispatchEvent(new MouseEvent('mouseenter'));
+    return { fav: document.querySelectorAll('#aux .aux-house.fav').length, at: document.querySelectorAll('#aux .aux-house.at').length }; })()`);
+  expect(lit.fav > 0 && lit.at === 1, "vedha hover " + JSON.stringify(lit));
+  await shot("aux");
+  return `37 sahams; ${Object.keys(counts).length + 1} tabs draw; row↔sign hover; śodhana switch; vedha ${lit.fav} favourable houses lit`;
+});
+
 // ── journeys: auxiliary (add new journeys for this workstream above this line) ──
 
 await journey("theme toggles and is remembered", async () => {
