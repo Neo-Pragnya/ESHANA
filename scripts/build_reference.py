@@ -95,7 +95,40 @@ def chart(name: str, lat: float, lon: float, zone: str, date: str, time: str, ra
         c_s, a_s = swe.houses_ex(jd, lat, lon, hs.encode(), swe.FLG_MOSEPH | swe.FLG_SIDEREAL)
         row["houses"][hs] = {"tropical": {"cusps": list(c_t[:12]), "asc": a_t[0], "mc": a_t[1]},
                              "sidereal": {"cusps": list(c_s[:12]), "asc": a_s[0], "mc": a_s[1]}}
+    # rise and set on the local civil date (upper limb, standard refraction: the almanac convention)
+    local_mid = dt.datetime.fromisoformat(f"{date}T00:00").replace(tzinfo=ZoneInfo(zone)).astimezone(dt.timezone.utc)
+    jd0 = jd_ut(local_mid)
+    row["rise_set"] = {}
+    for key, body, flag in (("sunrise", swe.SUN, swe.CALC_RISE), ("sunset", swe.SUN, swe.CALC_SET),
+                            ("moonrise", swe.MOON, swe.CALC_RISE), ("moonset", swe.MOON, swe.CALC_SET)):
+        try:
+            res, tret = swe.rise_trans(jd0, body, flag, (lon, lat, 0.0), 1013.25, 10.0, swe.FLG_MOSEPH)
+            t = tret[0]
+            row["rise_set"][key] = t if res == 0 and t < jd0 + 1.0 else None
+        except swe.Error:
+            row["rise_set"][key] = None
     return row
+
+
+def ingresses(body: int, start: str, end: str) -> list:
+    """Sidereal (Lahiri) sign ingresses of a body, found by daily sampling and bisection to about a second."""
+    swe.set_sid_mode(swe.SIDM_LAHIRI, 0, 0)
+    a = jd_ut(dt.datetime.fromisoformat(start)); b = jd_ut(dt.datetime.fromisoformat(end))
+    sign = lambda jd: int(swe.calc_ut(jd, body, swe.FLG_MOSEPH | swe.FLG_SIDEREAL)[0][0] // 30)  # noqa: E731
+    out, t, s = [], a, sign(a)
+    while t < b:
+        u = min(t + 1.0, b); su = sign(u)
+        if su != s:
+            lo, hi = t, u
+            for _ in range(40):
+                m = (lo + hi) / 2
+                if sign(m) == s:
+                    lo = m
+                else:
+                    hi = m
+            out.append({"jd_ut": hi, "from_sign": s, "to_sign": su})
+        t, s = u, su
+    return out
 
 
 def main() -> int:
@@ -117,6 +150,12 @@ def main() -> int:
                  "removed)",
         "generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d"),
         "charts": rows,
+        "ingresses": {
+            "range": ["1990-01-01T00:00:00", "2030-01-01T00:00:00"],
+            "sun": ingresses(swe.SUN, "1990-01-01T00:00:00", "2030-01-01T00:00:00"),
+            "jupiter": ingresses(swe.JUPITER, "1990-01-01T00:00:00", "2030-01-01T00:00:00"),
+            "saturn": ingresses(swe.SATURN, "1990-01-01T00:00:00", "2030-01-01T00:00:00"),
+        },
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(doc, indent=1) + "\n")

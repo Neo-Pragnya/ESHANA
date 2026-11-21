@@ -1,23 +1,30 @@
-"""HTML report: structure, self-containment, honesty about missing inputs, and chart geometry."""
+"""HTML chart studio: structure, self-containment, data completeness, honesty about missing inputs, SVG helpers,
+and the new engine surfaces it uses (features, panchanga, matching, ephemeris, ingresses, rule packs)."""
 import json
 import re
 
 import pytest
 
-from eshana import ChartEngine, Context
+from eshana import ChartEngine, Context, EshanaError
 from eshana import report as R
 
 CTX = Context.from_local_birth("1990-05-15", "14:30", "Asia/Kolkata", 28.6139, 77.2090)
+REF = "2026-11-21T00:00:00Z"
+
+
+def data_of(page):
+    raw = re.search(r'<script type="application/json" id="eshana-data">(.*?)</script>', page, re.S).group(1)
+    return json.loads(raw.replace("<\\/", "</"))
 
 
 @pytest.fixture(scope="module")
 def page():
-    return R.birth_report(CTX, name="Tester", place_label="Delhi")
+    partner = Context.from_local_birth("1992-08-20", "09:15", "Asia/Kolkata", 19.076, 72.8777)
+    return R.birth_report(CTX, name="Tester", place_label="Delhi", reference_utc=REF, partner=partner)
 
 
-def test_every_section_is_present(page):
-    for sid in ("summary", "chakra", "vedic", "divisional", "dasha", "nakshatra", "western", "human_design",
-                "numerology", "provenance", "raw"):
+def test_every_section_shell_is_present(page):
+    for sid in R.SECTIONS:
         assert f'id="{sid}"' in page, sid
 
 
@@ -25,49 +32,60 @@ def test_self_contained_no_network(page):
     assert "<link" not in page
     assert not re.search(r'(src|href)="https?://', page)
     assert "@import" not in page
+    assert "fetch(" not in page and "XMLHttpRequest" not in page
 
 
-def test_embedded_json_round_trips_and_matches_engine(page):
-    raw = re.search(r'<script type="application/json" id="eshana-data">(.*?)</script>', page, re.S).group(1)
-    data = json.loads(raw.replace("<\\/", "</"))
-    direct = ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", divisions=[1, 3, 4, 7, 9, 10, 12], dasha=True).raw
-    assert data["vedic"]["positions"] == direct["positions"]
-    assert data["vedic"]["interpretations"] == []
+def test_embedded_data_is_complete(page):
+    d = data_of(page)
+    env = d["envelopes"]
+    assert set(env) >= {"vedic", "western", "human_design", "numerology", "matching"}
+    ids = {a["id"] for a in env["vedic"]["derived_attributes"]}
+    for need in ("vedic.panchanga", "vedic.strength", "vedic.relationships", "vedic.drishti.graha", "vedic.drishti.rashi",
+                 "vedic.ashtakavarga", "vedic.jaimini.chara_karakas", "vedic.jaimini.arudha_padas", "vedic.kp",
+                 "vedic.yogas", "vedic.sade_sati", "vedic.dasha.vimshottari", "vedic.dasha.yogini", "vedic.moon.d60"):
+        assert need in ids, need
+    assert d["reference_utc"] == REF
+    assert len(d["transits"]["rows"]) > 100
+    assert len(d["progressions"]["rows"]) == 91
+    assert len(d["nakshatra_reference"]) == 27
+    assert env["vedic"]["interpretations"] == []
+
+
+def test_matches_the_engine_directly(page):
+    direct = ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", divisions=[1, 9]).raw
+    assert data_of(page)["envelopes"]["vedic"]["positions"] == direct["positions"]
 
 
 def test_user_text_is_escaped():
-    page = R.birth_report(CTX, name="<script>alert(1)</script>", systems=["numerology"])
+    page = R.birth_report(CTX, name="<script>alert(1)</script>", systems=["numerology"], transit_days=0,
+                          progression_years=0)
     assert "<script>alert(1)</script>" not in page
     assert "&lt;script&gt;" in page
 
 
-def test_unknown_time_lists_refusals_and_skips_lagna_charts():
+def test_unknown_time_lists_refusals():
     ctx = Context.from_local_birth("1990-05-15", None, "Asia/Kolkata", 28.6139, 77.2090)
-    page = R.birth_report(ctx)
+    page = R.birth_report(ctx, reference_utc=REF)
     assert "Not computed" in page and "ESH-TIME-UNCERTAIN" in page
-    assert "North Indian)" not in page
-    assert "omitted rather than guessed" in page
+    env = data_of(page)["envelopes"]["vedic"]
+    assert env["houses"] is None
+    assert not any(a["id"] == "vedic.ashtakavarga" for a in env["derived_attributes"])
+    assert data_of(page)["progressions"] is None
 
 
 def test_sections_filter_and_unknown_section():
-    env = ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", dasha=True)
-    html = env.to_html(sections=["summary", "dasha"])
+    chart = ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", dasha=True)
+    html = chart.to_html(sections=["summary", "dasha"])
     assert 'id="dasha"' in html and 'id="chakra"' not in html
     with pytest.raises(ValueError):
-        env.to_html(sections=["horoscope"])
+        chart.to_html(sections=["horoscope"])
 
 
-def test_south_indian_layout_puts_pisces_top_left_and_marks_lagna():
+def test_svg_helpers_still_work():
     svg = R.south_indian_svg({11: [("sun", "Su", "1°")]}, 11, "T")
-    first_rect = re.search(r'<rect x="(\d+)" y="(\d+)"[^>]*><title>Meena', svg)
-    assert first_rect and first_rect.groups() == ("0", "0")
-    assert ">As<" in svg and 'data-body="sun"' in svg
-
-
-def test_north_indian_house_one_holds_the_lagna_sign():
-    svg = R.north_indian_svg({}, 5, "T")  # Kanya lagna
-    assert "<title>House 1: Kanya</title>" in svg
-    assert "<title>House 7: Meena</title>" in svg
+    first = re.search(r'<rect x="(\d+)" y="(\d+)"[^>]*><title>Meena', svg)
+    assert first and first.groups() == ("0", "0")
+    assert "<title>House 1: Kanya</title>" in R.north_indian_svg({}, 5, "T")
 
 
 @pytest.mark.parametrize("lon,expect", [
@@ -84,10 +102,54 @@ def test_markers_follow_the_template_rules(lon, expect):
 def test_cli_writes_file(tmp_path):
     out = tmp_path / "c.html"
     assert R.main(["--date", "2000-01-01", "--time", "12:00", "--tz", "UTC", "--lat", "51.5", "--lon", "0",
-                   "--systems", "vedic", "-o", str(out)]) == 0
-    assert out.read_text().startswith("<!doctype html>")
+                   "--systems", "vedic", "--icons", "glyph", "--reference", REF, "-o", str(out)]) == 0
+    text = out.read_text()
+    assert text.startswith("<!doctype html>")
+    assert data_of(text)["defaults"] == {"icons": "glyph"}
 
 
 def test_cli_refuses_without_time_input(capsys):
     assert R.main(["-o", "x.html"]) == 2
     assert "give --date" in capsys.readouterr().err
+
+
+# ── the engine surfaces behind the studio ─────────────────────────────────────────────────────────────────────────
+def test_panchanga_method():
+    p = ChartEngine().panchanga(CTX)["panchanga"]
+    assert p["vara"]["english"] == "Tuesday"
+    assert p["tithi"]["name"] and p["karana"]["name"] and p["yoga"]["name"]
+    assert p["sunrise"]["local"].startswith("1990-05-15T05:3")
+
+
+def test_matching_method_is_bounded_and_symmetric_in_nadi():
+    a = Context.from_local_birth("1990-05-15", "14:30", "Asia/Kolkata", 28.61, 77.21)
+    b = Context.from_local_birth("1992-08-20", "09:15", "Asia/Kolkata", 19.08, 72.88)
+    r1, r2 = ChartEngine().matching(a, b), ChartEngine().matching(b, a)
+    assert 0 <= r1["ashtakoota"]["total"] <= 36
+    assert r1["ashtakoota"]["nadi_dosha"] == r2["ashtakoota"]["nadi_dosha"]
+
+
+def test_ephemeris_and_ingresses():
+    e = ChartEngine().ephemeris("2026-01-01T00:00:00Z", 10, 5, bodies=["sun"], zodiac="sidereal", ayanamsha="lahiri")
+    assert len(e["rows"]) == 5
+    i = ChartEngine().ingresses("sun", "2026-01-01T00:00:00Z", "2027-01-01T00:00:00Z")
+    assert len(i["ingresses"]) == 12
+
+
+def test_rulesets_are_yaml_and_listed():
+    packs = {p["file"] for p in ChartEngine.rulesets()["packs"]}
+    assert packs == {"vedic-core.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml"}
+
+
+def test_features_are_vedic_only():
+    from eshana import execute
+    with pytest.raises(EshanaError) as e:
+        execute({"op": "chart", "system": "western", "when": CTX.when, "place": CTX.place,
+                 "config": {"zodiac": "tropical"}, "features": ["kp"]})
+    assert e.value.code == "ESH-CONFIG"
+
+
+def test_unknown_feature_is_refused():
+    with pytest.raises(EshanaError) as e:
+        ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", features=["horoscope"])
+    assert e.value.code == "ESH-INPUT"

@@ -27,7 +27,7 @@ PADA = 10.0 / 3.0
 DASHA_ORDER = ["ketu", "venus", "sun", "moon", "mars", "rahu", "jupiter", "saturn", "mercury"]
 DASHA_YEARS = {"ketu": 7, "venus": 20, "sun": 6, "moon": 10, "mars": 7, "rahu": 18, "jupiter": 16, "saturn": 19,
                "mercury": 17}
-DIVISIONS = (1, 3, 4, 7, 9, 10, 12)
+DIVISIONS = (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
 PLANETS = ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto")
 
 
@@ -141,6 +141,34 @@ def varga(lon: float, d: int) -> int:
         return ((s if odd else s + 8) + part) % 12
     if d == 12:
         return (s + min(int(deg // 2.5), 11)) % 12
+    modality = s % 3  # 0 movable (cara), 1 fixed (sthira), 2 dual (dvisvabhava)
+    if d == 2:  # horā: odd sign, first half Sun (Leo) and second half Moon (Cancer); even sign the reverse
+        first = deg < 15.0
+        return 4 if first == odd else 3
+    if d == 16:  # movable from Aries, fixed from Leo, dual from Sagittarius
+        return ([0, 4, 8][modality] + min(int(deg // (30 / 16)), 15)) % 12
+    if d == 20:  # movable from Aries, fixed from Sagittarius, dual from Leo
+        return ([0, 8, 4][modality] + min(int(deg // 1.5), 19)) % 12
+    if d == 24:  # odd from Leo, even from Cancer
+        return ((4 if odd else 3) + min(int(deg // 1.25), 23)) % 12
+    if d == 27:  # fire from Aries, earth from Cancer, air from Libra, water from Capricorn
+        return ([0, 3, 6, 9][s % 4] + min(int(deg // (30 / 27)), 26)) % 12
+    if d == 30:  # unequal parts ruled by Mars, Saturn, Jupiter, Mercury, Venus
+        if odd:
+            for limit, target in ((5, 0), (10, 10), (18, 8), (25, 2), (30, 6)):
+                if deg < limit:
+                    return target
+            return 6
+        for limit, target in ((5, 1), (12, 5), (20, 11), (25, 9), (30, 7)):
+            if deg < limit:
+                return target
+        return 7
+    if d == 40:  # odd from Aries, even from Libra
+        return ((0 if odd else 6) + min(int(deg // 0.75), 39)) % 12
+    if d == 45:  # movable from Aries, fixed from Leo, dual from Sagittarius
+        return ([0, 4, 8][modality] + min(int(deg // (30 / 45)), 44)) % 12
+    if d == 60:  # from the sign itself, one sign per half degree
+        return (s + min(int(deg * 2), 59)) % 12
     raise ValueError(d)
 
 
@@ -160,6 +188,28 @@ def vimshottari(moon_lon: float, birth_utc: str, year_days: float = 365.25) -> D
         mahas.append({"lord": lo, "start": max(t, birth), "end": end})
         t = end
     return {"lord": lord, "balance_years": balance, "mahadashas": mahas}
+
+
+def kp_lords(lon: float) -> tuple:
+    """Star, sub and sub-sub lords: each nakshatra split in Vimshottari proportions from its own lord."""
+    lon = lon % 360.0
+    nk = nakshatra(lon)
+    within = lon - nk * NAKS
+
+    def split(start: int, offset: float, span: float) -> tuple:
+        acc = 0.0
+        for k in range(9):
+            i = (start + k) % 9
+            length = span * DASHA_YEARS[DASHA_ORDER[i]] / 120.0
+            if offset < acc + length or k == 8:
+                return i, offset - acc, length
+            acc += length
+        raise AssertionError
+
+    star = nk % 9
+    sub, off, length = split(star, within, NAKS)
+    subsub, _, _ = split(sub, off, length)
+    return DASHA_ORDER[star], DASHA_ORDER[sub], DASHA_ORDER[subsub]
 
 
 def parse_utc(s: str) -> dt.datetime:

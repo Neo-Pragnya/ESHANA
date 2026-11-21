@@ -17,7 +17,7 @@ Feature: Vedic chart
   Scenario: Derived values name their rule pack and tradition
     When I run "eshana chart vedic --utc 2000-01-01T12:00:00Z --lat 17.385 --lon 78.487"
     Then it succeeds
-    And the output contains "vedic.parashari@0.1"
+    And the output contains "vedic.parashari@0.2"
     And the output contains ""tradition_id": "vedic.parashari""
     And the output contains ""epistemic": "tradition_rule""
 
@@ -34,7 +34,7 @@ Feature: Vedic chart
     And the output contains "ESH-RULES"
 
   Scenario: A divisional chart that is not implemented says so
-    When I run "eshana chart vedic --utc 2000-01-01T12:00:00Z --divisions 60"
+    When I run "eshana chart vedic --utc 2000-01-01T12:00:00Z --divisions 150"
     Then the exit code is 2
     And the output contains "not implemented"
 

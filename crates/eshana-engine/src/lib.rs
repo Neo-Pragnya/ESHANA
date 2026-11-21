@@ -4,9 +4,14 @@
 
 pub mod api;
 pub mod astro;
+pub mod events;
 pub mod graph;
 pub mod hd;
+pub mod jyotish;
+pub mod matching;
 pub mod numerology;
+pub mod packs;
+pub mod panchanga;
 pub mod vedic;
 
 pub use api::{Engine, Request, ENGINE_VERSION};

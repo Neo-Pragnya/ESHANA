@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
     "kind": {
-      "enum": ["positions", "computed_chart", "human_design", "numerology_analysis", "method_comparison", "symbolic_graph", "symbolic_graph_export", "info", "error"]
+      "enum": ["positions", "computed_chart", "human_design", "numerology_analysis", "method_comparison", "symbolic_graph", "symbolic_graph_export", "info", "error", "panchanga", "matching", "ephemeris", "ingresses", "rulesets"]
     },
     "error": {
       "type": "object",

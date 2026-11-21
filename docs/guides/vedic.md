@@ -34,7 +34,7 @@ at birth, and the balance at birth in years.
 
 ## Divisional charts
 
-Implemented under `vedic.parashari@0.1`: D1, D3, D4, D7, D9, D10, D12. D30 and D60 return `ESH-RULES`: they need a
+Implemented under `vedic.parashari@0.2`: D1, D3, D4, D7, D9, D10, D12. D30 and D60 return `ESH-RULES`: they need a
 documented school choice first ([roadmap](../roadmap.md)). Formulas: [Calculation conventions](../concepts/calculation-conventions.md).
 
 ## Reading disagreements

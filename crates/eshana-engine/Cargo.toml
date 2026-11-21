@@ -17,6 +17,7 @@ eshana-ephemeris.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 unicode-normalization.workspace = true
+serde_norway.workspace = true
 
 [lints]
 workspace = true

@@ -1,0 +1,76 @@
+# Rule pack: vedic.matching.ashtakoota@0.2
+# Ashtakoota (eight-fold) compatibility from the two Moons, 36 points in total. The classical tables give the
+# two partners different roles; this pack calls them `a` (the role classical texts give the groom) and `b` (the
+# bride). Vashya and gana scoring tables differ between regional traditions; the tables used are written out
+# below, so a different school is a different pack, never a silent change.
+id: vedic.matching.ashtakoota
+version: "0.2"
+max: {varna: 1, vashya: 2, tara: 3, yoni: 4, graha_maitri: 5, gana: 6, bhakoot: 7, nadi: 8}
+
+# Varna by Moon sign (0 = Aries). Rank: 4 Brahmin (water), 3 Kshatriya (fire), 2 Vaishya (earth), 1 Shudra (air).
+varna_rank: [3, 2, 1, 4, 3, 2, 1, 4, 3, 2, 1, 4]
+varna_names: {4: Brahmin, 3: Kshatriya, 2: Vaishya, 1: Shudra}
+
+# Vashya groups by sign; Sagittarius and Capricorn split at 15 degrees.
+vashya_groups: [chatushpada, chatushpada, manava, jalachara, vanachara, manava, manava, keeta,
+                [manava, chatushpada], [chatushpada, jalachara], manava, jalachara]
+vashya_table:  # rows: a's group, columns: b's group
+  order: [chatushpada, manava, jalachara, vanachara, keeta]
+  scores:
+    - [2.0, 1.0, 1.0, 0.5, 1.0]
+    - [1.0, 2.0, 0.5, 0.0, 1.0]
+    - [1.0, 0.5, 2.0, 1.0, 1.0]
+    - [0.5, 0.0, 1.0, 2.0, 0.0]
+    - [1.0, 1.0, 1.0, 0.0, 2.0]
+
+# Tara: count from one Moon nakshatra to the other (both directions); remainders 3, 5 and 7 (of 9) score 0.
+tara_bad_remainders: [3, 5, 7]
+
+# Yoni animal by nakshatra (0 = Ashwini) and the 14 x 14 compatibility matrix.
+yoni: [horse, elephant, sheep, serpent, serpent, dog, cat, sheep, cat, rat, rat, cow, buffalo, tiger, buffalo,
+       tiger, deer, deer, dog, monkey, mongoose, monkey, lion, horse, lion, cow, elephant]
+yoni_order: [horse, elephant, sheep, serpent, dog, cat, rat, cow, buffalo, tiger, deer, monkey, mongoose, lion]
+yoni_matrix:
+  - [4, 2, 2, 3, 2, 2, 2, 1, 0, 1, 3, 3, 2, 1]
+  - [2, 4, 3, 3, 2, 2, 2, 2, 3, 1, 2, 3, 2, 0]
+  - [2, 3, 4, 2, 1, 2, 1, 3, 3, 1, 2, 0, 3, 1]
+  - [3, 3, 2, 4, 2, 1, 1, 1, 1, 2, 2, 2, 0, 2]
+  - [2, 2, 1, 2, 4, 2, 1, 2, 2, 1, 0, 2, 1, 1]
+  - [2, 2, 2, 1, 2, 4, 0, 2, 2, 1, 3, 3, 2, 1]
+  - [2, 2, 1, 1, 1, 0, 4, 2, 2, 2, 2, 2, 1, 2]
+  - [1, 2, 3, 1, 2, 2, 2, 4, 3, 0, 3, 2, 2, 1]
+  - [0, 3, 3, 1, 2, 2, 2, 3, 4, 1, 2, 2, 2, 1]
+  - [1, 1, 1, 2, 1, 1, 2, 0, 1, 4, 1, 1, 2, 1]
+  - [3, 2, 2, 2, 0, 3, 2, 3, 2, 1, 4, 2, 2, 1]
+  - [3, 3, 0, 2, 2, 3, 2, 2, 2, 1, 2, 4, 3, 2]
+  - [2, 2, 3, 0, 1, 2, 1, 2, 2, 2, 2, 3, 4, 2]
+  - [1, 0, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 2, 4]
+
+# Graha maitri: relationship of the two Moon-sign lords (natural friendship from vedic-core).
+# Score by the pair of relationships (a's view of b's lord, b's view of a's lord), order-independent.
+graha_maitri:
+  same_lord: 5.0
+  friend_friend: 5.0
+  friend_neutral: 4.0
+  neutral_neutral: 3.0
+  friend_enemy: 1.0
+  neutral_enemy: 0.5
+  enemy_enemy: 0.0
+
+# Gana by nakshatra.
+gana: [deva, manushya, rakshasa, manushya, deva, manushya, deva, deva, rakshasa, rakshasa, manushya, manushya,
+       deva, rakshasa, deva, rakshasa, deva, rakshasa, rakshasa, manushya, manushya, deva, rakshasa, rakshasa,
+       manushya, manushya, deva]
+gana_table:  # rows: a, columns: b
+  order: [deva, manushya, rakshasa]
+  scores:
+    - [6, 6, 1]
+    - [5, 6, 0]
+    - [1, 0, 6]
+
+# Bhakoot: sign distance from a's Moon to b's Moon (1-based) and back; these pairs score 0, all others 7.
+bhakoot_dosha_pairs: [[2, 12], [12, 2], [5, 9], [9, 5], [6, 8], [8, 6]]
+
+# Nadi by nakshatra; the same nadi scores 0, different nadis 8.
+nadi: [adi, madhya, antya, antya, madhya, adi, adi, madhya, antya, antya, madhya, adi, adi, madhya, antya, antya,
+       madhya, adi, adi, madhya, antya, antya, madhya, adi, adi, madhya, antya]

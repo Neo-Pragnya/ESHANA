@@ -154,7 +154,7 @@ class Chart:
         return page
 
     def _repr_html_(self) -> str:  # Jupyter renders the report inline
-        return self.to_html(sections=["summary", "chakra", "vedic", "divisional", "dasha", "western"])
+        return self.to_html(sections=["summary", "chakra", "charts", "planets", "dasha", "western"])
 
 
 class ChartEngine:
@@ -205,11 +205,61 @@ class ChartEngine:
         divisions: Iterable[int] = (1,),
         dasha: bool = False,
         year_convention: Optional[str] = None,
+        features: Iterable[str] = (),
+        dasha_levels: Optional[int] = None,
+        dasha_systems: Iterable[str] = (),
+        reference_utc: Optional[str] = None,
+        sunrise: Optional[str] = None,
+        special_lagna_sun: Optional[str] = None,
     ) -> Chart:
-        """Sidereal chart. ``ayanamsha`` is required: ESHANA never picks one silently."""
+        """Sidereal chart. ``ayanamsha`` is required: ESHANA never picks one silently.
+
+        ``features`` adds Vedic sections: ``panchanga``, ``strength``, ``relationships``, ``drishti``,
+        ``ashtakavarga``, ``jaimini``, ``kp``, ``yogas``, ``sade_sati`` or ``all``. ``dasha_levels`` (1-5) nests
+        Vimshottari; ``dasha_systems`` adds ``yogini``; ``reference_utc`` marks the periods current at that instant.
+        """
         cfg = self._cfg(zodiac="sidereal", ayanamsha=ayanamsha, house_system=houses, node_model=node_model)
-        req = self._base(ctx, "vedic", cfg, divisions=list(divisions), dasha=dasha, year_convention=year_convention)
+        req = self._base(
+            ctx, "vedic", cfg, divisions=list(divisions), dasha=dasha, year_convention=year_convention,
+            features=list(features) or None, dasha_levels=dasha_levels, dasha_systems=list(dasha_systems) or None,
+            reference_utc=reference_utc, sunrise=sunrise, special_lagna_sun=special_lagna_sun,
+        )
         return Chart(execute({"op": "chart", **req}))
+
+    def panchanga(self, ctx: Context, ayanamsha: str = "lahiri", natal_moon_deg: Optional[float] = None,
+                  sunrise: Optional[str] = None) -> Dict[str, Any]:
+        """Panchanga and day divisions at a moment and place (tithi, vara, nakshatra, yoga, karana, sunrise,
+        hora, choghadiya, rahu kalam...). ``natal_moon_deg`` adds tara bala and chandra bala."""
+        chart = self._base(ctx, "vedic", self._cfg(zodiac="sidereal", ayanamsha=ayanamsha), sunrise=sunrise)
+        return execute({"op": "panchanga", "chart": chart, "natal_moon_deg": natal_moon_deg})
+
+    def matching(self, a: Context, b: Context, ayanamsha: str = "lahiri") -> Dict[str, Any]:
+        """Ashtakoota compatibility. ``a`` takes the role classical tables give the groom, ``b`` the bride."""
+        cfg = self._cfg(zodiac="sidereal", ayanamsha=ayanamsha)
+        return execute({"op": "matching", "a": self._base(a, None, cfg), "b": self._base(b, None, cfg)})
+
+    def ephemeris(self, start_utc: str, step_days: float, count: int, bodies: Optional[Iterable[str]] = None,
+                  zodiac: str = "tropical", ayanamsha: Optional[str] = None) -> Dict[str, Any]:
+        """Longitudes at regular steps: transit animation, secondary progressions (one day per year)."""
+        req = {"op": "ephemeris", "start_utc": start_utc, "step_days": step_days, "count": count,
+               "bodies": list(bodies) if bodies else None, "config": self._cfg(zodiac=zodiac, ayanamsha=ayanamsha)}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def ingresses(self, body: str, start_utc: str, end_utc: str, zodiac: str = "sidereal",
+                  ayanamsha: Optional[str] = "lahiri") -> Dict[str, Any]:
+        """Every sign ingress of a body in a range, including retrograde re-entries."""
+        req = {"op": "ingresses", "body": body, "start_utc": start_utc, "end_utc": end_utc,
+               "config": self._cfg(zodiac=zodiac, ayanamsha=ayanamsha if zodiac == "sidereal" else None)}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute(req)
+
+    @staticmethod
+    def rulesets() -> Dict[str, Any]:
+        """The built-in YAML rule packs, verbatim."""
+        return execute({"op": "rulesets"})
 
     def western_chart(
         self,

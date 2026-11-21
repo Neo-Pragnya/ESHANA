@@ -1,30 +1,66 @@
 ---
 title: "Rule packs"
-description: "The versioned rule packs, their sources, and what changes a version."
+description: "The versioned rule packs, the YAML tables behind them, the condition language, and what changes a version."
 ---
 
 # Rule packs
 
-A rule pack is a named, versioned set of derivations for one tradition and convention. Every derived value in a result names its
-pack as `id@version`.
+A rule pack is a named, versioned set of derivations for one tradition and convention. Every derived value in a result
+names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](../adr/012-yaml-rule-packs.md)) in
+`crates/eshana-engine/rulesets/`; `eshana rulesets` prints them verbatim.
 
-| Pack | Covers | Source and status |
+| Pack | Covers | Data |
 |---|---|---|
-| `vedic.parashari@0.1` | rāśi, nakshatra/pada, bhāva, D1/D3/D4/D7/D9/D10/D12, Vimśottarī | Parāśara conventions as widely published; implemented from the standard tables; unit-tested with worked values |
-| `western.basic@0.1` | signs, houses placement, Ptolemaic aspects, applying/separating | Ptolemaic aspects; orbs are a tradition-level choice |
-| `human_design.basic@0.1` | design instant, wheel, lines, channels, centres, type, authority, profile, definition | public structure; mathematics independent; **rights review pending (ADR-009)** |
-| `numerology.pythagorean@0.1` | letter table, reductions, life path, personal year | as commonly published |
-| `numerology.chaldean@0.1` | letter table, reductions | as commonly published |
-| `ayanamsha-<id>@0.1` | Lahiri, Raman, Krishnamurti, Fagan–Bradley anchors | J2000 anchors from the Swiss Ephemeris reference values; Lahiri also from the 1956 CRC value |
+| `vedic.parashari@0.2` | rāśi, nakshatra/pada, bhāva, vargas D1–D60 (D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60), Vimśottarī (five levels), Yoginī | algorithms in code (`vedic.rs`) |
+| `vedic.core@0.2` | sign lords, dignity (exaltation, debilitation, moolatrikoṇa, own), natural and five-fold relationships, graha drishti, combustion, dig bala, naisargika bala, avasthā; Jaimini kārakas, ārūḍhas, rāśi drishti; KP | `vedic-core.yaml` |
+| `vedic.ashtakavarga@0.2` | bhinna- and sarvāṣṭakavarga | `ashtakavarga.yaml` |
+| `vedic.panchanga@0.2` | tithi, vāra, nakṣatra, yoga, karaṇa; horā, choghaḍiyā, Rāhu kālam, Yamagaṇḍam, Gulika kālam; Tārā and Candra bala | `panchanga.yaml` |
+| `vedic.yogas@0.2` | 18 yogas and 6 doshas as declarative conditions | `yogas.yaml` |
+| `vedic.matching.ashtakoota@0.2` | aṣṭakūṭa (8 kūṭas, 36 points) | `matching.yaml` |
+| `western.basic@0.1` | signs, house placement, Ptolemaic aspects | code |
+| `human_design.basic@0.1` | design instant, wheel, channels, centres, type, authority, profile, definition | code |
+| `numerology.pythagorean@0.1`, `numerology.chaldean@0.1` | letter tables, reductions, life path, personal year | code |
+| `ayanamsha-<id>@0.1` | Lahiri, Raman, Krishnamurti, Fagan–Bradley | code |
+| `report.markers@0.1` | pushkara navāṃśa, vargottama, gaṇḍānta markers in HTML reports | report renderer |
+
+## Conventions named in the packs
+
+| Choice | This pack set | Alternatives (would be another pack) |
+|---|---|---|
+| Lords of Scorpio and Aquarius | Mars and Saturn only | co-lordship of Ketu and Rahu |
+| Rahu and Ketu aspects | 5th, 7th, 9th | 7th only |
+| Chara kārakas | both the 7-kāraka and 8-kāraka (with Rahu) schemes are returned | — |
+| Ārūḍha exception | pada in the house or its 7th moves to the 10th from there | other exceptions |
+| Vashya and gana scoring | the tables written in `matching.yaml` | regional tables |
+| Manglik | from lagna, Moon and Venus; cancellations not applied | cancellation rules |
+| Sunrise | upper limb with refraction by default; `centre_refracted` and `centre_unrefracted` on request | — |
+| Special lagnas | Sun at birth by default (`special_lagna_sun: sunrise` for the other reading) | — |
+
+## The condition language (yogas and doshas)
+
+All houses are whole-sign counts from a reference (`lagna`, `moon` or any graha):
+
+```yaml
+- id: gaja_kesari
+  name: Gaja Kesari
+  category: lunar
+  rule: "Jupiter in a kendra (1, 4, 7, 10) from the Moon"
+  when: {in_house: {graha: jupiter, from: moon, houses: [1, 4, 7, 10]}}
+```
+
+Conditions: `in_house`, `dignity`, `same_sign`, `occupied` (with `min` and `exclude`), `empty`, `lords_conjoined`,
+`lord_in_house`, `lord_dignity`, `between_nodes`, `all_of`, `any_of`, `not`, and `for_each_graha` (with `$g`).
+A result reports `present` (true, false, or null when it cannot be evaluated, for example a lagna rule without a birth
+time) and the grahas that satisfied it. It never states what a yoga means.
 
 ## When does a version change?
 
-When the output for some input could differ: a corrected table, a new convention default, a changed tie-break. Adding a
-division that used to be `ESH-RULES` does not change the pack's version for the divisions it already served.
+When the output for some input could differ: a corrected table, a new convention default, a changed tie-break. Every
+pack's fixed facts are checked at load and in CI (`packs::validate`): table sizes, aṣṭakavarga totals, a symmetric
+yoni matrix, kūṭa maxima summing to 36.
 
-## Authoring a pack (planned)
+## Adding or changing a pack
 
-Today packs are Rust modules (`crates/eshana-engine/src/{vedic,hd,numerology}.rs`) with their tables in code. A data-driven
-format with a validator and a source-citation requirement is planned ([ADR-004](../adr/004-rule-packaging.md), task
-`RULE-01`). A contribution that adds a tradition must include: tradition id, source and edition, the convention in prose,
-worked examples from the source, boundary tests, and a version.
+Edit the YAML, bump its `version`, and add worked examples to the tests. A new tradition needs: tradition id, source and
+edition, the convention in prose, worked examples, boundary tests and a version. Loading your own packs at run time is
+planned (`RULE-02`).

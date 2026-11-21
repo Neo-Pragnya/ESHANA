@@ -50,18 +50,24 @@ $ eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --
 - **Numerology**: Pythagorean and Chaldean as separate schemas; explicit normalisation; life path.
 - **Uncertain birth time**: intervals and stability flags; the Ascendant and houses are never invented.
 - **Method comparison** (`eshana compare`) and a **symbolic graph** (JSON, Mermaid, GraphML) with no causal edges.
-- **HTML chart reports** (`eshana-report`, `Chart.to_html()`): Panchang chakra, South and North Indian charts, vargas,
-  daśā, Western wheel, BodyGraph, numerology and provenance in one offline file
+- **Vedic features from YAML rule packs**: vargas D1–D60, Vimśottarī to five levels and Yoginī daśā, strength and
+  dignity, graha and rāśi drishti, aṣṭakavarga, Jaimini kārakas and ārūḍhas, KP sub-lords and significators, 18 yogas
+  and 6 doshas, Sāḍe Sātī ([guide](docs/guides/vedic-features.md)); **pañcāṅga** with rise/set, horā, choghaḍiyā and
+  special lagnas ([guide](docs/guides/panchanga.md)); **aṣṭakūṭa matching** ([guide](docs/guides/matching.md)).
+- **Chart studio** (`eshana-report`, `Chart.to_html()`): one offline, interactive HTML file. It has the Panchang Chakra
+  with every point placed, layers for drishti, transits and more, South and North Indian charts for every varga,
+  textured planet icons, daśā timelines and a BodyGraph
   ([guide](docs/guides/html-report.md), [example](examples/reports/example-birth-chart.html)).
 - **Birth-chart accuracy suite**: 44 reference charts against the Swiss Ephemeris, the Lahiri definition and a recorded
-  ProKerala chart, plus an independent re-derivation of every rule; about 970 checks
+  ProKerala chart, PyJHora special lagnas, Swiss rise/set and ingresses, plus an independent re-derivation of every
+  rule; about 1,300 checks
   ([guide](docs/guides/accuracy-suite.md), [results](benchmarks/accuracy/birth-chart-accuracy.md)).
 
 ## Guarantees you can rely on
 
 Sidereal without an ayanāṃśa is refused. A repeated local time is refused. Placidus beyond the polar circle is refused. An
 unknown birth time gets intervals, not noon. The same request returns the same bytes. A chart writes nothing to disk. Each is
-a scenario in the release gate (`make acceptance`: 79 scenarios, 18 capabilities).
+a scenario in the release gate (`make acceptance`: 98 scenarios, 22 capabilities).
 
 ## Install
 
@@ -93,7 +99,7 @@ Docs: <https://neo-pragnya.github.io/ESHANA/> · Start with [`docs/index.md`](do
 
 ## Status and honesty
 
-Version 0.1.0. ESHANA is an open-source tool stack published as libraries
+Version 0.2.0. ESHANA is an open-source tool stack published as libraries
 ([ADR-011](docs/adr/011-open-source-distribution.md)), licensed Apache-2.0. The `analytic` provider is arc-minute class
 for Jupiter and Saturn; use `spk` when that matters. The Swiss Ephemeris (AGPL) is used only as an offline test oracle and
 is never bundled; an optional, separately licensed adapter is planned. Next steps: [`docs/next-steps.md`](docs/next-steps.md).

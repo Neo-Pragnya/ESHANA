@@ -42,7 +42,7 @@ TAI−UTC = 37 s until 2027 and a forecast after; earlier instants use ΔT polyn
   true obliquity. In a sidereal chart the cusps are shifted by Δψ + ayanāṃśa like the planets.
 - Ascendant and houses require an exact time. A window wider than 30 minutes omits them with a warning.
 
-## Vedic rule pack `vedic.parashari@0.1`
+## Vedic rule pack `vedic.parashari@0.2`
 
 - **Nakshatra**: 27 divisions of 13°20′, each with four 3°20′ padas; the lord follows the Vimśottarī order.
 - **Bhāva**: whole sign from the lagna.
