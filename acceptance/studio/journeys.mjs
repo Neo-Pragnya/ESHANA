@@ -597,6 +597,49 @@ await journey("theme toggles and is remembered", async () => {
   return `${before} → ${after}`;
 });
 
+await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅghaṭṭa ring", async () => {
+  await go("#/chakras", 1800);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  const sbc = await evaluate(`(() => { const svg = document.querySelector("#chakras svg.ck-sbc"); const v = val("vedic.chakra.sarvatobhadra");
+    return { cells: svg.querySelectorAll(".ck-cell").length, nak: svg.querySelectorAll(".ck-cell[data-kind=nakshatra]").length,
+      marks: svg.querySelectorAll(".ck-pl").length, want: v.cells.reduce((n, c) => n + c.natal.length, 0),
+      lines: svg.querySelectorAll(".ck-line").length, grahas: v.grahas.natal.filter(g => g.id !== "lagna").length }; })()`);
+  expect(sbc.cells === 81 && sbc.nak === 28, "grid " + JSON.stringify(sbc));
+  expect(sbc.marks === sbc.want, `${sbc.marks} markers for ${sbc.want} placements`);
+  expect(sbc.lines === sbc.grahas * 3, `${sbc.lines} vedha lines for ${sbc.grahas} grahas`);
+  await evaluate(`document.querySelector("#chakras .ck-chip[data-graha=saturn]").click()`); await sleep(400);
+  const pick = await evaluate(`(() => { const svg = document.querySelector("#chakras svg.ck-sbc"); const g = val("vedic.chakra.sarvatobhadra").grahas.natal.find(x => x.id === "saturn");
+    return { on: svg.querySelectorAll(".ck-line.on").length, picked: svg.classList.contains("picked"), hit: svg.querySelectorAll(".ck-cell.hit").length,
+      want: new Set(["front", "left", "right"].flatMap(n => g.lines[n].map(rc => rc.join(",")))).size }; })()`);
+  expect(pick.on === 3 && pick.picked && pick.hit === pick.want, "pick saturn " + JSON.stringify(pick));
+  const box = await evaluate(`(() => { const r = document.querySelector("#chakras .ck-cell[data-kind=nakshatra] rect").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await mouse(box[0], box[1]); await sleep(250);
+  const tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`);
+  expect(/Pierced by/.test(tipText), "no cell tooltip: " + tipText.slice(0, 80));
+  await shot("chakras-sarvatobhadra");
+  await tab("Kota"); await sleep(1500);
+  const k = await evaluate(`(() => { const v = val("vedic.chakra.kota"); return { places: document.querySelectorAll("#chakras .ck-place").length,
+    zones: document.querySelectorAll("#chakras .ck-zone").length, janma: document.querySelector("#chakras .ck-place.janma")?.dataset.position,
+    marks: document.querySelectorAll("#chakras svg.ck-kota .ck-pl").length, want: v.natal.length, tr: (v.transit || []).length }; })()`);
+  expect(k.places === 28 && k.zones === 4 && k.janma === "1" && k.marks === k.want, "kota " + JSON.stringify(k));
+  if (k.tr) {
+    await tab("Transit"); await sleep(1200);
+    const tm = await evaluate(`document.querySelectorAll("#chakras svg.ck-kota .ck-pl.tr").length`);
+    expect(tm === k.tr, `${tm} transit markers for ${k.tr}`);
+    await tab("Natal"); await sleep(600);
+  }
+  await shot("chakras-kota");
+  await tab("Saṅghaṭṭa"); await sleep(1500);
+  const sg = await evaluate(`({ sectors: document.querySelectorAll("#chakras .ck-sector").length, chords: document.querySelectorAll("#chakras .ck-chord").length })`);
+  expect(sg.sectors === 28 && sg.chords === 14, "sanghatta " + JSON.stringify(sg));
+  await evaluate(`document.querySelector("#chakras .ck-chip[data-graha=mars]").click()`); await sleep(400);
+  const lit = await evaluate(`document.querySelectorAll("#chakras .ck-chord.on").length`);
+  expect(lit === 1, `${lit} chords lit for Mars`);
+  await shot("chakras-sanghatta");
+  await tab("Sarvatobhadra");
+  return `81 cells, ${sbc.lines} vedha lines, Saturn pierces ${pick.want} cells; Kota 28 places${k.tr ? `, ${k.tr} transits` : ""}; Saṅghaṭṭa 28 + 14`;
+});
+
 // ── journeys: chakras (add new journeys for this workstream above this line) ──
 
 await viewport(390, 844, true);
