@@ -422,7 +422,7 @@ def bodygraph_svg(hd: Dict[str, Any]) -> str:
 # ── the chart studio page ───────────────────────────────────────────────────────────────────────────────────────
 SECTION_TITLES = {
     "overview": "Overview",
-    "chakra": "Panchang chakra",
+    "chakra": "Jyotish Chakra (Graha-Nakshatra Mandala)",
     "charts": "Charts (South and North Indian)",
     "vargas": "Divisional charts (vargas)",
     "planets": "Grahas",
@@ -435,7 +435,9 @@ SECTION_TITLES = {
     "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
     "panchanga": "Pañcāṅga",
     "special": "Lagnas and special points",
+    "point": "Lagna or special point",
     "yogas": "Yogas and doshas",
+    "yoga": "Yoga",
     "kp": "KP (Krishnamurti Paddhati)",
     "nadi": "Nadi direction matrix",
     "energetics": "AstroEnergetics",
@@ -453,6 +455,15 @@ ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js")
 
 def _asset(name: str) -> str:
     return resources.files("eshana").joinpath(f"assets/{name}").read_text(encoding="utf-8")
+
+
+def _reading_reference() -> Optional[Dict[str, Any]]:
+    """Reading notes for yogas, doshas and special points (interpretation, attributed); see
+    scripts/build_reading_reference.py."""
+    try:
+        return json.loads(resources.files("eshana").joinpath("data/reading_reference.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 def _energetics() -> Optional[Dict[str, Any]]:
@@ -474,16 +485,21 @@ def _kind(env: Dict[str, Any]) -> Optional[str]:
     return None
 
 
-BRAND = ('<svg class="sigil" viewBox="0 0 24 24" aria-hidden="true"><circle class="core" cx="12" cy="12" r="3.2"/>'
-         '<g class="spin"><ellipse cx="12" cy="12" rx="9.5" ry="4" class="ring"/><circle cx="21.5" cy="12" r="1.5" class="sat"/></g>'
-         '<g class="spin rev"><ellipse cx="12" cy="12" rx="4" ry="9.5" class="ring"/><circle cx="12" cy="2.5" r="1.2" class="sat"/></g></svg>')
+# The ESHANA mark: a three-ring gimbal around a bindu. Each ring turns about its own axis (vertical, horizontal,
+# diagonal) while the whole gimbal precesses; styles in studio.css (.gimbal).
+BRAND = ('<svg class="sigil gimbal" viewBox="0 0 24 24" aria-hidden="true"><g class="gb-precess">'
+         '<g class="gb gb1"><circle cx="12" cy="12" r="10.6" class="ring"/><circle cx="22.6" cy="12" r="1.3" class="sat"/></g>'
+         '<g class="gb gb2"><circle cx="12" cy="12" r="7.9" class="ring"/><circle cx="12" cy="4.1" r="1.1" class="sat"/></g>'
+         '<g class="gb gb3"><circle cx="12" cy="12" r="5.2" class="ring"/><circle cx="17.2" cy="12" r="0.9" class="sat"/></g>'
+         '</g><circle class="core" cx="12" cy="12" r="2.4"/></svg>')
 
 
 def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart report",
                 subject: Optional[Dict[str, Any]] = None, sections: Optional[Iterable[str]] = None,
                 theme: str = "auto", transits: Optional[Dict[str, Any]] = None,
                 progressions: Optional[Dict[str, Any]] = None, reference_utc: Optional[str] = None,
-                errors: Optional[Dict[str, str]] = None, defaults: Optional[Dict[str, Any]] = None) -> str:
+                errors: Optional[Dict[str, str]] = None, defaults: Optional[Dict[str, Any]] = None,
+                revolutions: Optional[Dict[str, Any]] = None) -> str:
     """Render engine envelopes as ESHANA Studio: one self-contained, multi-page, animated HTML app.
 
     ``envelopes`` maps labels to envelopes; their kinds are recognised from the envelopes themselves. ``transits`` and
@@ -499,6 +515,10 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
         want.append("planet")
     if "houses" in want and "house" not in want:
         want.append("house")
+    if "yogas" in want and "yoga" not in want:
+        want.append("yoga")
+    if "special" in want and "point" not in want:
+        want.append("point")
     by_kind: Dict[str, Dict[str, Any]] = {}
     for env in envelopes.values():
         k = _kind(env)
@@ -506,8 +526,8 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
             by_kind[k] = env
     data = {
         "envelopes": by_kind, "subject": subject or {}, "title": title, "theme": theme if theme in ("light", "dark") else None,
-        "reference_utc": reference_utc, "transits": transits, "progressions": progressions,
-        "nakshatra_reference": _nak_reference(), "energetics": _energetics(), "errors": errors or None,
+        "reference_utc": reference_utc, "transits": transits, "progressions": progressions, "revolutions": revolutions,
+        "nakshatra_reference": _nak_reference(), "energetics": _energetics(), "reading": _reading_reference(), "errors": errors or None,
         "defaults": defaults or {}, "pages": want, "generator": "eshana.report",
     }
     first = next(iter(by_kind.values()), {})
@@ -614,7 +634,8 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
     if "human_design" in systems:
         run("human_design", lambda: eng.human_design(ctx))
     if "numerology" in systems and (name or ctx.when.get("date")):
-        run("numerology", lambda: eng.numerology(name=name, date_of_birth=ctx.when.get("date"), school=numerology_school))
+        run("numerology", lambda: eng.numerology(name=name, date_of_birth=ctx.when.get("date"), school=numerology_school,
+                                                 extended=True, reference_date=(reference_utc or "")[:10] or None))
     if partner is not None:
         run("matching", lambda: eng.matching(ctx, partner, ayanamsha=ayanamsha))
     if errors:
@@ -630,15 +651,85 @@ def _series(eng: Any, start: str, step: float, count: int, zodiac: str, ayanamsh
         return None
 
 
+def _instant(x: str) -> _dt.datetime:
+    """A date (YYYY-MM-DD) or a UTC instant as a naive UTC datetime."""
+    x = x.strip().rstrip("Z")
+    return _dt.datetime.strptime(x[:19], "%Y-%m-%dT%H:%M:%S") if "T" in x else _dt.datetime.strptime(x[:10], "%Y-%m-%d")
+
+
+def _transit_series(eng: Any, ref: str, ayanamsha: Optional[str], days: Optional[int], start: Optional[str],
+                    end: Optional[str], step: float) -> Optional[Dict[str, Any]]:
+    ref_dt = _instant(ref)
+    if start or end:
+        s0 = _instant(start) if start else _instant(end) - _dt.timedelta(days=365)
+        s1 = _instant(end) if end else s0 + _dt.timedelta(days=365)
+    elif days:
+        s0, s1 = ref_dt - _dt.timedelta(days=days / 2), ref_dt + _dt.timedelta(days=days / 2)
+    else:
+        s0, s1 = ref_dt - _dt.timedelta(days=365), ref_dt + _dt.timedelta(days=730)
+    if s1 <= s0:
+        raise ValueError("the transit range must end after it starts")
+    span = (s1 - s0).total_seconds() / 86400
+    step = max(float(step or 1.0), span / 6000)
+    out = _series(eng, s0.strftime("%Y-%m-%dT%H:%M:%SZ"), step, int(span / step) + 1, "sidereal", ayanamsha)
+    if out:
+        k = round((ref_dt - s0).total_seconds() / 86400 / step)
+        out["reference_index"] = k if 0 <= k < len(out.get("rows", [])) else 0
+        out["range"] = {"start": s0.strftime("%Y-%m-%d"), "end": s1.strftime("%Y-%m-%d"), "step_days": step}
+    return out
+
+
+def _revolutions(eng: Any, birth_utc: str, ayanamsha: Optional[str], years: int, step: float = 5.0) -> Optional[Dict[str, Any]]:
+    """Return dates of every completed sidereal revolution of each body after birth (report.revolutions@0.1).
+
+    Each body's motion is unwrapped from a sidereal ephemeris every ``step`` days; a revolution completes the first
+    time the travel since birth passes another 360 degrees in the body's mean direction (backwards for the nodes), so
+    retrograde loops are not counted twice. Dates are interpolated within the step.
+    """
+    t0 = _instant(birth_utc)
+    count = int(years * 365.25 / step) + 1
+    ser = _series(eng, t0.strftime("%Y-%m-%dT%H:%M:%SZ"), step, count, "sidereal", ayanamsha)
+    if not ser or not ser.get("rows"):
+        return None
+    rows = ser["rows"]
+    bodies: Dict[str, Any] = {}
+    for key in rows[0]["longitudes"]:
+        natal = rows[0]["longitudes"][key]
+        cum, prev, done, out = 0.0, natal, 0, []
+        direction = -1 if "node" in key else 1
+        for i in range(1, len(rows)):
+            lon = rows[i]["longitudes"].get(key)
+            if lon is None:
+                continue
+            d = (lon - prev + 540.0) % 360.0 - 180.0
+            before, cum, prev = cum, cum + d, lon
+            while direction * cum >= 360.0 * (done + 1):
+                target = direction * 360.0 * (done + 1)
+                frac = (target - before) / (cum - before) if cum != before else 1.0
+                when = t0 + _dt.timedelta(days=step * (i - 1 + max(0.0, min(1.0, frac))))
+                out.append(when.strftime("%Y-%m-%dT%H:%MZ"))
+                done += 1
+        bodies[key] = {"natal": natal, "direction": direction, "returns": out}
+    return {"rule": "report.revolutions@0.1", "birth_utc": birth_utc, "years": years, "step_days": step,
+            "convention": "each completed sidereal revolution after birth advances the body one sign in its direction "
+                          "of motion (backwards for the nodes); the degree within the sign is kept",
+            "bodies": bodies}
+
+
 def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[str] = None,
                  title: Optional[str] = None, sections: Optional[Iterable[str]] = None, theme: str = "auto",
-                 reference_utc: Optional[str] = None, transit_days: int = 365, progression_years: int = 90,
+                 reference_utc: Optional[str] = None, transit_days: Optional[int] = None,
+                 transit_start: Optional[str] = None, transit_end: Optional[str] = None,
+                 transit_step_days: float = 1.0, progression_years: int = 90,
                  defaults: Optional[Dict[str, Any]] = None, **kw: Any) -> str:
     """Compute every requested system for ``ctx`` (an :class:`eshana.Context`) and return the chart studio HTML.
 
     ``reference_utc`` is the instant used for "current" daśā periods and the transit table (default: now, recorded
-    in the file). ``transit_days`` sets the span of the transit animation around it; ``progression_years`` the span of
-    secondary progressions. Other keyword arguments go to :func:`envelopes_for`.
+    in the file). The transit series embedded for the chakra's date picker and animation runs from ``transit_start``
+    to ``transit_end`` (dates or UTC instants) every ``transit_step_days``. Without them it runs from a year before
+    the reference to two years after; ``transit_days`` instead centres a span of that many days on the reference, and
+    ``transit_days=0`` leaves transits out. The step grows if the range would exceed 6,000 rows.
+    ``progression_years`` sets the span of secondary progressions. Other keyword arguments go to :func:`envelopes_for`.
     """
     from . import ChartEngine
 
@@ -646,25 +737,22 @@ def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[
     envs = envelopes_for(ctx, name=name, reference_utc=ref, **kw)
     errs = envs.pop("_errors", None)
     eng = ChartEngine(provider=kw.get("provider", "analytic"), spk_path=kw.get("spk_path"))
-    transits = progressions = None
+    transits = progressions = revolutions = None
     ayan = kw.get("ayanamsha", "lahiri")
-    if transit_days > 0 and "vedic" in envs:
-        ref_dt = _dt.datetime.strptime(ref[:19], "%Y-%m-%dT%H:%M:%S")
-        start = (ref_dt - _dt.timedelta(days=transit_days / 2)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        step = max(1.0, transit_days / 180)
-        transits = _series(eng, start, step, int(transit_days / step) + 1, "sidereal", ayan)
-        if transits:
-            transits["reference_index"] = int((transit_days / 2) / step)
+    if transit_days != 0 and "vedic" in envs:
+        transits = _transit_series(eng, ref, ayan, transit_days, transit_start, transit_end, transit_step_days)
     birth_utc = next((e.get("input", {}).get("instant_utc") for e in envs.values() if e.get("input")), None)
     if progression_years > 0 and birth_utc and ctx.when.get("time"):
         progressions = _series(eng, birth_utc[:19] + "Z", 1.0, progression_years + 1, "tropical", None)
+        if "vedic" in envs:
+            revolutions = _revolutions(eng, birth_utc[:19] + "Z", ayan, max(progression_years, 1))
     local = " ".join(str(ctx.when.get(k)) for k in ("date", "time") if ctx.when.get(k)) or ctx.when.get("utc", "")
     if ctx.when.get("timezone"):
         local += f' ({ctx.when["timezone"]})'
     return render_html(envs, title=title or (f"{name} · birth chart" if name else "Birth chart"),
                        subject={"name": name, "place_label": place_label, "local": local}, sections=sections,
                        theme=theme, transits=transits, progressions=progressions, reference_utc=ref,
-                       errors=(errs or {}).get("errors"), defaults=defaults)
+                       errors=(errs or {}).get("errors"), defaults=defaults, revolutions=revolutions)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -693,7 +781,11 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--dasha-systems", default="vimshottari,yogini")
     p.add_argument("--no-dasha", action="store_true")
     p.add_argument("--reference", help="instant for 'current' periods and transits, UTC (default: now)")
-    p.add_argument("--transit-days", type=int, default=365, help="span of the transit animation (0 = none)")
+    p.add_argument("--transit-days", type=int, default=None,
+                   help="centre a transit span of N days on the reference (0 = no transits)")
+    p.add_argument("--transit-start", help="first date of the transit series, YYYY-MM-DD (default: a year before the reference)")
+    p.add_argument("--transit-end", help="last date of the transit series, YYYY-MM-DD (default: two years after the reference)")
+    p.add_argument("--transit-step-days", type=float, default=1.0, help="days between transit frames (default 1)")
     p.add_argument("--progression-years", type=int, default=90, help="span of secondary progressions (0 = none)")
     p.add_argument("--sunrise", choices=["upper_limb_refracted", "centre_refracted", "centre_unrefracted"])
     p.add_argument("--systems", default="vedic,western,human_design,numerology")
@@ -703,7 +795,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
     p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
-    p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Panchang chakra")
+    p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
     p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p
@@ -747,6 +839,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             feats = [] if a.features == "none" else [x for x in a.features.split(",") if x]
             page = birth_report(ctx, name=a.name, place_label=a.place_label, title=a.title, sections=sections,
                                 theme=a.theme, reference_utc=a.reference, transit_days=a.transit_days,
+                                transit_start=a.transit_start, transit_end=a.transit_end,
+                                transit_step_days=a.transit_step_days,
                                 progression_years=a.progression_years, defaults=defaults,
                                 ayanamsha=a.ayanamsha, houses=a.houses, western_houses=a.western_houses,
                                 node_model=a.node, divisions=[int(x) for x in a.divisions.split(",") if x],

@@ -2,6 +2,7 @@
 // ESHANA sigils: line-drawn celestial marks (not morphing blobs). Each has moving parts that wake when the enclosing
 // link, card or heading is hovered or focused: orbits counter-rotate, constellations draw and twinkle, the yantra's
 // triangles turn against each other, the rāśi wheel spins, the moon goes through a phase. `live` keeps it moving.
+// "eshana" is the mark: a three-ring gimbal (vertical, horizontal and diagonal axes) that is always alive.
 // Styles live in src/styles/sigil.css; motion stops under prefers-reduced-motion.
 interface Props {
   name?: "eshana" | "bindu" | "nakshatra" | "yantra" | "chakra" | "crescent" | "comet";
@@ -20,17 +21,18 @@ const stars = [
 ---
 
 <svg
-  class:list={["sigil", `sg-${name}`, cls, tint && `t-${tint}`, live && "sg-live"]}
+  class:list={["sigil", `sg-${name}`, cls, tint && `t-${tint}`, (live || name === "eshana") && "sg-live"]}
   viewBox="0 0 48 48"
   aria-hidden="true"
   focusable="false"
 >
   {name === "eshana" && (
     <g>
-      <circle class="sg-halo" cx="24" cy="24" r="21" />
-      <g class="sg-spin"><ellipse class="sg-orbit" cx="24" cy="24" rx="20" ry="7.5" transform="rotate(-28 24 24)" /><circle class="sg-rider" cx="41.6" cy="14.6" r="2.4" /></g>
-      <g class="sg-spin-rev"><ellipse class="sg-orbit sg-b" cx="24" cy="24" rx="20" ry="7.5" transform="rotate(32 24 24)" /><circle class="sg-rider sg-b" cx="7.4" cy="13" r="1.8" /></g>
-      <path class="sg-tick" d="M24 1.5v4M24 42.5v4M1.5 24h4M42.5 24h4" />
+      <g class="gb-precess">
+        <g class="gb gb1"><circle class="sg-orbit" cx="24" cy="24" r="21" /><circle class="sg-rider" cx="45" cy="24" r="2.4" /></g>
+        <g class="gb gb2"><circle class="sg-orbit" cx="24" cy="24" r="15.5" /><circle class="sg-rider sg-b" cx="24" cy="8.5" r="2" /></g>
+        <g class="gb gb3"><circle class="sg-orbit" cx="24" cy="24" r="10" /><circle class="sg-rider sg-c" cx="34" cy="24" r="1.6" /></g>
+      </g>
       <circle class="sg-bindu" cx="24" cy="24" r="3.6" />
     </g>
   )}

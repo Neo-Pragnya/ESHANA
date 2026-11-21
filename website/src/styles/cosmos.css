@@ -154,3 +154,5 @@ h2 { font-weight: 600; }
 
 /* doc-section sigils on the home cards read at a glance */
 .grid-cards .sidebar-heading svg { width: 24px; height: 24px; margin-right: 6px; vertical-align: -6px; }
+.hero.cosmos h1 .pline { display: block; width: fit-content; }
+.hero.cosmos h1 .hl .pline.mk-particles-on { background: none; }

@@ -69,9 +69,21 @@ const G = {
   pluto:   { abbr: 'Pl', skt: 'Pluto',   en: 'Pluto',   glyph: '♇', dot: '#CDB39A' },
   lagna:   { abbr: 'As', skt: 'Lagna',   en: 'Ascendant', glyph: 'Asc', dot: '#E0314F' },
 };
+/* upagrahas (aprakāśa and kāla upagrahas), shown like grahas but marked as points; colours are muted on purpose */
+Object.assign(G, {
+  dhuma:      { abbr: 'Dh', skt: 'Dhūma',     en: 'Dhūma',     glyph: 'Dh', dot: '#8D6E63', upa: true },
+  vyatipata:  { abbr: 'Vy', skt: 'Vyatīpāta', en: 'Vyatīpāta', glyph: 'Vy', dot: '#78909C', upa: true },
+  parivesha:  { abbr: 'Pv', skt: 'Pariveṣa',  en: 'Pariveṣa',  glyph: 'Pv', dot: '#A1887F', upa: true },
+  indrachapa: { abbr: 'Cp', skt: 'Indracāpa', en: 'Indracāpa', glyph: 'Cp', dot: '#9575CD', upa: true },
+  upaketu:    { abbr: 'Uk', skt: 'Upaketu',   en: 'Upaketu',   glyph: 'Uk', dot: '#90A4AE', upa: true },
+  gulika:     { abbr: 'Gk', skt: 'Gulika',    en: 'Gulika',    glyph: 'Gk', dot: '#6D4C41', upa: true },
+  mandi:      { abbr: 'Md', skt: 'Māndi',     en: 'Māndi',     glyph: 'Md', dot: '#5D4037', upa: true },
+});
+const OUTER = ['uranus', 'neptune', 'pluto'];
+const UPAGRAHA = ['dhuma', 'vyatipata', 'parivesha', 'indrachapa', 'upaketu', 'gulika', 'mandi'];
 const SEVEN = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
 const NINE = SEVEN.concat(['rahu', 'ketu']);
-const GRAHA_ORDER = NINE.concat(['uranus', 'neptune', 'pluto']);
+const GRAHA_ORDER = NINE.concat(OUTER, UPAGRAHA);
 const engineId = id => ({ mean_node: 'rahu', true_node: 'rahu', south_node: 'ketu' }[id] || id);
 const ASPECT_COLOUR = { conjunction: '#9a9a9a', opposition: '#e0564f', square: '#e0564f', trine: '#4f8cff', sextile: '#2fb36d' };
 function ink(hex) { if (!/^#[0-9a-f]{6}$/i.test(hex)) return '#1b1b1b'; const n = parseInt(hex.slice(1), 16); const c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); });
@@ -92,6 +104,9 @@ function grahasOf(env) {
   return out;
 }
 const GR = grahasOf(VED);
+const UPA = val('vedic.upagrahas') || {};
+for (const u of UPAGRAHA) if (UPA[u] && UPA[u].longitude_deg != null) GR[u] = { id: u, lon: UPA[u].longitude_deg, retro: false, upa: true };
+const GR_ALL = Object.assign({}, GR);
 const ASC = VED && VED.houses && VED.houses.ascendant ? VED.houses.ascendant.longitude_deg : null;
 const MC = VED && VED.houses && VED.houses.midheaven ? VED.houses.midheaven.longitude_deg : null;
 const LAGNA_SIGN = ASC == null ? null : Math.floor(norm(ASC) / 30);
@@ -104,6 +119,10 @@ const houseOf = sg => LAGNA_SIGN == null ? null : (sg - LAGNA_SIGN + 12) % 12 + 
 const lonOf = id => id === 'lagna' ? ASC : (GR[id] ? GR[id].lon : null);
 const PUSHKARA = { Fire: [6, 8], Earth: [2, 4], Air: [5, 7], Water: [0, 2] };
 const GANDANTA = [107, 0, 35, 36, 71, 72];
+/* report.markers@0.2: classical points shown on the chakra's markers ring (fixed tables, labelled in the legend) */
+const PUSHKARA_BHAGA = [21, 14, 18, 8, 19, 9, 24, 11, 23, 14, 19, 9]; // the pushkara degree in each sign, Mesha first
+const UCCHA = { sun: [0, 10], moon: [1, 3], mars: [9, 28], mercury: [5, 15], jupiter: [3, 5], venus: [11, 27], saturn: [6, 20] }; // sign, degree of deep exaltation
+const MOOLA = { sun: [4, 0, 20], moon: [1, 3, 30], mars: [0, 0, 12], mercury: [5, 15, 20], jupiter: [8, 0, 10], venus: [6, 0, 15], saturn: [10, 0, 20] }; // sign, from, to
 function markers(l) { /* report.markers@0.1: fixed rules printed in the Panchang Chakra template */
   const i = Math.floor(norm(l) / NAV) % 108, r = Math.floor(i / 9), pos = i % 9, out = [];
   if (PUSHKARA[ELEMENT[r % 4]].includes(pos)) out.push('pushkara navamsha');
@@ -131,6 +150,12 @@ const DIV_AREA = { 1: 'body, overall', 2: 'wealth', 3: 'siblings, courage', 4: '
   9: 'spouse, dharma', 10: 'career', 12: 'parents', 16: 'vehicles, comforts', 20: 'spiritual practice', 24: 'learning', 27: 'strength', 30: 'misfortune', 40: 'maternal legacy', 45: 'paternal legacy', 60: 'all areas, past karma' };
 const STRENGTH = val('vedic.strength') || {};
 const DRISHTI = val('vedic.drishti.graha') || [];
+const DRISHTI_ALL = DRISHTI.slice();
+/* additional aspects (retrograde shadow, parivartana) from the engine; shown only when the layer is switched on */
+const ADDITIONAL_ALL = val('vedic.drishti.additional') || [];
+const ADDITIONAL = ADDITIONAL_ALL.slice();
+const EXTRA_MARK = { retrograde_shadow: 'ʳ', parivartana: '⇄' };
+const EXTRA_NAME = { retrograde_shadow: 'retrograde shadow', parivartana: 'parivartana (exchange)' };
 const SPECIAL = val('vedic.special_points') || {};
 const YOGAS = val('vedic.yogas');
 const NAKREF = D.nakshatra_reference || [];
@@ -139,12 +164,13 @@ const REF_UTC = D.reference_utc;
 
 /* ── settings (per viewer, kept in this browser only) ─────────────────────────────────────────────────────────── */
 const DEFAULTS = Object.assign({
-  icons: 'sphere', chart: 'south', varga: 1, orientation: 'template', centre: 'south', hd: 'detailed', animate: true, sky: true,
-  layers: { nak: true, pada: true, dres: false, houses: true, ticks: true, needles: true, drishti: true, aspect_marks: true, rashi_drishti: false,
+  icons: 'sphere', chart: 'south', varga: 1, orientation: 'template', centre: 'south', hd: 'standard', animate: true, sky: true, turnOnSelect: true, showOuter: true, showUpa: true,
+  layers: { markers: true, nak: true, pada: true, dres: false, houses: true, ticks: true, needles: true, drishti: true, aspect_marks: true, rashi_marks: true, extra_aspects: false, rashi_drishti: false,
     west_aspects: false, transits: false, sav: false, arudha: true, chart_drishti: false },
 }, D.defaults || {});
 let S = JSON.parse(JSON.stringify(DEFAULTS));
 try { const saved = JSON.parse(localStorage.getItem('eshana-studio-v3') || 'null'); if (saved) S = Object.assign(S, saved, { layers: Object.assign(S.layers, saved.layers || {}) }); } catch (e) { /* private mode */ }
+if (!S.hdStandardV1) { S.hd = 'standard'; S.hdStandardV1 = true; }
 function save() { try { localStorage.setItem('eshana-studio-v3', JSON.stringify(S)); } catch (e) { /* ignore */ } }
 
 /* ── tooltip ──────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -335,3 +361,17 @@ function route() {
   untip();
 }
 addEventListener('hashchange', route);
+
+/* what the charts show: Uranus, Neptune and Pluto, and the upagrahas, can be switched off everywhere at once.
+   GR and DRISHTI are rebuilt in place from the full sets, so every page follows the same choice. */
+function applyVisibility() {
+  for (const k of Object.keys(GR)) delete GR[k];
+  for (const [k, v] of Object.entries(GR_ALL)) {
+    if (S.showOuter === false && OUTER.includes(k)) continue;
+    if (S.showUpa === false && UPAGRAHA.includes(k)) continue;
+    GR[k] = v;
+  }
+  DRISHTI.length = 0; for (const d of DRISHTI_ALL) if (GR[d.from]) DRISHTI.push(d);
+  ADDITIONAL.length = 0; for (const d of ADDITIONAL_ALL) if (GR[d.from]) ADDITIONAL.push(d);
+  if (typeof rebuildAspected === 'function') rebuildAspected();
+}

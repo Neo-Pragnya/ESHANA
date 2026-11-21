@@ -126,6 +126,13 @@ studio-journeys: build-release
 site-journeys:
 	node acceptance/site/journeys.mjs website/dist --base $${SITE_BASE:-/} $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/site)
 
+# Local review preview (git-ignored preview/): studio files for a few charts, the website, an index page
+preview: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv --release
+	python3 scripts/build_preview.py
+preview-serve: preview
+	cd preview && python3 -m http.server 8765 --bind 127.0.0.1
+
 # ── supply chain ─────────────────────────────────────────────────────────────────────────────────────────────
 deny:
 	cargo deny check
@@ -145,8 +152,10 @@ docs-site: demo docs-check
 # ── tracking ─────────────────────────────────────────────────────────────────────────────────────────────────
 tracking:
 	python3 scripts/tracking_report.py
+	python3 scripts/progress_report.py
 tracking-check:
 	python3 scripts/tracking_report.py --check
+	python3 scripts/progress_report.py --check
 
 clean:
 	cargo clean

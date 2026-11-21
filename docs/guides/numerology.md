@@ -41,7 +41,28 @@ $ eshana numerology --name 'José Ram राम'      → normalized "JOSERAM"; 
 $ eshana numerology --name 'राम'               → ESH-RULES
 ```
 
+## Every number, in every school (`extended`)
+
+Pass `extended=True` (Python) or `"extended": true` (request) to add four more attributes. Add `reference_date`
+(`YYYY-MM-DD`) for the cycles. ESHANA Studio always asks for them.
+
+| Attribute | Rule | Numbers |
+|---|---|---|
+| `numerology.pythagorean.extended` | `numerology.extended@0.1` | life path, expression, soul urge, personality, birthday, maturity, attitude, balance, rational thought; hidden passion, karmic lessons, subconscious self, cornerstone, capstone, first vowel; karmic debt (13, 14, 16, 19) met while reducing; inclusion table, planes of expression; pinnacles, challenges and life cycles with ages; personal year, month and day, universal year, month and day; bridge numbers |
+| `numerology.chaldean.extended` | `numerology.extended@0.1` | name (compound and root), each word, psychic, destiny |
+| `numerology.vedic` | `numerology.vedic@0.1` | mulank (driver) and bhagyank (conductor) with their planets, the name number (Chaldean values), and friendly, neutral and enemy numbers |
+| `numerology.lo_shu` | `numerology.lo_shu@0.1` | the Lo Shu grid of the birth date: counts, missing and repeated numbers, and the eight arrows. A second grid adds the driver and conductor |
+
+The conventions are stated in each result's `conventions` field:
+- Pinnacles: the first ends at 36 minus the one-digit life path.
+- Planes: the letter groups as commonly published.
+- Number friendships: taken from the natural relationships of the ruling planets in BPHS, with Rāhu counted as
+  Saturn and Ketu as Mars, rather than from an unsourced table.
+
+What each number is *said to describe* is interpretation. It is not in the engine: the studio shows paraphrased
+notes, labelled as such.
+
 ## Not here yet
 
-Name-change cycles, pinnacles, karmic debts, other alphabets (Hebrew gematria, abjad). Each will be its own named
-rule pack with a cited source.
+Name-change cycles, other alphabets (Hebrew gematria, abjad), Kua numbers and compound-number readings. Each will
+be its own named rule pack, with a cited source.

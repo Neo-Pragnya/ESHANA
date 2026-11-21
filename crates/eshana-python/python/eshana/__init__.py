@@ -290,8 +290,12 @@ class ChartEngine:
         y_policy: str = "consonant",
         life_path_method: str = "reduce_parts",
         reference_year: Optional[int] = None,
+        extended: bool = False,
+        reference_date: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Name and date numerology under one named school."""
+        """Name and date numerology under one named school. ``extended=True`` adds every school's full set of numbers
+        (Pythagorean, Chaldean, Indian/Vedic and the Lo Shu grid); ``reference_date`` (YYYY-MM-DD) sets the personal
+        year, month and day cycles."""
         req = {
             "op": "numerology",
             "name": name,
@@ -301,6 +305,8 @@ class ChartEngine:
             "y_policy": y_policy,
             "life_path_method": life_path_method,
             "reference_year": reference_year,
+            "extended": extended or None,
+            "reference_date": reference_date,
         }
         return execute({k: v for k, v in req.items() if v is not None})
 

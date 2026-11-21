@@ -48,6 +48,18 @@
 @keyframes sg-twinkle { 0%, 100% { transform: scale(1) rotate(0); opacity: 1; } 50% { transform: scale(.55) rotate(45deg); opacity: .6; } }
 @keyframes sg-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.35); } }
 
+/* the ESHANA gimbal: three rings, each turning about its own axis, precessing as a whole */
+.sg-eshana .gb1 { color: var(--lilac); animation: gb-v 5.2s ease-in-out infinite; }
+.sg-eshana .gb2 { color: var(--teal); animation: gb-h 3.9s ease-in-out infinite; }
+.sg-eshana .gb3 { color: var(--coral); animation: gb-d 2.9s ease-in-out infinite; }
+.sg-eshana .gb .sg-orbit { stroke-width: 1.6; }
+.sigil.sg-eshana .gb .sg-rider { fill: currentColor; filter: none; }
+.sg-eshana .gb-precess { animation: sg-turn 24s linear infinite; }
+:is(a, .brand):is(:hover, :focus-visible) .sg-eshana .gb { animation-duration: 1.4s; }
+@keyframes gb-v { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
+@keyframes gb-h { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(-1); } }
+@keyframes gb-d { 0%, 100% { transform: rotate(45deg) scaleX(1); } 50% { transform: rotate(45deg) scaleX(-1); } }
+
 @media (prefers-reduced-motion: reduce) {
   .sigil * { animation: none !important; transition: none !important; }
 }

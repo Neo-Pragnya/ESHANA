@@ -51,3 +51,5 @@ Parāśara starting-sign rules written out in `vedic.rs` and re-derived independ
 
 The full ṣaḍbala (only dig and naisargika bala are computed), Chara daśā and other conditional daśās, varṣaphala,
 muhūrta search, praśna and Lal Kitab are tracked in [capabilities](../reference/capabilities.md).
+
+Aspects of every kind, including the optional additional aspects (retrograde shadow and parivartana), are explained in [Aspects (drishti)](aspects.md).

@@ -1,6 +1,6 @@
 ---
 title: "ESHANA Studio (HTML chart app)"
-description: "One self-contained, offline HTML app per chart: Panchang chakra with a South or North Indian centre, graha and bhāva pages, aspects in virūpas, ṣaḍbala, vargas to D60, Nadi matrix, daśā, Western, Human Design and provenance."
+description: "One self-contained, offline HTML app per chart: the Jyotish Chakra (Graha-Nakshatra Mandala) with a South or North Indian centre, graha and bhāva pages, aspects in virūpas, ṣaḍbala, vargas to D60, Nadi matrix, daśā, Western, Human Design and provenance."
 ---
 
 # ESHANA Studio (HTML chart app)
@@ -49,7 +49,8 @@ guessed.
 | `--features` | `all` | Vedic features (see [Vedic features](vedic-features.md)), or `none` |
 | `--dasha-levels`, `--dasha-systems` | `3`, `vimshottari,yogini` | daśā depth and systems |
 | `--reference` | now | instant for "current" periods and transits, recorded in the file |
-| `--transit-days`, `--progression-years` | `365`, `90` | spans of the transit animation and progressions (0 = none) |
+| `--transit-start`, `--transit-end`, `--transit-step-days` | a year before to two years after `--reference`, `1` | the transit series the chakra's date picker and animation use (dates `YYYY-MM-DD`) |
+| `--transit-days`, `--progression-years` | none, `90` | centre a transit span of N days on the reference instead (0 = no transits); span of progressions |
 | `--sunrise` | `upper_limb_refracted` | sunrise convention for the pañcāṅga |
 | `--partner` | none | second birth (`date,time,tz,lat,lon`) for compatibility |
 | `--icons`, `--chart-style`, `--centre` | `sphere`, `south`, `south` | default planet icons, chart style and chakra centre (viewers can change them) |
@@ -100,21 +101,25 @@ holds the viewer's choices (planet icons, chart style, chakra centre, layers, an
 | Page | What you see | Engine data |
 |---|---|---|
 | **Overview** | the person, the moment and the place; lagna, Moon, tithi, vāra, yoga, karaṇa, current daśā chain; a small chakra and both charts; cards that lead into every page | `input`, `vedic.panchanga`, `vedic.dasha.*` |
-| **Panchang chakra** | every point placed by exact degree on rings for degrees, 27 nakshatras, 108 padas (navāṃśa), 36 dreshkāṇas, 12 rāśis, bhāvas and SAV. The centre shows a **South Indian** chart, a **North Indian** chart or the orbit lanes. Layers: needles, drishti arcs, translucent **aspect marks**, rāśi drishti, Western aspects and animated transits. Turn the wheel to Mesha or the lagna; click a rāśi, nakshatra or pada to drill down | positions, `vedic.*` |
-| **Charts** | South Indian, North Indian or both, for D1, D9 and the Sripati bhāva chalit. Each graha shows its degree and nakshatra. Aspects appear as **translucent graha marks** (for example `Ju*` and `Ve*` in the house they aspect), with ārūḍha padas in the corners. Clicking a house opens its bhāva page; clicking a graha opens its graha page | `vedic.*.dN`, `vedic.drishti.graha`, `vedic.bhava_chalit` |
+| **Jyotish Chakra** (the Graha-Nakshatra Mandala) | every point placed by exact degree on rings for degrees, 27 nakshatras, 108 padas (navāṃśa), 36 dreshkāṇas, 12 rāśis, bhāvas and SAV. The centre shows a **South Indian** chart, a **North Indian** chart or the orbit lanes. A **markers ring** outside shows vargottama, pushkara navāṃśa and gaṇḍānta padas, pushkara bhāga, mūlatrikoṇa ranges and each graha's uccha ▲ and nīca ▼ degree; nakshatra and rāśi names run along the circle; a **graha legend** under the wheel lists dignity, retrograde, combustion, speed and aspects. Layers: needles, drishti arcs, translucent **aspect marks** (graha drishti), **◇ rāśi drishti marks**, rāśi drishti lines, **additional aspects** (retrograde shadow ʳ and parivartana ⇄, off by default; see [Aspects](aspects.md)), Western aspects and transits. **Hover a graha** and its aspects animate: a flowing curve to each sign it sees (with the house count), the signs and centre boxes light up. **Transits**: pick a date, set a from/to range and a speed, and play; jump back to the reference date. **Turn to selection** can be switched off so a click selects without turning the wheel. Turn the wheel to Mesha or the lagna; click a rāśi, nakshatra or pada to drill down. **Include** switches hide Uranus, Neptune and Pluto, or the upagrahas, everywhere at once (also in Show and style) | positions, `vedic.*`, `vedic.upagrahas` |
+| **Charts** | South Indian, North Indian or both, for D1, D9 and the Sripati bhāva chalit. Each graha shows its degree and nakshatra. Aspects appear as **translucent graha marks** (for example `Ju*` and `Ve*` in the house they aspect), with ārūḍha padas in the corners. **Bhāva chalit** can be laid over the rāśi chart as concentric squares (the birth chart inside, an even band of bhāva sectors outside) or as a circle. Clicking a house opens its bhāva page; clicking a graha opens its graha page | `vedic.*.dN`, `vedic.drishti.graha`, `vedic.bhava_chalit` |
 | **Vargas** | a gallery of all 19 divisional charts (D1–D60, including D5, D6 and D8), each graha with its degree inside the varga, and the body × division grid | `vedic.*.dN` |
 | **Grahas** and each **graha page** | one page per graha. It shows position (sidereal, tropical, latitude, **declination**, right ascension, speed, distance), nakshatra and its attributes, and lordship with functional nature. Aspects it casts and receives come in virūpas (sputa drishti, D1 and D9) and as rāśi drishti. Then the yogas and doshas it takes part in, its ṣaḍbala components, viṃśopaka, avasthā, KP lords, every varga with degree, and its Nadi links. Arrows step to the previous and next graha | positions, `vedic.aspects`, `vedic.shadbala`, `vedic.vimshopaka`, `vedic.yogas`, `vedic.kp` |
-| **Bhāvas** and each **bhāva page** | the house as cusp and Sripati madhya, its lord, the grahas in it, the aspects falling on it, bhāva bala, SAV, the KP cusp, and its AstroEnergetics row (significations, body, quadrant, trikoṇa) | `vedic.bhava_chalit`, `vedic.bhava_bala`, `vedic.kp` |
-| **Aspects** | the full graha × graha sputa drishti matrix in virūpas for D1 and D9, with graha drishti fractions and rāśi drishti | `vedic.aspects`, `vedic.drishti.*` |
-| **Strength** | ṣaḍbala by component (sthāna, dig, kāla, ceṣṭā, naisargika, dṛk) with totals in virūpas and rūpas, the required minimum and the ratio; every component in detail; viṃśopaka in four schemes; bhāva bala | `vedic.shadbala`, `vedic.vimshopaka`, `vedic.bhava_bala` |
+| **Bhāvas** and each **bhāva page** | the Bhāvas page reads the whole chart: where each lord sits (from the lagna and from its own house), bhāvāt bhāvam, sign exchanges and Vipareeta Rāja yogas (Harṣa, Sarala, Vimala) with a short reading. Each bhāva page also reads the chart **with that bhāva as the lagna** (its 2nd as its gains, its 12th as its losses, and so on). How the bhāva works: a connection map (lord, occupants, aspecting grahas, kāraka, bhāvāt bhāvam), the lord's story, occupants and the houses they rule, the kāraka, and a bearing summary (the usual factors as supportive or challenging, tied to the significations and the daśās that activate them); then the house as cusp and Sripati madhya, its lord, the grahas in it, the aspects falling on it, bhāva bala, SAV, the KP cusp, and its AstroEnergetics row (significations, body, quadrant, trikoṇa) | `vedic.bhava_chalit`, `vedic.bhava_bala`, `vedic.kp` |
+| **Aspects** ([guide](aspects.md)) | opens on the graha × graha matrix; then sputa drishti as percent bar charts, for D1 and D9 (navāṃśa degrees), from every view: on the lagna and each house (Śrīpati madhya), on house + its lord, on and from each graha, from each graha to the houses; the virūpa table to the Śrīpati cusps; the graha × graha matrix | `vedic.aspects` (`houses`, `house_and_lord`, `house_madhya`) |
+| **Strength** | ṣaḍbala, with a dotted cut-off at 1.0 in the ratio column (below it a graha is short of its required strength): by component (sthāna, dig, kāla, ceṣṭā, naisargika, dṛk) with totals in virūpas and rūpas, the required minimum and the ratio; every component in detail; viṃśopaka in four schemes; bhāva bala | `vedic.shadbala`, `vedic.vimshopaka`, `vedic.bhava_bala` |
 | **Aṣṭakavarga** | bhinna matrices and the sarva row as a heat map, plus prastāraka (who gives each bindu) | `vedic.ashtakavarga` |
-| **Daśā** | Vimśottarī and Yoginī timelines with a NOW marker, drill-down to five levels, Sāḍe Sātī | `vedic.dasha.*`, `vedic.sade_sati` |
+| **Daśā** | Vimśottarī as a five-level zoom: click a period and its sub-periods open in a thinner row beneath it, with a bracket from the chosen period (mahādaśā → antardaśā → pratyantardaśā → sūkṣma → prāṇa). It opens on the running chain. Levels 1–3 come from the engine; deeper levels use the same proportions, checked against the engine. Yoginī timeline; Sāḍe Sātī | `vedic.dasha.*`, `vedic.sade_sati` |
 | **Pañcāṅga** | the five limbs with end times, rise and set, horā, choghaḍiyā and the inauspicious periods | `vedic.panchanga` |
-| **Lagnas and points** | Bhāva, Horā, Ghaṭī and Indu lagna; yogi, avayogi and duplicate yogi; dagdha rāśis; 64th navāṃśa and 22nd dreshkāṇa from Moon and lagna; kartari; graha yuddha | `vedic.special_points`, `vedic.panchanga` |
-| **Yogas**, **KP** | each rule with the grahas involved; KP cusps, sub and sub-sub lords, significators, ruling planets | `vedic.yogas`, `vedic.kp` |
+| **Lagnas and points** and each **point page** | a tile per point with its value and why it matters: lagna, Bhāva, Horā, Ghaṭī and Indu lagna, ārūḍha lagna and upapada, yogi point, yogi, duplicate yogi, avayogi, dagdha rāśis, 64th navāṃśa, 22nd dreshkāṇa, graha yuddha, kartari, chara kārakas, kārakāṃśa, ārūḍha padas, functional nature. Each opens a page with what it is, why it matters and how it is read, its value in this chart (longitude, nakshatra, navāṃśa or graha), the sign it marks on a chart, and the elements around that sign: lord and where it sits, bhāva, occupants, graha and rāśi drishti, SAV | `vedic.special_points`, `vedic.panchanga`, `vedic.jaimini.*`, reading notes |
+| **Yogas** and each **yoga page** | only the yogas and doshas that hold (the rest are listed as checked). Each opens a page with the rule and how it forms here, the usual strength checks for each graha involved (ṣaḍbala, combustion, navāṃśa, house, benefic and malefic aspects), the signs on a chart, when it is active in Vimśottarī, and what the tradition associates with it, how it is read and what cancels it | `vedic.yogas`, `vedic.shadbala`, `vedic.aspects`, `vedic.dasha.vimshottari`, reading notes |
+| **KP** | KP cusps, sub and sub-sub lords, significators, ruling planets | `vedic.kp` |
 | **Nadi** | the [direction matrix](nadi.md): signs as a spiral through North, East, South and West in three rounds. Each graha sits in its sign with its degree; click one to see its links | positions |
 | **Energetics** | the twelve houses as body, dimension and question; quadrants, trikoṇas, energy bands and temperatures ([guide](nadi.md#astroenergetics)) | positions, reference table |
-| Transits, Progressions, Western, Human Design, Numerology, Compatibility | as before; compatibility appears when a partner is given | all envelopes |
+| **Progressions** | two methods. **By completed revolutions** (`report.revolutions@0.1`): every sidereal return after birth moves a graha one sign on (the nodes backwards). It is shown as an inner ring in the South Indian chart or a circle, with the signs it aspects, a date picker, play at a week, month, quarter or year per tick, a table of where each graha has moved and when it moves next, and a life timeline you can click. **Secondary progressions** (a day for a year) | `revolutions`, ephemeris |
+| **Human Design** | the standard chart: Design and Personality columns, the BodyGraph over a silhouette, variable arrows and properties ([guide](human-design.md)); detailed and schematic views | Human Design |
+| **Numerology** | every school (Pythagorean, Chaldean, Indian, Lo Shu), filtered. Each number is a tile that opens its meaning, alongside the pinnacles, challenges and life-cycles timeline, the inclusion and planes charts, and the Lo Shu grid with its arrows ([guide](numerology.md)) | `numerology.*` |
+| Transits, Western, Compatibility | as before; compatibility appears when a partner is given | all envelopes |
 | **Provenance and data** | versions, assumptions, rule packs, refusals (**Not computed**), the raw envelopes | all envelopes |
 
 **Copy summary** puts a plain-text list of positions and the current daśā on the clipboard. **JSON** saves the data,
@@ -123,6 +128,14 @@ and **Print** gives a clean layout of the current page.
 Choose the defaults for a file with `--icons`, `--chart-style south|north|both` and `--centre south|north|lanes`. Pick
 pages with `--sections` (for example `--sections overview,chakra,charts,planets,dasha`). The graha and bhāva pages come
 with Grahas and Bhāvas.
+
+### Reading notes
+
+The yoga and point pages show what classical texts and common practice say about each yoga, dosha and point. This
+covers what it is, what it is associated with, how it is judged and what weakens or cancels it. These notes are
+**interpretation**, paraphrased with the texts named, and are labelled as such on every page. They live in
+`eshana/data/reading_reference.json`, built by `scripts/build_reading_reference.py`. The engine still only computes
+whether a condition holds and the values around it.
 
 ### Tested in a real browser
 

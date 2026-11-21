@@ -176,7 +176,14 @@ pub fn panchadha_maitri(c: &VChart) -> Value {
 pub fn graha_drishti(c: &VChart) -> Value {
     let d = &packs::core().drishti;
     let mut out = vec![];
-    for g in c.grahas_present() {
+    // the nine grahas, and the outer planets when the chart has them (aspects by the convention in vedic-core.yaml)
+    let all: Vec<&str> = NINE
+        .iter()
+        .chain(["uranus", "neptune", "pluto"].iter())
+        .copied()
+        .filter(|g| c.lon.contains_key(*g))
+        .collect();
+    for &g in &all {
         let Some(sg) = c.sign(g) else { continue };
         let mut houses: BTreeSet<usize> = d.all.iter().copied().collect();
         if let Some(extra) = d.special.get(g) {
@@ -184,9 +191,9 @@ pub fn graha_drishti(c: &VChart) -> Value {
         }
         for h in houses {
             let target = (sg + h - 1) % 12;
-            let hit: Vec<&str> = c
-                .grahas_present()
-                .into_iter()
+            let hit: Vec<&str> = all
+                .iter()
+                .copied()
                 .filter(|x| *x != g && c.sign(x) == Some(target))
                 .collect();
             let full = d.all.contains(&h);
@@ -196,6 +203,81 @@ pub fn graha_drishti(c: &VChart) -> Value {
                 "aspects_grahas": hit,
                 "aspects_bhava": c.asc.map(|a| house_from(sign_of(a), target)),
             }));
+        }
+    }
+    Value::Array(out)
+}
+
+/// The nine grahas and, when present, Uranus, Neptune and Pluto.
+fn with_outer(c: &VChart) -> Vec<&'static str> {
+    NINE.iter()
+        .chain(["uranus", "neptune", "pluto"].iter())
+        .copied()
+        .filter(|g| c.lon.contains_key(*g))
+        .collect()
+}
+
+/// Graha drishti houses for a graha: the 7th, plus its special aspects from `vedic-core.yaml`.
+fn drishti_houses(g: &str) -> Vec<(usize, bool)> {
+    let d = &packs::core().drishti;
+    let mut houses: BTreeSet<usize> = d.all.iter().copied().collect();
+    if let Some(extra) = d.special.get(g) {
+        houses.extend(extra.iter().copied());
+    }
+    houses.into_iter().map(|h| (h, d.all.contains(&h))).collect()
+}
+
+/// Additional aspects (off by default in the studio), by two conventions named in `vedic-core.yaml`:
+///
+/// * **retrograde shadow**: a retrograde graha (not Rāhu or Ketu, which always move backwards) also acts from the
+///   sign before the one it occupies, and casts its graha drishti and rāśi drishti from there;
+/// * **parivartana**: two grahas in each other's signs are read as exchanged, and each casts its aspects from the
+///   other's sign (its own).
+///
+/// Each entry names its `basis`, the sign it is cast `from_sign`, the drishti type, the target sign and the grahas
+/// and bhāva there (the targets are the grahas' real positions).
+#[must_use]
+pub fn additional_drishti(c: &VChart) -> Value {
+    let all = with_outer(c);
+    let hit_in = |g: &str, target: usize| -> Vec<&str> {
+        all.iter()
+            .copied()
+            .filter(|x| *x != g && c.sign(x) == Some(target))
+            .collect()
+    };
+    let bhava = |target: usize| c.asc.map(|a| house_from(sign_of(a), target));
+    let mut out = vec![];
+    let mut cast = |g: &str, from_sign: usize, basis: &str, partner: Option<&str>| {
+        for (h, full) in drishti_houses(g) {
+            let target = (from_sign + h - 1) % 12;
+            out.push(json!({"from": g, "basis": basis, "partner": partner, "from_sign": from_sign, "drishti": "graha",
+                "house_from_graha": h, "sign": target, "kind": if full { "full" } else { "special" },
+                "aspects_grahas": hit_in(g, target), "aspects_bhava": bhava(target)}));
+        }
+        for target in rashi_drishti_targets(from_sign) {
+            out.push(json!({"from": g, "basis": basis, "partner": partner, "from_sign": from_sign, "drishti": "rashi",
+                "house_from_graha": house_from(from_sign, target), "sign": target, "kind": "rashi",
+                "aspects_grahas": hit_in(g, target), "aspects_bhava": bhava(target)}));
+        }
+    };
+    for &g in &all {
+        if g == "rahu" || g == "ketu" {
+            continue;
+        }
+        let retro = c.speed.get(g).is_some_and(|v| *v < 0.0);
+        if let (true, Some(sg)) = (retro, c.sign(g)) {
+            cast(g, (sg + 11) % 12, "retrograde_shadow", None);
+        }
+    }
+    for (i, a) in SEVEN.iter().enumerate() {
+        for b in &SEVEN[i + 1..] {
+            let (Some(sa), Some(sb)) = (c.sign(a), c.sign(b)) else {
+                continue;
+            };
+            if sa != sb && lord_of(sa) == *b && lord_of(sb) == *a {
+                cast(a, sb, "parivartana", Some(b));
+                cast(b, sa, "parivartana", Some(a));
+            }
         }
     }
     Value::Array(out)
@@ -220,12 +302,13 @@ pub fn rashi_drishti_targets(s: usize) -> Vec<usize> {
 #[must_use]
 pub fn rashi_drishti(c: &VChart) -> Value {
     let mut out = vec![];
-    for g in c.grahas_present() {
+    let all = with_outer(c);
+    for &g in &all {
         let Some(sg) = c.sign(g) else { continue };
         let targets = rashi_drishti_targets(sg);
-        let hit: Vec<&str> = c
-            .grahas_present()
-            .into_iter()
+        let hit: Vec<&str> = all
+            .iter()
+            .copied()
             .filter(|x| *x != g && c.sign(x).is_some_and(|s| targets.contains(&s)))
             .collect();
         out.push(json!({"from": g, "sign": sg, "aspects_signs": targets, "aspects_grahas": hit}));
@@ -799,6 +882,31 @@ mod tests {
         assert_eq!(rashi_drishti_targets(0), vec![4, 7, 10]); // Aries: Leo, Scorpio, Aquarius (not Taurus)
         assert_eq!(rashi_drishti_targets(1), vec![3, 6, 9]); // Taurus: Cancer, Libra, Capricorn (not Aries)
         assert_eq!(rashi_drishti_targets(2), vec![5, 8, 11]); // Gemini: the other duals
+    }
+
+    #[test]
+    fn additional_aspects_from_retro_shadow_and_exchange() {
+        let mut c = VChart::default();
+        // Mars retrograde in Gemini (sign 2); Sun in Aries (Mars's sign) and Mars… no exchange here
+        c.lon.insert("mars".into(), 75.0);
+        c.speed.insert("mars".into(), -0.2);
+        // Jupiter in Gemini (Mercury's sign) and Mercury in Sagittarius (Jupiter's sign): an exchange
+        c.lon.insert("jupiter".into(), 80.0);
+        c.speed.insert("jupiter".into(), 0.1);
+        c.lon.insert("mercury".into(), 250.0);
+        c.speed.insert("mercury".into(), 1.0);
+        let v = additional_drishti(&c);
+        let a = v.as_array().unwrap();
+        let shadow: Vec<_> = a.iter().filter(|x| x["basis"] == "retrograde_shadow").collect();
+        assert!(shadow.iter().all(|x| x["from"] == "mars" && x["from_sign"] == 1)); // cast from Taurus
+        assert!(shadow
+            .iter()
+            .any(|x| x["drishti"] == "graha" && x["house_from_graha"] == 7 && x["sign"] == 7));
+        let swap: Vec<_> = a.iter().filter(|x| x["basis"] == "parivartana").collect();
+        assert!(swap
+            .iter()
+            .any(|x| x["from"] == "jupiter" && x["from_sign"] == 8 && x["partner"] == "mercury"));
+        assert!(swap.iter().any(|x| x["from"] == "mercury" && x["from_sign"] == 2));
     }
 
     #[test]

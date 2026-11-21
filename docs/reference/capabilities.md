@@ -13,11 +13,25 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Capability | State |
 |---|---|
 | Natal chart, Vedic (sidereal) and Western (tropical) | verified |
-| South Indian and North Indian charts, side by side, any varga | verified (HTML studio) |
-| Panchang chakra wheel: nakshatra, pada/navāṃśa, dreshkāṇa, rāśi and bhāva rings; exact-degree needles; drill-down | verified (HTML studio) |
+| Multi-page studio app: graha, bhāva, yoga and point pages, ⌘K palette, settings drawer, starfield, deep links | verified (HTML studio, browser journeys) |
+| South Indian and North Indian charts, side by side, any varga, degrees and nakshatras, translucent aspect marks, ◇ rāśi drishti marks | verified (HTML studio) |
+| South or North Indian chart in the centre of the Jyotish Chakra (Graha-Nakshatra Mandala) | verified (browser journeys) |
+| Hover a graha to animate its aspects; optional turn to selection | verified (browser journeys) |
+| Nadi direction matrix with degrees and links | verified (HTML studio, `report.nadi@0.1`) |
+| AstroEnergetics: houses as body, dimension and question; quadrants, trikoṇas, energy bands | verified (HTML studio) |
+| Yoga pages: present yogas only, formation, strength checks, daśā timing, attributed reading notes | verified (browser journeys) |
+| Point pages for every lagna and special point: meaning, reading, value, sign elements | verified (browser journeys) |
+| Chakra markers ring (vargottama, pushkara, gaṇḍānta, mūlatrikoṇa, uccha/nīca), curved names, graha legend | verified (browser journeys) |
+| Bhāva chalit over the rāśi chart: concentric squares or circle | verified (browser journeys) |
+| Bhāva depth: bhāvāt bhāvam, lord's story, kāraka, connection map, bearing on significations | verified (browser journeys) |
+| Aspects on houses, house + lord, on and from grahas, to Śrīpati cusps, D1 and D9, as percent charts | verified (browser journeys); Jupiter and node conventions differ from one reference program (`CHK-23`) |
+| Progression by completed revolutions with overlay, date picker and life timeline | verified (browser journeys) |
+| Human Design standard chart: columns, BodyGraph over a silhouette, variables, properties | verified (browser journeys) |
+| Numerology: Pythagorean, Chaldean, Indian and Lo Shu numbers with meanings and filters | verified (unit tests, browser journeys) |
+| Jyotish Chakra wheel: nakshatra, pada/navāṃśa, dreshkāṇa, rāśi and bhāva rings; exact-degree needles; drill-down | verified (HTML studio) |
 | Layers: graha drishti, rāśi drishti, Western aspects, ārūḍha padas, SAV bindus, transits | verified (HTML studio) |
 | Planet icons: textured spheres, glyphs or badges | verified (HTML studio) |
-| Transit overlay with play and a date slider | verified (HTML studio) |
+| Transit overlay with play, a date picker, a from/to range and speed; `--transit-start`, `--transit-end` | verified (browser journeys) |
 | Hover tooltips with sign, degree, nakshatra and pada | verified |
 | Show/hide sections; light and dark; print and PDF; SVG and JSON export; copy a text summary | verified |
 | Rotate the wheel to the lagna | verified |
@@ -60,7 +74,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Viṃśopaka bala: ṣaḍvarga, saptavarga, daśavarga, ṣoḍaśavarga | verified (weights validated) |
 | Sputa drishti in virūpas (D1 and D9 matrices) | verified (unit tests) |
 | Yogi, avayogi, duplicate yogi, dagdha rāśis, Indu lagna, 64th navāṃśa, 22nd dreshkāṇa, kartari, graha yuddha, functional nature | verified (published reference chart) |
-| Graha drishti and rāśi drishti | verified |
+| Graha drishti and rāśi drishti (outer planets included: 5th, 7th, 9th and rāśi drishti) | verified |
+| Additional aspects: retrograde shadow and parivartana ([guide](../guides/aspects.md)) | verified (unit tests, browser journeys) |
 | Bhinna- and sarvāṣṭakavarga | verified |
 | Aṣṭakavarga transit strength by date | planned (`VED-12`) |
 | Chara kārakas (7 and 8), kārakāṃśa, ārūḍha padas A1–A12 | verified |
@@ -83,6 +98,6 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Secondary progressions (a day for a year) | verified |
 | Solar arc and other progressions, returns | planned (`WES-05`) |
 | Human Design: design instant, gates and lines, channels, centres, type, authority, profile; detailed or schematic BodyGraph | verified |
-| Numerology: Pythagorean and Chaldean | verified |
+| Numerology: Pythagorean and Chaldean, extended numbers, Indian (mulank, bhagyank), Lo Shu | verified |
 | Ephemeris tables at any step; sign ingresses including retrograde re-entries | verified |
 | Stations, eclipses, returns | planned (`AST-06`) |

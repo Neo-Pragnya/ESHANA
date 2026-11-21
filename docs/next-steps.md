@@ -10,6 +10,17 @@ State on 2026-11-21. The ledger of every task is [`planning/TRACKING.md`](../pla
 
 ## Done
 
+**0.3.1 (2026-11-21): review rounds 1–4**
+- Upagrahas; switches to hide the outer planets and upagrahas; outer-planet graha and rāśi drishti; optional additional aspects (retrograde shadow, parivartana) — see the [Aspects guide](guides/aspects.md).
+- Jyotish Chakra (Graha-Nakshatra Mandala); daśā five-level zoom; bhāvāt bhāvam and each bhāva as its own lagna; even concentric squares.
+- **Aspects:** percent charts from every view, for D1 and D9.
+- **Chakra:** markers ring, curved names and a graha legend.
+- **Charts and bhāvas:** chalit overlays (square and circle); bhāva depth (bhāvāt bhāvam, connections, bearing).
+- **Strength and progressions:** a strength cut-off line; progression by completed revolutions.
+- **Numerology and Human Design:** numerology in every school; the standard Human Design chart.
+- **Website and tooling:** PyPI links on the website; local preview (`make preview`) and
+  [progress tracker](../planning/PROGRESS.md).
+
 **0.3.0 (2026-11-21)**
 - **ESHANA Studio** ([guide](guides/html-report.md)) is now a multi-page app: graha and bhāva pages, a ⌘K palette and a
   starfield. The Panchang chakra can hold a South or North Indian chart in its centre. Charts show translucent aspect
@@ -44,6 +55,25 @@ GitHub Pages enabled.
 7. **User rule packs at run time** (`RULE-02`).
 8. **Bindings**: MCP server (`BIND-05`), Node and WASM (`BIND-03`, `BIND-04`), crates.io (`BIND-07`).
 9. **More published references** (`ACC-04`).
+
+## Planned studio sections (reference chart library, 0.5)
+
+The reference-software screenshots add about twenty charts. They fit into six new pages, so the studio stays easy to
+move around in, rather than one long page. Each will have its own sigil, deep link, tooltips and journeys, and a
+gallery entry on the website (`CHK-22`).
+
+| Page (nav group) | Contents | Tasks |
+|---|---|---|
+| **Lordships** (Grahas & bhāvas) | "lord of 1 in 3" for D1, D9 and D10 with sign exchanges; pada navāṃśa chart; upagrahas (Dhūma … Māndi) on the charts | `CHK-05`, `CHK-06`, `CHK-07` |
+| **Chakras** (Systems) | Sarvatobhadra with vedha, Kota, Saṅghaṭṭa, Ghāta, Avakahaḍā | `CHK-12`, `CHK-14`…`CHK-17` |
+| **Annual** (Time) | Varṣaphala: year lord, muntha, pañcādhikārīs, harṣa and hudda strengths; the 37 Sahams | `CHK-11`, `CHK-13` (with `VAR-01`) |
+| **Pañca pakṣī** (Time) | ruling and dying birds, the five activities through day and night | `CHK-09` |
+| **Sensitive points** (Strength) | mṛtyu bhāga, jīva and deha, śodhana piṇḍa, male and female rāśis | `CHK-10`, `CHK-18`…`CHK-20` |
+| KP (existing) and Transits (existing) | bhāva significator table, strong / normal / weak significators; vedhasthāna from the Moon | `CHK-08`, `CHK-21` |
+
+Open differences found while matching the screenshots:
+- Jupiter's special aspects and the node aspects in one reference program (`CHK-23`);
+- Human Design cross names and exaltation and detriment arrows (`CHK-24`).
 
 ## Decisions still open
 

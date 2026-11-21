@@ -185,3 +185,195 @@ body.nav-open nav.side{transform:none}.grid2,.grid2.wide{grid-template-columns:1
 @media (max-width:560px){.tools .btn span.t{display:none}.phead-sigil{display:none}.phero{flex-direction:column;align-items:flex-start}}
 @media print{#sky,nav.side,.topbar,.toolbar,.drawer,#palette{display:none!important}.app{display:block}section.page{display:block!important;page-break-after:always}.card{box-shadow:none;break-inside:avoid;background:#fff}body{background:#fff;color:#111}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ESHANA gimbal mark: three rings turning about vertical, horizontal and diagonal axes, precessing as a whole */
+.gimbal *{transform-box:view-box;transform-origin:12px 12px;vector-effect:non-scaling-stroke}
+.gimbal .ring{fill:none;stroke:currentColor;stroke-width:1.4}
+.gimbal .gb1{color:#8f7bff;animation:gb-v 5.2s ease-in-out infinite}
+.gimbal .gb2{color:#2bb3c0;animation:gb-h 3.9s ease-in-out infinite}
+.gimbal .gb3{color:#e0589c;animation:gb-d 2.9s ease-in-out infinite}
+.gimbal .sat{fill:currentColor}
+.gimbal .core{fill:#f5c451;filter:drop-shadow(0 0 2px rgb(245 196 81 / 80%));animation:gb-pulse 2.4s ease-in-out infinite}
+.gimbal .gb-precess{animation:gb-turn 24s linear infinite}
+.brand:hover .gimbal .gb1,.brand:hover .gimbal .gb2,.brand:hover .gimbal .gb3{animation-duration:1.4s}
+@keyframes gb-v{0%,100%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+@keyframes gb-h{0%,100%{transform:scaleY(1)}50%{transform:scaleY(-1)}}
+@keyframes gb-d{0%,100%{transform:rotate(45deg) scaleX(1)}50%{transform:rotate(45deg) scaleX(-1)}}
+@keyframes gb-turn{to{transform:rotate(360deg)}}
+@keyframes gb-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+@media (prefers-reduced-motion:reduce){.gimbal *{animation:none!important}}
+
+/* aspects of the hovered graha: flowing curves, travelling dots, lit target signs and outlined boxes */
+.aflow{pointer-events:none}
+.aflow .af{fill:none;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:12 9;opacity:.9;animation:af-flow .7s linear infinite}
+.aflow .af.special{stroke-width:4.4}
+.aflow .af.rashi{stroke-width:2;stroke-dasharray:3 7;opacity:.75}
+.aflow .af-dot{filter:drop-shadow(0 0 6px currentColor);opacity:.95}
+.aflow .af-target{opacity:.35;animation:af-pulse 1s ease-in-out infinite alternate}
+.aflow .af-target.rashi{opacity:.2}
+.aflow .af-src{fill:none;stroke-width:3;animation:af-pulse .8s ease-in-out infinite alternate}
+.aflow .af-lbl{font-size:15px;font-weight:800;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px}
+.cell.aspected .cellbg{stroke:var(--accent);stroke-width:3;animation:af-cell 1s ease-in-out infinite alternate}
+.cell.aspected.aspected-rashi:not(.aspected-graha) .cellbg{stroke-dasharray:5 4}
+.cell.aspect-src .cellbg{fill:rgb(200 16 46 / 14%)}
+.pt-hit{fill:transparent;cursor:pointer}
+.rashimark{opacity:.6}
+.transit-ctl{display:grid;gap:8px;margin:8px 0}
+.transit-ctl input[type=date],.transit-ctl select{font:inherit;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+@keyframes af-flow{to{stroke-dashoffset:-42}}
+@keyframes af-pulse{from{opacity:.18}to{opacity:.6}}
+@keyframes af-cell{from{stroke-opacity:.35}to{stroke-opacity:1}}
+@media (prefers-reduced-motion:reduce){.aflow *,.cell.aspected .cellbg{animation:none!important}}
+
+/* yoga and point tiles and detail pages */
+.ygrid a.card.yoga,.ptgrid a.card.point{display:block;color:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.ygrid a.card.yoga:hover,.ptgrid a.card.point:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgb(0 0 0 / 18%)}
+.card.yoga.dosha{border-left:4px solid #e0564f}.card.yoga.yoga{border-left:4px solid var(--accent)}
+.card .more{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;color:var(--accent)}
+.ptgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.ptgrid .stat-v{font-size:18px;font-weight:800;margin:4px 0}
+.cell.yoga-src .cellbg{fill:rgb(200 16 46 / 20%);stroke:var(--accent);stroke-width:2.5;animation:af-cell 1.2s ease-in-out infinite alternate}
+.ok{color:#2f9e5b;font-weight:600}.warn{color:#d0563f;font-weight:600}.chip.ok{border-color:#2f9e5b}.chip.warn{border-color:#d0563f}
+.checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:8px}
+.checks .card{margin:0}
+.checks .facts{grid-template-columns:minmax(0,42%) minmax(0,1fr)}
+.checks .facts dd{overflow-wrap:normal;word-break:normal}
+.checks h4{margin:0 0 6px}
+
+/* ṣaḍbala ratio chart */
+.ratio-chart{width:100%;height:auto;display:block}
+.rc-grid{stroke:var(--line);stroke-width:1}.rc-tick{font-size:11px;fill:var(--muted);text-anchor:middle}
+.rc-lab{font-size:13px;font-weight:700;fill:var(--ink);text-anchor:end}
+.rc-bar{opacity:.85;transform-box:fill-box;transform-origin:left;animation:rc-grow .9s cubic-bezier(.2,.8,.2,1) both}
+.rc-val{font-size:12px;font-weight:700;fill:var(--ink)}.rc-val.below{fill:#d0563f}
+.rc-cut{stroke:var(--accent);stroke-width:2;stroke-dasharray:5 5}.rc-cutlab{font-size:11.5px;font-weight:700;fill:var(--accent)}
+@keyframes rc-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.rc-bar{animation:none}}
+
+/* markers ring, curved nakshatra names, graha legend */
+.nkname{pointer-events:none;letter-spacing:.01em}
+.markring .mk-seg{opacity:.85;cursor:help;transition:opacity .2s}.markring .mk-seg:hover{opacity:1;filter:brightness(1.15)}
+.mk-pt{cursor:help;font-weight:800}.mk-pt-l{fill:var(--muted);font-weight:700;pointer-events:none}
+.badges{display:flex;flex-wrap:wrap;gap:4px}
+.badge{display:inline-block;padding:1px 7px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;font-weight:650;white-space:nowrap}
+.b-up{border-color:#2f9e5b;color:#2f9e5b}.b-down{border-color:#d0563f;color:#d0563f}.b-moola{border-color:#a78bfa;color:#7c5cf0}
+.b-own{border-color:#3e8ef7;color:#3e8ef7}.b-retro{border-color:#e0a030;color:#c58a1d}.b-comb{border-color:#e0564f;color:#e0564f}
+.b-varg{border-color:#3ED9E4;color:#139aa6}.b-soft{color:var(--muted)}
+.legend-card{margin-top:14px}
+
+/* small-multiple bar charts (aspects) */
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:8px 8px 4px;background:var(--panel)}
+.mini-t{font-size:12.5px;font-weight:750;margin:0 0 2px 4px}
+.mini-bars{width:100%;height:auto;display:block}
+.mb-grid{stroke:var(--line);stroke-width:.8}.mb-tick{font-size:8.5px;fill:var(--muted);text-anchor:end}
+.mb-lab{font-size:9.5px;fill:var(--ink);text-anchor:middle;font-weight:650}
+.mb-bar{transform-box:fill-box;transform-origin:bottom;animation:mb-grow .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0ms);stroke:rgb(0 0 0 / 35%);stroke-width:.6}
+.mb-bar:hover{filter:brightness(1.2)}
+@keyframes mb-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.mb-bar{animation:none}}
+
+/* bhāva chalit overlays */
+.chalit-ring .chalit-bg{fill:rgb(109 79 216 / 8%);stroke:var(--accent2);stroke-opacity:.55}
+.chalit-ring .shifted{text-decoration:underline}
+.chalit-circle{width:100%;height:auto;display:block}
+.cc-madhya{stroke:var(--accent2);stroke-dasharray:3 4;stroke-opacity:.6}
+.cc-shift{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:4 3;animation:af-pulse 1.2s ease-in-out infinite alternate}
+
+/* bhāva depth: connection map and bearing meter */
+.bmap{width:100%;height:auto;display:block}
+.bm-edge{stroke-width:2.5;stroke-dasharray:8 6;opacity:.75;animation:af-flow 1.2s linear infinite;animation-delay:var(--d,0ms)}
+.bm-elab{font-size:10.5px;fill:var(--muted);text-anchor:middle;font-weight:650;paint-order:stroke;stroke:var(--panel-solid);stroke-width:4px}
+.bm-node{stroke:rgb(0 0 0 / 35%);stroke-width:1.2;transition:transform .2s;transform-box:fill-box;transform-origin:center}
+a:hover .bm-node{transform:scale(1.12)}
+.bm-nlab{font-size:11px;font-weight:800;text-anchor:middle;fill:#111;pointer-events:none}
+.bm-core{fill:var(--accent)}
+.bm-halo{fill:none;stroke:var(--accent);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:bm-halo 1.8s ease-out infinite}
+@keyframes bm-halo{from{transform:scale(.85);opacity:.8}to{transform:scale(1.35);opacity:0}}
+.bm-clab{font-size:14px;font-weight:800;fill:#fff;text-anchor:middle}.bm-csub{font-size:11px;fill:#fff;text-anchor:middle}
+.meter{display:flex;height:12px;border-radius:999px;overflow:hidden;border:1px solid var(--line);margin:4px 0 8px}
+.meter .good{background:#2f9e5b}.meter .bad{background:#d0563f}
+.factors li{margin:2px 0}
+
+/* progression by revolutions */
+.revtl{width:100%;height:auto;display:block;cursor:crosshair}
+.rev-seg{stroke:var(--panel-solid);stroke-width:1;transition:opacity .2s}.rev-seg:hover{opacity:.75}
+.rev-sl{font-size:10px;font-weight:700;fill:#1b1b1b;text-anchor:middle;pointer-events:none}
+.rev-now{stroke:var(--accent);stroke-width:2.5;stroke-dasharray:4 3}
+.rev-move{fill:none;stroke-width:1.6;stroke-dasharray:5 5;opacity:.7;animation:af-flow 1s linear infinite}
+.rev-asp{stroke-width:1;opacity:.35;stroke-dasharray:2 4}
+
+/* numerology tiles, inclusion bars, Lo Shu grid */
+.ntiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:8px 0 14px}
+.ntile{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:3px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel);transition:transform .2s,border-color .2s,box-shadow .2s}
+.ntile:hover{transform:translateY(-2px);border-color:var(--accent2)}
+.ntile.open{grid-column:span 2;border-color:var(--accent);box-shadow:0 10px 26px rgb(0 0 0 / 14%)}
+.ntile.small .n-num{font-size:24px}
+.n-num{font-size:34px;font-weight:850;line-height:1;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;animation:n-pop .6s cubic-bezier(.2,.9,.3,1.3) both}
+.n-role{font-size:12.5px;font-weight:700}.n-comp{font-size:11.5px;color:var(--muted)}
+.n-detail{margin-top:6px;font-size:13px;line-height:1.45;animation:n-pop .35s ease both}.n-detail p{margin:4px 0}
+.incl{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;align-items:end;height:130px}
+.incl-c{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
+.incl-c i{display:block;width:70%;background:linear-gradient(180deg,var(--accent2),var(--accent));border-radius:6px 6px 2px 2px;animation:mb-grow .7s cubic-bezier(.2,.8,.2,1) both;transform-origin:bottom}
+.incl-c small{color:var(--muted);font-size:11px}
+.loshu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:10px auto}
+.ls-c{aspect-ratio:1;border-radius:14px;border:1px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;animation:n-pop .5s ease both;animation-delay:calc(var(--i) * 60ms)}
+.ls-c.on{border-style:solid;border-color:var(--accent2);background:rgb(109 79 216 / 10%)}
+.ls-c b{font-size:22px;letter-spacing:.06em}.ls-c small{position:absolute;bottom:4px;right:8px;color:var(--muted);font-size:10px}
+@keyframes n-pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.n-num,.n-detail,.ls-c,.incl-c i{animation:none}}
+
+/* Human Design standard chart */
+.hd-std{display:grid;grid-template-columns:96px minmax(360px,620px) 96px;justify-content:center;gap:18px;align-items:start}
+.hd-props{grid-column:1/-1}.hd-props .facts{grid-template-columns:repeat(auto-fill,minmax(150px,auto) minmax(150px,1fr));column-gap:22px}
+.hd-col{display:flex;flex-direction:column;gap:3px;padding-top:40px}
+.hd-col-t{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:4px}
+.hd-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 9px;border-radius:6px;font-size:14px;animation:n-pop .45s ease both;animation-delay:calc(var(--i) * 45ms)}
+.hd-col.design .hd-row{background:#ecdcd2;color:#5a2a2a}.hd-col.personality .hd-row{background:#2b2b2e;color:#f2f2f2}
+.hd-gl{font-size:16px;width:20px;text-align:center}
+.hd-mid{position:relative}.hd-arrows{display:flex;justify-content:space-between;font-size:26px;font-weight:800;padding:0 30px;height:30px}
+.hd-arrows div{display:flex;flex-direction:column;line-height:.9}.hd-arrow{cursor:help}.hd-arrow.left{color:#c8102e}
+.hd-arrows div:last-child .hd-arrow{color:var(--ink)}
+.hdgraph{width:100%;height:auto;display:block}
+.hd-body{fill:var(--ink);opacity:.07}.hd-body path{fill:var(--ink)}
+.hd-ch-out{fill:none;stroke:var(--ink);stroke-width:8;stroke-opacity:.55}.hd-ch-in{fill:none;stroke:#fff;stroke-width:5.4}
+.hd-ch-half{fill:none;stroke-width:5.4;stroke-linecap:butt;stroke-dashoffset:0;animation:hd-draw 1.2s ease both}
+.hd-center{stroke:var(--ink);stroke-width:2;stroke-linejoin:round;cursor:help;transition:filter .2s}.hd-center:hover{filter:brightness(1.08)}
+.hd-gate{font-size:9.6px;font-weight:700;text-anchor:middle;fill:#222;pointer-events:none}.hd-gate.on{fill:#fff}
+@keyframes hd-draw{from{stroke-dasharray:0 100}}
+@media (max-width:900px){.hd-std{grid-template-columns:70px minmax(0,1fr) 70px}}
+@media (prefers-reduced-motion:reduce){.hd-row,.hd-ch-half{animation:none}}
+
+/* ṣaḍbala ratio cell: scale 0–2, a dotted cut-off at 1.0 */
+.ratio-bar{position:relative;overflow:visible}.ratio-bar i{background:#2f9e5b}.ratio-bar.below i{background:#d0563f}
+.ratio-bar .cut{position:absolute;left:50%;top:-4px;bottom:-4px;border-left:2px dotted var(--ink);opacity:.7}
+.mandala-t{margin:10px 0 4px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+/* concentric South Indian squares (chalit, progression) */
+.concentric{width:100%;height:auto;display:block}
+.cc-frame{fill:var(--cell);stroke:var(--ink);stroke-opacity:.55;stroke-width:1.5}
+.cc-outer .cellbg{fill:rgb(109 79 216 / 6%);stroke:var(--ink);stroke-opacity:.4}
+.cc-outer:hover .cellbg,.cc-inner:hover .cellbg{fill:var(--chip2)}
+.cc-inner .cellbg{stroke-width:1.2}
+
+/* daśā zoom */
+.dzoom{width:100%;height:auto;display:block}
+.dz-lab{font-size:12px;font-weight:750;fill:var(--ink);text-anchor:end}
+.dz-row{animation:dz-in .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--k) * 70ms);transform-box:fill-box;transform-origin:center top}
+.dz-bar{stroke:rgb(0 0 0 / 30%);stroke-width:.8;cursor:pointer;transition:opacity .25s,filter .25s}
+.dz-bar:hover{filter:brightness(1.12)}.dz-bar.dim{opacity:.42}.dz-bar.sel{stroke:var(--accent);stroke-width:2.6}
+.dz-name{text-anchor:middle;dominant-baseline:central;font-weight:750;pointer-events:none}
+.dz-bracket{opacity:.16;animation:dz-in .5s ease both}
+.dz-now{stroke:var(--accent);stroke-width:2;stroke-dasharray:3 3}
+.dz-date{font-size:10px;fill:var(--muted)}
+.dz-chain{flex-wrap:wrap;margin-bottom:8px}.dz-chain button.link{all:unset;cursor:pointer;display:flex;flex-direction:column;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
+.dz-chain button.link:hover{border-color:var(--accent)}
+@keyframes dz-in{from{opacity:0;transform:scaleY(.4)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.dz-row,.dz-bracket{animation:none}}
+
+.rd{font-size:12.5px;line-height:1.4;display:block;min-width:240px;max-width:420px;margin-top:4px}
+
+/* additional aspects (retrograde shadow ʳ, parivartana ⇄): dotted underline so they read as optional */
+.extramark{text-decoration:underline dotted;text-underline-offset:2px}
+.aflow .af.extra{stroke-dasharray:2 6;stroke-width:2.2;opacity:.85}
+.aflow .af-target.extra{opacity:.15}
