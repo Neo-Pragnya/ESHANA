@@ -407,3 +407,11 @@ a:hover .bm-node{transform:scale(1.12)}
 .mt-sum .s-dig{background:#f5c518}.mt-sum .s-fr{background:#4ad08a}.mt-sum .s-neu{background:var(--muted);opacity:.5}.mt-sum .s-bad{background:#e5484d}
 @keyframes mt-in{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.mt-c,.mt-sum i{animation:none}}
+/* ── dashas ── */
+.dz-tabs .tabs{margin:0 0 12px}
+.dz-tabs .tab{transition:background .2s,transform .2s}.dz-tabs .tab:hover{transform:translateY(-1px)}
+.dz-bar.dz-sign{stroke:rgb(0 0 0 / 22%)}
+.dz-glyph{font-weight:800}
+.dz-running{flex-wrap:wrap}.dz-running .link{display:flex;flex-direction:column;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
+.dz-conv summary .ep{margin-left:6px}
+@media (prefers-reduced-motion: reduce){.dz-row,.dz-bracket,.dz-tabs .tab{animation:none;transition:none}}

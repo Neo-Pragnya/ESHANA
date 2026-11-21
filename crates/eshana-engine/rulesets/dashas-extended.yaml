@@ -1,0 +1,92 @@
+# Rule pack: vedic.dashas_extended@0.1
+# Tables for the daśā systems computed by crates/eshana-engine/src/dashas_ext.rs (ADR-012: tables are data).
+#
+# Sources: Bṛhat Parāśara Horā Śāstra (daśā chapters: Aṣṭottarī, Ṣoḍaśottarī, Kālachakra, Nārāyaṇa, Śūla);
+# K. N. Rao, "Predicting through Jaimini's Chara Dasha" (Chara daśā); the Kālachakra pada rows as tabulated from
+# BPHS (savya: Aśvinī and Bharaṇī types, apasavya: Rohiṇī and Mṛgaśirā types). Convention choices settled against
+# a published reference chart are named here and in docs/guides/dashas.md; a different school is a different
+# pack, never a silent change.
+id: vedic.dashas_extended
+version: "0.1"
+
+# Length of the daśā year in days for every system in this pack. 365.2425 (the mean Gregorian year) reproduces
+# the period starts of the published reference chart to the day for the sign-based systems.
+year_days: 365.2425
+
+# ── Aṣṭottarī (108 years) ──────────────────────────────────────────────────────────────────────────────────────
+# Lords in order with years, and the nakṣatras each rules (28-nakṣatra scheme counted from Ārdrā). Indices:
+# 0 = Aśvinī … 26 = Revatī, 27 = Abhijit (the last quarter of Uttarāṣāḍhā to the first 1/15 of Śravaṇa,
+# 276°40′–280°53′20″).
+ashtottari:
+  lords:
+    - {lord: Sun,     years: 6,  nakshatras: [5, 6, 7, 8]}
+    - {lord: Moon,    years: 15, nakshatras: [9, 10, 11]}
+    - {lord: Mars,    years: 8,  nakshatras: [12, 13, 14, 15]}
+    - {lord: Mercury, years: 17, nakshatras: [16, 17, 18]}
+    - {lord: Saturn,  years: 10, nakshatras: [19, 20, 27, 21]}
+    - {lord: Jupiter, years: 19, nakshatras: [22, 23, 24]}
+    - {lord: Rahu,    years: 12, nakshatras: [25, 26, 0, 1]}
+    - {lord: Venus,   years: 21, nakshatras: [2, 3, 4]}
+  applicability: >-
+    BPHS: used when Rāhu is in a kendra or trikoṇa from the lord of the lagna, Rāhu not being in the lagna. A
+    second rule from later texts: birth in Kṛṣṇa pakṣa by day or in Śukla pakṣa by night.
+
+# ── Ṣoḍaśottarī (116 years) ───────────────────────────────────────────────────────────────────────────────────
+# Lords in order; the janma nakṣatra counted from Puṣya (1 = Puṣya), taken mod 8, picks the starting lord.
+shodashottari:
+  lords:
+    - {lord: Sun,     years: 11}
+    - {lord: Mars,    years: 12}
+    - {lord: Jupiter, years: 13}
+    - {lord: Saturn,  years: 14}
+    - {lord: Ketu,    years: 15}
+    - {lord: Moon,    years: 16}
+    - {lord: Mercury, years: 17}
+    - {lord: Venus,   years: 18}
+  first_nakshatra: 7
+  applicability: >-
+    BPHS: used when the lagna is in the Sun's horā in Kṛṣṇa pakṣa or in the Moon's horā in Śukla pakṣa (horā:
+    odd signs Sun then Moon, even signs Moon then Sun, 15° each).
+
+# ── Sign-based (Jaimini) systems ───────────────────────────────────────────────────────────────────────────────
+# Savya signs (Meṣa, Vṛṣabha, Mithuna, Tulā, Vṛścika, Dhanu); the others are apasavya.
+savya_signs: [0, 1, 2, 6, 7, 8]
+# Co-lords of Vṛścika (7) and Kumbha (10), the graha first.
+co_lords:
+  7: [mars, ketu]
+  10: [saturn, rahu]
+# Śūla daśā: every sign runs this many years.
+shoola_years: 9
+
+# ── Kālachakra ─────────────────────────────────────────────────────────────────────────────────────────────────
+# Years of each sign (0 = Meṣa).
+kalachakra_years: [7, 16, 9, 21, 5, 9, 16, 7, 10, 4, 4, 10]
+# Nine signs per pada in daśā order (pada 1 to 4). Savya rows: the first sign is the deha, the ninth the jīva.
+# Apasavya rows: the first sign is the jīva, the ninth the deha.
+kalachakra:
+  # Aśvinī type (Aśvinī, Punarvasu, Hasta, Mūla, Pūrva Bhādrapadā) and Kṛttikā type with the same rows (Kṛttikā,
+  # Āśleṣā, Svātī, Uttarāṣāḍhā, Revatī)
+  savya_ashvini:
+    - [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    - [9, 10, 11, 7, 6, 5, 3, 4, 2]
+    - [1, 0, 11, 10, 9, 8, 0, 1, 2]
+    - [3, 4, 5, 6, 7, 8, 9, 10, 11]
+  # Bharaṇī type: Bharaṇī, Puṣya, Citrā, Pūrvāṣāḍhā, Uttara Bhādrapadā
+  savya_bharani:
+    - [7, 6, 5, 3, 4, 2, 1, 0, 11]
+    - [10, 9, 8, 0, 1, 2, 3, 4, 5]
+    - [6, 7, 8, 9, 10, 11, 7, 6, 5]
+    - [3, 4, 2, 1, 0, 11, 10, 9, 8]
+  # Rohiṇī type (Rohiṇī, Maghā, Viśākhā, Śravaṇa) and Ārdrā type with the same rows (Ārdrā, Uttara Phalgunī,
+  # Jyeṣṭhā, Śatabhiṣā)
+  apasavya_rohini:
+    - [8, 9, 10, 11, 0, 1, 2, 4, 3]
+    - [5, 6, 7, 11, 10, 9, 8, 7, 6]
+    - [5, 4, 3, 2, 1, 0, 8, 9, 10]
+    - [11, 0, 1, 2, 4, 3, 5, 6, 7]
+  # Mṛgaśirā type: Mṛgaśirā, Pūrva Phalgunī, Anurādhā, Dhaniṣṭhā
+  apasavya_mrigashira:
+    - [11, 10, 9, 8, 7, 6, 5, 4, 3]
+    - [2, 1, 0, 8, 9, 10, 11, 0, 1]
+    - [2, 4, 3, 5, 6, 7, 11, 10, 9]
+    - [8, 7, 6, 5, 4, 3, 2, 1, 0]
