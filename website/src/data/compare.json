@@ -450,14 +450,14 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
    "provider_version": "0.1.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
-    "vedic.parashari@0.1"
+    "vedic.parashari@0.2"
    ],
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
@@ -470,19 +470,19 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
    "provider_version": "0.1.0",
    "rulesets": [
     "ayanamsha-fagan_bradley@0.1",
-    "vedic.parashari@0.1"
+    "vedic.parashari@0.2"
    ],
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "summary": {
    "changes": 29,
    "sign_changes": 0
@@ -575,7 +575,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -592,7 +592,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -603,7 +603,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": null
   },
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "summary": {
    "changes": 6,
    "sign_changes": 0
@@ -968,7 +968,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -987,7 +987,7 @@
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date",
     "western system with a sidereal zodiac: a Western sidereal variant"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -999,7 +999,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": null
   },
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "summary": {
    "changes": 24,
    "sign_changes": 10

@@ -15,18 +15,16 @@ pip install eshana
 eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 -o chart.html
 ```
 
-`chart.html` is one self-contained file:
+`chart.html` is one self-contained, interactive chart studio. It opens offline and prints cleanly. It includes:
 
-- the Panchang chakra;
-- South and North Indian charts;
-- divisional charts (D3 to D12);
-- Vimśottarī daśā;
-- a Western wheel with aspects;
-- a Human Design BodyGraph;
-- numerology;
-- full provenance.
+- the Panchang Chakra wheel, with every graha placed by exact degree in its nakshatra, pada and navāṃśa;
+- layers for drishti, rāśi drishti, Western aspects, ārūḍhas, aṣṭakavarga and animated transits;
+- South and North Indian charts for every varga, D1 to D60;
+- Vimśottarī (to five levels) and Yoginī daśā timelines;
+- pañcāṅga, strength, aṣṭakavarga, KP, Jaimini, yogas and doshas, and Sāḍe Sātī;
+- the Western wheel, progressions, a Human Design BodyGraph, numerology and compatibility.
 
-It opens offline and prints cleanly.
+Every table comes from versioned YAML rule packs, and each result names its pack.
 
 ```python
 from eshana import ChartEngine, Context
@@ -48,7 +46,7 @@ Accuracy is measured, not promised:
 - The default `analytic` provider needs no data files. It is good to tens of arc-seconds for the Sun, Moon and inner
   planets, and to arc-minutes for Jupiter and Saturn.
 
-A suite of about 970 checks compares whole birth charts against:
+A suite of about 1,300 checks compares whole birth charts against:
 
 - the Swiss Ephemeris, as an offline oracle;
 - the official definition of the Lahiri ayanāṃśa;

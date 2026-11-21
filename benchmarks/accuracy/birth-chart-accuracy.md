@@ -95,4 +95,24 @@ Printed input: November 20, 2026, 7:01 AM EST (-05:00), Fredericksburg, Virginia
 | mean_node | 300.808 Kumbha · Dhanishta 3 | -7.3 | -7.3 |
 | south_node | 120.808 Simha · Magha 1 | -7.3 | -7.3 |
 
+## Pañcāṅga, ingresses and special lagnas
+
+- `analytic`: worst rise/set difference vs Swiss (upper limb, latitude-normalised): sunrise 3.5 s, sunset 3.5 s, moonrise 11.0 s, moonset 10.8 s
+  - sun sidereal ingresses 1990-2030: 480 found vs 480 Swiss; worst 0.16 h, median 0.04 h
+  - jupiter sidereal ingresses 1990-2030: 60 found vs 60 Swiss; worst 28.53 h, median 4.67 h
+  - saturn sidereal ingresses 1990-2030: 38 found vs 38 Swiss; worst 83.22 h, median 25.37 h
+- `spk`: worst rise/set difference vs Swiss (upper limb, latitude-normalised): sunrise 3.3 s, sunset 3.3 s, moonrise 10.2 s, moonset 10.3 s
+  - sun sidereal ingresses 1990-2030: 480 found vs 480 Swiss; worst 0.00 h, median 0.00 h
+  - jupiter sidereal ingresses 1990-2030: 60 found vs 60 Swiss; worst 0.03 h, median 0.00 h
+  - saturn sidereal ingresses 1990-2030: 38 found vs 38 Swiss; worst 0.05 h, median 0.01 h
+
+Special lagnas against PyJHora (Chennai 1996-12-07 10:34, centre-of-disc sunrise, Sun at birth):
+
+| lagna | PyJHora | ESHANA − PyJHora |
+|---|---|---:|
+| bhava_lagna | 24Cp23'46.37 | +1.90′ |
+| hora_lagna | 27Pi17'37.59 | +0.15′ |
+| ghati_lagna | 5Li53'11.23 | +0.89′ |
+
+
 Assumptions for each published source are recorded next to its numbers in [`accuracy/reference/published.json`](../../accuracy/reference/published.json).

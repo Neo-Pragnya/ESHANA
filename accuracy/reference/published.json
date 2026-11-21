@@ -18,21 +18,113 @@
         "Rahu matches the mean node (7 arcsec) and not the true node (65 arcsec), so the mean node is compared",
         "seconds are not printed: 07:01:00 is assumed"
       ],
-      "date": "2026-11-20", "time": "07:01", "utc_offset_minutes": -300, "lat": 38.3032, "lon": -77.4605,
+      "date": "2026-11-20",
+      "time": "07:01",
+      "utc_offset_minutes": -300,
+      "lat": 38.3032,
+      "lon": -77.4605,
       "node": "mean",
       "printed": {
-        "lagna":   {"full_deg": 213.947, "rashi": "Vrischika", "nakshatra": "Anuradha", "pada": 1},
-        "sun":     {"full_deg": 213.943, "rashi": "Vrischika", "nakshatra": "Anuradha", "pada": 1},
-        "moon":    {"full_deg": 339.176, "rashi": "Meena", "nakshatra": "Uttara Bhadrapada", "pada": 2},
-        "mars":    {"full_deg": 123.503, "rashi": "Simha", "nakshatra": "Magha", "pada": 2},
-        "mercury": {"full_deg": 194.471, "rashi": "Tula", "nakshatra": "Swati", "pada": 3},
-        "jupiter": {"full_deg": 121.98, "rashi": "Simha", "nakshatra": "Magha", "pada": 1},
-        "venus":   {"full_deg": 179.445, "rashi": "Kanya", "nakshatra": "Chitra", "pada": 2},
-        "saturn":  {"full_deg": 344.073, "rashi": "Meena", "nakshatra": "Uttara Bhadrapada", "pada": 4, "retrograde": true},
-        "mean_node": {"full_deg": 300.808, "rashi": "Kumbha", "nakshatra": "Dhanishta", "pada": 3},
-        "south_node": {"full_deg": 120.808, "rashi": "Simha", "nakshatra": "Magha", "pada": 1}
+        "lagna": {
+          "full_deg": 213.947,
+          "rashi": "Vrischika",
+          "nakshatra": "Anuradha",
+          "pada": 1
+        },
+        "sun": {
+          "full_deg": 213.943,
+          "rashi": "Vrischika",
+          "nakshatra": "Anuradha",
+          "pada": 1
+        },
+        "moon": {
+          "full_deg": 339.176,
+          "rashi": "Meena",
+          "nakshatra": "Uttara Bhadrapada",
+          "pada": 2
+        },
+        "mars": {
+          "full_deg": 123.503,
+          "rashi": "Simha",
+          "nakshatra": "Magha",
+          "pada": 2
+        },
+        "mercury": {
+          "full_deg": 194.471,
+          "rashi": "Tula",
+          "nakshatra": "Swati",
+          "pada": 3
+        },
+        "jupiter": {
+          "full_deg": 121.98,
+          "rashi": "Simha",
+          "nakshatra": "Magha",
+          "pada": 1
+        },
+        "venus": {
+          "full_deg": 179.445,
+          "rashi": "Kanya",
+          "nakshatra": "Chitra",
+          "pada": 2
+        },
+        "saturn": {
+          "full_deg": 344.073,
+          "rashi": "Meena",
+          "nakshatra": "Uttara Bhadrapada",
+          "pada": 4,
+          "retrograde": true
+        },
+        "mean_node": {
+          "full_deg": 300.808,
+          "rashi": "Kumbha",
+          "nakshatra": "Dhanishta",
+          "pada": 3
+        },
+        "south_node": {
+          "full_deg": 120.808,
+          "rashi": "Simha",
+          "nakshatra": "Magha",
+          "pada": 1
+        }
       },
-      "printed_houses_whole_sign": {"lagna": 1, "sun": 1, "moon": 5, "mars": 10, "mercury": 12, "jupiter": 10, "venus": 11, "saturn": 5, "mean_node": 4, "south_node": 10}
+      "printed_houses_whole_sign": {
+        "lagna": 1,
+        "sun": 1,
+        "moon": 5,
+        "mars": 10,
+        "mercury": 12,
+        "jupiter": 10,
+        "venus": 11,
+        "saturn": 5,
+        "mean_node": 4,
+        "south_node": 10
+      }
+    }
+  ],
+  "pyjhora_special_lagnas": [
+    {
+      "id": "pyjhora-chennai-1996-12-07",
+      "url": "https://github.com/naturalstupid/PyJHora (src/jhora/tests/pvr_tests.py)",
+      "retrieved": "2026-11-20",
+      "printed_input": "1996-12-07 10:34:00, Chennai 13.0878 N 80.2785 E, UTC+5:30, Lahiri",
+      "date": "1996-12-07",
+      "time": "10:34",
+      "utc_offset_minutes": 330,
+      "lat": 13.0878,
+      "lon": 80.2785,
+      "conventions": {
+        "sunrise": "centre_unrefracted",
+        "special_lagna_sun": "birth"
+      },
+      "assumptions": [
+        "the test file states its values were checked against the JHora book examples; the sunrise and Sun conventions were identified by comparing both alternatives and are recorded here"
+      ],
+      "printed": {
+        "bhava_lagna": "24Cp23'46.37",
+        "hora_lagna": "27Pi17'37.59",
+        "ghati_lagna": "5Li53'11.23"
+      },
+      "tolerance_arcmin": 3
     }
   ]
 }

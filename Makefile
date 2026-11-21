@@ -62,9 +62,15 @@ diagrams:
 reports: build-release
 	mkdir -p dist
 	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
-	  --name "Example Person" --place "New Delhi, India" -o examples/reports/example-birth-chart.html
+	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
+	  -o examples/reports/example-birth-chart.html
+	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
+	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
+	  --partner 1992-08-20,09:15,Asia/Kolkata,19.076,72.8777 --title "Compatibility example" --icons glyph \
+	  -o examples/reports/example-compatibility.html
 	.venv/bin/eshana-report --date 1990-05-15 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 --name "Example Person" \
-	  --place "New Delhi, India (time unknown)" --title "Unknown birth time" -o examples/reports/example-unknown-time.html
+	  --place "New Delhi, India (time unknown)" --title "Unknown birth time" --reference 2026-11-21T00:00:00Z \
+	  -o examples/reports/example-unknown-time.html
 	.venv/bin/eshana-report --date 1985-11-03 --time 06:45 --tz Europe/London --lat 51.5074 --lon=-0.1278 \
 	  --systems western,numerology --name "Sample Western" --place "London, UK" --theme light \
 	  -o examples/reports/example-western.html

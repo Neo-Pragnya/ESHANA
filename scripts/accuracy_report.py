@@ -100,9 +100,63 @@ def write(res, tol) -> str:
               "| source | what is compared | result |", "|---|---|---|",
               "| Calendar Reform Committee (1955) | Lahiri = 23°15′00″ on 1956-03-21 0h | within 3″ (test `test_lahiri_definition_1956`) |",
               "| ProKerala, sidereal planet positions, read 2026-11-20 | 10 grahas + lagna: degree, rashi, nakshatra, pada, retrograde, house | all agree within the stated tolerances (test `test_prokerala_snapshot`) |",
-              ""] + prokerala_table() + ["", "Assumptions for each published source are recorded next to its numbers in "
+              ""] + prokerala_table() + [""] + feature_tables() + ["", "Assumptions for each published source are recorded next to its numbers in "
               "[`accuracy/reference/published.json`](../../accuracy/reference/published.json).", ""]
     return "\n".join(lines)
+
+
+def feature_tables() -> list:
+    """Measured worst cases of the Vedic-feature checks: rise/set and ingresses against Swiss, special lagnas
+    against PyJHora."""
+    import math
+    ref = lib.load("swiss_charts.json")
+    out = ["## Pañcāṅga, ingresses and special lagnas", ""]
+    for prov, spk in lib.providers():
+        worst = {k: 0.0 for k in ("sunrise", "sunset", "moonrise", "moonset")}
+        for row in ref["charts"]:
+            if row["range"] != "analytic":
+                continue
+            req = {"op": "panchanga", "chart": {"when": {"date": row["date"], "time": "12:00", "timezone": row["timezone"]},
+                   "place": {"latitude": row["lat"], "longitude": row["lon"]},
+                   "config": {"provider": prov, "zodiac": "sidereal", "ayanamsha": "lahiri"}}}
+            if spk:
+                req["chart"]["spk_path"] = spk
+            p = lib.run(req)["panchanga"]
+            for k in worst:
+                r, g = row["rise_set"].get(k), p.get(k)
+                if r and g and abs(g["jd_ut"] - r) < 0.5:
+                    worst[k] = max(worst[k], abs(g["jd_ut"] - r) * 86400 * math.cos(math.radians(row["lat"])))
+        out.append(f"- `{prov}`: worst rise/set difference vs Swiss (upper limb, latitude-normalised): "
+                   + ", ".join(f"{k} {v:.1f} s" for k, v in worst.items()))
+        for body in ("sun", "jupiter", "saturn"):
+            req = {"op": "ingresses", "body": body, "start_utc": "1990-01-01T00:00:00Z", "end_utc": "2030-01-01T00:00:00Z",
+                   "config": {"provider": prov, "zodiac": "sidereal", "ayanamsha": "lahiri"}}
+            if spk:
+                req["spk_path"] = spk
+            got = lib.run(req)["ingresses"]
+            diffs = []
+            for r in ref["ingresses"][body]:
+                same = [abs(g["jd_ut"] - r["jd_ut"]) for g in got if g["to_sign"] == r["to_sign"] and g["from_sign"] == r["from_sign"]]
+                if same:
+                    diffs.append(min(same) * 24)
+            out.append(f"  - {body} sidereal ingresses 1990-2030: {len(got)} found vs {len(ref['ingresses'][body])} Swiss; "
+                       f"worst {max(diffs):.2f} h, median {statistics.median(diffs):.2f} h")
+    out += ["", "Special lagnas against PyJHora (Chennai 1996-12-07 10:34, centre-of-disc sunrise, Sun at birth):", ""]
+    pub = lib.load("published.json")
+    for ex in pub.get("pyjhora_special_lagnas", []):
+        req = {"op": "panchanga", "chart": {"when": {"date": ex["date"], "time": ex["time"], "utc_offset_minutes": ex["utc_offset_minutes"]},
+               "place": {"latitude": ex["lat"], "longitude": ex["lon"]}, "config": {"zodiac": "sidereal", "ayanamsha": "lahiri"},
+               "sunrise": ex["conventions"]["sunrise"], "special_lagna_sun": ex["conventions"]["special_lagna_sun"]}}
+        sl = lib.run(req)["panchanga"]["special_lagnas"]
+        signs = {"Ar": 0, "Ta": 1, "Ge": 2, "Cn": 3, "Le": 4, "Vi": 5, "Li": 6, "Sc": 7, "Sg": 8, "Cp": 9, "Aq": 10, "Pi": 11}
+        import re
+        out += ["| lagna | PyJHora | ESHANA − PyJHora |", "|---|---|---:|"]
+        for k, v in ex["printed"].items():
+            d, sg, mi, se = re.match(r"(\d+)([A-Za-z]{2})(\d+)'([\d.]+)", v).groups()
+            want = signs[sg] * 30 + int(d) + int(mi) / 60 + float(se) / 3600
+            out.append(f"| {k} | {v} | {lib.adiff(sl[k]['longitude_deg'], want) * 60:+.2f}′ |")
+    out.append("")
+    return out
 
 
 def prokerala_table() -> list:

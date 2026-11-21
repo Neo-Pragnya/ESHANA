@@ -24,6 +24,10 @@ capabilities:
   - { id: python-parity, title: "The Python facade and the CLI return the same JSON", dimension: interop, blocker: true }
   - { id: privacy, title: "Computation is local: no files written, no network needed, birth data not echoed outside the result", dimension: privacy, blocker: true }
   - { id: report, title: "eshana-report writes one self-contained HTML file with every chart; unknown inputs are listed as not computed, never guessed", dimension: usability, blocker: true }
+  - { id: vedic-features, title: "Vedic features from YAML rule packs: strength, drishti, ashtakavarga, Jaimini, KP, yogas and doshas, Sade Sati, vargas to D60, dasha to five levels, Yogini", dimension: core, blocker: true }
+  - { id: panchanga, title: "Panchanga: five limbs with end times, sunrise and moonrise under a stated convention, hora, choghadiya, rahu kalam, special lagnas, tara bala", dimension: core, blocker: true }
+  - { id: matching, title: "Ashtakoota compatibility out of 36 with manglik flags, from a named rule pack", dimension: core, blocker: true }
+  - { id: ephemeris-events, title: "Ephemeris tables for animation and progressions; sign ingresses including retrograde re-entries", dimension: core, blocker: true }
   - { id: schema, title: "Results validate against the published JSON Schema", dimension: interop, blocker: false }
 
 surface:
@@ -38,4 +42,9 @@ surface:
   - eshana doctor
   - eshana explain
   - eshana schema
+  - eshana panchanga
+  - eshana matching
+  - eshana ephemeris
+  - eshana ingresses
+  - eshana rulesets
   - eshana-report

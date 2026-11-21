@@ -7,6 +7,9 @@ description: "Versioned packs named for traditions; code for algorithms in 0.1, 
 
 **Status.** Accepted for 0.1. A data-driven format is planned (`RULE-01`).
 
+> [!NOTE]
+> **Amended by [ADR-012](012-yaml-rule-packs.md) (2026-11-21):** data-driven rule packs are YAML.
+
 ## Decision
 
 Rule packs are versioned (`id@version`), named for the tradition and convention (never for the software), and carry a source

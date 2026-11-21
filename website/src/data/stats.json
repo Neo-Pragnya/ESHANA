@@ -1,34 +1,34 @@
 {
  "accuracy_test_functions": 9,
- "adrs": 11,
+ "adrs": 12,
  "ayanamshas": [
   "lahiri",
   "raman",
   "krishnamurti",
   "fagan_bradley"
  ],
- "capabilities": 18,
- "doc_pages": 48,
+ "capabilities": 22,
+ "doc_pages": 53,
  "error_codes": 11,
  "expansion": "Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations",
- "python_tests": 27,
+ "python_tests": 33,
  "reference_charts": 44,
  "rulesets": [
-  "vedic.parashari@0.1",
+  "vedic.parashari@0.2",
   "western.basic@0.1",
   "human_design.basic@0.1",
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 105,
- "scenarios": 79,
- "tasks": 95,
+ "rust_tests": 120,
+ "scenarios": 98,
+ "tasks": 125,
  "tasks_by_status": {
-  "implemented": 4,
-  "proposed": 36,
+  "implemented": 3,
+  "proposed": 50,
   "released": 1,
-  "verified": 54
+  "verified": 71
  },
  "tzdb_version": "2026f",
- "version": "0.1.0"
+ "version": "0.2.0"
 }

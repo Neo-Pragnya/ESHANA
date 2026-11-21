@@ -1,0 +1,141 @@
+# Rule pack: vedic.yogas@0.2
+# Yogas and doshas as declarative conditions. Each entry states WHAT is checked; ESHANA reports whether the
+# condition holds and which grahas satisfied it. It never states what a yoga "means" (that is interpretation).
+#
+# Condition language (all houses are whole-sign counts, 1 = the reference sign itself):
+#   in_house:        {graha, from: lagna|moon|<graha>, houses: [..]}
+#   dignity:         {graha, any_of: [exalted, own, moolatrikona, debilitated]}
+#   same_sign:       [graha, graha, ...]
+#   occupied:        {from, houses: [..], min: n, exclude: [..]}      at least n grahas there (default 1)
+#   empty:           {from, houses: [..], exclude: [..]}              no grahas there
+#   lords_conjoined: {houses_a: [..], houses_b: [..], from: lagna}    a lord of a group shares a sign with a
+#                                                                     different lord of the other group
+#   lord_in_house:   {house: n, from: lagna, houses: [..]}            the lord of house n sits in one of `houses`
+#   between_nodes:   {}                                               all seven grahas on one side of the axis
+#   all_of / any_of: [conditions]      not: condition
+#   for_each_graha:  {grahas: [..], condition: <condition with graha "$g">}   one result per graha that matches
+id: vedic.yogas
+version: "0.2"
+yogas:
+  - id: ruchaka
+    name: Ruchaka (Pancha Mahapurusha)
+    category: pancha_mahapurusha
+    rule: "Mars in its own or exaltation sign, in a kendra (1, 4, 7, 10) from the lagna"
+    when: {all_of: [{dignity: {graha: mars, any_of: [own, exalted, moolatrikona]}}, {in_house: {graha: mars, from: lagna, houses: [1, 4, 7, 10]}}]}
+  - id: bhadra
+    name: Bhadra (Pancha Mahapurusha)
+    category: pancha_mahapurusha
+    rule: "Mercury in its own or exaltation sign, in a kendra from the lagna"
+    when: {all_of: [{dignity: {graha: mercury, any_of: [own, exalted, moolatrikona]}}, {in_house: {graha: mercury, from: lagna, houses: [1, 4, 7, 10]}}]}
+  - id: hamsa
+    name: Hamsa (Pancha Mahapurusha)
+    category: pancha_mahapurusha
+    rule: "Jupiter in its own or exaltation sign, in a kendra from the lagna"
+    when: {all_of: [{dignity: {graha: jupiter, any_of: [own, exalted, moolatrikona]}}, {in_house: {graha: jupiter, from: lagna, houses: [1, 4, 7, 10]}}]}
+  - id: malavya
+    name: Malavya (Pancha Mahapurusha)
+    category: pancha_mahapurusha
+    rule: "Venus in its own or exaltation sign, in a kendra from the lagna"
+    when: {all_of: [{dignity: {graha: venus, any_of: [own, exalted, moolatrikona]}}, {in_house: {graha: venus, from: lagna, houses: [1, 4, 7, 10]}}]}
+  - id: shasha
+    name: Shasha (Pancha Mahapurusha)
+    category: pancha_mahapurusha
+    rule: "Saturn in its own or exaltation sign, in a kendra from the lagna"
+    when: {all_of: [{dignity: {graha: saturn, any_of: [own, exalted, moolatrikona]}}, {in_house: {graha: saturn, from: lagna, houses: [1, 4, 7, 10]}}]}
+  - id: gaja_kesari
+    name: Gaja Kesari
+    category: lunar
+    rule: "Jupiter in a kendra (1, 4, 7, 10) from the Moon"
+    when: {in_house: {graha: jupiter, from: moon, houses: [1, 4, 7, 10]}}
+  - id: budha_aditya
+    name: Budha-Aditya
+    category: conjunction
+    rule: "Sun and Mercury in the same sign"
+    when: {same_sign: [sun, mercury]}
+  - id: chandra_mangala
+    name: Chandra-Mangala
+    category: conjunction
+    rule: "Moon and Mars in the same sign"
+    when: {same_sign: [moon, mars]}
+  - id: guru_chandala
+    name: Guru-Chandala
+    category: conjunction
+    rule: "Jupiter and Rahu in the same sign"
+    when: {same_sign: [jupiter, rahu]}
+  - id: sunapha
+    name: Sunapha
+    category: lunar
+    rule: "At least one graha other than the Sun and the nodes in the 2nd from the Moon"
+    when: {occupied: {from: moon, houses: [2], exclude: [sun, rahu, ketu]}}
+  - id: anapha
+    name: Anapha
+    category: lunar
+    rule: "At least one graha other than the Sun and the nodes in the 12th from the Moon"
+    when: {occupied: {from: moon, houses: [12], exclude: [sun, rahu, ketu]}}
+  - id: durudhara
+    name: Durudhara
+    category: lunar
+    rule: "Grahas other than the Sun and the nodes in both the 2nd and the 12th from the Moon"
+    when: {all_of: [{occupied: {from: moon, houses: [2], exclude: [sun, rahu, ketu]}}, {occupied: {from: moon, houses: [12], exclude: [sun, rahu, ketu]}}]}
+  - id: kemadruma
+    name: Kemadruma
+    category: lunar
+    rule: "No graha other than the Sun and the nodes in the 2nd or 12th from the Moon"
+    when: {empty: {from: moon, houses: [2, 12], exclude: [sun, rahu, ketu]}}
+  - id: raja_kendra_trikona
+    name: Raja yoga (kendra and trikona lords)
+    category: raja
+    rule: "A lord of a kendra (1, 4, 7, 10) shares a sign with a different lord of a trikona (1, 5, 9), from the lagna"
+    when: {lords_conjoined: {houses_a: [1, 4, 7, 10], houses_b: [1, 5, 9], from: lagna}}
+  - id: dhana
+    name: Dhana yoga
+    category: dhana
+    rule: "A lord of the 2nd or 11th shares a sign with a different lord of the 1st, 5th or 9th, from the lagna"
+    when: {lords_conjoined: {houses_a: [2, 11], houses_b: [1, 5, 9], from: lagna}}
+  - id: vipareeta_raja
+    name: Vipareeta Raja yoga
+    category: raja
+    rule: "The lord of the 6th, 8th or 12th sits in the 6th, 8th or 12th from the lagna"
+    when: {any_of: [{lord_in_house: {house: 6, from: lagna, houses: [6, 8, 12]}}, {lord_in_house: {house: 8, from: lagna, houses: [6, 8, 12]}}, {lord_in_house: {house: 12, from: lagna, houses: [6, 8, 12]}}]}
+  - id: lakshmi
+    name: Lakshmi yoga
+    category: dhana
+    rule: "The 9th lord in its own or exaltation sign, in a kendra or trikona from the lagna"
+    when: {all_of: [{lord_in_house: {house: 9, from: lagna, houses: [1, 4, 5, 7, 9, 10]}}, {lord_dignity: {house: 9, from: lagna, any_of: [own, exalted, moolatrikona]}}]}
+  - id: neecha_graha
+    name: Debilitated graha
+    category: dignity
+    rule: "A graha in its debilitation sign"
+    when: {for_each_graha: {grahas: [sun, moon, mars, mercury, jupiter, venus, saturn], condition: {dignity: {graha: $g, any_of: [debilitated]}}}}
+
+doshas:
+  - id: manglik_lagna
+    name: Manglik (from the lagna)
+    category: manglik
+    rule: "Mars in the 1st, 2nd, 4th, 7th, 8th or 12th from the lagna (cancellations are not applied)"
+    when: {in_house: {graha: mars, from: lagna, houses: [1, 2, 4, 7, 8, 12]}}
+  - id: manglik_moon
+    name: Manglik (from the Moon)
+    category: manglik
+    rule: "Mars in the 1st, 2nd, 4th, 7th, 8th or 12th from the Moon (cancellations are not applied)"
+    when: {in_house: {graha: mars, from: moon, houses: [1, 2, 4, 7, 8, 12]}}
+  - id: manglik_venus
+    name: Manglik (from Venus)
+    category: manglik
+    rule: "Mars in the 1st, 2nd, 4th, 7th, 8th or 12th from Venus (cancellations are not applied)"
+    when: {in_house: {graha: mars, from: venus, houses: [1, 2, 4, 7, 8, 12]}}
+  - id: kala_sarpa
+    name: Kala Sarpa
+    category: nodal
+    rule: "All seven grahas lie within the half of the zodiac from Rahu to Ketu, or from Ketu to Rahu"
+    when: {between_nodes: {}}
+  - id: grahana
+    name: Grahana (eclipse) dosha
+    category: nodal
+    rule: "The Sun or the Moon in the same sign as Rahu or Ketu"
+    when: {any_of: [{same_sign: [sun, rahu]}, {same_sign: [sun, ketu]}, {same_sign: [moon, rahu]}, {same_sign: [moon, ketu]}]}
+  - id: shrapit
+    name: Shrapit dosha
+    category: nodal
+    rule: "Saturn and Rahu in the same sign"
+    when: {same_sign: [saturn, rahu]}

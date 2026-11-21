@@ -27,7 +27,8 @@ const diff = (c: Any) => (c.changes as Any[]).filter((x) => x.kind === "position
 const interval = (uncertain.positions as Any[]).map((p) => ({ id: p.id, iv: p.longitude_interval_deg as number[], sign: p.sign.name }));
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 const reports = [
-  ["example-birth-chart.html", "Full birth chart", "Panchang chakra, South and North Indian charts, vargas, daśā, Western wheel, Human Design, numerology, provenance."],
+  ["example-birth-chart.html", "Chart studio", "Panchang Chakra with every point placed, drishti and transit layers, South/North Indian charts for D1–D60, daśā timelines, pañcāṅga, KP, Jaimini, yogas, aṣṭakavarga, Western, BodyGraph."],
+  ["example-compatibility.html", "Compatibility", "Two births: aṣṭakūṭa out of 36 with Manglik flags, glyph icons."],
   ["example-unknown-time.html", "Unknown birth time", "Date only: what stays fixed all day is shown; the Ascendant, houses and Human Design are listed as not computed."],
   ["example-western.html", "Western + numerology", "Tropical wheel with Placidus houses and aspect lines, light theme."],
   ["example-from-cli.html", "Rendered from CLI JSON", "Envelopes saved by the Rust CLI, rendered later with --from-json."],

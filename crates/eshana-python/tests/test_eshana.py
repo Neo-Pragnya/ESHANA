@@ -27,7 +27,7 @@ def cli(*args):
 
 
 def test_version_matches_the_crate():
-    assert eshana.__version__ == "0.1.0"
+    assert eshana.__version__ == "0.2.0"
     assert eshana.EXPANSION.startswith("Extensible Spatiotemporal Hypersystem")
 
 
@@ -37,7 +37,7 @@ def test_vedic_chart_reads_naturally():
     assert chart.attribute("vedic.moon.nakshatra")["name"] == "Revati"
     assert chart.attribute("vedic.lagna.rashi")["name"] == "Dhanu"
     assert chart.attribute("vedic.dasha.vimshottari")["starting_lord"] == "Mercury"
-    assert chart.attribute_full("vedic.moon.d9")["rule_version"] == "vedic.parashari@0.1"
+    assert chart.attribute_full("vedic.moon.d9")["rule_version"] == "vedic.parashari@0.2"
     assert chart.provenance["rulesets"]
     assert chart.provenance["assumptions"]
 

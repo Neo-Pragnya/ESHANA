@@ -17,7 +17,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 11.9840244634008,
@@ -32,7 +32,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 9,
@@ -49,7 +49,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 9,
@@ -62,7 +62,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -76,7 +76,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.jupiter.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -90,7 +90,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 23.523404860373432,
@@ -105,7 +105,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 26,
@@ -122,7 +122,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 4,
@@ -135,7 +135,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -149,7 +149,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mars.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -163,7 +163,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 8.181562684104506,
@@ -178,7 +178,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 18,
@@ -195,7 +195,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -208,7 +208,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -222,7 +222,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mean_node.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -236,7 +236,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 9.959426406081839,
@@ -251,7 +251,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 2,
@@ -268,7 +268,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -281,7 +281,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -295,7 +295,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.mercury.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -309,7 +309,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 28.79073431416282,
@@ -324,7 +324,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 26,
@@ -341,7 +341,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 4,
@@ -354,7 +354,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -368,7 +368,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.moon.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -382,7 +382,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 24.834954352249497,
@@ -397,7 +397,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 19,
@@ -414,7 +414,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -427,7 +427,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -441,7 +441,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.neptune.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -455,7 +455,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 27.362520131533813,
@@ -470,7 +470,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 15,
@@ -487,7 +487,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 11,
@@ -500,7 +500,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -514,7 +514,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.pluto.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -528,7 +528,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 24.65592687232163,
@@ -543,7 +543,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 22,
@@ -560,7 +560,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 2,
@@ -573,7 +573,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -587,7 +587,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.saturn.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -601,7 +601,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 8.181562684104506,
@@ -616,7 +616,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 5,
@@ -633,7 +633,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 7,
@@ -646,7 +646,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -660,7 +660,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.south_node.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -674,7 +674,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 13.74600268263739,
@@ -689,7 +689,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 3,
@@ -706,7 +706,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -719,7 +719,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -733,7 +733,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.sun.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -747,7 +747,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 23.741651801979174,
@@ -762,7 +762,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 19,
@@ -779,7 +779,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 1,
@@ -792,7 +792,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -806,7 +806,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.uranus.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -820,7 +820,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 9.381787741338165,
@@ -835,7 +835,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 2,
@@ -852,7 +852,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.bhava",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "house": 6,
@@ -865,7 +865,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -879,7 +879,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.venus.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -893,7 +893,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.rashi",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "degree_in_sign": 2.4274640841052246,
@@ -908,7 +908,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.nakshatra",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "index": 18,
@@ -923,7 +923,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.d1",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 1,
@@ -937,7 +937,7 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.lagna.d9",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "division": 9,
@@ -951,10 +951,11 @@
     ],
     "epistemic": "tradition_rule",
     "id": "vedic.dasha.vimshottari",
-    "rule_version": "vedic.parashari@0.1",
+    "rule_version": "vedic.parashari@0.2",
     "tradition_id": "vedic.parashari",
     "value": {
      "balance_at_birth_years": 1.541813749442431,
+     "levels": 2,
      "mahadashas": [
       {
        "antardashas": [
@@ -962,7 +963,8 @@
          "clipped_at_birth": true,
          "end_utc": "1993-12-12T18:07:21.579Z",
          "lord": "Saturn",
-         "start_utc": "1992-05-28T14:35:00Z"
+         "start_utc": "1992-05-28T14:35:00Z",
+         "years": 2.691666666666667
         }
        ],
        "clipped_at_birth": true,
@@ -977,55 +979,64 @@
          "clipped_at_birth": false,
          "end_utc": "1994-05-10T21:34:21.579Z",
          "lord": "Ketu",
-         "start_utc": "1993-12-12T18:07:21.579Z"
+         "start_utc": "1993-12-12T18:07:21.579Z",
+         "years": 0.4083333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1995-07-11T00:34:21.579Z",
          "lord": "Venus",
-         "start_utc": "1994-05-10T21:34:21.579Z"
+         "start_utc": "1994-05-10T21:34:21.579Z",
+         "years": 1.1666666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1995-11-15T20:40:21.579Z",
          "lord": "Sun",
-         "start_utc": "1995-07-11T00:34:21.579Z"
+         "start_utc": "1995-07-11T00:34:21.579Z",
+         "years": 0.35
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1996-06-15T22:10:21.579Z",
          "lord": "Moon",
-         "start_utc": "1995-11-15T20:40:21.579Z"
+         "start_utc": "1995-11-15T20:40:21.579Z",
+         "years": 0.5833333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1996-11-12T01:37:21.579Z",
          "lord": "Mars",
-         "start_utc": "1996-06-15T22:10:21.579Z"
+         "start_utc": "1996-06-15T22:10:21.579Z",
+         "years": 0.4083333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1997-11-30T13:55:21.579Z",
          "lord": "Rahu",
-         "start_utc": "1996-11-12T01:37:21.579Z"
+         "start_utc": "1996-11-12T01:37:21.579Z",
+         "years": 1.05
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1998-11-06T11:31:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "1997-11-30T13:55:21.579Z"
+         "start_utc": "1997-11-30T13:55:21.579Z",
+         "years": 0.9333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "1999-12-16T07:10:21.579Z",
          "lord": "Saturn",
-         "start_utc": "1998-11-06T11:31:21.579Z"
+         "start_utc": "1998-11-06T11:31:21.579Z",
+         "years": 1.1083333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2000-12-12T12:07:21.579Z",
          "lord": "Mercury",
-         "start_utc": "1999-12-16T07:10:21.579Z"
+         "start_utc": "1999-12-16T07:10:21.579Z",
+         "years": 0.9916666666666667
         }
        ],
        "clipped_at_birth": false,
@@ -1040,55 +1051,64 @@
          "clipped_at_birth": false,
          "end_utc": "2004-04-13T00:07:21.579Z",
          "lord": "Venus",
-         "start_utc": "2000-12-12T12:07:21.579Z"
+         "start_utc": "2000-12-12T12:07:21.579Z",
+         "years": 3.3333333333333335
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2005-04-13T06:07:21.579Z",
          "lord": "Sun",
-         "start_utc": "2004-04-13T00:07:21.579Z"
+         "start_utc": "2004-04-13T00:07:21.579Z",
+         "years": 1.0
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2006-12-13T00:07:21.579Z",
          "lord": "Moon",
-         "start_utc": "2005-04-13T06:07:21.579Z"
+         "start_utc": "2005-04-13T06:07:21.579Z",
+         "years": 1.6666666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2008-02-12T03:07:21.579Z",
          "lord": "Mars",
-         "start_utc": "2006-12-13T00:07:21.579Z"
+         "start_utc": "2006-12-13T00:07:21.579Z",
+         "years": 1.1666666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2011-02-11T21:07:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2008-02-12T03:07:21.579Z"
+         "start_utc": "2008-02-12T03:07:21.579Z",
+         "years": 3.0
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2013-10-12T21:07:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2011-02-11T21:07:21.579Z"
+         "start_utc": "2011-02-11T21:07:21.579Z",
+         "years": 2.6666666666666665
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2016-12-12T12:07:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2013-10-12T21:07:21.579Z"
+         "start_utc": "2013-10-12T21:07:21.579Z",
+         "years": 3.1666666666666665
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2019-10-13T09:07:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2016-12-12T12:07:21.579Z"
+         "start_utc": "2016-12-12T12:07:21.579Z",
+         "years": 2.8333333333333335
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2020-12-12T12:07:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2019-10-13T09:07:21.579Z"
+         "start_utc": "2019-10-13T09:07:21.579Z",
+         "years": 1.1666666666666667
         }
        ],
        "clipped_at_birth": false,
@@ -1103,55 +1123,64 @@
          "clipped_at_birth": false,
          "end_utc": "2021-04-01T01:55:21.579Z",
          "lord": "Sun",
-         "start_utc": "2020-12-12T12:07:21.579Z"
+         "start_utc": "2020-12-12T12:07:21.579Z",
+         "years": 0.3
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2021-09-30T16:55:21.579Z",
          "lord": "Moon",
-         "start_utc": "2021-04-01T01:55:21.579Z"
+         "start_utc": "2021-04-01T01:55:21.579Z",
+         "years": 0.5
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2022-02-05T13:01:21.579Z",
          "lord": "Mars",
-         "start_utc": "2021-09-30T16:55:21.579Z"
+         "start_utc": "2021-09-30T16:55:21.579Z",
+         "years": 0.35
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2022-12-31T06:25:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2022-02-05T13:01:21.579Z"
+         "start_utc": "2022-02-05T13:01:21.579Z",
+         "years": 0.9
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2023-10-19T11:13:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2022-12-31T06:25:21.579Z"
+         "start_utc": "2022-12-31T06:25:21.579Z",
+         "years": 0.8
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2024-09-30T10:55:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2023-10-19T11:13:21.579Z"
+         "start_utc": "2023-10-19T11:13:21.579Z",
+         "years": 0.95
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2025-08-06T22:01:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2024-09-30T10:55:21.579Z"
+         "start_utc": "2024-09-30T10:55:21.579Z",
+         "years": 0.85
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2025-12-12T18:07:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2025-08-06T22:01:21.579Z"
+         "start_utc": "2025-08-06T22:01:21.579Z",
+         "years": 0.35
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2026-12-13T00:07:21.579Z",
          "lord": "Venus",
-         "start_utc": "2025-12-12T18:07:21.579Z"
+         "start_utc": "2025-12-12T18:07:21.579Z",
+         "years": 1.0
         }
        ],
        "clipped_at_birth": false,
@@ -1166,55 +1195,64 @@
          "clipped_at_birth": false,
          "end_utc": "2027-10-13T09:07:21.579Z",
          "lord": "Moon",
-         "start_utc": "2026-12-13T00:07:21.579Z"
+         "start_utc": "2026-12-13T00:07:21.579Z",
+         "years": 0.8333333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2028-05-13T10:37:21.579Z",
          "lord": "Mars",
-         "start_utc": "2027-10-13T09:07:21.579Z"
+         "start_utc": "2027-10-13T09:07:21.579Z",
+         "years": 0.5833333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2029-11-12T07:37:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2028-05-13T10:37:21.579Z"
+         "start_utc": "2028-05-13T10:37:21.579Z",
+         "years": 1.5
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2031-03-14T07:37:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2029-11-12T07:37:21.579Z"
+         "start_utc": "2029-11-12T07:37:21.579Z",
+         "years": 1.3333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2032-10-12T15:07:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2031-03-14T07:37:21.579Z"
+         "start_utc": "2031-03-14T07:37:21.579Z",
+         "years": 1.5833333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2034-03-14T01:37:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2032-10-12T15:07:21.579Z"
+         "start_utc": "2032-10-12T15:07:21.579Z",
+         "years": 1.4166666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2034-10-13T03:07:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2034-03-14T01:37:21.579Z"
+         "start_utc": "2034-03-14T01:37:21.579Z",
+         "years": 0.5833333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2036-06-12T21:07:21.579Z",
          "lord": "Venus",
-         "start_utc": "2034-10-13T03:07:21.579Z"
+         "start_utc": "2034-10-13T03:07:21.579Z",
+         "years": 1.6666666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2036-12-12T12:07:21.579Z",
          "lord": "Sun",
-         "start_utc": "2036-06-12T21:07:21.579Z"
+         "start_utc": "2036-06-12T21:07:21.579Z",
+         "years": 0.5
         }
        ],
        "clipped_at_birth": false,
@@ -1229,55 +1267,64 @@
          "clipped_at_birth": false,
          "end_utc": "2037-05-10T15:34:21.579Z",
          "lord": "Mars",
-         "start_utc": "2036-12-12T12:07:21.579Z"
+         "start_utc": "2036-12-12T12:07:21.579Z",
+         "years": 0.4083333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2038-05-29T03:52:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2037-05-10T15:34:21.579Z"
+         "start_utc": "2037-05-10T15:34:21.579Z",
+         "years": 1.05
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2039-05-05T01:28:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2038-05-29T03:52:21.579Z"
+         "start_utc": "2038-05-29T03:52:21.579Z",
+         "years": 0.9333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2040-06-12T21:07:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2039-05-05T01:28:21.579Z"
+         "start_utc": "2039-05-05T01:28:21.579Z",
+         "years": 1.1083333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2041-06-10T02:04:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2040-06-12T21:07:21.579Z"
+         "start_utc": "2040-06-12T21:07:21.579Z",
+         "years": 0.9916666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2041-11-06T05:31:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2041-06-10T02:04:21.579Z"
+         "start_utc": "2041-06-10T02:04:21.579Z",
+         "years": 0.4083333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2043-01-06T08:31:21.579Z",
          "lord": "Venus",
-         "start_utc": "2041-11-06T05:31:21.579Z"
+         "start_utc": "2041-11-06T05:31:21.579Z",
+         "years": 1.1666666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2043-05-14T04:37:21.579Z",
          "lord": "Sun",
-         "start_utc": "2043-01-06T08:31:21.579Z"
+         "start_utc": "2043-01-06T08:31:21.579Z",
+         "years": 0.35
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2043-12-13T06:07:21.579Z",
          "lord": "Moon",
-         "start_utc": "2043-05-14T04:37:21.579Z"
+         "start_utc": "2043-05-14T04:37:21.579Z",
+         "years": 0.5833333333333334
         }
        ],
        "clipped_at_birth": false,
@@ -1292,55 +1339,64 @@
          "clipped_at_birth": false,
          "end_utc": "2046-08-25T10:19:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2043-12-13T06:07:21.579Z"
+         "start_utc": "2043-12-13T06:07:21.579Z",
+         "years": 2.7
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2049-01-18T00:43:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2046-08-25T10:19:21.579Z"
+         "start_utc": "2046-08-25T10:19:21.579Z",
+         "years": 2.4
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2051-11-24T23:49:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2049-01-18T00:43:21.579Z"
+         "start_utc": "2049-01-18T00:43:21.579Z",
+         "years": 2.85
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2054-06-13T09:07:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2051-11-24T23:49:21.579Z"
+         "start_utc": "2051-11-24T23:49:21.579Z",
+         "years": 2.55
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2055-07-01T21:25:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2054-06-13T09:07:21.579Z"
+         "start_utc": "2054-06-13T09:07:21.579Z",
+         "years": 1.05
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2058-07-01T15:25:21.579Z",
          "lord": "Venus",
-         "start_utc": "2055-07-01T21:25:21.579Z"
+         "start_utc": "2055-07-01T21:25:21.579Z",
+         "years": 3.0
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2059-05-26T08:49:21.579Z",
          "lord": "Sun",
-         "start_utc": "2058-07-01T15:25:21.579Z"
+         "start_utc": "2058-07-01T15:25:21.579Z",
+         "years": 0.9
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2060-11-24T05:49:21.579Z",
          "lord": "Moon",
-         "start_utc": "2059-05-26T08:49:21.579Z"
+         "start_utc": "2059-05-26T08:49:21.579Z",
+         "years": 1.5
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2061-12-12T18:07:21.579Z",
          "lord": "Mars",
-         "start_utc": "2060-11-24T05:49:21.579Z"
+         "start_utc": "2060-11-24T05:49:21.579Z",
+         "years": 1.05
         }
        ],
        "clipped_at_birth": false,
@@ -1355,55 +1411,64 @@
          "clipped_at_birth": false,
          "end_utc": "2064-01-30T22:55:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2061-12-12T18:07:21.579Z"
+         "start_utc": "2061-12-12T18:07:21.579Z",
+         "years": 2.1333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2066-08-13T06:07:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2064-01-30T22:55:21.579Z"
+         "start_utc": "2064-01-30T22:55:21.579Z",
+         "years": 2.533333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2068-11-18T03:43:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2066-08-13T06:07:21.579Z"
+         "start_utc": "2066-08-13T06:07:21.579Z",
+         "years": 2.2666666666666666
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2069-10-25T01:19:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2068-11-18T03:43:21.579Z"
+         "start_utc": "2068-11-18T03:43:21.579Z",
+         "years": 0.9333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2072-06-25T01:19:21.579Z",
          "lord": "Venus",
-         "start_utc": "2069-10-25T01:19:21.579Z"
+         "start_utc": "2069-10-25T01:19:21.579Z",
+         "years": 2.6666666666666665
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2073-04-13T06:07:21.579Z",
          "lord": "Sun",
-         "start_utc": "2072-06-25T01:19:21.579Z"
+         "start_utc": "2072-06-25T01:19:21.579Z",
+         "years": 0.8
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2074-08-13T06:07:21.579Z",
          "lord": "Moon",
-         "start_utc": "2073-04-13T06:07:21.579Z"
+         "start_utc": "2073-04-13T06:07:21.579Z",
+         "years": 1.3333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2075-07-20T03:43:21.579Z",
          "lord": "Mars",
-         "start_utc": "2074-08-13T06:07:21.579Z"
+         "start_utc": "2074-08-13T06:07:21.579Z",
+         "years": 0.9333333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2077-12-12T18:07:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2075-07-20T03:43:21.579Z"
+         "start_utc": "2075-07-20T03:43:21.579Z",
+         "years": 2.4
         }
        ],
        "clipped_at_birth": false,
@@ -1418,55 +1483,64 @@
          "clipped_at_birth": false,
          "end_utc": "2080-12-15T13:10:21.579Z",
          "lord": "Saturn",
-         "start_utc": "2077-12-12T18:07:21.579Z"
+         "start_utc": "2077-12-12T18:07:21.579Z",
+         "years": 3.0083333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2083-08-25T16:19:21.579Z",
          "lord": "Mercury",
-         "start_utc": "2080-12-15T13:10:21.579Z"
+         "start_utc": "2080-12-15T13:10:21.579Z",
+         "years": 2.691666666666667
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2084-10-03T11:58:21.579Z",
          "lord": "Ketu",
-         "start_utc": "2083-08-25T16:19:21.579Z"
+         "start_utc": "2083-08-25T16:19:21.579Z",
+         "years": 1.1083333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2087-12-04T02:58:21.579Z",
          "lord": "Venus",
-         "start_utc": "2084-10-03T11:58:21.579Z"
+         "start_utc": "2084-10-03T11:58:21.579Z",
+         "years": 3.1666666666666665
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2088-11-15T02:40:21.579Z",
          "lord": "Sun",
-         "start_utc": "2087-12-04T02:58:21.579Z"
+         "start_utc": "2087-12-04T02:58:21.579Z",
+         "years": 0.95
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2090-06-16T10:10:21.579Z",
          "lord": "Moon",
-         "start_utc": "2088-11-15T02:40:21.579Z"
+         "start_utc": "2088-11-15T02:40:21.579Z",
+         "years": 1.5833333333333333
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2091-07-26T05:49:21.579Z",
          "lord": "Mars",
-         "start_utc": "2090-06-16T10:10:21.579Z"
+         "start_utc": "2090-06-16T10:10:21.579Z",
+         "years": 1.1083333333333334
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2094-06-01T04:55:21.579Z",
          "lord": "Rahu",
-         "start_utc": "2091-07-26T05:49:21.579Z"
+         "start_utc": "2091-07-26T05:49:21.579Z",
+         "years": 2.85
         },
         {
          "clipped_at_birth": false,
          "end_utc": "2096-12-12T12:07:21.579Z",
          "lord": "Jupiter",
-         "start_utc": "2094-06-01T04:55:21.579Z"
+         "start_utc": "2094-06-01T04:55:21.579Z",
+         "years": 2.533333333333333
         }
        ],
        "clipped_at_birth": false,
@@ -1752,19 +1826,19 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
    "provider_version": "0.1.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
-    "vedic.parashari@0.1"
+    "vedic.parashari@0.2"
    ],
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "warnings": []
  },
  "western": {
@@ -2686,7 +2760,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.1.0",
+   "engine_version": "0.2.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -2697,7 +2771,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "warnings": []
  }
 }

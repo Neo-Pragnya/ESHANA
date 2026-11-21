@@ -98,7 +98,8 @@ def test_houses_match_swiss(provider, spk, row, system, zodiac, hs, code):
 
 
 # ── 2. categorical agreement with values re-derived from the Swiss longitudes ─────────────────────────────────────
-WIDTH = {1: 30.0, 3: 10.0, 4: 7.5, 7: 30.0 / 7.0, 9: 10.0 / 3.0, 10: 3.0, 12: 2.5}
+WIDTH = {1: 30.0, 2: 15.0, 3: 10.0, 4: 7.5, 7: 30.0 / 7.0, 9: 10.0 / 3.0, 10: 3.0, 12: 2.5, 16: 30 / 16, 20: 1.5,
+         24: 1.25, 27: 30 / 27, 30: 1.0, 40: 0.75, 45: 30 / 45, 60: 0.5}  # D30's unequal parts end on whole degrees
 
 
 @pytest.mark.parametrize("provider,spk,row", CASES)
@@ -106,8 +107,10 @@ def test_categorical_values_match_swiss(provider, spk, row):
     env = _env(row, provider, spk)
     at = lib.attrs(env)
     mismatches, skipped = [], 0
+    pos = lib.positions(env)
     for b in [x for x in BODIES if x != "true_node"]:
-        tol_deg = TOL["body_arcsec"][provider][b] / 3600.0
+        # the reference longitude differs from ESHANA's by the tolerance plus the stated delta-T difference
+        tol_deg = TOL["body_arcsec"][provider][b] / 3600.0 + abs(_dt_corr(env, row, pos[b]["speed_deg_per_day"]))
         swiss = row["sidereal"][b]["lon"]
         if lib.near_boundary(swiss, lib.PADA, tol_deg):
             skipped += 1

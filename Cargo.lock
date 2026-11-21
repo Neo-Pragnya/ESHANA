@@ -215,7 +215,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "eshana-core",
@@ -227,7 +227,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -236,19 +236,20 @@ dependencies = [
 
 [[package]]
 name = "eshana-engine"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "eshana-core",
  "eshana-ephemeris",
  "eshana-time",
  "serde",
  "serde_json",
+ "serde_norway",
  "unicode-normalization",
 ]
 
 [[package]]
 name = "eshana-ephemeris"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "eshana-core",
  "eshana-time",
@@ -258,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-python"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "eshana-engine",
  "pyo3",
@@ -267,7 +268,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-time"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "eshana-core",
  "jiff",
@@ -609,6 +610,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ryu"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
 name = "serde"
 version = "1.0.229"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -649,6 +656,19 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "serde_norway"
+version = "0.9.42"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e408f29489b5fd500fab51ff1484fc859bb655f32c671f307dcd733b72e8168c"
+dependencies = [
+ "indexmap",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml-norway",
 ]
 
 [[package]]
@@ -763,6 +783,12 @@ checksum = "75cd3fb03d5288b3ba9a1ee103ac7e9cbb59f0b03d64f8ddfcc04dd42758a85d"
 dependencies = [
  "tinyvec",
 ]
+
+[[package]]
+name = "unsafe-libyaml-norway"
+version = "0.2.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b39abd59bf32521c7f2301b52d05a6a2c975b6003521cbd0c6dc1582f0a22104"
 
 [[package]]
 name = "utf8parse"

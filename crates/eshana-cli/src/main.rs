@@ -101,6 +101,40 @@ struct ChartOpts {
     /// Multiply every aspect orb
     #[arg(long)]
     orb_scale: Option<f64>,
+    /// Vedic features: panchanga, strength, relationships, drishti, ashtakavarga, jaimini, kp, yogas, sade_sati, all
+    #[arg(long, value_delimiter = ',')]
+    features: Vec<String>,
+    /// Vimshottari depth 1-5 (default 2)
+    #[arg(long)]
+    dasha_levels: Option<usize>,
+    /// Dasha systems: vimshottari (default), yogini
+    #[arg(long, value_delimiter = ',')]
+    dasha_systems: Vec<String>,
+    /// Instant for "current" periods, e.g. 2026-11-21T00:00:00Z (never the computer's clock)
+    #[arg(long)]
+    reference_utc: Option<String>,
+    /// Sunrise: upper_limb_refracted (default), centre_refracted, centre_unrefracted
+    #[arg(long)]
+    sunrise: Option<String>,
+}
+
+#[derive(Args, Clone, Default)]
+struct Person {
+    /// Local date YYYY-MM-DD
+    #[arg(long)]
+    date: String,
+    /// Local time HH:MM[:SS]
+    #[arg(long)]
+    time: Option<String>,
+    /// IANA time zone
+    #[arg(long = "tz")]
+    timezone: Option<String>,
+    /// Degrees north
+    #[arg(long, allow_hyphen_values = true)]
+    lat: Option<f64>,
+    /// Degrees east
+    #[arg(long, allow_hyphen_values = true)]
+    lon: Option<f64>,
 }
 
 #[derive(Subcommand)]
@@ -163,6 +197,59 @@ enum Cmd {
         #[arg(long, default_value = "json")]
         format: String,
     },
+    /// Panchanga and day divisions (sunrise, tithi, nakshatra, yoga, karana, hora, choghadiya, rahu kalam)
+    Panchanga {
+        #[command(flatten)]
+        o: ChartOpts,
+        /// Natal Moon in sidereal degrees, for tara bala and chandra bala
+        #[arg(long)]
+        natal_moon: Option<f64>,
+    },
+    /// Ashtakoota compatibility of two births: a = the role classical tables give the groom, b = the bride
+    Matching {
+        /// First partner as date,time,tz,lat,lon (e.g. 1990-05-15,14:30,Asia/Kolkata,28.61,77.21)
+        #[arg(long, allow_hyphen_values = true)]
+        a: String,
+        /// Second partner, same format
+        #[arg(long, allow_hyphen_values = true)]
+        b: String,
+        /// Ayanamsha (default lahiri, recorded)
+        #[arg(long, default_value = "lahiri")]
+        ayanamsha: String,
+    },
+    /// Longitudes at regular steps (transit animation, progressions)
+    Ephemeris {
+        /// First instant, UTC
+        #[arg(long)]
+        start: String,
+        /// Step in days
+        #[arg(long, default_value_t = 1.0)]
+        step_days: f64,
+        /// Number of rows (max 20000)
+        #[arg(long, default_value_t = 30)]
+        count: usize,
+        /// Bodies, comma separated
+        #[arg(long, value_delimiter = ',')]
+        bodies: Option<Vec<String>>,
+        #[command(flatten)]
+        set: Settings,
+    },
+    /// Sign ingresses of one body between two instants
+    Ingresses {
+        /// Body id, e.g. saturn
+        #[arg(long)]
+        body: String,
+        /// Range start, UTC
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC
+        #[arg(long)]
+        end: String,
+        #[command(flatten)]
+        set: Settings,
+    },
+    /// Print the built-in YAML rule packs
+    Rulesets,
     /// Send a raw JSON request from a file, or `-` for stdin
     Request {
         /// File path or -
@@ -205,8 +292,25 @@ fn chart_json(o: &ChartOpts, system: Option<&str>, assume: bool) -> Value {
                    "house_system": o.set.houses, "node_model": o.set.node},
         "spk_path": o.set.spk, "bodies": o.bodies, "divisions": o.divisions, "dasha": o.dasha,
         "year_convention": o.year_convention, "aspects": o.aspects, "orb_scale": o.orb_scale,
-        "assume_defaults": assume,
+        "assume_defaults": assume, "features": o.features, "dasha_levels": o.dasha_levels,
+        "dasha_systems": o.dasha_systems, "reference_utc": o.reference_utc, "sunrise": o.sunrise,
     })
+}
+
+fn person_json(spec: &str, ayanamsha: &str) -> Value {
+    let f: Vec<&str> = spec.split(',').map(str::trim).collect();
+    let get = |i: usize| f.get(i).filter(|s| !s.is_empty()).map(|s| (*s).to_string());
+    let num = |i: usize| get(i).and_then(|s| s.parse::<f64>().ok());
+    let place = match (num(3), num(4)) {
+        (Some(la), Some(lo)) => json!({"latitude": la, "longitude": lo}),
+        _ => Value::Null,
+    };
+    json!({"when": {"date": get(0), "time": get(1), "timezone": get(2)}, "place": place,
+           "config": {"zodiac": "sidereal", "ayanamsha": ayanamsha}})
+}
+
+fn settings_json(s: &Settings) -> Value {
+    json!({"provider": s.provider, "zodiac": s.zodiac, "ayanamsha": s.ayanamsha, "node_model": s.node})
 }
 
 fn strip_nulls(v: Value) -> Value {
@@ -259,6 +363,34 @@ fn main() -> ExitCode {
         Cmd::Graph { system, o, format } => json!({
             "op": "graph", "chart": chart_json(o, Some(system), system == "vedic"), "format": format,
         }),
+        Cmd::Panchanga { o, natal_moon } => {
+            let mut c = chart_json(o, Some("vedic"), true);
+            c["config"]["zodiac"] = json!("sidereal");
+            json!({"op": "panchanga", "chart": c, "natal_moon_deg": natal_moon})
+        }
+        Cmd::Matching { a, b, ayanamsha } => json!({
+            "op": "matching", "a": person_json(a, ayanamsha), "b": person_json(b, ayanamsha),
+        }),
+        Cmd::Ephemeris {
+            start,
+            step_days,
+            count,
+            bodies,
+            set,
+        } => json!({
+            "op": "ephemeris", "start_utc": start, "step_days": step_days, "count": count, "bodies": bodies,
+            "config": settings_json(set), "spk_path": set.spk,
+        }),
+        Cmd::Ingresses {
+            body,
+            start,
+            end,
+            set,
+        } => json!({
+            "op": "ingresses", "body": body, "start_utc": start, "end_utc": end,
+            "config": settings_json(set), "spk_path": set.spk,
+        }),
+        Cmd::Rulesets => json!({"op": "rulesets"}),
         Cmd::Request { file } => {
             let mut s = String::new();
             let r = if file == "-" {

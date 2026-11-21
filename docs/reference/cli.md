@@ -34,8 +34,12 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `--houses` | `whole_sign`, `equal`, `placidus` | `whole_sign` (recorded) |
 | `--node` | `mean`, `true` | `mean` (recorded); `true` for `human-design` |
 | `--bodies a,b,c` | body ids | ten planets + the node |
-| `--divisions 1,9,10` | 1, 3, 4, 7, 9, 10, 12 | none |
+| `--divisions 1,9,10` | 1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60 | none |
 | `--dasha`, `--year-convention` | `365.25`, `365.2425`, `360`, `365.25636` | `365.25` |
+| `--dasha-levels N`, `--dasha-systems` | 1–5; `vimshottari`, `yogini` | 2; `vimshottari` |
+| `--features a,b` | `panchanga`, `strength`, `relationships`, `drishti`, `ashtakavarga`, `jaimini`, `kp`, `yogas`, `sade_sati`, `all` (Vedic only) | none |
+| `--reference-utc T` | instant for "current" daśā periods | none (nothing is "current") |
+| `--sunrise` | `upper_limb_refracted`, `centre_refracted`, `centre_unrefracted` | `upper_limb_refracted` |
 | `--aspects`, `--orb-scale F` | | off, 1.0 |
 
 ## Commands
@@ -48,6 +52,11 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana numerology --name N --dob D [--school S] [--no-master] [--y-vowel] [--life-path-method M] [--year Y]` | name and date numbers |
 | `eshana compare vedic\|western ... --a KEY=VAL --b KEY=VAL` | the same input under two configurations (keys: `provider`, `zodiac`, `ayanamsha`, `house_system`, `node_model`) |
 | `eshana graph vedic\|western ... --format json\|mermaid\|graphml` | a typed symbolic graph; mermaid and graphml print raw text |
+| `eshana panchanga ... [--natal-moon DEG] [--sunrise C]` | pañcāṅga, rise and set, horā, choghaḍiyā, Rāhu kālam, special lagnas; Tārā and Candra bala with a natal Moon |
+| `eshana matching --a D,T,TZ,LAT,LON --b ... [--ayanamsha A]` | aṣṭakūṭa compatibility with Manglik flags |
+| `eshana ephemeris --start T --step-days N --count N [--bodies ...]` | a longitude table (transits, progressions) |
+| `eshana ingresses --body B --start T --end T` | sign ingresses, retrograde re-entries included |
+| `eshana rulesets` | the built-in YAML rule packs, verbatim |
 | `eshana request FILE\|-` | send a raw JSON request |
 | `eshana doctor` | versions, tz database, providers, rule packs, error codes |
 | `eshana explain ESH-CODE` | what a code means |

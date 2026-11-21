@@ -27,12 +27,10 @@ import sys
 from importlib import resources
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-__all__ = ["birth_report", "render_html", "envelopes_for", "main", "SECTIONS"]
+__all__ = ["birth_report", "render_html", "envelopes_for", "main", "SECTIONS", "chakra_svg", "south_indian_svg",
+           "north_indian_svg", "western_wheel_svg", "bodygraph_svg", "markers"]
 
 MARKER_RULES = "report.markers@0.1"
-SECTIONS = ("summary", "chakra", "vedic", "divisional", "dasha", "nakshatra", "western", "human_design",
-            "numerology", "attributes", "provenance", "raw")
-
 # ── tradition tables (names only; every number comes from the engine) ─────────────────────────────────────────────
 SIGN_EN = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn",
            "Aquarius", "Pisces"]
@@ -421,519 +419,107 @@ def bodygraph_svg(hd: Dict[str, Any]) -> str:
 
 
 # ── HTML sections ───────────────────────────────────────────────────────────────────────────────────────────────────
-def _table(head: Sequence[str], rows: Iterable[Sequence[Any]], cls: str = "", row_attrs: Optional[List[str]] = None) -> str:
-    th = "".join(f"<th>{_esc(h)}</th>" for h in head)
-    body = []
-    for i, r in enumerate(rows):
-        attr = row_attrs[i] if row_attrs and i < len(row_attrs) else ""
-        body.append(f"<tr{attr}>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>")
-    return f'<div class="tbl-wrap"><table class="{cls}"><thead><tr>{th}</tr></thead><tbody>{"".join(body)}</tbody></table></div>'
+# ── the chart studio page ───────────────────────────────────────────────────────────────────────────────────────
+SECTION_TITLES = {
+    "summary": "Birth data",
+    "chakra": "Panchang chakra",
+    "charts": "Rāśi and varga charts (South and North Indian)",
+    "planets": "Grahas and bhāvas",
+    "nakshatra": "Nakshatra ruler",
+    "vargas": "Divisional charts (vargas)",
+    "panchanga": "Pañcāṅga of the birth moment",
+    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
+    "strength": "Strength and relationships",
+    "ashtakavarga": "Aṣṭakavarga",
+    "kp": "KP (Krishnamurti Paddhati)",
+    "jaimini": "Jaimini: kārakas and ārūḍhas",
+    "yogas": "Yogas and doshas",
+    "transits": "Transits",
+    "progressions": "Progressions",
+    "western": "Western chart (tropical)",
+    "human_design": "Human Design",
+    "numerology": "Numerology",
+    "matching": "Compatibility (Ashtakoota)",
+    "attributes": "Other derived attributes",
+    "provenance": "Provenance",
+    "raw": "Raw data",
+}
+SECTIONS = tuple(SECTION_TITLES)
+TOC_NAMES = {"summary": "Birth", "chakra": "Chakra", "charts": "Charts", "planets": "Grahas", "nakshatra": "Nakshatras",
+             "vargas": "Vargas", "panchanga": "Pañcāṅga", "dasha": "Daśā", "strength": "Strength",
+             "ashtakavarga": "Aṣṭakavarga", "kp": "KP", "jaimini": "Jaimini", "yogas": "Yogas", "transits": "Transits",
+             "progressions": "Progressions", "western": "Western", "human_design": "Human Design",
+             "numerology": "Numerology", "matching": "Matching", "attributes": "Other", "provenance": "Provenance",
+             "raw": "JSON"}
+ASSETS = ("report-core.js", "report-wheel.js", "report-sections.js")
 
 
-def _facts(pairs: Sequence[Tuple[str, Any]]) -> str:
-    return '<dl class="facts">' + "".join(f"<dt>{_esc(k)}</dt><dd>{v}</dd>" for k, v in pairs if v not in (None, "")) + "</dl>"
+def _asset(name: str) -> str:
+    return resources.files("eshana").joinpath(f"assets/{name}").read_text(encoding="utf-8")
 
 
-def _label(epistemic: str) -> str:
-    return f'<span class="ep ep-{_esc(epistemic)}">{_esc(epistemic)}</span>'
-
-
-def _section(sid: str, title: str, body: str, lead: str = "") -> str:
-    lead_html = f'<p class="lead">{lead}</p>' if lead else ""
-    return f'<section class="card" id="{sid}"><h2>{_esc(title)}</h2>{lead_html}{body}</section>'
-
-
-def _vedic_placements(env: Dict[str, Any], division: int = 1) -> Tuple[Dict[int, List[Tuple[str, str, str]]], Optional[int]]:
-    at = _attrs(env)
-    out: Dict[int, List[Tuple[str, str, str]]] = {}
-    for p in _bodies(env):
-        abbr = BODY[p["id"]][0] + ("℞" if p.get("retrograde") and p["id"] not in ("mean_node", "south_node") else "")
-        if division == 1:
-            sign = int(p["longitude_deg"] // 30) % 12
-            note = f'{int(p["longitude_deg"] % 30)}°'
-        else:
-            a = at.get(f'vedic.{p["id"]}.d{division}')
-            if not a:
-                continue
-            sign, note = a["value"]["index"], ""
-        out.setdefault(sign, []).append((p["id"], abbr, note))
-    lagna = None
-    if division == 1:
-        asc = _lagna(env)
-        lagna = int(asc // 30) % 12 if asc is not None else None
-    else:
-        a = at.get(f"vedic.lagna.d{division}")
-        lagna = a["value"]["index"] if a else None
-    return out, lagna
-
-
-def _divisions(env: Dict[str, Any]) -> List[int]:
-    ds = set()
-    for k in _attrs(env):
-        tail = k.rsplit(".", 1)[-1]
-        if tail.startswith("d") and tail[1:].isdigit():
-            ds.add(int(tail[1:]))
-    return sorted(ds)
-
-
-DIV_NAME = {1: "Rāśi", 2: "Horā", 3: "Drekkāṇa", 4: "Chaturthāṃśa", 7: "Saptāṃśa", 9: "Navāṃśa", 10: "Daśāṃśa",
-            12: "Dvādaśāṃśa", 16: "Ṣoḍaśāṃśa", 20: "Viṃśāṃśa", 24: "Chaturviṃśāṃśa", 27: "Bhāṃśa",
-            30: "Triṃśāṃśa", 40: "Khavedāṃśa", 45: "Akṣavedāṃśa", 60: "Ṣaṣṭyāṃśa"}
-
-
-def _vedic_sections(env: Dict[str, Any], used: set) -> Dict[str, str]:
-    at = _attrs(env)
-    out: Dict[str, str] = {}
-    calc = env.get("calculation", {})
-    # chakra
-    out["chakra"] = _section("chakra", "Panchang chakra", f'<div class="figure">{chakra_svg(env)}</div>',
-                             "Sidereal positions on the rāśi, nakshatra and pada rings (palette from the Panchang Chakra "
-                             "template). Hover a planet anywhere in the report to find it on every chart.")
-    # charts + planet table
-    pl, lagna = _vedic_placements(env, 1)
-    charts = [f'<div class="figure">{south_indian_svg(pl, lagna, "D1 · Rāśi (South Indian)")}</div>']
-    if lagna is not None:
-        charts.append(f'<div class="figure">{north_indian_svg(pl, lagna, "D1 · Rāśi (North Indian)")}</div>')
-    else:
-        charts.append('<p class="note">The North Indian chart needs a lagna, which needs an exact birth time and '
-                      'place. It is omitted rather than guessed.</p>')
-    rows, attrs = [], []
-    asc = _lagna(env)
-    if asc is not None:
-        nk = at.get("vedic.lagna.nakshatra", {}).get("value", {})
-        used.update({"vedic.lagna.rashi", "vedic.lagna.nakshatra"})
-        rows.append(["<b>Lagna</b>", f"{asc:.4f}°", f"{SIGN_SKT[int(asc // 30)]}", _deg_in_sign(asc),
-                     _esc(nk.get("name", "")), _esc(nk.get("pada", "")), _esc(nk.get("lord", "")), "1", "", "", "",
-                     ", ".join(markers(asc))])
-        attrs.append(' data-body="lagna"')
-    for p in _bodies(env):
-        b = p["id"]
-        r = at.get(f"vedic.{b}.rashi", {}).get("value", {})
-        nk = at.get(f"vedic.{b}.nakshatra", {}).get("value", {})
-        bh = at.get(f"vedic.{b}.bhava", {}).get("value", {})
-        used.update({f"vedic.{b}.rashi", f"vedic.{b}.nakshatra", f"vedic.{b}.bhava"})
-        flags = markers(p["longitude_deg"])
-        if not nk.get("stable_within_uncertainty", True):
-            flags.append("nakshatra unstable in time window")
-        rows.append([f'<i class="dot" style="background:{_colour(BODY[b][1])}"></i>{_esc(BODY[b][2])}',
-                     f'{p["longitude_deg"]:.4f}°', _esc(r.get("name", SIGN_SKT[int(p["longitude_deg"] // 30)])),
-                     _esc(r.get("dms", _deg_in_sign(p["longitude_deg"]))), _esc(nk.get("name", "")),
-                     _esc(nk.get("pada", "")), _esc(nk.get("lord", "")), _esc(bh.get("house", "—")),
-                     "℞" if p.get("retrograde") else "", f'{p.get("speed_deg_per_day", 0):+.4f}',
-                     f'{p.get("tropical_longitude_deg", 0):.4f}°', _esc(", ".join(flags))])
-        attrs.append(f' data-body="{_esc(b)}"')
-    table = _table(["Graha", "Sidereal", "Rāśi", "In sign", "Nakshatra", "Pada", "Nak. lord", "Bhāva", "℞",
-                    "Speed °/day", "Tropical", f"Markers ({MARKER_RULES})"], rows, "planets", attrs)
-    houses = env.get("houses") or {}
-    htab = ""
-    if houses.get("cusps_deg"):
-        hrows = [[str(i + 1), f"{c:.4f}°", SIGN_SKT[int(c // 30) % 12], _deg_in_sign(c)]
-                 for i, c in enumerate(houses["cusps_deg"])]
-        mc = houses.get("midheaven", {}).get("longitude_deg")
-        htab = (f'<h3>Houses ({_esc(houses.get("system", ""))})</h3>' + _table(["Bhāva", "Cusp", "Rāśi", "In sign"], hrows)
-                + (f'<p class="note">Midheaven {mc:.4f}° · local apparent sidereal time '
-                   f'{houses.get("local_apparent_sidereal_time_deg", 0):.4f}°</p>' if mc is not None else ""))
-    out["vedic"] = _section(
-        "vedic", "Vedic chart (sidereal)",
-        f'<div class="charts">{"".join(charts)}</div>{table}{htab}',
-        f'Ayanāṃśa {_esc(calc.get("ayanamsha", "—"))} = {calc.get("ayanamsha_deg", 0):.6f}° · houses '
-        f'{_esc(calc.get("house_system", ""))} · node {_esc(calc.get("node_model", ""))} · provider '
-        f'{_esc(calc.get("provider", ""))}')
-    # divisional charts
-    divs = [d for d in _divisions(env) if d != 1]
-    if divs:
-        tabs, panes, grid_rows = [], [], []
-        for k, d in enumerate(divs):
-            pl_d, lg_d = _vedic_placements(env, d)
-            name = f"D{d} · {DIV_NAME.get(d, '')}"
-            tabs.append(f'<button class="tab" data-tab="d{d}" aria-selected="{str(k == 0).lower()}">{_esc(name)}</button>')
-            panes.append(f'<div class="pane" data-pane="d{d}"{"" if k == 0 else " hidden"}>'
-                         f'{south_indian_svg(pl_d, lg_d, name)}</div>')
-        bodies = (["lagna"] if asc is not None else []) + [p["id"] for p in _bodies(env)]
-        for b in bodies:
-            cells = []
-            for d in [1] + divs:
-                if d == 1:
-                    lon = asc if b == "lagna" else next(p["longitude_deg"] for p in _bodies(env) if p["id"] == b)
-                    cells.append(SIGN_SKT[int(lon // 30) % 12])
-                else:
-                    a = at.get(f"vedic.{b}.d{d}")
-                    used.add(f"vedic.{b}.d{d}")
-                    cells.append(_esc(a["value"]["rashi"]) if a else "—")
-            name = "Lagna" if b == "lagna" else BODY[b][2]
-            grid_rows.append([f"<b>{_esc(name)}</b>"] + cells)
-        out["divisional"] = _section(
-            "divisional", "Divisional charts (vargas)",
-            f'<div class="tabs" role="tablist">{"".join(tabs)}</div><div class="figure">{"".join(panes)}</div>'
-            + _table(["Body"] + [f"D{d}" for d in [1] + divs], grid_rows, "vargas"),
-            "Each varga sign is computed by the engine under vedic.parashari@0.1. A body whose D1 and D9 signs "
-            "match is vargottama.")
-    # dasha
-    das = at.get("vedic.dasha.vimshottari")
-    if das:
-        used.add("vedic.dasha.vimshottari")
-        v = das["value"]
-        now = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        blocks = []
-        for m in v.get("mahadashas", []):
-            cur = m["start_utc"] <= now < m["end_utc"]
-            ants = "".join(
-                f'<li class="{"cur" if a["start_utc"] <= now < a["end_utc"] else ""}"><b>{_esc(a["lord"])}</b> '
-                f'{_esc(a["start_utc"][:10])} → {_esc(a["end_utc"][:10])}'
-                f'{" <small>(from birth)</small>" if a.get("clipped_at_birth") else ""}</li>'
-                for a in m.get("antardashas", []))
-            blocks.append(f'<details{" open" if cur else ""} class="{"cur" if cur else ""}"><summary><b>'
-                          f'{_esc(m["lord"])}</b> mahādaśā · {_esc(m["start_utc"][:10])} → {_esc(m["end_utc"][:10])}'
-                          f'{" · <em>current</em>" if cur else ""}</summary><ul class="ants">{ants}</ul></details>')
-        extra = {k: val for k, val in v.items() if k != "mahadashas"}
-        out["dasha"] = _section(
-            "dasha", "Vimśottarī daśā", _facts([(k.replace("_", " "), _esc(val)) for k, val in extra.items()])
-            + "".join(blocks),
-            f'{_label(das["epistemic"])} rule {_esc(das["rule_version"])}. "Current" is marked against the time this '
-            f'file was generated ({now}).')
-    # nakshatra reference
-    ref = _nak_reference()
-    if ref:
-        cards = []
-        for b, label in (("moon", "Janma nakshatra (Moon)"), ("lagna", "Lagna nakshatra")):
-            nk = at.get(f"vedic.{b}.nakshatra", {}).get("value")
-            if not nk:
-                continue
-            r = ref[nk["index"]]
-            cards.append(f'<div class="mini"><h3>{_esc(label)}: {_esc(nk["name"])} pada {_esc(nk.get("pada", ""))}</h3>'
-                         + _facts([(k.replace("_", " ").capitalize(), _esc(r[k])) for k in
-                                   ("nature", "gana", "yoni", "gender", "activity", "direction", "behaviour", "dosha",
-                                    "nadi", "tattva", "purpose", "guna", "gunas", "gotra", "varna")]) + "</div>")
-        if cards:
-            out["nakshatra"] = _section(
-                "nakshatra", "Nakshatra reference", f'<div class="minis">{"".join(cards)}</div>',
-                f'{_label("tradition_rule")} Attributes from the Nakshatra Ruler table of the Panchang Chakra template, '
-                'shown beside the computed nakshatra. ESHANA does not compute or interpret them.')
-    return out
-
-
-def _western_section(env: Dict[str, Any], used: set) -> str:
-    at = _attrs(env)
-    rows, attrs = [], []
-    for p in _bodies(env):
-        b = p["id"]
-        h = at.get(f"western.{b}.house", {}).get("value", {})
-        used.update({f"western.{b}.sign", f"western.{b}.house"})
-        rows.append([f'<i class="dot" style="background:{_colour(BODY[b][1])}"></i>{_esc(BODY[b][2].split(" (")[0] if b != "mean_node" else "North node")}',
-                     f'{p["longitude_deg"]:.4f}°', SIGN_EN[int(p["longitude_deg"] // 30) % 12],
-                     _deg_in_sign(p["longitude_deg"]), _esc(h.get("house", "—")), "℞" if p.get("retrograde") else "",
-                     f'{p.get("latitude_deg", 0):+.4f}°'])
-        attrs.append(f' data-body="{_esc(b)}"')
-    asp = []
-    for a in env.get("derived_attributes", []):
-        if ".aspect." in a["id"]:
-            used.add(a["id"])
-            v = a["value"]
-            b1, b2 = a["derived_from"][:2]
-            asp.append([_esc(BODY.get(b1, (b1, b1, b1))[2]), f'<b>{_esc(v["aspect"])}</b>', _esc(BODY.get(b2, (b2, b2, b2))[2]),
-                        f'{v["orb_deg"]:.2f}°', "applying" if v.get("applying") else "separating"])
-    used.add("western.ascendant.sign")
-    calc = env.get("calculation", {})
-    houses = env.get("houses") or {}
-    hrow = ""
-    if houses.get("cusps_deg"):
-        hrow = "<h3>House cusps</h3>" + _table(
-            ["House", "Cusp", "Sign", "In sign"],
-            [[str(i + 1), f"{c:.4f}°", SIGN_EN[int(c // 30) % 12], _deg_in_sign(c)] for i, c in enumerate(houses["cusps_deg"])])
-    return _section(
-        "western", "Western chart (tropical)",
-        f'<div class="charts"><div class="figure">{western_wheel_svg(env)}</div></div>'
-        + _table(["Body", "Longitude", "Sign", "In sign", "House", "℞", "Latitude"], rows, "planets", attrs)
-        + (("<h3>Aspects</h3>" + _table(["Body", "Aspect", "Body", "Orb", "Phase"], asp)) if asp else "") + hrow,
-        f'Zodiac {_esc(calc.get("zodiac", ""))} · houses {_esc(calc.get("house_system", ""))} · '
-        f'aspects western.basic@0.1')
-
-
-def _hd_section(hd: Dict[str, Any], used: set) -> str:
-    bg = _attrs(hd).get("human_design.bodygraph", {})
-    used.add("human_design.bodygraph")
-    v = bg.get("value", {})
-    chips = "".join(f'<span class="flag">{_esc(k)}: <b>{_esc(v.get(k, "—"))}</b></span>'
-                    for k in ("type", "authority", "profile", "definition"))
-    rows = []
-    pers = {a["body"]: a for a in hd["positions"]["personality"]["activations"]}
-    des = {a["body"]: a for a in hd["positions"]["design"]["activations"]}
-    for body in pers:
-        p, d = pers[body], des.get(body, {})
-        rows.append([_esc(body.replace("_", " ")), f'<b>{p["gate"]}.{p["line"]}</b>', _esc(p["center"].replace("_", " ")),
-                     f'<b class="red">{d.get("gate", "")}.{d.get("line", "")}</b>',
-                     _esc(str(d.get("center", "")).replace("_", " "))])
-    facts = _facts([
-        ("Personality (UTC)", _esc(hd["positions"]["personality"].get("instant_utc", ""))),
-        ("Design (UTC)", _esc(hd["positions"]["design"].get("instant_utc", ""))),
-        ("Defined centres", _esc(", ".join(c.replace("_", " ") for c in v.get("defined_centers", [])))),
-        ("Undefined centres", _esc(", ".join(c.replace("_", " ") for c in v.get("undefined_centers", [])))),
-        ("Channels", _esc(", ".join(v.get("channels", [])))),
-        ("Active gates", _esc(", ".join(str(g) for g in v.get("active_gates", [])))),
-    ])
-    return _section(
-        "human_design", "Human Design",
-        f'<div class="flags">{chips}</div><div class="hd"><div class="figure small">{bodygraph_svg(hd)}</div>'
-        f'<div>{facts}</div></div>'
-        + _table(["Body", "Personality", "Centre", "Design", "Centre"], rows, "hd-acts"),
-        f'{_label(bg.get("epistemic", "tradition_rule"))} rule {_esc(bg.get("rule_version", ""))}. The design instant '
-        'is when the Sun was 88° of arc earlier. The BodyGraph is schematic.')
-
-
-def _num_section(num: Dict[str, Any], used: set) -> str:
-    cards = []
-    letters = ""
-    for a in num.get("derived_attributes", []):
-        used.add(a["id"])
-        v = a["value"]
-        pairs = []
-        for k, val in v.items():
-            if k == "letters":
-                letters = _table(["Letter", "Value", "Vowel"],
-                                 [[_esc(x["letter"]), str(x["value"]), "yes" if x.get("vowel") else ""] for x in val])
-                continue
-            if isinstance(val, dict) and "reduced" in val:
-                pairs.append((k.replace("_", " "), f'<b>{val["reduced"]}</b> <small>({val.get("compound", "")})</small>'))
-            elif isinstance(val, (dict, list)):
-                pairs.append((k.replace("_", " "), f"<code>{_esc(json.dumps(val, ensure_ascii=False))}</code>"))
-            else:
-                pairs.append((k.replace("_", " "), _esc(val)))
-        cards.append(f'<div class="mini"><h3>{_esc(a["id"])}</h3>{_facts(pairs)}'
-                     f'<p class="note">{_label(a["epistemic"])} {_esc(a["rule_version"])}</p></div>')
-    return _section("numerology", "Numerology", f'<div class="minis">{"".join(cards)}</div>'
-                    + (f"<details><summary>Letter values</summary>{letters}</details>" if letters else ""),
-                    "Each school is a separate rule pack; numbers are shown as reduced (compound).")
-
-
-def _provenance_section(envs: Dict[str, Dict[str, Any]]) -> str:
-    blocks = []
-    for name, env in envs.items():
-        pv = env.get("provenance", {})
-        calc = env.get("calculation", {})
-        pairs = [(k.replace("_", " "), _esc(v)) for k, v in calc.items()]
-        pairs += [(k.replace("_", " "), _esc(v)) for k, v in pv.items() if k not in ("assumptions", "rulesets")]
-        rs = pv.get("rulesets") or []
-        if rs:
-            pairs.append(("rulesets", _esc(", ".join(r if isinstance(r, str) else json.dumps(r) for r in rs))))
-        asm = "".join(f"<li>{_esc(a if isinstance(a, str) else json.dumps(a, ensure_ascii=False))}</li>"
-                      for a in pv.get("assumptions", []))
-        warns = "".join(f"<li>{_esc(w if isinstance(w, str) else json.dumps(w, ensure_ascii=False))}</li>"
-                        for w in env.get("warnings", []))
-        blocks.append(f'<div class="mini"><h3>{_esc(name)}</h3>{_facts(pairs)}'
-                      + (f"<h4>Assumptions</h4><ul>{asm}</ul>" if asm else "")
-                      + (f'<h4>Warnings</h4><ul class="warn">{warns}</ul>' if warns else "") + "</div>")
-    return _section("provenance", "Provenance", f'<div class="minis">{"".join(blocks)}</div>',
-                    "Every setting, data source and assumption behind the numbers above, as the engine recorded it.")
-
-
-def _attributes_section(envs: Dict[str, Dict[str, Any]], used: set) -> str:
-    rows = []
-    for name, env in envs.items():
-        for a in env.get("derived_attributes", []):
-            if a["id"] in used:
-                continue
-            rows.append([_esc(name), f'<code>{_esc(a["id"])}</code>',
-                         f'<code>{_esc(json.dumps(a["value"], ensure_ascii=False)[:300])}</code>',
-                         _label(a["epistemic"]), _esc(a.get("rule_version", ""))])
-    if not rows:
-        return ""
-    return _section("attributes", "Other derived attributes", _table(["Envelope", "Id", "Value", "Label", "Rule"], rows),
-                    "Every attribute the engine returned that is not shown in a section above, so nothing is hidden.")
-
-
-# ── page ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
-CSS = r"""
-:root{--paper:#f7f5f0;--panel:#fff;--ink:#1f1d1a;--muted:#6b665e;--line:#e3ded3;--accent:#c8102e;--chip:#f1ede4;
---shadow:0 10px 30px rgba(40,30,10,.12);--disc:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#16151a;--panel:#211f26;--ink:#f0ece4;
---muted:#a59f95;--line:#37343d;--accent:#ff5c70;--chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}}
-:root[data-theme="dark"]{--paper:#16151a;--panel:#211f26;--ink:#f0ece4;--muted:#a59f95;--line:#37343d;--accent:#ff5c70;
---chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}
-*{box-sizing:border-box}html,body{margin:0}
-body{background:var(--paper);color:var(--ink);font:15px/1.45 "Open Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
-header.top{max-width:1240px;margin:0 auto;padding:22px 16px 6px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
-header.top h1{margin:0;font-style:italic;font-weight:800;font-size:clamp(22px,3vw,34px)}
-header.top .sub{color:var(--muted);font-size:14px}
-.tools{display:flex;gap:6px;flex-wrap:wrap}
-.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px;box-shadow:var(--shadow)}
-.btn:hover{border-color:var(--ink)}
-nav.toc{max-width:1240px;margin:6px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px}
-nav.toc a{background:var(--chip);color:var(--ink);text-decoration:none;border-radius:999px;padding:3px 10px;font-size:13px}
-main{max-width:1240px;margin:0 auto;padding:10px 16px 40px;display:grid;gap:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px;min-width:0}
-.card h2{margin:0 0 6px;font-style:italic;font-weight:800;font-size:22px}
-.card h3{font-size:15px;margin:14px 0 6px}
-p.lead,.note{color:var(--muted);font-size:13.5px;margin:0 0 10px}
-.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start;margin-bottom:12px}
-.figure svg{width:100%;height:auto;display:block}
-.figure.small{max-width:300px}
-.figure .chakra{max-width:760px;margin:0 auto}
-.lbl{text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.seg{stroke:#fff;stroke-width:1.2}
-.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:6px 0 10px}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{padding:6px 9px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);white-space:nowrap}
-th{background:var(--chip);font-size:12.5px;position:sticky;top:0}
-tbody tr:hover,tr.hl{background:var(--chip)}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.35);margin-right:6px;vertical-align:middle}
-.facts{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:4px 12px;margin:0 0 10px;font-size:13.5px}
-.facts dt{color:var(--muted)}.facts dd{margin:0;overflow-wrap:anywhere}
-.flags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
-.flag{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:3px 10px;font-size:13px}
-.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.mini{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.mini h3{margin-top:0}
-.hd{display:grid;grid-template-columns:minmax(200px,300px) 1fr;gap:16px;align-items:start}
-@media (max-width:720px){.hd{grid-template-columns:1fr}}
-.red{color:var(--accent)}
-.ep{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;background:var(--chip);border:1px solid var(--line)}
-.ep-calculated{color:#2563EB}.ep-tradition_rule{color:#7C3AED}
-details{border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0}
-details.cur{border-color:var(--accent)}
-summary{cursor:pointer}
-ul.ants{columns:2;font-size:13px;margin:6px 0}
-@media (max-width:720px){ul.ants{columns:1}}
-ul.ants li.cur{color:var(--accent);font-weight:700}
-ul.warn li{color:var(--accent)}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
-.tab{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:3px 11px;cursor:pointer;font:inherit;font-size:13px}
-.tab[aria-selected="true"]{background:var(--ink);color:var(--panel)}
-.pane{max-width:520px}
-[data-body].hl circle,[data-body].hl{filter:drop-shadow(0 0 6px var(--accent))}
-line.asp.dim{opacity:.08}
-pre.raw{max-height:420px;overflow:auto;background:var(--chip);border-radius:10px;padding:10px;font-size:12px}
-footer{max-width:1240px;margin:0 auto 30px;padding:0 16px;color:var(--muted);font-size:12.5px}
-code{font-size:12px}
-@media print{.tools,nav.toc{display:none}.card{box-shadow:none;break-inside:avoid}body{background:#fff}
-details{break-inside:avoid}details>*{display:block}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-"""
-
-JS = r"""
-(function(){
-  var root=document.documentElement;
-  try{var t=localStorage.getItem('eshana-theme'); if(t) root.setAttribute('data-theme',t);}catch(e){}
-  var tb=document.getElementById('theme');
-  if(tb) tb.addEventListener('click',function(){
-    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-    var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
-    try{localStorage.setItem('eshana-theme',nx);}catch(e){}
-  });
-  var pb=document.getElementById('print'); if(pb) pb.addEventListener('click',function(){
-    document.querySelectorAll('details').forEach(function(d){d.open=true}); window.print();});
-  var jb=document.getElementById('json'); if(jb) jb.addEventListener('click',function(){
-    var raw=document.getElementById('eshana-data').textContent;
-    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
-    a.download='eshana-envelopes.json'; document.body.appendChild(a); a.click(); a.remove();});
-  function mark(id,on){
-    document.querySelectorAll('[data-body]').forEach(function(el){
-      var ids=el.getAttribute('data-body').split(' ');
-      if(ids.indexOf(id)>=0) el.classList.toggle('hl',on);
-      if(el.classList.contains('asp')) el.classList.toggle('dim',on&&ids.indexOf(id)<0);
-    });
-  }
-  document.querySelectorAll('[data-body]').forEach(function(el){
-    var id=el.getAttribute('data-body').split(' ')[0];
-    if(el.classList.contains('asp')) return;
-    el.addEventListener('mouseenter',function(){mark(id,true)});
-    el.addEventListener('mouseleave',function(){mark(id,false)});
-  });
-  document.querySelectorAll('.tabs').forEach(function(tabs){
-    var card=tabs.closest('.card');
-    tabs.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){
-      tabs.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',String(x===b))});
-      card.querySelectorAll('.pane').forEach(function(p){p.hidden=p.getAttribute('data-pane')!==b.getAttribute('data-tab')});
-    })});
-  });
-})();
-"""
+def _kind(env: Dict[str, Any]) -> Optional[str]:
+    kind = env.get("kind")
+    system = (env.get("calculation") or {}).get("system")
+    if kind == "computed_chart" and system in ("vedic", "western"):
+        return system
+    if kind in ("human_design", "matching"):
+        return kind
+    if env.get("derived_attributes") and str(env["derived_attributes"][0].get("id", "")).startswith("numerology"):
+        return "numerology"
+    return None
 
 
 def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart report",
                 subject: Optional[Dict[str, Any]] = None, sections: Optional[Iterable[str]] = None,
-                theme: str = "auto") -> str:
-    """Render engine envelopes into one self-contained HTML document.
+                theme: str = "auto", transits: Optional[Dict[str, Any]] = None,
+                progressions: Optional[Dict[str, Any]] = None, reference_utc: Optional[str] = None,
+                errors: Optional[Dict[str, str]] = None, defaults: Optional[Dict[str, Any]] = None) -> str:
+    """Render engine envelopes as one self-contained, interactive HTML chart studio.
 
-    ``envelopes`` maps a label to an envelope; kinds are recognised from the envelope itself (``computed_chart`` with
-    ``calculation.system`` vedic/western, ``human_design``, ``numerology``). ``subject`` holds display-only details
-    such as the person's name and a place label. ``sections`` restricts output to names in :data:`SECTIONS`.
+    ``envelopes`` maps labels to envelopes; their kinds are recognised from the envelopes themselves. ``transits`` and
+    ``progressions`` are ``ephemeris`` envelopes (rows of longitudes). ``sections`` limits the page to names in
+    :data:`SECTIONS`; ``defaults`` presets viewer settings (icons, chart style, layers). Everything renders in the
+    browser from the embedded data; nothing is fetched.
     """
-    want = set(sections or SECTIONS)
-    unknown = want - set(SECTIONS)
+    want = list(sections or SECTIONS)
+    unknown = set(want) - set(SECTIONS)
     if unknown:
         raise ValueError(f"unknown sections: {', '.join(sorted(unknown))}; choose from {', '.join(SECTIONS)}")
-    vedic = western = hd = num = None
+    by_kind: Dict[str, Dict[str, Any]] = {}
     for env in envelopes.values():
-        kind = env.get("kind")
-        system = (env.get("calculation") or {}).get("system")
-        if kind == "computed_chart" and system == "vedic":
-            vedic = env
-        elif kind == "computed_chart" and system == "western":
-            western = env
-        elif kind == "human_design":
-            hd = env
-        elif env.get("derived_attributes") and str(env["derived_attributes"][0].get("id", "")).startswith("numerology"):
-            num = env
-    used: set = set()
-    parts: Dict[str, str] = {}
-    subject = subject or {}
-    first = next(iter(envelopes.values()), {})
-    inp = first.get("input", {})
-    place = inp.get("place") or {}
-    summary_pairs = [
-        ("Name", _esc(subject.get("name", ""))),
-        ("Place", _esc(subject.get("place_label", ""))),
-        ("Local date and time", _esc(subject.get("local", ""))),
-        ("Instant (UTC)", _esc(inp.get("instant_utc", ""))),
-        ("Time zone", _esc(inp.get("civil_zone", "")) + (f' ({inp["civil_offset_s"] / 3600:+.2f} h)' if
-                                                         inp.get("civil_offset_s") is not None else "")),
-        ("Latitude, longitude", f'{place["latitude_deg"]:.4f}°, {place["longitude_deg"]:.4f}°' if place else ""),
-        ("Birth time quality", _esc(inp.get("birth_time_quality", ""))),
-        ("Julian day (UT / TT)", f'{inp["jd_ut"]:.6f} / {inp.get("jd_tt", 0):.6f}' if "jd_ut" in inp else ""),
-        ("ΔT", f'{inp["delta_t_s"]:.2f} s' if "delta_t_s" in inp else ""),
-    ]
-    chips = []
-    if vedic:
-        at = _attrs(vedic)
-        for k, lab in (("vedic.lagna.rashi", "Lagna"), ("vedic.moon.rashi", "Moon rāśi"),
-                       ("vedic.sun.rashi", "Sun rāśi")):
-            if k in at:
-                chips.append(f'<span class="flag">{lab}: <b>{_esc(at[k]["value"]["name"])}</b></span>')
-        mn = at.get("vedic.moon.nakshatra")
-        if mn:
-            chips.append(f'<span class="flag">Janma nakshatra: <b>{_esc(mn["value"]["name"])} '
-                         f'{_esc(mn["value"].get("pada", ""))}</b></span>')
-    if hd:
-        bg = _attrs(hd).get("human_design.bodygraph", {}).get("value", {})
-        if bg:
-            chips.append(f'<span class="flag">HD: <b>{_esc(bg.get("type"))} {_esc(bg.get("profile"))}</b></span>')
-    parts["summary"] = _section("summary", "Birth data", f'<div class="flags">{"".join(chips)}</div>' + _facts(summary_pairs),
-                                "Computed by ESHANA. Values are labelled calculated or tradition_rule; nothing here is "
-                                "an interpretation.")
-    if vedic:
-        parts.update(_vedic_sections(vedic, used))
-    if western:
-        parts["western"] = _western_section(western, used)
-    if hd:
-        parts["human_design"] = _hd_section(hd, used)
-    if num:
-        parts["numerology"] = _num_section(num, used)
-    parts["attributes"] = _attributes_section(envelopes, used)
-    parts["provenance"] = _provenance_section(envelopes)
-    raw = json.dumps(envelopes, ensure_ascii=False, indent=1)
-    parts["raw"] = _section("raw", "Raw envelopes", f'<details><summary>Show JSON ({len(raw):,} characters)</summary>'
-                            f'<pre class="raw">{_esc(raw)}</pre></details>',
-                            "Exactly what the engine returned. The Export JSON button saves the same data.")
-    body = [parts[s] for s in SECTIONS if s in want and parts.get(s)]
-    toc_names = {"summary": "Birth data", "chakra": "Chakra", "vedic": "Vedic", "divisional": "Vargas",
-                 "dasha": "Daśā", "nakshatra": "Nakshatra", "western": "Western", "human_design": "Human Design",
-                 "numerology": "Numerology", "attributes": "Other", "provenance": "Provenance", "raw": "JSON"}
-    toc = "".join(f'<a href="#{s}">{toc_names[s]}</a>' for s in SECTIONS if s in want and parts.get(s))
+        k = _kind(env)
+        if k and k not in by_kind:
+            by_kind[k] = env
+    data = {
+        "envelopes": by_kind,
+        "subject": subject or {},
+        "reference_utc": reference_utc,
+        "transits": transits,
+        "progressions": progressions,
+        "nakshatra_reference": _nak_reference(),
+        "defaults": defaults or {},
+        "generator": "eshana.report",
+    }
+    first = next(iter(by_kind.values()), {})
     version = (first.get("provenance") or {}).get("engine_version", "")
+    data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    shells = "".join(
+        f'<section class="card" id="{sid}"><h2>{_esc(SECTION_TITLES[sid])}</h2><div class="body">'
+        f'<noscript><p class="note">This section is drawn in the browser; enable JavaScript to see it. The data is in the '
+        f'Raw data section of the file.</p></noscript></div></section>'
+        for sid in SECTIONS if sid in want)
+    toc = "".join(f'<a href="#{s}">{TOC_NAMES[s]}</a>' for s in SECTIONS if s in want)
+    err_html = ""
+    if errors:
+        items = "".join(f"<li><b>{_esc(k)}</b>: {_esc(v)}</li>" for k, v in errors.items())
+        err_html = (f'<section class="card" id="not-computed"><h2>Not computed</h2><p class="lead">These were refused '
+                    f'by the engine, so they are left out rather than guessed.</p><ul class="warn">{items}</ul></section>')
+    sub = " · ".join(str(x) for x in ((subject or {}).get("name"), (subject or {}).get("local"),
+                                      (subject or {}).get("place_label")) if x)
     theme_attr = f' data-theme="{theme}"' if theme in ("light", "dark") else ""
-    data_json = json.dumps(envelopes, ensure_ascii=False).replace("</", "<\\/")
     generated = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    sub = " · ".join(x for x in (subject.get("name"), subject.get("local"), subject.get("place_label")) if x)
+    js = "\n".join(_asset(n) for n in ASSETS)
     return f"""<!doctype html>
 <html lang="en"{theme_attr}>
 <head>
@@ -941,34 +527,45 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="ESHANA {_esc(version)}">
 <title>{_esc(title)}</title>
-<style>{CSS}</style>
+<style>{_asset("report.css")}</style>
 </head>
 <body>
 <header class="top"><div><h1>{_esc(title)}</h1><div class="sub">{_esc(sub)}</div></div>
-<div class="tools"><button class="btn" id="theme" type="button">◐ Theme</button>
+<div class="tools">
+<button class="btn" id="settings" type="button">⚙ Show and style</button>
+<button class="btn" id="theme" type="button">◐ Theme</button>
 <button class="btn" id="print" type="button">⎙ Print / PDF</button>
-<button class="btn" id="json" type="button">⤓ Export JSON</button></div></header>
+<button class="btn" id="svg" type="button">⤓ Chakra SVG</button>
+<button class="btn" id="json" type="button">⤓ Export JSON</button>
+<button class="btn" id="copy" type="button">⧉ Copy summary</button>
+</div></header>
 <nav class="toc" aria-label="Sections">{toc}</nav>
 <main>
-{"".join(body)}
+{err_html}{shells}
 </main>
+<aside class="drawer" id="drawer" aria-label="Show and style"></aside>
 <footer>Generated {generated} by ESHANA {_esc(version)} (Extensible Spatiotemporal Hypersystem for Astroinformatics,
-Natural Cycles &amp; Associations). Open source, Apache-2.0. Chart markers follow {MARKER_RULES}. This file is
-self-contained and makes no network requests.</footer>
+Natural Cycles &amp; Associations). Open source, Apache-2.0. Every value comes from the engine and is labelled calculated
+or tradition_rule; chart markers follow {MARKER_RULES}. This file is self-contained and makes no network requests.</footer>
 <script type="application/json" id="eshana-data">{data_json}</script>
-<script>{JS}</script>
+<script>{js}</script>
 </body>
 </html>
 """
 
 
 # ── running the engine ─────────────────────────────────────────────────────────────────────────────────────────────
+ALL_DIVISIONS = (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
+
+
 def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lahiri", houses: str = "whole_sign",
-                  western_houses: str = "placidus", node_model: str = "mean", divisions: Sequence[int] = (1, 3, 4, 7, 9, 10, 12),
-                  dasha: bool = True, systems: Sequence[str] = ("vedic", "western", "human_design", "numerology"),
-                  provider: str = "analytic", spk_path: Optional[str] = None,
-                  numerology_school: str = "pythagorean") -> Dict[str, Dict[str, Any]]:
-    """Run the engine for each requested system. A system that cannot be computed becomes an ``error`` entry."""
+                  western_houses: str = "placidus", node_model: str = "mean", divisions: Sequence[int] = ALL_DIVISIONS,
+                  dasha: bool = True, dasha_levels: int = 3, dasha_systems: Sequence[str] = ("vimshottari", "yogini"),
+                  features: Sequence[str] = ("all",), reference_utc: Optional[str] = None,
+                  systems: Sequence[str] = ("vedic", "western", "human_design", "numerology"),
+                  provider: str = "analytic", spk_path: Optional[str] = None, numerology_school: str = "pythagorean",
+                  sunrise: Optional[str] = None, partner: Any = None) -> Dict[str, Dict[str, Any]]:
+    """Run the engine for each requested system. A system that cannot be computed becomes an ``_errors`` entry."""
     from . import ChartEngine, EshanaError
 
     eng = ChartEngine(provider=provider, spk_path=spk_path)
@@ -984,40 +581,75 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
 
     if "vedic" in systems:
         run("vedic", lambda: eng.vedic_chart(ctx, ayanamsha=ayanamsha, houses=houses, node_model=node_model,
-                                             divisions=list(divisions), dasha=dasha))
+                                             divisions=list(divisions), dasha=dasha, dasha_levels=dasha_levels,
+                                             dasha_systems=list(dasha_systems), features=list(features),
+                                             reference_utc=reference_utc, sunrise=sunrise))
+        if "vedic" in errors and features:
+            # A feature may be refused for this input (for example no place); keep the chart without features.
+            errors.pop("vedic")
+            run("vedic", lambda: eng.vedic_chart(ctx, ayanamsha=ayanamsha, houses=houses, node_model=node_model,
+                                                 divisions=list(divisions), dasha=dasha, dasha_levels=dasha_levels,
+                                                 dasha_systems=list(dasha_systems), reference_utc=reference_utc))
     if "western" in systems:
         run("western", lambda: eng.western_chart(ctx, houses=western_houses, node_model=node_model, aspects=True))
     if "human_design" in systems:
         run("human_design", lambda: eng.human_design(ctx))
     if "numerology" in systems and (name or ctx.when.get("date")):
         run("numerology", lambda: eng.numerology(name=name, date_of_birth=ctx.when.get("date"), school=numerology_school))
+    if partner is not None:
+        run("matching", lambda: eng.matching(ctx, partner, ayanamsha=ayanamsha))
     if errors:
         out["_errors"] = {"kind": "report_errors", "errors": errors}
     return out
 
 
+def _series(eng: Any, start: str, step: float, count: int, zodiac: str, ayanamsha: Optional[str]) -> Optional[Dict[str, Any]]:
+    from . import EshanaError
+    try:
+        return eng.ephemeris(start, step, count, zodiac=zodiac, ayanamsha=ayanamsha)
+    except EshanaError:
+        return None
+
+
 def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[str] = None,
                  title: Optional[str] = None, sections: Optional[Iterable[str]] = None, theme: str = "auto",
-                 **kw: Any) -> str:
-    """Compute every requested system for ``ctx`` (an :class:`eshana.Context`) and return the HTML report."""
-    envs = envelopes_for(ctx, name=name, **kw)
+                 reference_utc: Optional[str] = None, transit_days: int = 365, progression_years: int = 90,
+                 defaults: Optional[Dict[str, Any]] = None, **kw: Any) -> str:
+    """Compute every requested system for ``ctx`` (an :class:`eshana.Context`) and return the chart studio HTML.
+
+    ``reference_utc`` is the instant used for "current" daśā periods and the transit table (default: now, recorded
+    in the file). ``transit_days`` sets the span of the transit animation around it; ``progression_years`` the span of
+    secondary progressions. Other keyword arguments go to :func:`envelopes_for`.
+    """
+    from . import ChartEngine
+
+    ref = reference_utc or _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    envs = envelopes_for(ctx, name=name, reference_utc=ref, **kw)
     errs = envs.pop("_errors", None)
+    eng = ChartEngine(provider=kw.get("provider", "analytic"), spk_path=kw.get("spk_path"))
+    transits = progressions = None
+    ayan = kw.get("ayanamsha", "lahiri")
+    if transit_days > 0 and "vedic" in envs:
+        ref_dt = _dt.datetime.strptime(ref[:19], "%Y-%m-%dT%H:%M:%S")
+        start = (ref_dt - _dt.timedelta(days=transit_days / 2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        step = max(1.0, transit_days / 180)
+        transits = _series(eng, start, step, int(transit_days / step) + 1, "sidereal", ayan)
+        if transits:
+            transits["reference_index"] = int((transit_days / 2) / step)
+    birth_utc = next((e.get("input", {}).get("instant_utc") for e in envs.values() if e.get("input")), None)
+    if progression_years > 0 and birth_utc and ctx.when.get("time"):
+        progressions = _series(eng, birth_utc[:19] + "Z", 1.0, progression_years + 1, "tropical", None)
     local = " ".join(str(ctx.when.get(k)) for k in ("date", "time") if ctx.when.get(k)) or ctx.when.get("utc", "")
     if ctx.when.get("timezone"):
         local += f' ({ctx.when["timezone"]})'
-    page = render_html(envs, title=title or (f"{name} · birth chart" if name else "Birth chart"),
+    return render_html(envs, title=title or (f"{name} · birth chart" if name else "Birth chart"),
                        subject={"name": name, "place_label": place_label, "local": local}, sections=sections,
-                       theme=theme)
-    if errs:
-        note = "".join(f"<li><b>{_esc(k)}</b>: {_esc(v)}</li>" for k, v in errs["errors"].items())
-        page = page.replace("<main>\n", f'<main>\n<section class="card" id="not-computed"><h2>Not computed</h2>'
-                            f'<p class="lead">These systems were refused by the engine, so they are left out rather '
-                            f'than guessed.</p><ul class="warn">{note}</ul></section>', 1)
-    return page
+                       theme=theme, transits=transits, progressions=progressions, reference_utc=ref,
+                       errors=(errs or {}).get("errors"), defaults=defaults)
 
 
 def _parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="eshana-report", description="Write a self-contained HTML chart report.")
+    p = argparse.ArgumentParser(prog="eshana-report", description="Write a self-contained, interactive HTML chart studio.")
     p.add_argument("-o", "--output", default="-", help="output .html file (default: stdout)")
     p.add_argument("--from-json", nargs="+", metavar="FILE", help="render envelopes saved from the eshana CLI instead")
     p.add_argument("--date", help="local date YYYY-MM-DD")
@@ -1033,17 +665,26 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--place", dest="place_label", help="place label shown in the report")
     p.add_argument("--title")
     p.add_argument("--ayanamsha", default="lahiri", choices=["lahiri", "raman", "krishnamurti", "fagan_bradley"])
-    p.add_argument("--houses", default="whole_sign", choices=["whole_sign", "equal", "placidus"],
-                   help="Vedic house system")
+    p.add_argument("--houses", default="whole_sign", choices=["whole_sign", "equal", "placidus"], help="Vedic houses")
     p.add_argument("--western-houses", default="placidus", choices=["whole_sign", "equal", "placidus"])
     p.add_argument("--node", default="mean", choices=["mean", "true"])
-    p.add_argument("--divisions", default="1,3,4,7,9,10,12")
+    p.add_argument("--divisions", default=",".join(str(d) for d in ALL_DIVISIONS))
+    p.add_argument("--features", default="all", help="Vedic features (comma list) or all, or none")
+    p.add_argument("--dasha-levels", type=int, default=3)
+    p.add_argument("--dasha-systems", default="vimshottari,yogini")
     p.add_argument("--no-dasha", action="store_true")
+    p.add_argument("--reference", help="instant for 'current' periods and transits, UTC (default: now)")
+    p.add_argument("--transit-days", type=int, default=365, help="span of the transit animation (0 = none)")
+    p.add_argument("--progression-years", type=int, default=90, help="span of secondary progressions (0 = none)")
+    p.add_argument("--sunrise", choices=["upper_limb_refracted", "centre_refracted", "centre_unrefracted"])
     p.add_argument("--systems", default="vedic,western,human_design,numerology")
     p.add_argument("--school", default="pythagorean", choices=["pythagorean", "chaldean"])
+    p.add_argument("--partner", help="second person for matching: date,time,tz,lat,lon")
     p.add_argument("--provider", default="analytic", choices=["analytic", "spk"])
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
+    p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
+    p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p
 
@@ -1053,6 +694,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     a = _parser().parse_args(argv)
     sections = a.sections.split(",") if a.sections else None
+    defaults = {k: v for k, v in {"icons": a.icons, "chart": a.chart_style}.items() if v}
     try:
         if a.from_json:
             envs = {}
@@ -1064,7 +706,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     return 2
                 envs[f.rsplit("/", 1)[-1].rsplit(".", 1)[0]] = env
             page = render_html(envs, title=a.title or "ESHANA chart report",
-                               subject={"name": a.name, "place_label": a.place_label}, sections=sections, theme=a.theme)
+                               subject={"name": a.name, "place_label": a.place_label}, sections=sections,
+                               theme=a.theme, reference_utc=a.reference, defaults=defaults)
         else:
             if a.utc:
                 ctx = Context.from_utc(a.utc, a.lat, a.lon)
@@ -1075,11 +718,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 print("eshana-report: give --date (with --tz or --offset-minutes) or --utc, or --from-json",
                       file=sys.stderr)
                 return 2
+            partner = None
+            if a.partner:
+                f = [x.strip() for x in a.partner.split(",")]
+                partner = Context.from_local_birth(f[0], f[1] or None, f[2] or None,
+                                                   float(f[3]) if len(f) > 3 and f[3] else None,
+                                                   float(f[4]) if len(f) > 4 and f[4] else None)
+            feats = [] if a.features == "none" else [x for x in a.features.split(",") if x]
             page = birth_report(ctx, name=a.name, place_label=a.place_label, title=a.title, sections=sections,
-                                theme=a.theme, ayanamsha=a.ayanamsha, houses=a.houses, western_houses=a.western_houses,
+                                theme=a.theme, reference_utc=a.reference, transit_days=a.transit_days,
+                                progression_years=a.progression_years, defaults=defaults,
+                                ayanamsha=a.ayanamsha, houses=a.houses, western_houses=a.western_houses,
                                 node_model=a.node, divisions=[int(x) for x in a.divisions.split(",") if x],
-                                dasha=not a.no_dasha, systems=a.systems.split(","), provider=a.provider,
-                                spk_path=a.spk, numerology_school=a.school)
+                                dasha=not a.no_dasha, dasha_levels=a.dasha_levels,
+                                dasha_systems=[x for x in a.dasha_systems.split(",") if x], features=feats,
+                                systems=a.systems.split(","), provider=a.provider, spk_path=a.spk,
+                                numerology_school=a.school, sunrise=a.sunrise, partner=partner)
     except (EshanaError, ValueError) as e:
         print(f"eshana-report: {e}", file=sys.stderr)
         return 2

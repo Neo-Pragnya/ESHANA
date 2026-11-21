@@ -685,9 +685,10 @@
       "id": "RULE-01",
       "area": "bind",
       "title": "Data-driven rule packs with validator and mandatory source",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "ADR-004"
+      "source": "ADR-004",
+      "evidence": "ADR-012: YAML packs (serde_norway), packs::validate in tests; eshana rulesets."
     },
     {
       "id": "QA-01",
@@ -849,9 +850,9 @@
       "id": "SEC-04",
       "area": "sec",
       "title": "CI: build, test, lint, acceptance, docs, security",
-      "status": "implemented",
+      "status": "verified",
       "track": "primary",
-      "evidence": "workflows written; first run pending",
+      "evidence": "All 13 checks green on PR #1, merged to main 2026-11-21.",
       "evidence_paths": [
         ".github/workflows/ci.yml"
       ]
@@ -894,7 +895,7 @@
       "title": "Report on the website: demos section G and /reports/",
       "status": "implemented",
       "track": "primary",
-      "note": "Verified when the Pages site deploys."
+      "note": "Pages enabled 2026-11-21 (build_type workflow); verified when the deploy completes."
     },
     {
       "id": "REP-05",
@@ -907,17 +908,18 @@
       "id": "ACC-04",
       "area": "qa",
       "title": "More published reference charts (sites that print full input and output)",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
-      "note": "Recipe in docs/guides/accuracy-suite.md."
+      "note": "PyJHora special lagnas added; more sources welcome."
     },
     {
       "id": "ACC-05",
       "area": "qa",
       "title": "Accuracy suite in CI with the JPL kernel",
-      "status": "implemented",
+      "status": "verified",
       "track": "primary",
-      "note": "ci.yml job 'accuracy'; verified on the first GitHub run."
+      "note": "ci.yml job 'accuracy'; verified on the first GitHub run.",
+      "evidence": "ci.yml accuracy job passed on PR #1 (first GitHub run, 2026-11-21)."
     },
     {
       "id": "FIX-01",
@@ -958,6 +960,230 @@
       "status": "implemented",
       "track": "primary",
       "note": "Needs the GitHub publisher added on PyPI."
+    },
+    {
+      "id": "VED-20",
+      "area": "vedic",
+      "title": "Vargas D2, D16, D20, D24, D27, D30, D40, D45, D60",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "accuracy suite re-derives all 16 vargas on 44 charts"
+    },
+    {
+      "id": "VED-21",
+      "area": "vedic",
+      "title": "Vimshottari to five levels with the current chain; Yogini dasha",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "dasha_level_tests, yogini_start_follows_the_nakshatra_rule"
+    },
+    {
+      "id": "VED-22",
+      "area": "vedic",
+      "title": "Strength: dignity, avastha, combustion, dig bala, naisargika bala; panchadha maitri",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "jyotish tests incl. the signed-angle regression"
+    },
+    {
+      "id": "VED-23",
+      "area": "vedic",
+      "title": "Graha and rashi drishti",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "graha_drishti_includes_special_aspects, rashi_drishti_rules"
+    },
+    {
+      "id": "VED-24",
+      "area": "vedic",
+      "title": "Ashtakavarga (bhinna and sarva)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "totals fixed by the pack; re-derived from the YAML on 40 charts x 2 providers"
+    },
+    {
+      "id": "VED-25",
+      "area": "vedic",
+      "title": "Jaimini chara karakas, karakamsa, arudha padas",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "karakas_rank_by_degree, arudha_lagna_example"
+    },
+    {
+      "id": "VED-26",
+      "area": "vedic",
+      "title": "KP sub and sub-sub lords, significators, ruling planets",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "lords re-derived in Python for every planet and cusp"
+    },
+    {
+      "id": "VED-27",
+      "area": "vedic",
+      "title": "Yogas (18) and doshas (6) from a YAML condition language",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "yogas_hold_where_the_rule_says; acceptance vedic-features"
+    },
+    {
+      "id": "VED-28",
+      "area": "vedic",
+      "title": "Sade Sati windows with phases",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Saturn ingresses agree with Swiss within 3 minutes (spk)"
+    },
+    {
+      "id": "PAN-01",
+      "area": "vedic",
+      "title": "Panchanga with end times, rise/set, hora, choghadiya, rahu kalam, special lagnas, tara and chandra bala",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "limbs and rise/set vs Swiss; special lagnas vs PyJHora within 2'"
+    },
+    {
+      "id": "MAT-01",
+      "area": "vedic",
+      "title": "Ashtakoota matching with Manglik flags",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "re-derived from the YAML for 20 pairs; bounds and symmetry tests"
+    },
+    {
+      "id": "EPH-01",
+      "area": "astro",
+      "title": "Ephemeris tables and sign-ingress search",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "ingresses vs Swiss 1990-2030 for Sun, Jupiter, Saturn"
+    },
+    {
+      "id": "REP-10",
+      "area": "docs",
+      "title": "Chart studio: Panchang Chakra with layers, drill-down, transits animation, N/S charts for any varga, icon styles, viewer settings",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "rendered in headless Chrome with no console errors; acceptance report capability"
+    },
+    {
+      "id": "REP-11",
+      "area": "docs",
+      "title": "Detailed and schematic BodyGraph",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "rendered and inspected"
+    },
+    {
+      "id": "REP-06",
+      "area": "docs",
+      "title": "East Indian chart style",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "REP-07",
+      "area": "docs",
+      "title": "Chart playground (drag planets, vargas follow)",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "REP-08",
+      "area": "docs",
+      "title": "Interface languages beyond English",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "AYA-02",
+      "area": "astro",
+      "title": "Star-based and further ayanamshas (Yukteshwar, true Chitrapaksha, Revati, Pushya)",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VED-09",
+      "area": "vedic",
+      "title": "D150 and non-Parashara vargas",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VED-10",
+      "area": "vedic",
+      "title": "Chara, Narayana and other conditional dashas",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VED-11",
+      "area": "vedic",
+      "title": "Full shadbala",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VED-12",
+      "area": "vedic",
+      "title": "Ashtakavarga transit strength by date",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VED-13",
+      "area": "vedic",
+      "title": "Upagrahas (Gulika, Mandi)",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "KP-02",
+      "area": "vedic",
+      "title": "KP horary by number",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "MAT-02",
+      "area": "vedic",
+      "title": "Rajju and vedha doshas, matching calendar",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "MUH-01",
+      "area": "vedic",
+      "title": "Muhurta search",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "VAR-01",
+      "area": "vedic",
+      "title": "Varshaphala",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "LK-01",
+      "area": "vedic",
+      "title": "Lal Kitab",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "WES-05",
+      "area": "western",
+      "title": "Solar arc progressions and returns",
+      "status": "proposed",
+      "track": "primary"
+    },
+    {
+      "id": "RULE-02",
+      "area": "core",
+      "title": "Load user rule packs at run time with the same validator",
+      "status": "proposed",
+      "track": "primary"
     }
   ]
 }

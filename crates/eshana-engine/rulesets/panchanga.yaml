@@ -1,0 +1,44 @@
+# Rule pack: vedic.panchanga@0.2
+# Names and day-division tables for the five limbs of the day (tithi, vara, nakshatra, yoga, karana) and the
+# common muhurta divisions. The day starts at local sunrise. Rise and set use the disc centre with standard
+# refraction (Sun: -0.8333 deg; Moon: 0.7275 x horizontal parallax - 0.5667 deg).
+id: vedic.panchanga
+version: "0.2"
+tithis: [Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami,
+         Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Purnima,
+         Pratipada, Dwitiya, Tritiya, Chaturthi, Panchami, Shashthi, Saptami, Ashtami, Navami, Dashami,
+         Ekadashi, Dwadashi, Trayodashi, Chaturdashi, Amavasya]
+yogas: [Vishkambha, Priti, Ayushman, Saubhagya, Shobhana, Atiganda, Sukarma, Dhriti, Shula, Ganda, Vriddhi,
+        Dhruva, Vyaghata, Harshana, Vajra, Siddhi, Vyatipata, Variyana, Parigha, Shiva, Siddha, Sadhya, Shubha,
+        Shukla, Brahma, Indra, Vaidhriti]
+# 60 half-tithis: index 0 is Kimstughna; 1-56 cycle through the seven movable karanas; 57-59 are fixed.
+karana_first: Kimstughna
+karana_movable: [Bava, Balava, Kaulava, Taitila, Garaja, Vanija, Vishti]
+karana_last: [Shakuni, Chatushpada, Naga]
+varas:
+  - {name: Ravivara, english: Sunday, lord: sun}
+  - {name: Somavara, english: Monday, lord: moon}
+  - {name: Mangalavara, english: Tuesday, lord: mars}
+  - {name: Budhavara, english: Wednesday, lord: mercury}
+  - {name: Guruvara, english: Thursday, lord: jupiter}
+  - {name: Shukravara, english: Friday, lord: venus}
+  - {name: Shanivara, english: Saturday, lord: saturn}
+# Daytime split into eight equal parts; the part number (1-8) for each weekday, Sunday first.
+rahu_kalam: [8, 2, 7, 5, 6, 4, 3]
+yamagandam: [5, 4, 3, 2, 1, 7, 6]
+gulika_kalam: [7, 6, 5, 4, 3, 2, 1]
+# Horas: 12 day and 12 night parts; the first day hora belongs to the weekday lord, then this order repeats.
+hora_order: [sun, venus, mercury, moon, saturn, jupiter, mars]
+# Choghadiya: eight day and eight night parts. Day sequences step +1 through `names`, night sequences step -2.
+choghadiya:
+  names: [Udveg, Chal, Labh, Amrit, Kaal, Shubh, Rog]
+  quality: {Udveg: inauspicious, Chal: neutral, Labh: auspicious, Amrit: auspicious, Kaal: inauspicious, Shubh: auspicious, Rog: inauspicious}
+  day_start: [0, 3, 6, 2, 5, 1, 4]
+  night_start: [5, 1, 4, 0, 3, 6, 2]
+  day_step: 1
+  night_step: -2
+# Tara bala: count from the birth nakshatra to the day's nakshatra, inclusive; position in the cycle of nine.
+taras: [Janma, Sampat, Vipat, Kshema, Pratyari, Sadhaka, Vadha, Mitra, Ati-Mitra]
+tara_favourable: [Sampat, Kshema, Sadhaka, Mitra, Ati-Mitra]
+# Chandra bala: houses of the transiting Moon counted from the natal Moon sign that are counted favourable.
+chandra_bala_favourable: [1, 3, 6, 7, 10, 11]

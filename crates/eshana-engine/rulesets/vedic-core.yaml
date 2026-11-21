@@ -1,0 +1,77 @@
+# Rule pack: vedic.core@0.2
+# Tables used by several Vedic features: sign lords, dignities, natural relationships, graha drishti,
+# combustion orbs and directional strength. Values follow Brihat Parashara Hora Shastra (BPHS) as commonly
+# taught. Where schools differ, the convention used here is named in `conventions`.
+id: vedic.core
+version: "0.2"
+conventions:
+  scorpio_aquarius_lords: "Primary lords only: Scorpio -> Mars, Aquarius -> Saturn (Ketu and Rahu co-lordship not used)"
+  node_aspects: "Rahu and Ketu aspect the 5th, 7th and 9th from their sign (a common convention; some schools use the 7th only)"
+  combustion: "Orbs in degrees from the Sun; Mercury and Venus use smaller orbs when retrograde"
+
+# Sign index 0 = Aries (Mesha). Lords by graha id.
+sign_lords: [mars, venus, mercury, moon, sun, mercury, venus, mars, jupiter, saturn, saturn, jupiter]
+
+grahas: [sun, moon, mars, mercury, jupiter, venus, saturn, rahu, ketu]
+
+dignity:
+  sun:     {exaltation: [0, 10],  debilitation: [6, 10],  own: [4],      moolatrikona: [4, 0, 20]}
+  moon:    {exaltation: [1, 3],   debilitation: [7, 3],   own: [3],      moolatrikona: [1, 3, 30]}
+  mars:    {exaltation: [9, 28],  debilitation: [3, 28],  own: [0, 7],   moolatrikona: [0, 0, 12]}
+  mercury: {exaltation: [5, 15],  debilitation: [11, 15], own: [2, 5],   moolatrikona: [5, 15, 20]}
+  jupiter: {exaltation: [3, 5],   debilitation: [9, 5],   own: [8, 11],  moolatrikona: [8, 0, 10]}
+  venus:   {exaltation: [11, 27], debilitation: [5, 27],  own: [1, 6],   moolatrikona: [6, 0, 15]}
+  saturn:  {exaltation: [6, 20],  debilitation: [0, 20],  own: [9, 10],  moolatrikona: [10, 0, 20]}
+  rahu:    {exaltation: [1, 20],  debilitation: [7, 20],  own: [],       moolatrikona: null}
+  ketu:    {exaltation: [7, 20],  debilitation: [1, 20],  own: [],       moolatrikona: null}
+
+# Naisargika (natural) relationships, BPHS.
+natural_friendship:
+  sun:     {friends: [moon, mars, jupiter],    neutral: [mercury],                       enemies: [venus, saturn]}
+  moon:    {friends: [sun, mercury],           neutral: [mars, jupiter, venus, saturn],  enemies: []}
+  mars:    {friends: [sun, moon, jupiter],     neutral: [venus, saturn],                 enemies: [mercury]}
+  mercury: {friends: [sun, venus],             neutral: [mars, jupiter, saturn],         enemies: [moon]}
+  jupiter: {friends: [sun, moon, mars],        neutral: [saturn],                        enemies: [mercury, venus]}
+  venus:   {friends: [mercury, saturn],        neutral: [mars, jupiter],                 enemies: [sun, moon]}
+  saturn:  {friends: [mercury, venus],         neutral: [jupiter],                       enemies: [sun, moon, mars]}
+
+# Temporary (tatkalika) friends: grahas in these houses counted from a graha.
+temporary_friend_houses: [2, 3, 4, 10, 11, 12]
+
+# Graha drishti: every graha aspects the 7th; these add special aspects (houses counted from the graha's sign).
+drishti:
+  all: [7]
+  special:
+    mars: [4, 8]
+    jupiter: [5, 9]
+    saturn: [3, 10]
+    rahu: [5, 9]
+    ketu: [5, 9]
+
+combustion_orbs:
+  moon: 12
+  mars: 17
+  mercury: {direct: 14, retrograde: 12}
+  jupiter: 11
+  venus: {direct: 10, retrograde: 8}
+  saturn: 15
+
+# Dig bala: the angle at which each graha has full directional strength.
+dig_bala_strong_point:
+  jupiter: ascendant
+  mercury: ascendant
+  sun: midheaven
+  mars: midheaven
+  saturn: descendant
+  moon: imum_coeli
+  venus: imum_coeli
+
+# Naisargika bala in virupas (BPHS).
+naisargika_bala:
+  sun: 60.0
+  moon: 51.43
+  venus: 42.86
+  jupiter: 34.29
+  mercury: 25.71
+  mars: 17.14
+  saturn: 8.57

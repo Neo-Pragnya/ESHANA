@@ -19,7 +19,7 @@ ESHANA_SPK=/path/de440s.bsp make accuracy-suite        # also the spk provider
 make accuracy-report                                   # rewrite the measured tables; fails if a margin is gone
 ```
 
-About 970 checks run in under three seconds. The suite needs only the installed `eshana` package and the committed
+About 1,300 checks run in under three seconds. The suite needs only the installed `eshana` package and the committed
 reference files. It does not need the Swiss Ephemeris, a network connection or a website.
 
 ## The layers
@@ -33,6 +33,10 @@ reference files. It does not need the Swiss Ephemeris, a network connection or a
 | 3 | Daśā vs Swiss Moon | starting lord and balance from the Swiss Moon, within the balance the Moon tolerance allows | Swiss |
 | 4 | Published values | Lahiri = 23°15′00″ on 1956-03-21 (the definition); a full ProKerala chart | [published.json](../../accuracy/reference/published.json) |
 | 5 | Civil time | local time → UTC and offset for every chart | Python `zoneinfo`, an independent tz implementation |
+| 6 | Pañcāṅga | tithi, karaṇa, nakshatra and yoga from the Swiss Sun and Moon; sunrise, sunset, moonrise and moonset (upper limb) on 40 charts | Swiss Ephemeris |
+| 6 | Special lagnas | Bhāva, Horā and Ghaṭī lagnas | PyJHora's book-checked test values (within 2′) |
+| 7 | Ingresses | every sidereal ingress of the Sun, Jupiter and Saturn, 1990–2030, retrograde re-entries included | Swiss Ephemeris (SPK: within 3 minutes) |
+| 8 | Vargas to D60, KP lords, aṣṭakavarga, aṣṭakūṭa | re-derived in Python from ESHANA's longitudes and from the YAML packs | `accuracy/lib.py`, the packs |
 
 ### The chart set
 
@@ -107,3 +111,5 @@ submission or render in the browser, so they have no fixed published example to 
 | Sidereal whole-sign cusps started one sign early when the sidereal Ascendant was less than the ayanāṃśa past a sign boundary | `eshana-engine/src/api.rs` | `whole_sign_cusps_start_at_the_ascendant_sign_in_both_zodiacs` |
 | Ketu had no tropical longitude | `api.rs` | `south_node_carries_its_tropical_longitude` |
 | The last antardaśā could end 1 ms away from its mahādaśā (floating-point seam) | `vedic.rs` | `dasha_structure_and_balance` |
+| Combustion and dig bala used a signed angle, so every graha behind the Sun read as combust | `jyotish.rs` | `combustion_and_dig_bala_use_the_unsigned_separation` |
+| A pañcāṅga at the very end of the provider's range failed instead of reporting "no event in range" | `panchanga.rs` | `test_panchanga_limbs_match_swiss[...2099-12-31...]` |
