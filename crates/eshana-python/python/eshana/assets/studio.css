@@ -377,3 +377,33 @@ a:hover .bm-node{transform:scale(1.12)}
 .extramark{text-decoration:underline dotted;text-underline-offset:2px}
 .aflow .af.extra{stroke-dasharray:2 6;stroke-width:2.2;opacity:.85}
 .aflow .af-target.extra{opacity:.15}
+
+/* ── maitri ── */
+.mt-grid{border-collapse:separate;border-spacing:3px;font-size:12.5px}
+.mt-grid th{font-weight:700;white-space:nowrap;padding:2px 6px;text-align:center}
+.mt-grid tbody th{text-align:left}
+.mt-h{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--ink)}a.mt-h:hover{color:var(--accent)}
+.mt-c{text-align:center;padding:5px 7px;border-radius:7px;white-space:nowrap;cursor:default;color:var(--ink);animation:mt-in .45s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--k,0) * 26ms);transition:transform .15s,box-shadow .15s}
+.mt-c:hover{transform:scale(1.08);box-shadow:0 0 0 2px var(--accent);position:relative;z-index:1}
+.mt-self{text-align:center;color:var(--muted)}
+.rel-great_friend,.dig-great_friend{background:color-mix(in srgb,#1f9d55 55%,transparent)}
+.rel-friend,.dig-friend{background:color-mix(in srgb,#4ad08a 30%,transparent)}
+.rel-neutral,.dig-neutral{background:var(--chip);outline:1px solid var(--line)}
+.rel-enemy,.dig-enemy{background:color-mix(in srgb,#ff8a3d 32%,transparent)}
+.rel-great_enemy,.dig-great_enemy{background:color-mix(in srgb,#e5484d 52%,transparent)}
+.dig-exalted{background:color-mix(in srgb,#f5c518 62%,transparent);font-weight:750}
+.dig-moolatrikona{background:color-mix(in srgb,#a48bff 55%,transparent);font-weight:750}
+.dig-own{background:color-mix(in srgb,#3aa0ff 45%,transparent);font-weight:750}
+.dig-debilitated{background:color-mix(in srgb,#8b1e2d 70%,transparent);color:#fff;font-weight:750}
+.tara-auspicious{background:color-mix(in srgb,#4ad08a 30%,transparent)}
+.tara-inauspicious{background:color-mix(in srgb,#e5484d 38%,transparent)}
+.tara-mixed{background:color-mix(in srgb,#f5c518 32%,transparent)}
+.mt-legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.mt-legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line)}
+.mt-legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.mt-sumcell{min-width:170px}.mt-sumcell small{color:var(--muted);font-size:11px;white-space:nowrap}
+.mt-sum{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--chip);margin-bottom:3px}
+.mt-sum i{display:block;height:100%;transform-origin:left;animation:grow .9s ease both}
+.mt-sum .s-dig{background:#f5c518}.mt-sum .s-fr{background:#4ad08a}.mt-sum .s-neu{background:var(--muted);opacity:.5}.mt-sum .s-bad{background:#e5484d}
+@keyframes mt-in{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.mt-c,.mt-sum i{animation:none}}

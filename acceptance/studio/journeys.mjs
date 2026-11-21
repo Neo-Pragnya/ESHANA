@@ -492,6 +492,25 @@ await journey("concentric squares are even: inner birth chart, outer band of twe
   return "12 equal inner boxes; even outer sectors";
 });
 
+await journey("maitri page: relationship, tārā and dignity grids fill in; hover explains a cell; a graha head links to its page", async () => {
+  await go("#/maitri", 1500);
+  const r = await evaluate(`({ rel: document.querySelectorAll('#maitri .mt-rel td.mt-c').length, tara: document.querySelectorAll('#maitri .mt-tara td.mt-c').length,
+    dig: document.querySelectorAll('#maitri .mt-dig td.mt-c').length, sums: document.querySelectorAll('#maitri .mt-sum').length, legends: document.querySelectorAll('#maitri .mt-legend').length,
+    data: (val('vedic.maitri.relationships') || {}).rows?.length || 0 })`);
+  expect(r.rel === r.data && r.rel === 72 && r.tara === 90 && r.dig === 144 && r.sums === 9 && r.legends === 3, JSON.stringify(r));
+  const pos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-rel td[data-from=sun][data-to=jupiter]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
+  await mouse(pos[0], pos[1]); await sleep(300);
+  const tipText = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  expect(/Natural/.test(tipText) && /Temporal/.test(tipText) && /Compound/.test(tipText), "no relationship tooltip: " + tipText.slice(0, 120));
+  const dpos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-dig td[data-g=moon][data-d="9"]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
+  await mouse(dpos[0], dpos[1]); await sleep(300);
+  const dTip = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  expect(/Sign lord/.test(dTip) && /Why/.test(dTip), "no dignity tooltip: " + dTip.slice(0, 120));
+  await evaluate(`document.querySelector('#maitri .mt-rel thead a.mt-h[href="#/planet/mars"]').click()`); await sleep(1200);
+  expect(await evaluate(`location.hash`) === "#/planet/mars", "graha head did not open the Mars page");
+  return `${r.rel} relationships, ${r.tara} tārās, ${r.dig} dignity cells; tooltips and link work`;
+});
+
 // ── journeys: maitri (add new journeys for this workstream above this line) ──
 
 await journey("additional aspects (retrograde shadow, parivartana) are off by default and appear everywhere when switched on", async () => {
