@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neo-pragnya.github.io/ESHANA/schemas/envelope.schema.json",
+  "title": "ESHANA result envelope",
+  "description": "Every successful ESHANA result, or an error envelope with a stable ESH-* code. schema_version is the contract version; it changes independently of the engine version.",
+  "type": "object",
+  "required": ["schema_version", "kind"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "kind": {
+      "enum": ["positions", "computed_chart", "human_design", "numerology_analysis", "method_comparison", "symbolic_graph", "symbolic_graph_export", "info", "error"]
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^ESH-[A-Z-]+$" },
+        "message": { "type": "string" }
+      }
+    },
+    "input": { "type": "object" },
+    "calculation": { "type": "object" },
+    "positions": { "type": ["array", "object"] },
+    "houses": { "type": ["object", "null"] },
+    "derived_attributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "tradition_id", "rule_version", "epistemic", "value", "derived_from"],
+        "properties": {
+          "id": { "type": "string" },
+          "tradition_id": { "type": "string" },
+          "rule_version": { "type": "string", "pattern": "@" },
+          "epistemic": { "enum": ["calculated", "tradition_rule", "speculative_interpretation", "research_hypothesis"] },
+          "value": {},
+          "derived_from": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "interpretations": { "type": "array" },
+    "warnings": { "type": "array", "items": { "type": "object", "required": ["code", "message"] } },
+    "provenance": {
+      "type": "object",
+      "required": ["engine_version", "rulesets", "assumptions"],
+      "properties": {
+        "engine_version": { "type": "string" },
+        "provider": { "type": ["string", "null"] },
+        "provider_version": { "type": "string" },
+        "provider_data": { "type": "string" },
+        "provider_accuracy": { "type": "string" },
+        "tzdb_version": { "type": ["string", "null"] },
+        "time_model": { "type": "string" },
+        "rulesets": { "type": "array", "items": { "type": "string" } },
+        "assumptions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "kind": { "const": "error" } } }, "then": { "required": ["error"] } },
+    { "if": { "properties": { "kind": { "enum": ["computed_chart", "positions", "human_design", "numerology_analysis"] } } }, "then": { "required": ["provenance", "interpretations"] } }
+  ]
+}

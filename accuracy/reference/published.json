@@ -1,0 +1,38 @@
+{
+  "_doc": "Values printed by published sources, copied verbatim with where and when they were read. Nothing here is computed by ESHANA. Add a source only when its input (instant, place, ayanamsha) is stated or can be pinned down, and record every assumption you had to make.",
+  "lahiri_definition": {
+    "source": "Report of the Calendar Reform Committee, Government of India (1955): the Lahiri (Chitrapaksha) ayanamsha is 23 deg 15 min 00 s on 21 March 1956 at 0h. Swiss Ephemeris (SE_SIDM_LAHIRI) is anchored to the same definition.",
+    "utc": "1956-03-21T00:00:00Z",
+    "true_ayanamsha_deg": 23.25,
+    "tolerance_arcsec": 3
+  },
+  "prokerala_snapshots": [
+    {
+      "id": "prokerala-2026-11-20-fredericksburg",
+      "url": "https://www.prokerala.com/astrology/planet-positions-sidereal.php",
+      "retrieved": "2026-11-20",
+      "printed_input": "November 20, 2026, 7:01 AM EST (-05:00), Fredericksburg, Virginia, United States",
+      "assumptions": [
+        "latitude/longitude are not printed: the city centre 38.3032 N, 77.4605 W is assumed, so the lagna gets a wider tolerance",
+        "the ayanamsha is not printed: ProKerala's default (Lahiri) is assumed",
+        "Rahu matches the mean node (7 arcsec) and not the true node (65 arcsec), so the mean node is compared",
+        "seconds are not printed: 07:01:00 is assumed"
+      ],
+      "date": "2026-11-20", "time": "07:01", "utc_offset_minutes": -300, "lat": 38.3032, "lon": -77.4605,
+      "node": "mean",
+      "printed": {
+        "lagna":   {"full_deg": 213.947, "rashi": "Vrischika", "nakshatra": "Anuradha", "pada": 1},
+        "sun":     {"full_deg": 213.943, "rashi": "Vrischika", "nakshatra": "Anuradha", "pada": 1},
+        "moon":    {"full_deg": 339.176, "rashi": "Meena", "nakshatra": "Uttara Bhadrapada", "pada": 2},
+        "mars":    {"full_deg": 123.503, "rashi": "Simha", "nakshatra": "Magha", "pada": 2},
+        "mercury": {"full_deg": 194.471, "rashi": "Tula", "nakshatra": "Swati", "pada": 3},
+        "jupiter": {"full_deg": 121.98, "rashi": "Simha", "nakshatra": "Magha", "pada": 1},
+        "venus":   {"full_deg": 179.445, "rashi": "Kanya", "nakshatra": "Chitra", "pada": 2},
+        "saturn":  {"full_deg": 344.073, "rashi": "Meena", "nakshatra": "Uttara Bhadrapada", "pada": 4, "retrograde": true},
+        "mean_node": {"full_deg": 300.808, "rashi": "Kumbha", "nakshatra": "Dhanishta", "pada": 3},
+        "south_node": {"full_deg": 120.808, "rashi": "Simha", "nakshatra": "Magha", "pada": 1}
+      },
+      "printed_houses_whole_sign": {"lagna": 1, "sun": 1, "moon": 5, "mars": 10, "mercury": 12, "jupiter": 10, "venus": 11, "saturn": 5, "mean_node": 4, "south_node": 10}
+    }
+  ]
+}

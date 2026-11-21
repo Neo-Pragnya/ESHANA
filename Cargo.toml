@@ -1,0 +1,47 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/eshana-core",
+  "crates/eshana-time",
+  "crates/eshana-ephemeris",
+  "crates/eshana-engine",
+  "crates/eshana-cli",
+  "crates/eshana-python",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+repository = "https://github.com/Neo-Pragnya/ESHANA"
+homepage = "https://neo-pragnya.github.io/ESHANA/"
+keywords = ["astronomy", "ephemeris", "astrology", "numerology", "symbolic"]
+categories = ["science", "algorithms"]
+
+[workspace.dependencies]
+eshana-core = { path = "crates/eshana-core", version = "0.1.0" }
+eshana-time = { path = "crates/eshana-time", version = "0.1.0" }
+eshana-ephemeris = { path = "crates/eshana-ephemeris", version = "0.1.0" }
+eshana-engine = { path = "crates/eshana-engine", version = "0.1.0" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+# jiff with its own bundled tz database: results do not depend on the machine's zoneinfo.
+jiff-tzdb = "1"
+jiff = { version = "1", default-features = false, features = ["std", "tzdb-bundle-always"] }
+clap = { version = "4", features = ["derive"] }
+unicode-normalization = "0.1"
+proptest = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

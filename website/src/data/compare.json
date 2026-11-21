@@ -1,0 +1,1008 @@
+{
+ "ayanamsha": {
+  "a": {
+   "ayanamsha": "lahiri",
+   "ayanamsha_deg": 23.751007457126555,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "mean",
+   "provider": "analytic",
+   "system": "vedic",
+   "zodiac": "sidereal"
+  },
+  "b": {
+   "ayanamsha": "fagan_bradley",
+   "ayanamsha_deg": 24.634215097126557,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "mean",
+   "provider": "analytic",
+   "system": "vedic",
+   "zodiac": "sidereal"
+  },
+  "changes": [
+   {
+    "a_longitude_deg": 131.9840244634008,
+    "a_sign": "Simha",
+    "b_longitude_deg": 131.1008168234008,
+    "b_sign": "Simha",
+    "difference_deg": -0.8832076400000233,
+    "id": "jupiter",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 353.52340486037343,
+    "a_sign": "Meena",
+    "b_longitude_deg": 352.6401972203734,
+    "b_sign": "Meena",
+    "difference_deg": -0.8832076400000233,
+    "id": "mars",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 248.1815626841045,
+    "a_sign": "Dhanu",
+    "b_longitude_deg": 247.29835504410448,
+    "b_sign": "Dhanu",
+    "difference_deg": -0.8832076400000233,
+    "id": "mean_node",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 39.95942640608184,
+    "a_sign": "Vrishabha",
+    "b_longitude_deg": 39.07621876608184,
+    "b_sign": "Vrishabha",
+    "difference_deg": -0.8832076400000233,
+    "id": "mercury",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 358.7907343141628,
+    "a_sign": "Meena",
+    "b_longitude_deg": 357.9075266741628,
+    "b_sign": "Meena",
+    "difference_deg": -0.8832076400000233,
+    "id": "moon",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 264.8349543522495,
+    "a_sign": "Dhanu",
+    "b_longitude_deg": 263.9517467122495,
+    "b_sign": "Dhanu",
+    "difference_deg": -0.8832076400000233,
+    "id": "neptune",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 207.3625201315338,
+    "a_sign": "Tula",
+    "b_longitude_deg": 206.4793124915338,
+    "b_sign": "Tula",
+    "difference_deg": -0.8832076400000233,
+    "id": "pluto",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 294.65592687232163,
+    "a_sign": "Makara",
+    "b_longitude_deg": 293.7727192323216,
+    "b_sign": "Makara",
+    "difference_deg": -0.8832076400000233,
+    "id": "saturn",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 68.1815626841045,
+    "a_sign": "Mithuna",
+    "b_longitude_deg": 67.29835504410448,
+    "b_sign": "Mithuna",
+    "difference_deg": -0.8832076400000233,
+    "id": "south_node",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 43.74600268263739,
+    "a_sign": "Vrishabha",
+    "b_longitude_deg": 42.86279504263739,
+    "b_sign": "Vrishabha",
+    "difference_deg": -0.8832076400000233,
+    "id": "sun",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 263.7416518019792,
+    "a_sign": "Dhanu",
+    "b_longitude_deg": 262.85844416197915,
+    "b_sign": "Dhanu",
+    "difference_deg": -0.8832076400000233,
+    "id": "uranus",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 39.381787741338165,
+    "a_sign": "Vrishabha",
+    "b_longitude_deg": 38.49858010133816,
+    "b_sign": "Vrishabha",
+    "difference_deg": -0.8832076400000233,
+    "id": "venus",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a": {
+     "degree_in_sign": 11.9840244634008,
+     "dms": "11°59′02″",
+     "index": 4,
+     "name": "Simha"
+    },
+    "b": {
+     "degree_in_sign": 11.100816823400805,
+     "dms": "11°06′03″",
+     "index": 4,
+     "name": "Simha"
+    },
+    "id": "vedic.jupiter.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 2.4274640841052246,
+     "dms": "2°25′39″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "b": {
+     "degree_in_sign": 1.5442564441052014,
+     "dms": "1°32′39″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "id": "vedic.lagna.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "index": 26,
+     "lord": "Mercury",
+     "name": "Revati",
+     "pada": 3,
+     "stable_within_uncertainty": true
+    },
+    "b": {
+     "index": 26,
+     "lord": "Mercury",
+     "name": "Revati",
+     "pada": 2,
+     "stable_within_uncertainty": true
+    },
+    "id": "vedic.mars.nakshatra",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 23.523404860373432,
+     "dms": "23°31′24″",
+     "index": 11,
+     "name": "Meena"
+    },
+    "b": {
+     "degree_in_sign": 22.64019722037341,
+     "dms": "22°38′25″",
+     "index": 11,
+     "name": "Meena"
+    },
+    "id": "vedic.mars.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 8.181562684104506,
+     "dms": "8°10′54″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "b": {
+     "degree_in_sign": 7.298355044104483,
+     "dms": "7°17′54″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "id": "vedic.mean_node.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 9.959426406081839,
+     "dms": "9°57′34″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "b": {
+     "degree_in_sign": 9.076218766081837,
+     "dms": "9°04′34″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "id": "vedic.mercury.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 28.79073431416282,
+     "dms": "28°47′27″",
+     "index": 11,
+     "name": "Meena"
+    },
+    "b": {
+     "degree_in_sign": 27.907526674162796,
+     "dms": "27°54′27″",
+     "index": 11,
+     "name": "Meena"
+    },
+    "id": "vedic.moon.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 24.834954352249497,
+     "dms": "24°50′06″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "b": {
+     "degree_in_sign": 23.951746712249474,
+     "dms": "23°57′06″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "id": "vedic.neptune.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "index": 15,
+     "lord": "Jupiter",
+     "name": "Vishakha",
+     "pada": 3,
+     "stable_within_uncertainty": true
+    },
+    "b": {
+     "index": 15,
+     "lord": "Jupiter",
+     "name": "Vishakha",
+     "pada": 2,
+     "stable_within_uncertainty": true
+    },
+    "id": "vedic.pluto.nakshatra",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 27.362520131533813,
+     "dms": "27°21′45″",
+     "index": 6,
+     "name": "Tula"
+    },
+    "b": {
+     "degree_in_sign": 26.47931249153379,
+     "dms": "26°28′46″",
+     "index": 6,
+     "name": "Tula"
+    },
+    "id": "vedic.pluto.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 24.65592687232163,
+     "dms": "24°39′21″",
+     "index": 9,
+     "name": "Makara"
+    },
+    "b": {
+     "degree_in_sign": 23.772719232321606,
+     "dms": "23°46′22″",
+     "index": 9,
+     "name": "Makara"
+    },
+    "id": "vedic.saturn.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 8.181562684104506,
+     "dms": "8°10′54″",
+     "index": 2,
+     "name": "Mithuna"
+    },
+    "b": {
+     "degree_in_sign": 7.298355044104483,
+     "dms": "7°17′54″",
+     "index": 2,
+     "name": "Mithuna"
+    },
+    "id": "vedic.south_node.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "index": 3,
+     "lord": "Moon",
+     "name": "Rohini",
+     "pada": 2,
+     "stable_within_uncertainty": true
+    },
+    "b": {
+     "index": 3,
+     "lord": "Moon",
+     "name": "Rohini",
+     "pada": 1,
+     "stable_within_uncertainty": true
+    },
+    "id": "vedic.sun.nakshatra",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 13.74600268263739,
+     "dms": "13°44′46″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "b": {
+     "degree_in_sign": 12.862795042637387,
+     "dms": "12°51′46″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "id": "vedic.sun.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "index": 19,
+     "lord": "Venus",
+     "name": "Purva Ashadha",
+     "pada": 4,
+     "stable_within_uncertainty": true
+    },
+    "b": {
+     "index": 19,
+     "lord": "Venus",
+     "name": "Purva Ashadha",
+     "pada": 3,
+     "stable_within_uncertainty": true
+    },
+    "id": "vedic.uranus.nakshatra",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 23.741651801979174,
+     "dms": "23°44′30″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "b": {
+     "degree_in_sign": 22.85844416197915,
+     "dms": "22°51′30″",
+     "index": 8,
+     "name": "Dhanu"
+    },
+    "id": "vedic.uranus.rashi",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 9.381787741338165,
+     "dms": "9°22′54″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "b": {
+     "degree_in_sign": 8.498580101338163,
+     "dms": "8°29′55″",
+     "index": 1,
+     "name": "Vrishabha"
+    },
+    "id": "vedic.venus.rashi",
+    "kind": "derived"
+   }
+  ],
+  "configuration_differences": [
+   "ayanamsha"
+  ],
+  "input": {
+   "birth_time_quality": "exact",
+   "civil_offset_s": 19800,
+   "civil_zone": "Asia/Kolkata",
+   "delta_t_s": 58.184,
+   "instant_utc": "1992-05-28T14:35:00Z",
+   "jd_tt": 2448771.108312315,
+   "jd_ut": 2448771.107638889,
+   "place": {
+    "altitude_m": null,
+    "latitude_deg": 17.385,
+    "longitude_deg": 78.487
+   },
+   "time_window_minutes": null
+  },
+  "kind": "method_comparison",
+  "note": "Differences are consequences of the configuration differences listed, not software defects.",
+  "provenance_a": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "node_model not given; mean node used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "civil time resolved with IANA tzdb 2026f",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "ayanamsha-lahiri@0.1",
+    "vedic.parashari@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": "2026f"
+  },
+  "provenance_b": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "node_model not given; mean node used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "civil time resolved with IANA tzdb 2026f",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "ayanamsha-fagan_bradley@0.1",
+    "vedic.parashari@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": "2026f"
+  },
+  "schema_version": "0.1.0",
+  "summary": {
+   "changes": 29,
+   "sign_changes": 0
+  }
+ },
+ "node": {
+  "a": {
+   "ayanamsha": null,
+   "ayanamsha_deg": null,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "mean",
+   "provider": "analytic",
+   "system": "western",
+   "zodiac": "tropical"
+  },
+  "b": {
+   "ayanamsha": null,
+   "ayanamsha_deg": null,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "true",
+   "provider": "analytic",
+   "system": "western",
+   "zodiac": "tropical"
+  },
+  "changes": [
+   {
+    "id": "mean_node",
+    "kind": "position_only_in_a"
+   },
+   {
+    "a_longitude_deg": 197.71149444698077,
+    "a_sign": "Libra",
+    "b_longitude_deg": 195.9910385298306,
+    "b_sign": "Libra",
+    "difference_deg": -1.7204559171501614,
+    "id": "south_node",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "id": "true_node",
+    "kind": "position_only_in_b"
+   },
+   {
+    "id": "western.mean_node.sign",
+    "kind": "derived_only_in_a"
+   },
+   {
+    "a": {
+     "degree_in_sign": 17.711494446980765,
+     "dms": "17°42′41″",
+     "index": 6,
+     "name": "Libra"
+    },
+    "b": {
+     "degree_in_sign": 15.991038529830604,
+     "dms": "15°59′28″",
+     "index": 6,
+     "name": "Libra"
+    },
+    "id": "western.south_node.sign",
+    "kind": "derived"
+   },
+   {
+    "id": "western.true_node.sign",
+    "kind": "derived_only_in_b"
+   }
+  ],
+  "configuration_differences": [
+   "node_model"
+  ],
+  "input": {
+   "birth_time_quality": "exact",
+   "civil_offset_s": 0,
+   "civil_zone": null,
+   "delta_t_s": 69.184,
+   "instant_utc": "2024-02-29T18:45:30Z",
+   "jd_tt": 2460370.282397963,
+   "jd_ut": 2460370.281597222,
+   "place": null,
+   "time_window_minutes": null
+  },
+  "kind": "method_comparison",
+  "note": "Differences are consequences of the configuration differences listed, not software defects.",
+  "provenance_a": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "western.basic@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": null
+  },
+  "provenance_b": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "western.basic@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": null
+  },
+  "schema_version": "0.1.0",
+  "summary": {
+   "changes": 6,
+   "sign_changes": 0
+  }
+ },
+ "zodiac": {
+  "a": {
+   "ayanamsha": null,
+   "ayanamsha_deg": null,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "mean",
+   "provider": "analytic",
+   "system": "western",
+   "zodiac": "tropical"
+  },
+  "b": {
+   "ayanamsha": "lahiri",
+   "ayanamsha_deg": 23.85709238241086,
+   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+   "house_system": "whole_sign",
+   "node_model": "mean",
+   "provider": "analytic",
+   "system": "western",
+   "zodiac": "sidereal"
+  },
+  "changes": [
+   {
+    "a_longitude_deg": 25.348183953248196,
+    "a_sign": "Aries",
+    "b_longitude_deg": 1.4949891681007514,
+    "b_sign": "Aries",
+    "difference_deg": -23.853194785147423,
+    "id": "jupiter",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 327.9634785215895,
+    "a_sign": "Aquarius",
+    "b_longitude_deg": 304.110283736442,
+    "b_sign": "Aquarius",
+    "difference_deg": -23.85319478514748,
+    "id": "mars",
+    "kind": "position",
+    "sign_changed": false
+   },
+   {
+    "a_longitude_deg": 125.04061096495244,
+    "a_sign": "Leo",
+    "b_longitude_deg": 101.187416179805,
+    "b_sign": "Cancer",
+    "difference_deg": -23.853194785147423,
+    "id": "mean_node",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 271.8899648912809,
+    "a_sign": "Capricorn",
+    "b_longitude_deg": 248.03677010613345,
+    "b_sign": "Sagittarius",
+    "difference_deg": -23.85319478514748,
+    "id": "mercury",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 223.32374357627998,
+    "a_sign": "Scorpio",
+    "b_longitude_deg": 199.47054879113253,
+    "b_sign": "Libra",
+    "difference_deg": -23.85319478514748,
+    "id": "moon",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 303.18078654010367,
+    "a_sign": "Aquarius",
+    "b_longitude_deg": 279.3275917549562,
+    "b_sign": "Capricorn",
+    "difference_deg": -23.85319478514748,
+    "id": "neptune",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 251.44396540332855,
+    "a_sign": "Sagittarius",
+    "b_longitude_deg": 227.5907706181811,
+    "b_sign": "Scorpio",
+    "difference_deg": -23.85319478514748,
+    "id": "pluto",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 40.23668022561965,
+    "a_sign": "Taurus",
+    "b_longitude_deg": 16.383485440472203,
+    "b_sign": "Aries",
+    "difference_deg": -23.853194785147423,
+    "id": "saturn",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 305.0406109649524,
+    "a_sign": "Aquarius",
+    "b_longitude_deg": 281.187416179805,
+    "b_sign": "Capricorn",
+    "difference_deg": -23.853194785147423,
+    "id": "south_node",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 280.36965858923344,
+    "a_sign": "Capricorn",
+    "b_longitude_deg": 256.51646380408596,
+    "b_sign": "Sagittarius",
+    "difference_deg": -23.85319478514748,
+    "id": "sun",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 314.7901765274847,
+    "a_sign": "Aquarius",
+    "b_longitude_deg": 290.9369817423372,
+    "b_sign": "Capricorn",
+    "difference_deg": -23.85319478514748,
+    "id": "uranus",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a_longitude_deg": 241.5668326238203,
+    "a_sign": "Sagittarius",
+    "b_longitude_deg": 217.71363783867284,
+    "b_sign": "Scorpio",
+    "difference_deg": -23.85319478514748,
+    "id": "venus",
+    "kind": "position",
+    "sign_changed": true
+   },
+   {
+    "a": {
+     "degree_in_sign": 25.348183953248196,
+     "dms": "25°20′53″",
+     "index": 0,
+     "name": "Aries"
+    },
+    "b": {
+     "degree_in_sign": 1.4949891681007514,
+     "dms": "1°29′42″",
+     "index": 0,
+     "name": "Aries"
+    },
+    "id": "western.jupiter.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 27.96347852158948,
+     "dms": "27°57′49″",
+     "index": 10,
+     "name": "Aquarius"
+    },
+    "b": {
+     "degree_in_sign": 4.110283736442,
+     "dms": "4°06′37″",
+     "index": 10,
+     "name": "Aquarius"
+    },
+    "id": "western.mars.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 5.040610964952435,
+     "dms": "5°02′26″",
+     "index": 4,
+     "name": "Leo"
+    },
+    "b": {
+     "degree_in_sign": 11.187416179804998,
+     "dms": "11°11′15″",
+     "index": 3,
+     "name": "Cancer"
+    },
+    "id": "western.mean_node.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 1.889964891280897,
+     "dms": "1°53′24″",
+     "index": 9,
+     "name": "Capricorn"
+    },
+    "b": {
+     "degree_in_sign": 8.036770106133446,
+     "dms": "8°02′12″",
+     "index": 8,
+     "name": "Sagittarius"
+    },
+    "id": "western.mercury.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 13.32374357627998,
+     "dms": "13°19′25″",
+     "index": 7,
+     "name": "Scorpio"
+    },
+    "b": {
+     "degree_in_sign": 19.47054879113253,
+     "dms": "19°28′14″",
+     "index": 6,
+     "name": "Libra"
+    },
+    "id": "western.moon.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 3.180786540103668,
+     "dms": "3°10′51″",
+     "index": 10,
+     "name": "Aquarius"
+    },
+    "b": {
+     "degree_in_sign": 9.327591754956188,
+     "dms": "9°19′39″",
+     "index": 9,
+     "name": "Capricorn"
+    },
+    "id": "western.neptune.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 11.443965403328548,
+     "dms": "11°26′38″",
+     "index": 8,
+     "name": "Sagittarius"
+    },
+    "b": {
+     "degree_in_sign": 17.590770618181097,
+     "dms": "17°35′27″",
+     "index": 7,
+     "name": "Scorpio"
+    },
+    "id": "western.pluto.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 10.23668022561965,
+     "dms": "10°14′12″",
+     "index": 1,
+     "name": "Taurus"
+    },
+    "b": {
+     "degree_in_sign": 16.383485440472203,
+     "dms": "16°23′01″",
+     "index": 0,
+     "name": "Aries"
+    },
+    "id": "western.saturn.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 5.040610964952407,
+     "dms": "5°02′26″",
+     "index": 10,
+     "name": "Aquarius"
+    },
+    "b": {
+     "degree_in_sign": 11.187416179804984,
+     "dms": "11°11′15″",
+     "index": 9,
+     "name": "Capricorn"
+    },
+    "id": "western.south_node.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 10.369658589233438,
+     "dms": "10°22′11″",
+     "index": 9,
+     "name": "Capricorn"
+    },
+    "b": {
+     "degree_in_sign": 16.51646380408596,
+     "dms": "16°30′59″",
+     "index": 8,
+     "name": "Sagittarius"
+    },
+    "id": "western.sun.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 14.790176527484675,
+     "dms": "14°47′25″",
+     "index": 10,
+     "name": "Aquarius"
+    },
+    "b": {
+     "degree_in_sign": 20.936981742337196,
+     "dms": "20°56′13″",
+     "index": 9,
+     "name": "Capricorn"
+    },
+    "id": "western.uranus.sign",
+    "kind": "derived"
+   },
+   {
+    "a": {
+     "degree_in_sign": 1.5668326238202894,
+     "dms": "1°34′01″",
+     "index": 8,
+     "name": "Sagittarius"
+    },
+    "b": {
+     "degree_in_sign": 7.713637838672838,
+     "dms": "7°42′49″",
+     "index": 7,
+     "name": "Scorpio"
+    },
+    "id": "western.venus.sign",
+    "kind": "derived"
+   }
+  ],
+  "configuration_differences": [
+   "zodiac",
+   "ayanamsha"
+  ],
+  "input": {
+   "birth_time_quality": "exact",
+   "civil_offset_s": 0,
+   "civil_zone": null,
+   "delta_t_s": 64.184,
+   "instant_utc": "2000-01-01T12:00:00Z",
+   "jd_tt": 2451545.0007428704,
+   "jd_ut": 2451545.0,
+   "place": null,
+   "time_window_minutes": null
+  },
+  "kind": "method_comparison",
+  "note": "Differences are consequences of the configuration differences listed, not software defects.",
+  "provenance_a": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "node_model not given; mean node used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "western.basic@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": null
+  },
+  "provenance_b": {
+   "assumptions": [
+    "house_system not given; whole_sign used",
+    "node_model not given; mean node used",
+    "UTC is used as UT1 (differs by under 0.9 s)",
+    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date",
+    "western system with a sidereal zodiac: a Western sidereal variant"
+   ],
+   "engine_version": "0.1.0",
+   "provider": "analytic",
+   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.1.0",
+   "rulesets": [
+    "ayanamsha-lahiri@0.1",
+    "western.basic@0.1"
+   ],
+   "time_model": "leap-seconds-1972-2017+37s-to-2027",
+   "tzdb_version": null
+  },
+  "schema_version": "0.1.0",
+  "summary": {
+   "changes": 24,
+   "sign_changes": 10
+  }
+ }
+}

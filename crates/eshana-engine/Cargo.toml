@@ -1,0 +1,22 @@
+[package]
+name = "eshana-engine"
+description = "ESHANA engine: houses, Vedic, Western, Human Design, numerology and symbolic graph with provenance"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+eshana-core.workspace = true
+eshana-time.workspace = true
+eshana-ephemeris.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+unicode-normalization.workspace = true
+
+[lints]
+workspace = true

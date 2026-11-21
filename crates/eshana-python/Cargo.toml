@@ -1,0 +1,21 @@
+[package]
+name = "eshana-python"
+description = "ESHANA Python bindings (PyO3): a thin JSON bridge over the Rust engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "_native"
+crate-type = ["cdylib"]
+
+[dependencies]
+eshana-engine.workspace = true
+pyo3 = { version = "0.30", features = ["extension-module", "abi3-py39"] }
+serde_json.workspace = true
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }

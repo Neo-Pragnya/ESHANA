@@ -1,0 +1,216 @@
+{
+ "calculation": {
+  "ayanamsha": "lahiri",
+  "ayanamsha_deg": 23.750994576527717,
+  "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+  "house_system": "whole_sign",
+  "node_model": "mean",
+  "provider": "analytic",
+  "system": "vedic",
+  "zodiac": "sidereal"
+ },
+ "derived_attributes": [
+  {
+   "derived_from": [
+    "mercury"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.mercury.rashi",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "degree_in_sign": 9.228326138457156,
+    "dms": "9°13′42″",
+    "index": 1,
+    "name": "Vrishabha",
+    "stable_within_uncertainty": true
+   }
+  },
+  {
+   "derived_from": [
+    "mercury"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.mercury.nakshatra",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "index": 2,
+    "lord": "Sun",
+    "name": "Krittika",
+    "pada": 4,
+    "stable_within_uncertainty": false
+   }
+  },
+  {
+   "derived_from": [
+    "moon"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.moon.rashi",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "candidates": [
+     "Meena",
+     "Mesha"
+    ],
+    "degree_in_sign": 24.442197509817447,
+    "dms": "24°26′32″",
+    "index": 11,
+    "name": "Meena",
+    "stable_within_uncertainty": false
+   }
+  },
+  {
+   "derived_from": [
+    "moon"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.moon.nakshatra",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "index": 26,
+    "lord": "Mercury",
+    "name": "Revati",
+    "pada": 3,
+    "stable_within_uncertainty": false
+   }
+  },
+  {
+   "derived_from": [
+    "sun"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.sun.rashi",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "degree_in_sign": 13.422794332553408,
+    "dms": "13°25′22″",
+    "index": 1,
+    "name": "Vrishabha",
+    "stable_within_uncertainty": true
+   }
+  },
+  {
+   "derived_from": [
+    "sun"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "vedic.sun.nakshatra",
+   "rule_version": "vedic.parashari@0.1",
+   "tradition_id": "vedic.parashari",
+   "value": {
+    "index": 3,
+    "lord": "Moon",
+    "name": "Rohini",
+    "pada": 2,
+    "stable_within_uncertainty": false
+   }
+  }
+ ],
+ "houses": null,
+ "input": {
+  "birth_time_quality": "date_only",
+  "civil_offset_s": null,
+  "civil_zone": null,
+  "delta_t_s": 58.184,
+  "instant_utc": "1992-05-28T06:30:00Z",
+  "jd_tt": 2448770.7715067593,
+  "jd_ut": 2448770.7708333335,
+  "place": null,
+  "time_window_minutes": 1440.0
+ },
+ "interpretations": [],
+ "kind": "computed_chart",
+ "positions": [
+  {
+   "body": "sun",
+   "distance_au": 1.0135129548088317,
+   "epistemic": "calculated",
+   "id": "sun",
+   "latitude_deg": 0.00010368943118448071,
+   "longitude_deg": 43.42279433255341,
+   "longitude_interval_deg": [
+    42.94292601610739,
+    43.90259826552126
+   ],
+   "retrograde": false,
+   "sign": {
+    "degree_in_sign": 13.422794332553408,
+    "dms": "13°25′22″",
+    "index": 1,
+    "name": "Vrishabha"
+   },
+   "speed_deg_per_day": 0.9596995667564556,
+   "tropical_longitude_deg": 67.17824048845648
+  },
+  {
+   "body": "moon",
+   "distance_au": 0.0026031704053674615,
+   "epistemic": "calculated",
+   "id": "moon",
+   "latitude_deg": 5.00286333391949,
+   "longitude_deg": 354.44219750981745,
+   "longitude_interval_deg": [
+    348.0591735571156,
+    0.9122777039709185
+   ],
+   "retrograde": false,
+   "sign": {
+    "degree_in_sign": 24.442197509817447,
+    "dms": "24°26′32″",
+    "index": 11,
+    "name": "Meena"
+   },
+   "speed_deg_per_day": 12.851897183645633,
+   "tropical_longitude_deg": 18.197643665720534
+  },
+  {
+   "body": "mercury",
+   "distance_au": 1.315682838485406,
+   "epistemic": "calculated",
+   "id": "mercury",
+   "latitude_deg": 0.031677030932864635,
+   "longitude_deg": 39.228326138457156,
+   "longitude_interval_deg": [
+    38.14648661054869,
+    40.31430491511651
+   ],
+   "retrograde": false,
+   "sign": {
+    "degree_in_sign": 9.228326138457156,
+    "dms": "9°13′42″",
+    "index": 1,
+    "name": "Vrishabha"
+   },
+   "speed_deg_per_day": 2.1679958793399123,
+   "tropical_longitude_deg": 62.98377229436023
+  }
+ ],
+ "provenance": {
+  "assumptions": [
+   "ayanamsha not given; defaulted to lahiri because assume_defaults was set",
+   "house_system not given; whole_sign used",
+   "node_model not given; mean node used",
+   "UTC is used as UT1 (differs by under 0.9 s)",
+   "birth time quality is date_only: positions are evaluated over a window of ±720.0 minutes and given as intervals",
+   "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
+  ],
+  "engine_version": "0.1.0",
+  "provider": "analytic",
+  "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+  "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+  "provider_version": "0.1.0",
+  "rulesets": [
+   "ayanamsha-lahiri@0.1",
+   "vedic.parashari@0.1"
+  ],
+  "time_model": "leap-seconds-1972-2017+37s-to-2027",
+  "tzdb_version": null
+ },
+ "schema_version": "0.1.0",
+ "warnings": []
+}

@@ -1,0 +1,232 @@
+---
+import { getCollection } from "astro:content";
+import Glyph from "../components/Glyph.astro";
+import Layout from "../components/Layout.astro";
+import accuracy from "../data/accuracy.json";
+import dual from "../data/dual.json";
+import refusals from "../data/refusals.json";
+import stats from "../data/stats.json";
+import { DOC_NAV, DOC_TITLES, docHref, site } from "../lib/site";
+import { wheelSvg } from "../lib/wheel";
+
+const base = import.meta.env.BASE_URL;
+const docs = await getCollection("docs");
+const byId = new Map(docs.map((d) => [d.id, d]));
+const titleOf = (id: string) => byId.get(id)?.data.title ?? DOC_TITLES[id] ?? id;
+const wheel = wheelSvg(dual.western, "Western natal wheel computed by ESHANA: tropical zodiac, Placidus houses, Ptolemaic aspects");
+
+const moon = dual.vedic.positions.find((p) => p.id === "moon")!;
+const nakshatra = dual.vedic.derived_attributes.find((a) => a.id === "vedic.moon.nakshatra")!;
+const dasha = dual.vedic.derived_attributes.find((a) => a.id === "vedic.dasha.vimshottari")!;
+const byStatus = stats.tasks_by_status as Record<string, number>;
+const tests = stats.rust_tests + stats.python_tests;
+const maxArc = Math.max(...Object.values(accuracy.analytic).map((r) => r.max_lon_arcsec));
+const caps = [
+  { k: "Time", t: "Civil time that refuses to guess", p: "IANA zones with history. A repeated or skipped local time is an error with its own code.", href: "docs/concepts/time/" },
+  { k: "Positions", t: "Two providers, measured", p: "analytic needs no data files; spk reads a JPL kernel and agrees to 0.3″.", href: "docs/concepts/ephemeris-providers/" },
+  { k: "Vedic", t: "Nakshatra to daśā", p: "Rāśi, pada, bhāva, D1–D12, Vimśottarī with a named year length, four ayanāṃśas.", href: "docs/guides/vedic/" },
+  { k: "Western", t: "Houses with honest limits", p: "Whole sign, equal and Placidus; polar Placidus is refused, never extrapolated.", href: "docs/guides/western/" },
+  { k: "Human Design", t: "The 88° arc, solved", p: "The design instant is a root-solve, not 88 days. Rights review is stated, not hidden.", href: "docs/guides/human-design/" },
+  { k: "Numerology", t: "Schools, never blended", p: "Pythagorean and Chaldean separately; every ignored character is reported.", href: "docs/guides/numerology/" },
+  { k: "Uncertainty", t: "No invented birth times", p: "Unknown time gives intervals and stability flags; houses are omitted, not guessed.", href: "docs/guides/uncertain-birth-time/" },
+  { k: "Compare", t: "Differences are configuration", p: "Same input, two settings, a diff that names the setting responsible.", href: "docs/guides/method-comparison/" },
+  { k: "Graph", t: "Typed, never causal", p: "JSON, Mermaid, GraphML. Relation classes keep correspondence apart from causation.", href: "docs/guides/graph/" },
+];
+const href = (h: string) => `${base}${h}`;
+---
+
+<Layout title={site.name}>
+  <section class="hero cosmos">
+    <canvas class="orbits" id="orbits" aria-hidden="true"></canvas>
+    <div class="hero-content">
+      <p class="eyebrow" data-reveal>{site.eyebrow}</p>
+      <h1 data-reveal style="--d: .05s">
+        <span class="h1-lead">{site.headline}</span>
+        <span class="hl">{site.highlight}</span>
+      </h1>
+      <p class="lede" data-reveal style="--d: .1s">{site.lede}</p>
+      <div class="hero-actions" data-reveal style="--d: .15s">
+        <a class="btn" data-magnetic href={`${base}docs/guides/getting-started/`}>Get started →</a>
+        <a class="btn ghost" data-magnetic href={`${base}demos/`}>See the demos</a>
+        <a class="btn ghost" data-magnetic href={site.repo}>GitHub</a>
+      </div>
+      <div class="install-row" data-reveal style="--d: .2s">
+        <div class="install-line"><span>$ make install &amp;&amp; cargo build --release -p eshana-cli</span></div>
+        <span class="chip-version"><span>version</span><strong>{site.version}</strong></span>
+      </div>
+    </div>
+    <div data-reveal style="--d: .12s">
+      <div class="wheel-card">
+        <div set:html={wheel} />
+        <p class="wheel-cap">
+          Rendered from a real result: <code>eshana chart western --houses placidus --aspects</code> for a 1992 Hyderabad birth.
+          Hover a glyph for its position.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="card stat t-lilac" data-tilt data-reveal><strong data-countup>{tests}</strong><span>tests (Rust and Python)</span></div>
+    <div class="card stat t-teal" data-tilt data-reveal style="--d:.05s"><strong data-countup>{stats.scenarios}</strong><span>acceptance scenarios, gating every release</span></div>
+    <div class="card stat t-lemon" data-tilt data-reveal style="--d:.1s"><strong data-countup>{stats.capabilities}</strong><span>capabilities proven end to end</span></div>
+    <div class="card stat t-coral" data-tilt data-reveal style="--d:.15s"><strong>0.3″</strong><span>spk provider vs an independent JPL DE440s pipeline</span></div>
+  </div>
+
+  <h2 data-reveal>Three layers, kept apart in the data</h2>
+  <p class="section-lede" data-reveal>A calculation is not an endorsement. Every value says which layer it belongs to.</p>
+  <div class="layers">
+    <div class="layer calc" data-reveal>
+      <span class="tag">calculated</span>
+      <h3>Measurement</h3>
+      <p>Verifiable against reference ephemerides. Every one is tested.</p>
+      <ul><li>ecliptic longitude, latitude, speed</li><li>Julian day, sidereal time, Ascendant</li><li>angular separation</li></ul>
+    </div>
+    <div class="layer rule" data-reveal style="--d:.05s">
+      <span class="tag">tradition_rule</span>
+      <h3>Derived by a named rule</h3>
+      <p>Deterministic under an explicit tradition, method and version. Traditions can disagree.</p>
+      <ul><li>nakshatra and pada, divisional sign</li><li>aspect, house, gate and line</li><li>a name number under one school</li></ul>
+    </div>
+    <div class="layer interp" data-reveal style="--d:.1s">
+      <span class="tag">interpretation</span>
+      <h3>Meaning</h3>
+      <p>Belief or hypothesis. Attribution required.</p>
+      <ul><li>character, narrative, compatibility</li><li>“what this means for you”</li></ul>
+      <span class="never">never produced by the engine</span>
+    </div>
+  </div>
+
+  <h2 data-reveal>See it work</h2>
+  <p class="section-lede" data-reveal>Real output, regenerated from the binary on every site build (CI fails if it drifts).</p>
+  <div class="term" data-reveal>
+    <div class="term-bar"><i></i><i></i><i></i><span>eshana chart vedic --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 --divisions 9 --dasha</span></div>
+    <pre><span class="c"># position: calculated</span>
+moon  <span class="g">{moon.sign.dms} {moon.sign.name}</span>   speed {moon.speed_deg_per_day.toFixed(2)}°/day   <span class="c">epistemic: {moon.epistemic}</span>
+<span class="c"># derived by a rule: names the rule, never says what it means</span>
+vedic.moon.nakshatra  <span class="y">{(nakshatra.value as any).name}, pada {(nakshatra.value as any).pada}, lord {(nakshatra.value as any).lord}</span>   <span class="c">{nakshatra.rule_version} · {nakshatra.epistemic}</span>
+vedic.dasha.vimshottari  <span class="y">starts with {(dasha.value as any).starting_lord}, balance {(dasha.value as any).balance_at_birth_years.toFixed(2)} yr</span>   <span class="c">year = {(dasha.value as any).year_convention} d</span>
+<span class="c"># interpretation</span>
+interpretations  <span class="r">[]</span>   <span class="c">always empty from the engine</span>
+<span class="c"># provenance</span>
+{dual.vedic.provenance.assumptions.map((a) => `assumption: ${a}`).join("\n")}</pre>
+  </div>
+
+  <h2 data-reveal>It would rather refuse than guess</h2>
+  <p class="section-lede" data-reveal>Each of these is a scenario in the release gate, with the legitimate twin that must still work.</p>
+  {refusals.map((r) => (
+    <div class="term refusal" data-reveal>
+      <div class="term-bar"><i></i><i></i><i></i><span>{r.command}</span></div>
+      <pre><span class="r">{r.result.error!.code}</span>  {r.result.error!.message}</pre>
+    </div>
+  ))}
+
+  <h2 data-reveal>What ESHANA can do today</h2>
+  <div class="caps">
+    {caps.map((c, i) => (
+      <a class="cap" href={href(c.href)} data-reveal style={`--d:${i * 0.04}s`}>
+        <span class="k">{c.k}</span><strong>{c.t}</strong><p>{c.p}</p>
+      </a>
+    ))}
+  </div>
+
+  <h2 data-reveal>Measured, not promised</h2>
+  <p class="section-lede" data-reveal>
+    Maximum longitude error against JPL DE440s (computed independently with Skyfield), in arc-seconds. The analytic provider is honest
+    about Jupiter and Saturn; the kernel provider is arc-second class.
+  </p>
+  <div class="table-wrap" data-reveal>
+    <table class="acc">
+      <thead><tr><th>Body</th><th>analytic</th><th>spk (de440s)</th></tr></thead>
+      <tbody>
+        {Object.entries(accuracy.analytic).map(([b, r]) => (
+          <tr>
+            <td>{b}</td>
+            <td>{r.max_lon_arcsec.toFixed(1)}″ <span class="bar" style={`width:${Math.max(2, (r.max_lon_arcsec / maxArc) * 140)}px`}></span></td>
+            <td>{(accuracy.spk as Record<string, { max_lon_arcsec: number }>)[b].max_lon_arcsec.toFixed(1)}″ <span class="bar spk" style="width:2px"></span></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" data-reveal>Ayanāṃśa, Ascendant, houses, nodes and sidereal Sun and Moon are checked against the Swiss Ephemeris as an offline oracle. <a href={`${base}docs/reference/accuracy/`}>Method and caveats →</a></p>
+
+  <h2 data-reveal>How it works</h2>
+  <div class="pipeline" data-reveal>
+    <div class="pipe"><span class="who">you</span><b>A moment and a place</b><span>Civil time in a named zone, or UTC. Or a name. Or parameters.</span></div>
+    <div class="pipe"><span class="who">eshana-time · -ephemeris</span><b>Calculate</b><span>UTC → TT, apparent geocentric positions in one frame.</span></div>
+    <div class="pipe"><span class="who">eshana-engine</span><b>Derive</b><span>Versioned rule packs name every tradition they apply.</span></div>
+    <div class="pipe"><span class="who">envelope</span><b>One JSON result</b><span>CLI and Python return identical bytes, with provenance.</span></div>
+  </div>
+
+  <h2 data-reveal>Guarantees</h2>
+  <div class="promises">
+    <div class="promise" data-reveal><span class="ic">◇</span><b>No silent defaults</b><p>Sidereal needs an explicit ayanāṃśa. A local time needs a zone. Defaults that exist are recorded as assumptions.</p></div>
+    <div class="promise" data-reveal style="--d:.05s"><span class="ic">◈</span><b>Reproducible</b><p>Same request, same bytes. Results carry engine, provider, tz database and rule versions.</p></div>
+    <div class="promise" data-reveal style="--d:.1s"><span class="ic">◉</span><b>Local and private</b><p>No network, no files written, no telemetry. Unknown birth times stay unknown.</p></div>
+    <div class="promise" data-reveal style="--d:.15s"><span class="ic">◐</span><b>Licence-clean</b><p>Apache-2.0. The AGPL Swiss Ephemeris is an offline test oracle only, never bundled.</p></div>
+  </div>
+
+  <h2 data-reveal>Status, stated plainly</h2>
+  <p class="section-lede" data-reveal>
+    Version {stats.version}, not yet published. The name is not cleared or reserved. {stats.tasks} tasks are tracked by exact status:
+    {" "}<span class="pill">{byStatus.verified ?? 0} verified</span>
+    <span class="pill">{byStatus.implemented ?? 0} implemented</span>
+    <span class="pill off">{byStatus.proposed ?? 0} proposed</span>
+    <span class="pill off">{byStatus.released ?? 0} released</span>
+    <a href={`${base}docs/roadmap/`}>Roadmap →</a>
+  </p>
+
+  <h2 data-reveal>Browse the documentation</h2>
+  <div class="grid-cards">
+    {DOC_NAV.map((section, i) => (
+      <section class={`card t-${section.tint}`} data-reveal style={`--d:${i * 0.05}s`}>
+        <p class="sidebar-heading"><Glyph shapes={section.shapes} tint={section.tint} class="" />{section.section}</p>
+        <ul style="margin:0;padding-left:18px">
+          {section.items.filter((id) => byId.has(id)).slice(0, 6).map((id) => (<li><a href={docHref(base, id)}>{titleOf(id)}</a></li>))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <script>
+    // Orbits: three tilted ellipses with riders around a gold bindu. Paused when off screen and for reduced motion.
+    const canvas = document.getElementById("orbits") as HTMLCanvasElement | null;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).get("motion") === "static";
+    if (canvas) {
+      const ctx = canvas.getContext("2d")!;
+      let w = 0, h = 0, visible = true;
+      const size = () => { const r = canvas.getBoundingClientRect(); w = canvas.width = r.width * devicePixelRatio; h = canvas.height = r.height * devicePixelRatio; };
+      size(); window.addEventListener("resize", size);
+      new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas);
+      const orbits = [
+        { rx: 0.62, ry: 0.2, tilt: -0.5, speed: 0.00022, color: "143,123,255", dots: 3 },
+        { rx: 0.5, ry: 0.15, tilt: 0.7, speed: -0.0003, color: "43,179,192", dots: 2 },
+        { rx: 0.78, ry: 0.28, tilt: 0.15, speed: 0.00012, color: "245,196,81", dots: 4 },
+      ];
+      const draw = (t: number) => {
+        ctx.clearRect(0, 0, w, h);
+        const cx = w * 0.72, cy = h * 0.5, R = Math.min(w, h);
+        for (const o of orbits) {
+          ctx.save(); ctx.translate(cx, cy); ctx.rotate(o.tilt);
+          ctx.strokeStyle = `rgba(${o.color},.22)`; ctx.lineWidth = 1 * devicePixelRatio; ctx.setLineDash([2 * devicePixelRatio, 7 * devicePixelRatio]);
+          ctx.beginPath(); ctx.ellipse(0, 0, o.rx * R, o.ry * R, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+          for (let i = 0; i < o.dots; i++) {
+            const a = (i / o.dots) * Math.PI * 2 + t * o.speed;
+            const x = Math.cos(a) * o.rx * R, y = Math.sin(a) * o.ry * R;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, 9 * devicePixelRatio);
+            g.addColorStop(0, `rgba(${o.color},.95)`); g.addColorStop(1, `rgba(${o.color},0)`);
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 9 * devicePixelRatio, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.restore();
+        }
+        ctx.fillStyle = "rgba(245,196,81,.9)"; ctx.beginPath(); ctx.arc(cx, cy, 3 * devicePixelRatio, 0, Math.PI * 2); ctx.fill();
+      };
+      if (reduce) draw(0);
+      else {
+        const tick = (t: number) => { if (visible) draw(t); requestAnimationFrame(tick); };
+        requestAnimationFrame(tick);
+      }
+    }
+  </script>
+</Layout>

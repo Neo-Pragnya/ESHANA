@@ -1,0 +1,127 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: rust (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Toolchain
+        run: rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Clippy (warnings are errors)
+        run: cargo clippy --workspace --exclude eshana-python --all-targets -- -D warnings
+
+      - name: Tests (unit, property, golden, behaviour)
+        run: cargo test --workspace --exclude eshana-python
+
+  spk-golden:
+    name: golden accuracy with a real JPL kernel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Fetch de440s.bsp from NAIF (public-domain data; not part of the repository)
+        run: |
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors \
+            --output de440s.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
+          test "$(stat -c %s de440s.bsp)" = "32726016"
+
+      - name: SPK provider agrees with the independent fixture to 2 arc-seconds
+        run: ESHANA_SPK="$PWD/de440s.bsp" cargo test -p eshana-ephemeris --test golden
+
+  python:
+    name: python (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12", "3.14"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081
+        with:
+          version: "latest"
+          enable-cache: false
+
+      - name: Build the CLI and the extension, run the Python tests
+        run: |
+          cargo build --release -p eshana-cli
+          uv venv -q --python ${{ matrix.python-version }} .venv
+          uv pip install -q --python .venv/bin/python maturin pytest jsonschema
+          (cd crates/eshana-python && VIRTUAL_ENV="$PWD/../../.venv" ../../.venv/bin/maturin develop -q --uv)
+          ESHANA_BIN="$PWD/target/release/eshana" .venv/bin/python -m pytest crates/eshana-python/tests -q
+
+  tracking:
+    name: tracking and docs are fresh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Tracker, docs links, demo data
+        run: |
+          python3 scripts/tracking_report.py --check
+          python3 scripts/check_docs.py
+
+  accuracy:
+    name: birth-chart accuracy suite (analytic + spk)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081
+        with:
+          version: "latest"
+          enable-cache: false
+
+      - name: Fetch de440s.bsp from NAIF (public-domain data; not part of the repository)
+        run: |
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors \
+            --output de440s.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
+          test "$(stat -c %s de440s.bsp)" = "32726016"
+
+      - name: Run the suite and check every tolerance keeps its margin
+        run: |
+          uv venv -q --python 3.12 .venv
+          uv pip install -q --python .venv/bin/python maturin pytest pytest-xdist
+          (cd crates/eshana-python && VIRTUAL_ENV="$GITHUB_WORKSPACE/.venv" "$GITHUB_WORKSPACE/.venv/bin/maturin" develop -q --uv --release)
+          ESHANA_SPK="$PWD/de440s.bsp" .venv/bin/python -m pytest accuracy -q -n auto -p no:cacheprovider
+          ESHANA_SPK="$PWD/de440s.bsp" .venv/bin/python scripts/accuracy_report.py --check
+          git diff --exit-code -- benchmarks/accuracy/birth-chart-accuracy.md

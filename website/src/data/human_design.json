@@ -1,0 +1,347 @@
+{
+ "calculation": {
+  "design_arc_deg_achieved": 88.00000000013756,
+  "design_offset_days": 89.76009333878756,
+  "design_rule": "design instant: the moment the Sun was exactly 88 degrees of ecliptic longitude before its birth position (numerical root-solve, not 88 days)",
+  "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
+  "node_model": "true",
+  "provider": "analytic",
+  "wheel_start_deg": 302.0,
+  "zodiac": "tropical"
+ },
+ "derived_attributes": [
+  {
+   "derived_from": [
+    "personality",
+    "design"
+   ],
+   "epistemic": "tradition_rule",
+   "id": "human_design.bodygraph",
+   "rule_version": "human_design.basic@0.1",
+   "tradition_id": "human_design",
+   "value": {
+    "active_gates": [
+     9,
+     10,
+     13,
+     15,
+     16,
+     19,
+     20,
+     36,
+     37,
+     40,
+     42,
+     43,
+     51,
+     52,
+     54,
+     58,
+     59
+    ],
+    "authority": "emotional",
+    "channels": [
+     "9-52",
+     "10-20",
+     "37-40"
+    ],
+    "defined_centers": [
+     "throat",
+     "g",
+     "heart",
+     "solar_plexus",
+     "sacral",
+     "root"
+    ],
+    "definition": "triple_split",
+    "profile": "2/5",
+    "type": "generator",
+    "undefined_centers": [
+     "head",
+     "ajna",
+     "spleen"
+    ]
+   }
+  }
+ ],
+ "input": {
+  "birth_time_quality": "exact",
+  "civil_zone": "Asia/Kolkata",
+  "instant_utc": "1992-05-28T14:35:00Z",
+  "jd_ut": 2448771.107638889,
+  "place": {
+   "latitude_deg": 17.385,
+   "longitude_deg": 78.487
+  }
+ },
+ "interpretations": [],
+ "kind": "human_design",
+ "positions": {
+  "design": {
+   "activations": [
+    {
+     "body": "sun",
+     "center": "solar_plexus",
+     "color": 1,
+     "epistemic": "tradition_rule",
+     "gate": 37,
+     "line": 5,
+     "longitude_deg": 339.5014586406261
+    },
+    {
+     "body": "earth",
+     "center": "heart",
+     "color": 1,
+     "epistemic": "tradition_rule",
+     "gate": 40,
+     "line": 5,
+     "longitude_deg": 159.50145864062608
+    },
+    {
+     "body": "moon",
+     "center": "root",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 54,
+     "line": 4,
+     "longitude_deg": 288.1212547515097
+    },
+    {
+     "body": "north_node",
+     "center": "root",
+     "color": 3,
+     "epistemic": "tradition_rule",
+     "gate": 58,
+     "line": 5,
+     "longitude_deg": 278.0907010198453
+    },
+    {
+     "body": "south_node",
+     "center": "root",
+     "color": 3,
+     "epistemic": "tradition_rule",
+     "gate": 52,
+     "line": 5,
+     "longitude_deg": 98.09070101984531
+    },
+    {
+     "body": "mercury",
+     "center": "solar_plexus",
+     "color": 4,
+     "epistemic": "tradition_rule",
+     "gate": 36,
+     "line": 1,
+     "longitude_deg": 353.1913135105383
+    },
+    {
+     "body": "venus",
+     "center": "root",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 19,
+     "line": 6,
+     "longitude_deg": 312.5259619114432
+    },
+    {
+     "body": "mars",
+     "center": "root",
+     "color": 4,
+     "epistemic": "tradition_rule",
+     "gate": 19,
+     "line": 1,
+     "longitude_deg": 308.18455249912313
+    },
+    {
+     "body": "jupiter",
+     "center": "heart",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 40,
+     "line": 5,
+     "longitude_deg": 159.65980947920247
+    },
+    {
+     "body": "saturn",
+     "center": "root",
+     "color": 3,
+     "epistemic": "tradition_rule",
+     "gate": 19,
+     "line": 6,
+     "longitude_deg": 312.670640188564
+    },
+    {
+     "body": "uranus",
+     "center": "root",
+     "color": 6,
+     "epistemic": "tradition_rule",
+     "gate": 54,
+     "line": 2,
+     "longitude_deg": 286.87147982708274
+    },
+    {
+     "body": "neptune",
+     "center": "root",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 54,
+     "line": 4,
+     "longitude_deg": 288.2495425505779
+    },
+    {
+     "body": "pluto",
+     "center": "ajna",
+     "color": 3,
+     "epistemic": "tradition_rule",
+     "gate": 43,
+     "line": 5,
+     "longitude_deg": 232.95316854393414
+    }
+   ],
+   "instant_utc": "1992-02-28T20:20:27.936Z",
+   "jd_ut": 2448681.34754555
+  },
+  "personality": {
+   "activations": [
+    {
+     "body": "sun",
+     "center": "throat",
+     "color": 6,
+     "epistemic": "tradition_rule",
+     "gate": 16,
+     "line": 2,
+     "longitude_deg": 67.50145864076367
+    },
+    {
+     "body": "earth",
+     "center": "sacral",
+     "color": 6,
+     "epistemic": "tradition_rule",
+     "gate": 9,
+     "line": 2,
+     "longitude_deg": 247.50145864076367
+    },
+    {
+     "body": "moon",
+     "center": "sacral",
+     "color": 6,
+     "epistemic": "tradition_rule",
+     "gate": 42,
+     "line": 2,
+     "longitude_deg": 22.546190272289095
+    },
+    {
+     "body": "north_node",
+     "center": "g",
+     "color": 5,
+     "epistemic": "tradition_rule",
+     "gate": 10,
+     "line": 3,
+     "longitude_deg": 270.88289529476583
+    },
+    {
+     "body": "south_node",
+     "center": "g",
+     "color": 5,
+     "epistemic": "tradition_rule",
+     "gate": 15,
+     "line": 3,
+     "longitude_deg": 90.88289529476583
+    },
+    {
+     "body": "mercury",
+     "center": "throat",
+     "color": 5,
+     "epistemic": "tradition_rule",
+     "gate": 20,
+     "line": 4,
+     "longitude_deg": 63.71488236420813
+    },
+    {
+     "body": "venus",
+     "center": "throat",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 20,
+     "line": 4,
+     "longitude_deg": 63.137243699464456
+    },
+    {
+     "body": "mars",
+     "center": "heart",
+     "color": 2,
+     "epistemic": "tradition_rule",
+     "gate": 51,
+     "line": 3,
+     "longitude_deg": 17.278860818499712
+    },
+    {
+     "body": "jupiter",
+     "center": "sacral",
+     "color": 6,
+     "epistemic": "tradition_rule",
+     "gate": 59,
+     "line": 6,
+     "longitude_deg": 155.73948042152708
+    },
+    {
+     "body": "saturn",
+     "center": "g",
+     "color": 4,
+     "epistemic": "tradition_rule",
+     "gate": 13,
+     "line": 6,
+     "longitude_deg": 318.4113828304479
+    },
+    {
+     "body": "uranus",
+     "center": "root",
+     "color": 4,
+     "epistemic": "tradition_rule",
+     "gate": 54,
+     "line": 3,
+     "longitude_deg": 287.49710776010545
+    },
+    {
+     "body": "neptune",
+     "center": "root",
+     "color": 5,
+     "epistemic": "tradition_rule",
+     "gate": 54,
+     "line": 4,
+     "longitude_deg": 288.5904103103758
+    },
+    {
+     "body": "pluto",
+     "center": "ajna",
+     "color": 3,
+     "epistemic": "tradition_rule",
+     "gate": 43,
+     "line": 3,
+     "longitude_deg": 231.1179760896601
+    }
+   ],
+   "instant_utc": "1992-05-28T14:35:00Z",
+   "jd_ut": 2448771.107638889
+  }
+ },
+ "provenance": {
+  "assumptions": [
+   "node_model not given; the true node is used for Human Design (the usual convention)",
+   "house_system not given; whole_sign used",
+   "UTC is used as UT1 (differs by under 0.9 s)",
+   "Human Design gate numbering and the centre/channel structure are implemented from public structure only; branded terminology, text and diagrams are not included; legal review pending (ADR-009)"
+  ],
+  "engine_version": "0.1.0",
+  "provider": "analytic",
+  "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
+  "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
+  "provider_version": "0.1.0",
+  "rulesets": [
+   "human_design.basic@0.1"
+  ],
+  "time_model": "leap-seconds-1972-2017+37s-to-2027",
+  "tzdb_version": "2026f"
+ },
+ "schema_version": "0.1.0",
+ "warnings": []
+}

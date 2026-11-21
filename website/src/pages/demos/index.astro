@@ -1,0 +1,160 @@
+---
+import Layout from "../../components/Layout.astro";
+import Mermaid from "../../components/Mermaid.astro";
+import compare from "../../data/compare.json";
+import dual from "../../data/dual.json";
+import graph from "../../data/graph.json";
+import hd from "../../data/human_design.json";
+import numerology from "../../data/numerology.json";
+import uncertain from "../../data/uncertain.json";
+import { wheelSvg } from "../../lib/wheel";
+
+type Any = any;
+const westWheel = wheelSvg(dual.western, "Western tropical wheel");
+const vedWheel = wheelSvg(dual.vedic, "Vedic sidereal wheel");
+const attrs = (env: Any, ids: string[]) => ids.map((id) => (env.derived_attributes as Any[]).find((a) => a.id === id)).filter(Boolean);
+const vedicFacts = attrs(dual.vedic, ["vedic.lagna.rashi", "vedic.moon.rashi", "vedic.moon.nakshatra", "vedic.moon.d9", "vedic.sun.rashi", "vedic.sun.d9"]);
+const westFacts = attrs(dual.western, ["western.ascendant.sign", "western.moon.sign", "western.sun.sign"]);
+const fmt = (v: Any) => (typeof v === "object" ? Object.entries(v).filter(([k]) => !["index", "dms", "degree_in_sign", "stable_within_uncertainty"].includes(k)).map(([k, x]) => `${k}: ${x}`).join(" · ") : String(v));
+const pn = numerology.pythagorean.derived_attributes[0].value as Any;
+const cn = numerology.chaldean.derived_attributes[0].value as Any;
+const lp = numerology.pythagorean.derived_attributes[1].value as Any;
+const pers = hd.positions.personality.activations as Any[];
+const des = hd.positions.design.activations as Any[];
+const bg = hd.derived_attributes[0].value as Any;
+const sunP = pers.find((a) => a.body === "sun")!, sunD = des.find((a) => a.body === "sun")!;
+const diff = (c: Any) => (c.changes as Any[]).filter((x) => x.kind === "position" || x.kind === "derived").slice(0, 8);
+const interval = (uncertain.positions as Any[]).map((p) => ({ id: p.id, iv: p.longitude_interval_deg as number[], sign: p.sign.name }));
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const reports = [
+  ["example-birth-chart.html", "Full birth chart", "Panchang chakra, South and North Indian charts, vargas, daśā, Western wheel, Human Design, numerology, provenance."],
+  ["example-unknown-time.html", "Unknown birth time", "Date only: what stays fixed all day is shown; the Ascendant, houses and Human Design are listed as not computed."],
+  ["example-western.html", "Western + numerology", "Tropical wheel with Placidus houses and aspect lines, light theme."],
+  ["example-from-cli.html", "Rendered from CLI JSON", "Envelopes saved by the Rust CLI, rendered later with --from-json."],
+];
+const uncertainAttrs = (uncertain.derived_attributes as Any[]).filter((a) => /rashi|nakshatra/.test(a.id) && (a.id.includes("moon") || a.id.includes("sun")));
+---
+
+<Layout title="Demos" description="Five demonstrations from the ESHANA master plan, rendered from real runs of the binary.">
+  <section class="hero" style="text-align:left">
+    <div class="hero-content">
+      <p class="eyebrow">Demos</p>
+      <h1><span data-rise>Real output, not mock-ups</span></h1>
+      <p class="lede">Every number on this page was produced by the <code>eshana</code> binary when the site was built, for one example birth:
+        <strong>1992-05-28 20:05 Asia/Kolkata, 17.385°N 78.487°E</strong>. CI regenerates the data and fails the build if it drifts.</p>
+    </div>
+  </section>
+
+  <section class="demo" id="a">
+    <h2 data-reveal><span class="letter">A</span>One birth, two lenses</h2>
+    <p class="section-lede">Vedic sidereal (Lahiri) on the left, Western tropical on the right. Disagreements between them are configuration differences, not defects.</p>
+    <div class="twin" data-reveal>
+      <div class="wheel-card"><div set:html={vedWheel} /><p class="wheel-cap">Sidereal · Lahiri {dual.vedic.calculation.ayanamsha_deg.toFixed(3)}° · whole sign</p></div>
+      <div class="wheel-card"><div set:html={westWheel} /><p class="wheel-cap">Tropical · Placidus · aspects drawn in the hub</p></div>
+    </div>
+    <div class="facts">
+      {vedicFacts.map((a) => (<div class="fact"><b>{a.id}</b>{fmt(a.value)}<br /><span class="epi tradition_rule">{a.rule_version}</span></div>))}
+      {westFacts.map((a) => (<div class="fact"><b>{a.id}</b>{fmt(a.value)}<br /><span class="epi tradition_rule">{a.rule_version}</span></div>))}
+    </div>
+    <p class="note">The Moon is a <span class="epi calculated">calculated</span> position. “Revati, pada 4” is <span class="epi tradition_rule">tradition_rule</span>: the output names the rule that produced it and stops there. <code>interpretations</code> is <code>[]</code>.</p>
+  </section>
+
+  <section class="demo" id="b">
+    <h2 data-reveal><span class="letter">B</span>A transparent numerology analyser</h2>
+    <p class="section-lede">“Ada Lovelace”, two schools, never merged. Every letter, its value and the ruleset are in the result.</p>
+    <div class="table-wrap" data-reveal>
+      <table class="dtable">
+        <thead><tr><th>Letter</th>{(pn.letters as Any[]).map((l) => <th class="num">{l.letter}</th>)}<th class="num">Total</th></tr></thead>
+        <tbody>
+          <tr><td>Pythagorean</td>{(pn.letters as Any[]).map((l) => <td class="num">{l.value}</td>)}<td class="num"><b>{pn.expression.compound}</b> → {pn.expression.reduced}</td></tr>
+          <tr><td>Chaldean</td>{(cn.letters as Any[]).map((l) => <td class="num">{l.value}</td>)}<td class="num"><b>{cn.expression.compound}</b> → {cn.expression.reduced}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>soul urge (vowels), pythagorean</b>{pn.soul_urge.compound} → {pn.soul_urge.reduced}</div>
+      <div class="fact"><b>personality (consonants), pythagorean</b>{pn.personality.compound} → {pn.personality.reduced}</div>
+      <div class="fact"><b>life path 1815-12-10</b>{lp.life_path} <span class="hint">parts {JSON.stringify(lp.parts)}, {lp.method}</span></div>
+      <div class="fact"><b>rulesets</b><span class="epi tradition_rule">{pn.ruleset}</span> <span class="epi tradition_rule">{cn.ruleset}</span></div>
+    </div>
+  </section>
+
+  <section class="demo" id="c">
+    <h2 data-reveal><span class="letter">C</span>Human Design calculation trace</h2>
+    <ol class="steps" data-reveal>
+      <li>Birth Sun longitude: <b>{sunP.longitude_deg.toFixed(4)}°</b> (tropical, apparent) at <code>{hd.positions.personality.instant_utc}</code>.</li>
+      <li>Target: that minus <b>88°</b> = <b>{sunD.longitude_deg.toFixed(4)}°</b>. Solved by bisection; achieved arc <code>{hd.calculation.design_arc_deg_achieved.toFixed(9)}°</code>.</li>
+      <li>Design instant: <code>{hd.positions.design.instant_utc}</code>, which is <b>{hd.calculation.design_offset_days.toFixed(2)} days</b> earlier, not 88.</li>
+      <li>13 bodies on each side mapped onto the 64-gate wheel that starts at {hd.calculation.wheel_start_deg}° (2°00′ Aquarius).</li>
+      <li>Channels from active gate pairs, then centres, type, authority, profile, definition.</li>
+    </ol>
+    <div class="table-wrap" data-reveal>
+      <table class="dtable">
+        <thead><tr><th>Body</th><th class="num">Personality gate.line</th><th class="num">Design gate.line</th><th>Centre (personality)</th></tr></thead>
+        <tbody>
+          {pers.map((p, i) => (<tr><td>{p.body}</td><td class="num">{p.gate}.{p.line}</td><td class="num">{des[i].gate}.{des[i].line}</td><td>{p.center}</td></tr>))}
+        </tbody>
+      </table>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>type</b>{bg.type}</div>
+      <div class="fact"><b>authority</b>{bg.authority}</div>
+      <div class="fact"><b>profile</b>{bg.profile}</div>
+      <div class="fact"><b>definition</b>{bg.definition}</div>
+      <div class="fact"><b>channels</b>{(bg.channels as string[]).map((c) => <span class="pill">{c}</span>)}</div>
+      <div class="fact"><b>defined centres</b>{(bg.defined_centers as string[]).map((c) => <span class="pill">{c}</span>)}</div>
+    </div>
+    <p class="note">The result states in <code>provenance.assumptions</code> that the gate structure is implemented from public structure only and that the rights review is open (ADR-009). A longitude within arc-minutes of a gate, line or colour boundary is uncertain at the analytic provider's accuracy.</p>
+  </section>
+
+  <section class="demo" id="d">
+    <h2 data-reveal><span class="letter">D</span>A graph that never claims causation</h2>
+    <p class="section-lede">Position → rule → classification, with sources. Solid arrows are computational; dashed are traditional correspondences. The engine never emits a causal or correlational edge.</p>
+    <pre class="mermaid-src">{graph.mermaid.join("\n")}</pre>
+    <Mermaid />
+    <p class="hint">{graph.json.nodes.length} nodes · {graph.json.edges.length} edges · export as JSON, Mermaid or GraphML with <code>eshana graph</code>.</p>
+  </section>
+
+  <section class="demo" id="e">
+    <h2 data-reveal><span class="letter">E</span>Method comparison</h2>
+    <p class="section-lede">Same input, two settings. The diff names the setting that caused it.</p>
+    {[["ayanamsha", "Lahiri → Fagan-Bradley"], ["node", "mean node → true node"], ["zodiac", "tropical → sidereal (Lahiri)"]].map(([k, title]) => {
+      const c = (compare as Any)[k];
+      return (
+        <div data-reveal>
+          <h3>{title} <span class="hint">differs in: {(c.configuration_differences as string[]).map((d) => <span class="pill">{d}</span>)} · {c.summary.changes} changes, {c.summary.sign_changes} sign changes</span></h3>
+          <div class="table-wrap"><table class="dtable"><thead><tr><th>What</th><th>A</th><th>B</th><th class="num">Δ°</th></tr></thead><tbody>
+            {diff(c).map((x) => x.kind === "position"
+              ? <tr><td>{x.id}</td><td>{x.a_sign} {x.a_longitude_deg.toFixed(2)}°</td><td>{x.b_sign} {x.b_longitude_deg.toFixed(2)}°</td><td class="num">{x.difference_deg.toFixed(2)}{x.sign_changed ? " ⚑" : ""}</td></tr>
+              : <tr><td>{x.id}</td><td>{fmt(x.a)}</td><td>{fmt(x.b)}</td><td class="num">—</td></tr>)}
+          </tbody></table></div>
+        </div>
+      );
+    })}
+    <p class="note">⚑ marks a sign change. These are consequences of the configuration, <b>not software defects</b>.</p>
+  </section>
+
+  <section class="demo" id="f">
+    <h2 data-reveal><span class="letter">F</span>When the birth time is unknown</h2>
+    <p class="section-lede">Date only: every position is an interval, and a sign that could change inside the window says so instead of picking one. No Ascendant, no houses, no daśā.</p>
+    <div class="table-wrap" data-reveal>
+      <table class="dtable">
+        <thead><tr><th>Body</th><th class="num">Longitude over the local day</th><th>Sign (any time that day)</th></tr></thead>
+        <tbody>{interval.map((r) => (<tr><td>{r.id}</td><td class="num">{r.iv[0].toFixed(2)}° → {r.iv[1].toFixed(2)}°</td><td>{r.sign} at midday</td></tr>))}</tbody>
+      </table>
+    </div>
+    <div class="facts">
+      {uncertainAttrs.map((a) => (<div class="fact"><b>{a.id}</b>{a.value.name ?? ""}{a.value.stable_within_uncertainty === false ? <span> <span class="pill">could be {(a.value.candidates as string[] | undefined)?.join(" or ") ?? "either"}</span></span> : <span> <span class="pill off">stable</span></span>}</div>))}
+    </div>
+    <p class="note">warning: <code>{uncertain.warnings.length ? "" : "none"}</code>{uncertain.provenance.assumptions.filter((a) => /quality/.test(a)).join(" ")}</p>
+  </section>
+
+  <section class="demo" id="g">
+    <h2 data-reveal><span class="letter">G</span>Exported HTML chart reports</h2>
+    <p class="section-lede">One self-contained file per chart from <code>eshana-report</code>, generated from the real engine. Each opens offline, prints cleanly and carries its raw JSON.</p>
+    <div class="facts">
+      {reports.map(([file, title, text]) => (<div class="fact"><b><a href={`${base}reports/${file}`}>{title} ↗</a></b>{text}</div>))}
+    </div>
+    <p class="note">How to make your own: <a href={`${base}docs/guides/html-report/`}>HTML chart reports</a>.</p>
+  </section>
+</Layout>
