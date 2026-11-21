@@ -11,8 +11,9 @@ names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](..
 
 | Pack | Covers | Data |
 |---|---|---|
-| `vedic.parashari@0.2` | rāśi, nakshatra/pada, bhāva, vargas D1–D60 (D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60), Vimśottarī (five levels), Yoginī | algorithms in code (`vedic.rs`) |
-| `vedic.core@0.2` | sign lords, dignity (exaltation, debilitation, moolatrikoṇa, own), natural and five-fold relationships, graha drishti, combustion, dig bala, naisargika bala, avasthā; Jaimini kārakas, ārūḍhas, rāśi drishti; KP | `vedic-core.yaml` |
+| `vedic.parashari@0.3` | rāśi, nakshatra/pada, bhāva, vargas D1–D60 (D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60) with the degree in each varga, Vimśottarī (five levels), Yoginī | algorithms in code (`vedic.rs`) |
+| `vedic.core@0.3` | sign lords, dignity (exaltation, debilitation, moolatrikoṇa, own), natural and five-fold relationships, graha drishti, combustion, dig bala, naisargika bala, avasthā; Jaimini kārakas, ārūḍhas, rāśi drishti; KP; natural and functional benefics, yogi and avayogi offsets, dagdha rāśis by tithi, Indu lagna kalās | `vedic-core.yaml` |
+| `vedic.bala@0.3` | ṣaḍbala (six components with named conventions), bhāva bala, viṃśopaka (four schemes, each summing to 20), sputa drishti in virūpas ([guide](../guides/strength.md)) | `bala.yaml` |
 | `vedic.ashtakavarga@0.2` | bhinna- and sarvāṣṭakavarga | `ashtakavarga.yaml` |
 | `vedic.panchanga@0.2` | tithi, vāra, nakṣatra, yoga, karaṇa; horā, choghaḍiyā, Rāhu kālam, Yamagaṇḍam, Gulika kālam; Tārā and Candra bala | `panchanga.yaml` |
 | `vedic.yogas@0.2` | 18 yogas and 6 doshas as declarative conditions | `yogas.yaml` |
@@ -22,6 +23,7 @@ names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](..
 | `numerology.pythagorean@0.1`, `numerology.chaldean@0.1` | letter tables, reductions, life path, personal year | code |
 | `ayanamsha-<id>@0.1` | Lahiri, Raman, Krishnamurti, Fagan–Bradley | code |
 | `report.markers@0.1` | pushkara navāṃśa, vargottama, gaṇḍānta markers in HTML reports | report renderer |
+| `report.nadi@0.1` | Nadi links: conjunct, trine, 2nd, 12th, 7th; retrograde reach ([guide](../guides/nadi.md)) | report renderer |
 
 ## Conventions named in the packs
 

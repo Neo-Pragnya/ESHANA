@@ -901,8 +901,9 @@
       "id": "REP-05",
       "area": "docs",
       "title": "Report extras: Panchanga day section, more vargas, PDF preset",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "evidence": "0.3.0 studio: pañcāṅga page, a gallery of 19 vargas incl. D5/D6/D8, print styles; acceptance/studio/journeys.mjs."
     },
     {
       "id": "ACC-04",
@@ -1119,8 +1120,10 @@
       "id": "VED-11",
       "area": "vedic",
       "title": "Full shadbala",
-      "status": "proposed",
-      "track": "primary"
+      "status": "implemented",
+      "track": "primary",
+      "note": "Six components per BPHS with named conventions (bala.yaml, vedic.bala@0.3): sthana (uchcha, saptavargaja, oja-yugma, kendradi, drekkana), dig, kala (nathonnatha, paksha, tribhaga, abda/masa/vara/hora, ayana, yuddha), chesta, naisargika, drik; required rupas and ratio (ishta/kashta phala not yet).",
+      "evidence": "crates/eshana-engine/src/bala.rs unit tests; accuracy/test_reference_software.py compares against a published reference chart: within ~60 virupas per graha, tracked as VED-14."
     },
     {
       "id": "VED-12",
@@ -1184,6 +1187,79 @@
       "title": "Load user rule packs at run time with the same validator",
       "status": "proposed",
       "track": "primary"
+    },
+    {
+      "id": "VED-14",
+      "area": "vedic",
+      "title": "Reconcile ṣaḍbala totals with published reference software (currently within ~60 virupas)",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Positions, declinations, special lagnas, yogi/avayogi, dagdha, Indu lagna and 22nd drekkana already match. Remaining gap is in kala and chesta conventions; test is xfail until resolved.",
+      "source": "0.3.0 accuracy run"
+    },
+    {
+      "id": "VED-29",
+      "area": "vedic",
+      "title": "Vargas D5, D6 and D8 with degree in varga",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "vedic.rs DIVISIONS (19); accuracy/lib.py re-derives D5/D6/D8 independently for every reference chart."
+    },
+    {
+      "id": "VED-30",
+      "area": "vedic",
+      "title": "Sripati (bhāva chalit) and Porphyry houses; declination and right ascension for every body",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "astro.rs vs Swiss O/S within 0.2″; declinations match a published reference chart (accuracy/test_reference_software.py)."
+    },
+    {
+      "id": "VED-31",
+      "area": "vedic",
+      "title": "Vimśopaka (4 schemes), bhāva bala, sputa drishti matrix in virūpas (D1, D9), special points (yogi, avayogi, dagdha, Indu lagna, 64th navāṃśa, 22nd drekkāṇa, kartari, graha yuddha, functional nature)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "bala.rs tests; packs::validate checks each vimśopaka scheme sums to 20; reference chart checks for yogi, avayogi, dagdha, Indu lagna, 22nd drekkāṇa."
+    },
+    {
+      "id": "REP-12",
+      "area": "docs",
+      "title": "ESHANA Studio: multi-page hash-routed app (24 pages, graha and bhāva pages, command palette, settings drawer, starfield)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance/studio/journeys.mjs: 11 real-Chrome journeys, CI job acceptance/browser."
+    },
+    {
+      "id": "REP-13",
+      "area": "docs",
+      "title": "Nadi direction matrix with degrees and links (report.nadi@0.1)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Studio journey \"Nadi matrix places grahas by element and links them\"."
+    },
+    {
+      "id": "REP-14",
+      "area": "docs",
+      "title": "South Indian chart in the Panchang Chakra centre; translucent aspect glyphs in South/North charts",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Studio journeys: 12 boxes inside the wheel with every graha in its sign; aspect marks below 0.9 opacity."
+    },
+    {
+      "id": "ACC-06",
+      "area": "qa",
+      "title": "Reference-software chart (published printout) as an accuracy fixture",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "accuracy/reference/published.json parashara_light_charts; 10 pass, shadbala totals xfail (VED-14)."
+    },
+    {
+      "id": "DOC-08",
+      "area": "docs",
+      "title": "Website identity: universe hero (27-nakshatra ecliptic plexus, grahas, parallax stars) and ESHANA sigil icons",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance/site/journeys.mjs: 7 real-Chrome journeys incl. cursor reaction, sigil hover, reduced motion, phone width."
     }
   ]
 }

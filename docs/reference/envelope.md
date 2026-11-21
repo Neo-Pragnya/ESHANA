@@ -15,7 +15,7 @@ printed by `eshana schema`. The Python test suite and the acceptance gate valida
 | `kind` | all | `positions`, `computed_chart`, `human_design`, `numerology_analysis`, `method_comparison`, `symbolic_graph`, `symbolic_graph_export`, `info`, `error` |
 | `input` | charts | the resolved instant (`instant_utc`, `jd_ut`, `jd_tt`, `delta_t_s`), zone and offset, `birth_time_quality`, `time_window_minutes`, `place` |
 | `calculation` | charts | `frame`, `provider`, `zodiac`, `ayanamsha`, `ayanamsha_deg`, `house_system`, `node_model` |
-| `positions` | charts | per body: `id`, `longitude_deg` (in the chosen zodiac), `tropical_longitude_deg`, `latitude_deg`, `distance_au`, `speed_deg_per_day`, `retrograde`, `sign`, `epistemic: calculated`, optional `longitude_interval_deg` |
+| `positions` | charts | per body: `id`, `longitude_deg` (in the chosen zodiac), `tropical_longitude_deg`, `latitude_deg`, `right_ascension_deg` and `declination_deg` (true obliquity of date; since schema 0.3.0), `distance_au`, `speed_deg_per_day`, `retrograde`, `sign`, `epistemic: calculated`, optional `longitude_interval_deg` |
 | `houses` | charts with a place and an exact time | `system`, `ascendant`, `midheaven`, `cusps_deg`, `local_apparent_sidereal_time_deg`; `null` otherwise |
 | `derived_attributes` | charts, numerology, HD | `id`, `tradition_id`, `rule_version`, `epistemic`, `value`, `derived_from` |
 | `interpretations` | charts | **always empty** from the engine |

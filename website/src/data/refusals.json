@@ -7,7 +7,7 @@
     "message": "invalid configuration: sidereal zodiac requires an explicit ayanamsha (lahiri, raman, krishnamurti, fagan_bradley); ESHANA never picks one silently"
    },
    "kind": "error",
-   "schema_version": "0.2.0"
+   "schema_version": "0.3.0"
   },
   "title": "A sidereal zodiac without an ayanamsha"
  },
@@ -19,7 +19,7 @@
     "message": "ambiguous local time: 2024-11-03T01:30:00 in America/New_York occurs twice (UTC-04 and UTC-05); pass fold=earliest or fold=latest"
    },
    "kind": "error",
-   "schema_version": "0.2.0"
+   "schema_version": "0.3.0"
   },
   "title": "A local time that happens twice"
  },
@@ -31,7 +31,7 @@
     "message": "non-existent local time: 2024-03-10T02:30:00 in America/New_York was skipped by a clock change; the instant does not exist"
    },
    "kind": "error",
-   "schema_version": "0.2.0"
+   "schema_version": "0.3.0"
   },
   "title": "A local time that never happened"
  },
@@ -43,7 +43,7 @@
     "message": "unsupported latitude: Placidus houses are undefined at latitude 75.00° (polar circle is 66.56°); use whole_sign or equal"
    },
    "kind": "error",
-   "schema_version": "0.2.0"
+   "schema_version": "0.3.0"
   },
   "title": "Placidus houses inside the polar circle"
  },
@@ -55,7 +55,7 @@
     "message": "birth time too uncertain: Human Design needs the exact birth time: the design instant and gate lines move with it"
    },
    "kind": "error",
-   "schema_version": "0.2.0"
+   "schema_version": "0.3.0"
   },
   "title": "Human Design with an unknown birth time"
  }

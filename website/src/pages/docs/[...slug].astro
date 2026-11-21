@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
-import Glyph from "../../components/Glyph.astro";
+import Sigil from "../../components/Sigil.astro";
 import Layout from "../../components/Layout.astro";
 import Mermaid from "../../components/Mermaid.astro";
 import { hasMermaid } from "../../lib/remark-mermaid";
@@ -27,7 +27,7 @@ const h1 = headings.find((h) => h.depth === 1)?.text;
 const title = entry.data.title ?? DOC_TITLES[entry.id] ?? h1 ?? titleOf(entry.id);
 const listed = new Set(DOC_NAV.flatMap((s) => s.items));
 const extra = all.map((d) => d.id).filter((id) => !listed.has(id)).sort();
-const nav = extra.length ? [...DOC_NAV, { section: "More", items: extra, shapes: "circle>spark", tint: "sky" }] : DOC_NAV;
+const nav = extra.length ? [...DOC_NAV, { section: "More", items: extra, sigil: "comet" as const, tint: "sky" }] : DOC_NAV;
 const flat = nav.flatMap((s) => s.items).filter((id) => byId.has(id));
 const index = flat.indexOf(entry.id);
 const prev = index > 0 ? flat[index - 1] : undefined;
@@ -45,7 +45,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
           nav.map((s) => (
             <div class={`nav-group t-${s.tint}`}>
               <p class="sidebar-heading">
-                <Glyph shapes={s.shapes} tint={s.tint} class="" />
+                <Sigil name={s.sigil} tint={s.tint} class="" />
                 {s.section}
               </p>
               {s.items

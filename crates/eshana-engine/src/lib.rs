@@ -4,6 +4,7 @@
 
 pub mod api;
 pub mod astro;
+pub mod bala;
 pub mod events;
 pub mod graph;
 pub mod hd;

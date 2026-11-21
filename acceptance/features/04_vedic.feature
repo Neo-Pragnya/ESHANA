@@ -17,7 +17,7 @@ Feature: Vedic chart
   Scenario: Derived values name their rule pack and tradition
     When I run "eshana chart vedic --utc 2000-01-01T12:00:00Z --lat 17.385 --lon 78.487"
     Then it succeeds
-    And the output contains "vedic.parashari@0.2"
+    And the output contains "vedic.parashari@0.3"
     And the output contains ""tradition_id": "vedic.parashari""
     And the output contains ""epistemic": "tradition_rule""
 

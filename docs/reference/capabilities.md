@@ -33,6 +33,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Ayanāṃśas: Lahiri, Raman, Krishnamurti, Fagan–Bradley | verified |
 | Yukteshwar, true Chitrapakṣa, true Revatī and other star-based ayanāṃśas | planned (`AYA-02`) |
 | Whole-sign, equal and Placidus houses (Placidus refused in the polar circles) | verified |
+| Sripati (bhāva chalit) and Porphyry houses | verified (Swiss within 0.2″) |
+| Declination and right ascension for every body | verified (published reference chart) |
 | Civil time with IANA zones, DST folds and gaps as errors; uncertain birth time | verified |
 
 ## Vedic
@@ -40,7 +42,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Capability | State |
 |---|---|
 | Rāśi, nakshatra, pada, nakshatra lord, bhāva | verified |
-| Vargas D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60 | verified |
+| Vargas D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60, with degree in varga | verified |
+| D11 (rudrāṃśa) | planned (`VED-09`) |
 | D150 (nāḍyāṃśa) and other non-Parāśara vargas | planned (`VED-09`) |
 | Vimśottarī daśā to five levels with the current chain | verified |
 | Yoginī daśā | verified |
@@ -51,7 +54,12 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Bhāva, Horā and Ghaṭī lagnas | verified (PyJHora within 2′) |
 | Dignity, avasthā, combustion, five-fold relationships | verified |
 | Dig bala and naisargika bala | verified |
-| Full ṣaḍbala (sthāna, kāla, ceṣṭā, dṛk bala) | planned (`VED-11`) |
+| Full ṣaḍbala (sthāna, dig, kāla, ceṣṭā, naisargika, dṛk) with required rūpas and ratio | implemented (`VED-11`); totals within ~60 virūpas of reference software, reconciliation `VED-14` |
+| Iṣṭa and kaṣṭa phala | planned (`VED-14`) |
+| Bhāva bala | verified (unit tests) |
+| Viṃśopaka bala: ṣaḍvarga, saptavarga, daśavarga, ṣoḍaśavarga | verified (weights validated) |
+| Sputa drishti in virūpas (D1 and D9 matrices) | verified (unit tests) |
+| Yogi, avayogi, duplicate yogi, dagdha rāśis, Indu lagna, 64th navāṃśa, 22nd dreshkāṇa, kartari, graha yuddha, functional nature | verified (published reference chart) |
 | Graha drishti and rāśi drishti | verified |
 | Bhinna- and sarvāṣṭakavarga | verified |
 | Aṣṭakavarga transit strength by date | planned (`VED-12`) |

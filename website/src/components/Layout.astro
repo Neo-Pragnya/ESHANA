@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 import "../styles/cosmos.css";
-import Glyph from "./Glyph.astro";
+import "../styles/sigil.css";
+import Sigil from "./Sigil.astro";
 import { NAV, site } from "../lib/site";
 
 interface Props {
@@ -41,10 +42,11 @@ const href = (h: string) => (/^https?:/.test(h) ? h : `${base}${h.replace(/^\//,
     </script>
   </head>
   <body class="mk-grain">
+    <canvas class="sky-ambient" id="sky-ambient" aria-hidden="true"></canvas>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <a class="brand" href={base} aria-label={`${site.name} home`}>
-        <Glyph shapes={site.logoShapes} tint="coral" class="brand-mark" />
+        <Sigil name="eshana" tint="lilac" class="brand-mark" />
         <span class="brand-text">{site.name}<small>{site.tagline}</small></span>
       </a>
       <nav class="top-nav" aria-label="Main">
@@ -70,6 +72,9 @@ const href = (h: string) => (/^https?:/.test(h) ? h : `${base}${h.replace(/^\//,
     <script is:inline src={`${base}motion-kit/motion-kit.js`} defer></script>
     <script is:inline src={`${base}diagram-fx/diagram-fx.js`} defer></script>
     <script>
+      import { startUniverse } from "../lib/universe";
+      const ambient = document.getElementById("sky-ambient") as HTMLCanvasElement | null;
+      if (ambient) startUniverse(ambient, "ambient");
       document.getElementById("theme-toggle")?.addEventListener("click", () => {
         const root = document.documentElement;
         const dark = root.dataset.theme !== "dark";

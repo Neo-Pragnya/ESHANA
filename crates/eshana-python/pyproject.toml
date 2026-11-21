@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "eshana"
-version = "0.2.0"
+version = "0.3.0"
 description = "ESHANA - Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations. A Rust-first computation layer for celestial positions, traditions and traceable derived knowledge."
 readme = "README.md"
 requires-python = ">=3.9"

@@ -16,7 +16,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.mercury.rashi",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "degree_in_sign": 9.228326138457156,
@@ -32,7 +32,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.mercury.nakshatra",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "index": 2,
@@ -48,7 +48,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.moon.rashi",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "candidates": [
@@ -68,7 +68,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.moon.nakshatra",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "index": 26,
@@ -84,7 +84,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.sun.rashi",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "degree_in_sign": 13.422794332553408,
@@ -100,7 +100,7 @@
    ],
    "epistemic": "tradition_rule",
    "id": "vedic.sun.nakshatra",
-   "rule_version": "vedic.parashari@0.2",
+   "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
     "index": 3,
@@ -128,6 +128,7 @@
  "positions": [
   {
    "body": "sun",
+   "declination_deg": 21.50940623721381,
    "distance_au": 1.0135129548088317,
    "epistemic": "calculated",
    "id": "sun",
@@ -138,6 +139,7 @@
     43.90259826552126
    ],
    "retrograde": false,
+   "right_ascension_deg": 65.36099708346825,
    "sign": {
     "degree_in_sign": 13.422794332553408,
     "dms": "13°25′22″",
@@ -149,6 +151,7 @@
   },
   {
    "body": "moon",
+   "declination_deg": 11.757200596745058,
    "distance_au": 0.0026031704053674615,
    "epistemic": "calculated",
    "id": "moon",
@@ -159,6 +162,7 @@
     0.9122777039709185
    ],
    "retrograde": false,
+   "right_ascension_deg": 14.839704995125787,
    "sign": {
     "degree_in_sign": 24.442197509817447,
     "dms": "24°26′32″",
@@ -170,6 +174,7 @@
   },
   {
    "body": "mercury",
+   "declination_deg": 20.78684669548535,
    "distance_au": 1.315682838485406,
    "epistemic": "calculated",
    "id": "mercury",
@@ -180,6 +185,7 @@
     40.31430491511651
    ],
    "retrograde": false,
+   "right_ascension_deg": 60.93055242851876,
    "sign": {
     "degree_in_sign": 9.228326138457156,
     "dms": "9°13′42″",
@@ -199,18 +205,18 @@
    "birth time quality is date_only: positions are evaluated over a window of ±720.0 minutes and given as intervals",
    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
   ],
-  "engine_version": "0.2.0",
+  "engine_version": "0.3.0",
   "provider": "analytic",
   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
   "provider_version": "0.1.0",
   "rulesets": [
    "ayanamsha-lahiri@0.1",
-   "vedic.parashari@0.2"
+   "vedic.parashari@0.3"
   ],
   "time_model": "leap-seconds-1972-2017+37s-to-2027",
   "tzdb_version": null
  },
- "schema_version": "0.2.0",
+ "schema_version": "0.3.0",
  "warnings": []
 }

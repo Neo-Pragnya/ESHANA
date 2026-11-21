@@ -27,7 +27,7 @@ PADA = 10.0 / 3.0
 DASHA_ORDER = ["ketu", "venus", "sun", "moon", "mars", "rahu", "jupiter", "saturn", "mercury"]
 DASHA_YEARS = {"ketu": 7, "venus": 20, "sun": 6, "moon": 10, "mars": 7, "rahu": 18, "jupiter": 16, "saturn": 19,
                "mercury": 17}
-DIVISIONS = (1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
+DIVISIONS = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60)
 PLANETS = ("sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto")
 
 
@@ -121,7 +121,7 @@ def nak_lord(idx: int) -> str:
 
 
 def varga(lon: float, d: int) -> int:
-    """Parashari varga sign index (0 = Aries) for D1, D3, D4, D7, D9, D10, D12, written from the textbook rules."""
+    """Parashari varga sign index (0 = Aries) for every division in DIVISIONS, written from the textbook rules."""
     s = sign(lon)
     deg = (lon % 360.0) - 30.0 * s
     odd = s % 2 == 0  # Aries (index 0) is an odd sign
@@ -145,6 +145,13 @@ def varga(lon: float, d: int) -> int:
     if d == 2:  # horā: odd sign, first half Sun (Leo) and second half Moon (Cancer); even sign the reverse
         first = deg < 15.0
         return 4 if first == odd else 3
+    if d == 5:  # pañcāṁśa, 6° parts: odd signs Mars, Saturn, Jupiter, Mercury, Venus (Ar, Aq, Sg, Ge, Li);
+        # even signs Venus, Mercury, Jupiter, Saturn, Mars (Ta, Vi, Pi, Cp, Sc)
+        return ((0, 10, 8, 2, 6) if odd else (1, 5, 11, 9, 7))[min(int(deg // 6.0), 4)]
+    if d == 6:  # ṣaṣṭhāṁśa, 5° parts: odd signs from Aries, even signs from Libra
+        return ((0 if odd else 6) + min(int(deg // 5.0), 5)) % 12
+    if d == 8:  # aṣṭāṁśa, 3°45′ parts: movable from Aries, fixed from Sagittarius, dual from Leo
+        return ([0, 8, 4][modality] + min(int(deg // 3.75), 7)) % 12
     if d == 16:  # movable from Aries, fixed from Leo, dual from Sagittarius
         return ([0, 4, 8][modality] + min(int(deg // (30 / 16)), 15)) % 12
     if d == 20:  # movable from Aries, fixed from Sagittarius, dual from Leo

@@ -1,0 +1,44 @@
+# Rule pack: vedic.bala@0.3
+# Strength tables after Brihat Parashara Hora Shastra (BPHS): shadbala components, bhava bala, vimshopaka bala and
+# sputa (degree-based) drishti. Conventions that differ between schools are named in `conventions`.
+id: vedic.bala
+version: "0.3"
+conventions:
+  relationships: "Compound (panchadha) relationships from the rasi chart are used in every varga"
+  kendradi: "Houses counted whole-sign from the lagna"
+  chesta: "Ceshta bala from the motion state (speed against the mean daily motion); the Sun takes its ayana bala and the Moon its paksha bala"
+  abda_masa: "Abda lord: weekday lord on the local civil date of the Sun's last entry into sidereal Mesha; masa lord: the same for its last sign entry"
+  paksha: "Jupiter, Venus, Mercury and the Moon take paksha bala; the Sun, Mars and Saturn take 60 minus it; the Moon's is doubled"
+  drik: "Drik bala = (sum of sputa drishti from Jupiter, Venus, Mercury and the waxing Moon - sum from the Sun, Mars, Saturn and the waning Moon) / 4"
+  sputa_drishti_special: "Mars +15 at 90-120 and 210-240 degrees; Jupiter +30 at 120-150 and 240-270; Saturn +45 at 60-90 and 270-300; capped at 60"
+  bhava_dig: "Nara signs strongest in the 1st, jalachara in the 4th, keeta in the 7th, chatushpada in the 10th; (6 - houses from the strong house) x 10"
+  graha_yuddha: "Mars, Mercury, Jupiter, Venus and Saturn within 1 degree of longitude are at war; the one with the greater northern ecliptic latitude wins"
+
+required_rupas: {sun: 6.5, moon: 6.0, mars: 5.0, mercury: 7.0, jupiter: 6.5, venus: 5.5, saturn: 5.0}
+saptavarga_divisions: [1, 2, 3, 7, 9, 12, 30]
+saptavarga_points: {moolatrikona: 45.0, own: 30.0, great_friend: 22.5, friend: 15.0, neutral: 7.5, enemy: 3.75, great_enemy: 1.875}
+odd_even_females: [moon, venus]
+kendradi_points: {kendra: 60.0, panapara: 30.0, apoklima: 15.0}
+drekkana_gender: {sun: male, mars: male, jupiter: male, mercury: neuter, saturn: neuter, moon: female, venus: female}
+tribhaga: {day: [mercury, sun, saturn], night: [moon, venus, mars], always: [jupiter]}
+day_strong: [sun, jupiter, venus]
+night_strong: [moon, mars, saturn]
+paksha_benefics: [jupiter, venus, mercury, moon]
+ayana_north_strong: [sun, mars, jupiter, venus]
+ayana_south_strong: [moon, saturn]
+chesta_points: {retrograde: 60.0, stationary: 15.0, slow: 30.0, very_slow: 15.0, mean: 7.5, fast: 45.0, very_fast: 30.0}
+mean_daily_motion: {mars: 0.524, mercury: 1.383, jupiter: 0.083, venus: 1.2, saturn: 0.0335}
+drik_benefics: [jupiter, venus, mercury]
+drik_malefics: [sun, mars, saturn]
+
+bhava_dig_strong_house: {nara: 1, jalachara: 4, keeta: 7, chatushpada: 10}
+# Sign nature for bhava dig bala; Sagittarius and Capricorn change at 15 degrees.
+sign_nature: [chatushpada, chatushpada, nara, jalachara, chatushpada, nara, nara, keeta, [nara, chatushpada], [chatushpada, jalachara], nara, jalachara]
+
+vimshopaka:
+  points: {own: 20, great_friend: 18, friend: 15, neutral: 10, enemy: 7, great_enemy: 5}
+  schemes:
+    shadvarga: {1: 6, 2: 2, 3: 4, 9: 5, 12: 2, 30: 1}
+    saptavarga: {1: 5, 2: 2, 3: 3, 7: 2.5, 9: 4.5, 12: 2, 30: 1}
+    dashavarga: {1: 3, 2: 1.5, 3: 1.5, 7: 1.5, 9: 1.5, 10: 1.5, 12: 1.5, 16: 1.5, 30: 1.5, 60: 5}
+    shodashavarga: {1: 3.5, 2: 1, 3: 1, 4: 0.5, 7: 0.5, 9: 3, 10: 0.5, 12: 0.5, 16: 2, 20: 0.5, 24: 0.5, 27: 0.5, 30: 1, 40: 0.5, 45: 0.5, 60: 4}

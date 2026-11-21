@@ -10,6 +10,15 @@ State on 2026-11-21. The ledger of every task is [`planning/TRACKING.md`](../pla
 
 ## Done
 
+**0.3.0 (2026-11-21)**
+- **ESHANA Studio** ([guide](guides/html-report.md)) is now a multi-page app: graha and bhāva pages, a ⌘K palette and a
+  starfield. The Panchang chakra can hold a South or North Indian chart in its centre. Charts show translucent aspect
+  marks, there is a gallery of 19 vargas, and a [Nadi direction matrix](guides/nadi.md) and AstroEnergetics page.
+- **Strength and special points** ([guide](guides/strength.md)): ṣaḍbala, bhāva bala, viṃśopaka, sputa drishti
+  in virūpas, yogi/avayogi, dagdha, Indu lagna, Sripati bhāva chalit, declination; vargas D5, D6, D8.
+- A published reference-software chart joins the accuracy suite. Real-Chrome journeys test the studio and the website
+  in CI. The website has its own universe hero and ESHANA sigils.
+
 **0.2.0 (2026-11-21)**
 - **Chart studio** ([guide](guides/html-report.md)): the Panchang Chakra with every point placed by exact degree; layers
   for drishti, rāśi drishti, Western aspects, ārūḍhas, SAV and animated transits; South and North Indian charts for
@@ -27,10 +36,10 @@ GitHub Pages enabled.
 
 1. **Wheels for every platform.** Add the GitHub publisher on PyPI (trusted publishing, workflow `release.yml`,
    environment `pypi`) and push a version tag. Linux, Intel macOS and Windows users then install without Rust.
-2. **Full ṣaḍbala** (`VED-11`) and **aṣṭakavarga transit strength** (`VED-12`).
+2. **Reconcile ṣaḍbala totals** with reference software and add iṣṭa/kaṣṭa phala (`VED-14`); **aṣṭakavarga transit strength** (`VED-12`).
 3. **Conditional daśās** (`VED-10`): Chara, Nārāyaṇa.
 4. **Muhūrta search** (`MUH-01`), **varṣaphala** (`VAR-01`), **KP horary** (`KP-02`), **Rajju/vedha** (`MAT-02`).
-5. **More ayanāṃśas** (`AYA-02`) and **upagrahas** (`VED-13`).
+5. **More ayanāṃśas** (`AYA-02`), **upagrahas** (`VED-13`) and **D11 and other vargas** (`VED-09`).
 6. **Studio extras**: East Indian chart (`REP-06`), a chart playground (`REP-07`), languages (`REP-08`).
 7. **User rule packs at run time** (`RULE-02`).
 8. **Bindings**: MCP server (`BIND-05`), Node and WASM (`BIND-03`, `BIND-04`), crates.io (`BIND-07`).

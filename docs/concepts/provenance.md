@@ -16,7 +16,7 @@ A result you cannot reproduce is an anecdote. Every ESHANA result carries a `pro
   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md ...",
   "tzdb_version": "2026f",
   "time_model": "leap-seconds-1972-2017+37s-to-2027",
-  "rulesets": ["ayanamsha-lahiri@0.1", "vedic.parashari@0.2"],
+  "rulesets": ["ayanamsha-lahiri@0.1", "vedic.parashari@0.3"],
   "assumptions": [
     "ayanamsha not given; defaulted to lahiri because assume_defaults was set",
     "UTC is used as UT1 (differs by under 0.9 s)",

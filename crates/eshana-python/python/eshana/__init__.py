@@ -154,7 +154,7 @@ class Chart:
         return page
 
     def _repr_html_(self) -> str:  # Jupyter renders the report inline
-        return self.to_html(sections=["summary", "chakra", "charts", "planets", "dasha", "western"])
+        return self.to_html(sections=["overview", "chakra", "charts", "planets", "dasha", "western"])
 
 
 class ChartEngine:

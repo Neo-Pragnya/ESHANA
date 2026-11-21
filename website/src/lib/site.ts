@@ -1,3 +1,4 @@
+export type SigilName = "eshana" | "bindu" | "nakshatra" | "yantra" | "chakra" | "crescent" | "comet";
 import stats from "../data/stats.json";
 
 export const site = {
@@ -13,7 +14,6 @@ export const site = {
   headline: "Compute precisely.",
   highlight: "Interpret transparently.",
   lede: "Positions are calculated. Tradition rules are labelled as rules. Interpretation is never the engine's job. One JSON entry point serves a Rust CLI and a Python package, and every result carries the versions and assumptions that produced it.",
-  logoShapes: "circle hex flower star",
   footer: `ESHANA ${stats.version} · Open source, Apache-2.0 · Not a prediction service: calculation is not validation.`,
   footerLinks: [{ label: "GitHub ↗", href: "https://github.com/Neo-Pragnya/ESHANA" }],
 } as const;
@@ -28,8 +28,8 @@ export const NAV: { label: string; href: string }[] = [
 ];
 
 /** Documentation sidebar: section → doc ids (paths under docs/ without .md). */
-export const DOC_NAV: { section: string; items: string[]; shapes: string; tint: string }[] = [
-  { section: "Overview", items: ["index", "roadmap"], shapes: "blob>star", tint: "coral" },
+export const DOC_NAV: { section: string; items: string[]; sigil: SigilName; tint: string }[] = [
+  { section: "Overview", items: ["index", "roadmap"], sigil: "bindu", tint: "coral" },
   {
     section: "Concepts",
     items: [
@@ -44,7 +44,7 @@ export const DOC_NAV: { section: string; items: string[]; shapes: string; tint: 
       "concepts/licensing",
       "concepts/naming",
     ],
-    shapes: "circle>flower",
+    sigil: "nakshatra",
     tint: "teal",
   },
   {
@@ -63,12 +63,14 @@ export const DOC_NAV: { section: string; items: string[]; shapes: string; tint: 
       "guides/ways-to-use",
       "guides/html-report",
       "guides/vedic-features",
+      "guides/strength",
+      "guides/nadi",
       "guides/panchanga",
       "guides/matching",
       "guides/accuracy-suite",
       "guides/publishing",
     ],
-    shapes: "hex>flower8",
+    sigil: "yantra",
     tint: "lemon",
   },
   {
@@ -83,7 +85,7 @@ export const DOC_NAV: { section: string; items: string[]; shapes: string; tint: 
       "reference/accuracy",
       "reference/conformance",
     ],
-    shapes: "triangle>circle",
+    sigil: "chakra",
     tint: "sky",
   },
   {
@@ -104,7 +106,7 @@ export const DOC_NAV: { section: string; items: string[]; shapes: string; tint: 
       "adr/012-yaml-rule-packs",
       "design/master-plan",
     ],
-    shapes: "star>blob",
+    sigil: "crescent",
     tint: "lilac",
   },
 ];

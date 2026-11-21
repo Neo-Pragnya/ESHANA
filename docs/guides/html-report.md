@@ -1,11 +1,11 @@
 ---
-title: "HTML chart reports"
-description: "Export one self-contained HTML file with every chart and detail: Panchang chakra, South and North Indian charts, vargas, dasha, Western wheel, Human Design, numerology and provenance."
+title: "ESHANA Studio (HTML chart app)"
+description: "One self-contained, offline HTML app per chart: Panchang chakra with a South or North Indian centre, graha and bhāva pages, aspects in virūpas, ṣaḍbala, vargas to D60, Nadi matrix, daśā, Western, Human Design and provenance."
 ---
 
-# HTML chart reports
+# ESHANA Studio (HTML chart app)
 
-`eshana-report` turns a birth request into **one interactive HTML file**, the chart studio. The file holds every chart and table, the raw engine
+`eshana-report` turns a birth request into **one interactive HTML file**, ESHANA Studio: a multi-page app. The file holds every chart and table, the raw engine
 output, a light/dark toggle and a print layout. It makes **no network requests**, so you can email it, archive it or
 open it offline years later.
 
@@ -41,7 +41,7 @@ guessed.
 | `--houses` | `whole_sign` | Vedic houses: `whole_sign`, `equal`, `placidus` |
 | `--western-houses` | `placidus` | Western houses |
 | `--node` | `mean` | `mean` or `true` lunar node |
-| `--divisions` | all sixteen | vargas to include (D1 … D60) |
+| `--divisions` | all nineteen | vargas to include (D1 … D60) |
 | `--no-dasha` | off | leave out Vimśottarī daśā |
 | `--systems` | all four | any of `vedic,western,human_design,numerology` |
 | `--school` | `pythagorean` | numerology school, or `chaldean` |
@@ -52,8 +52,8 @@ guessed.
 | `--transit-days`, `--progression-years` | `365`, `90` | spans of the transit animation and progressions (0 = none) |
 | `--sunrise` | `upper_limb_refracted` | sunrise convention for the pañcāṅga |
 | `--partner` | none | second birth (`date,time,tz,lat,lon`) for compatibility |
-| `--icons`, `--chart-style` | `sphere`, `south` | default planet icons and chart style (viewers can change them) |
-| `--sections` | all | any of `summary,chakra,charts,planets,nakshatra,vargas,panchanga,dasha,strength,ashtakavarga,kp,jaimini,yogas,transits,progressions,western,human_design,numerology,matching,attributes,provenance,raw` |
+| `--icons`, `--chart-style`, `--centre` | `sphere`, `south`, `south` | default planet icons, chart style and chakra centre (viewers can change them) |
+| `--sections` | all | any of `overview,chakra,charts,vargas,planets,planet,houses,house,aspects,strength,ashtakavarga,dasha,panchanga,special,yogas,kp,nadi,energetics,transits,progressions,western,human-design,numerology,matching,data` |
 | `--theme` | `auto` | `light`, `dark` or follow the reader's system |
 | `-o` | stdout | output file |
 
@@ -82,7 +82,7 @@ open("chart.html", "w").write(html)
 
 # or one chart object
 chart = ChartEngine().vedic_chart(ctx, ayanamsha="lahiri", divisions=[1, 9], dasha=True)
-chart.to_html("vedic.html", sections=["summary", "chakra", "vedic", "divisional", "dasha"])
+chart.to_html("vedic.html", sections=["overview", "chakra", "charts", "planets", "dasha"])
 ```
 
 In Jupyter a `Chart` renders itself: put `chart` on the last line of a cell.
@@ -90,35 +90,57 @@ In Jupyter a `Chart` renders itself: put `chart` on the last line of a cell.
 The SVG builders are public too, for apps that want only a picture: `chakra_svg(env)`, `south_indian_svg(...)`,
 `north_indian_svg(...)`, `western_wheel_svg(env)` and `bodygraph_svg(hd_env)` in `eshana.report`.
 
-## What is in the file: the chart studio
+## What is in the file: ESHANA Studio
 
-The page is an interactive studio, drawn in the browser from the embedded engine output. **Show and style** picks
-the sections, planet icons, chart style, BodyGraph style and animation. The choices are kept in that browser only.
+The file is a small app, not a long page. A side rail lists the pages; each page opens with its own animation over a
+slowly turning starfield, and the address bar keeps the page (`#/chakra`, `#/planet/moon`, `#/house/7`), so the back
+button and bookmarks work. **⌘K** (or **Jump**) opens a palette that finds any page, graha or bhāva. **Show and style**
+holds the viewer's choices (planet icons, chart style, chakra centre, layers, animation), kept in that browser only.
 
-| Section | What you see | Engine data |
+| Page | What you see | Engine data |
 |---|---|---|
-| Birth data | name, place, local time, UTC, zone, coordinates, JD, ΔT, ayanāṃśa; chips for lagna, Moon, tithi, vāra, yoga, karaṇa, HD type | `input`, `vedic.panchanga` |
-| **Panchang chakra** | the Panchang Chakra wheel with every point placed: degree ticks, 27 nakshatras, 108 padas labelled with their navāṃśa sign, 36 dreshkāṇas (optional), 12 rāśis, bhāvas from the lagna, and each graha with a needle to its exact degree, so you can see which nakshatra, pada and navāṃśa it falls in. Hover any segment for what is there; click a rāśi, nakshatra or pada to turn the wheel to it and drill down (rāśi → nakshatra → pada); click a graha for its full details | positions, `vedic.*` |
-| Layers on the wheel | graha drishti (animated arcs; dashed = special aspects), rāśi drishti, Western aspects, SAV bindus by sign, transits (with play and a date slider), pushkara, vargottama and gaṇḍānta markers | `vedic.drishti.*`, `vedic.ashtakavarga`, ephemeris |
-| Charts | South Indian, North Indian or both, for D1 and any varga up to D60; ārūḍha padas (AL, UL, A2…) and drishti arrows as layers; click a house for its lord, occupants, aspects, SAV and KP cusp | `vedic.*.dN`, `vedic.jaimini.*` |
-| Grahas and bhāvas | sidereal and tropical longitude, rāśi, nakshatra, pada, lord, navāṃśa, bhāva, motion, dignity, avasthā, combustion, KP sub-lord, markers; bhāva cusps | positions, `vedic.strength`, `vedic.kp` |
-| Nakshatra ruler | all 27 with the grahas and lagna in each (with pada) and the Nakshatra Ruler attributes; click a row to find it on the wheel | positions, reference table |
-| Vargas | body × division grid, with matches to D1 highlighted | `vedic.*.dN` |
-| Pañcāṅga | the five limbs with end times, sunrise to moonset, Rāhu kālam and friends, the three special lagnas, and the 24 horās and 16 choghaḍiyās of the birth day | `vedic.panchanga` |
-| Daśā | Vimśottarī and Yoginī timelines with a NOW marker; click to drill into antardaśās and deeper; the five-level current chain; Sāḍe Sātī windows | `vedic.dasha.*`, `vedic.sade_sati` |
-| Strength | dignity, avasthā, combustion, dig bala and naisargika bala bars; the pañcadhā maitrī matrix | `vedic.strength`, `vedic.relationships` |
-| Aṣṭakavarga | the 7 × 12 bhinna matrix and the sarva row as a heat map | `vedic.ashtakavarga` |
-| KP | cusps and planets with sign, star, sub and sub-sub lords; A/B/C/D significators; ruling planets | `vedic.kp` |
-| Jaimini | chara kārakas in both schemes, kārakāṃśa, ārūḍha padas | `vedic.jaimini.*` |
-| Yogas and doshas | each rule in words, present or absent, and the grahas involved | `vedic.yogas` |
-| Transits | positions at the reference instant against the natal chart (bhāva from lagna and Moon) | ephemeris |
-| Progressions | secondary progressions by age as lines through the zodiac, and a table every five years | ephemeris |
-| Western | tropical wheel with houses and aspect lines, an aspect grid, and positions | Western chart |
-| Human Design | **detailed** (all 64 gates and 36 channels, personality black, design red, both striped) or **schematic** BodyGraph; activations | Human Design |
-| Numerology, Compatibility, Provenance, Raw data | as computed; matching appears when a partner is given | all envelopes |
+| **Overview** | the person, the moment and the place; lagna, Moon, tithi, vāra, yoga, karaṇa, current daśā chain; a small chakra and both charts; cards that lead into every page | `input`, `vedic.panchanga`, `vedic.dasha.*` |
+| **Panchang chakra** | every point placed by exact degree on rings for degrees, 27 nakshatras, 108 padas (navāṃśa), 36 dreshkāṇas, 12 rāśis, bhāvas and SAV. The centre shows a **South Indian** chart, a **North Indian** chart or the orbit lanes. Layers: needles, drishti arcs, translucent **aspect marks**, rāśi drishti, Western aspects and animated transits. Turn the wheel to Mesha or the lagna; click a rāśi, nakshatra or pada to drill down | positions, `vedic.*` |
+| **Charts** | South Indian, North Indian or both, for D1, D9 and the Sripati bhāva chalit. Each graha shows its degree and nakshatra. Aspects appear as **translucent graha marks** (for example `Ju*` and `Ve*` in the house they aspect), with ārūḍha padas in the corners. Clicking a house opens its bhāva page; clicking a graha opens its graha page | `vedic.*.dN`, `vedic.drishti.graha`, `vedic.bhava_chalit` |
+| **Vargas** | a gallery of all 19 divisional charts (D1–D60, including D5, D6 and D8), each graha with its degree inside the varga, and the body × division grid | `vedic.*.dN` |
+| **Grahas** and each **graha page** | one page per graha. It shows position (sidereal, tropical, latitude, **declination**, right ascension, speed, distance), nakshatra and its attributes, and lordship with functional nature. Aspects it casts and receives come in virūpas (sputa drishti, D1 and D9) and as rāśi drishti. Then the yogas and doshas it takes part in, its ṣaḍbala components, viṃśopaka, avasthā, KP lords, every varga with degree, and its Nadi links. Arrows step to the previous and next graha | positions, `vedic.aspects`, `vedic.shadbala`, `vedic.vimshopaka`, `vedic.yogas`, `vedic.kp` |
+| **Bhāvas** and each **bhāva page** | the house as cusp and Sripati madhya, its lord, the grahas in it, the aspects falling on it, bhāva bala, SAV, the KP cusp, and its AstroEnergetics row (significations, body, quadrant, trikoṇa) | `vedic.bhava_chalit`, `vedic.bhava_bala`, `vedic.kp` |
+| **Aspects** | the full graha × graha sputa drishti matrix in virūpas for D1 and D9, with graha drishti fractions and rāśi drishti | `vedic.aspects`, `vedic.drishti.*` |
+| **Strength** | ṣaḍbala by component (sthāna, dig, kāla, ceṣṭā, naisargika, dṛk) with totals in virūpas and rūpas, the required minimum and the ratio; every component in detail; viṃśopaka in four schemes; bhāva bala | `vedic.shadbala`, `vedic.vimshopaka`, `vedic.bhava_bala` |
+| **Aṣṭakavarga** | bhinna matrices and the sarva row as a heat map, plus prastāraka (who gives each bindu) | `vedic.ashtakavarga` |
+| **Daśā** | Vimśottarī and Yoginī timelines with a NOW marker, drill-down to five levels, Sāḍe Sātī | `vedic.dasha.*`, `vedic.sade_sati` |
+| **Pañcāṅga** | the five limbs with end times, rise and set, horā, choghaḍiyā and the inauspicious periods | `vedic.panchanga` |
+| **Lagnas and points** | Bhāva, Horā, Ghaṭī and Indu lagna; yogi, avayogi and duplicate yogi; dagdha rāśis; 64th navāṃśa and 22nd dreshkāṇa from Moon and lagna; kartari; graha yuddha | `vedic.special_points`, `vedic.panchanga` |
+| **Yogas**, **KP** | each rule with the grahas involved; KP cusps, sub and sub-sub lords, significators, ruling planets | `vedic.yogas`, `vedic.kp` |
+| **Nadi** | the [direction matrix](nadi.md): signs as a spiral through North, East, South and West in three rounds. Each graha sits in its sign with its degree; click one to see its links | positions |
+| **Energetics** | the twelve houses as body, dimension and question; quadrants, trikoṇas, energy bands and temperatures ([guide](nadi.md#astroenergetics)) | positions, reference table |
+| Transits, Progressions, Western, Human Design, Numerology, Compatibility | as before; compatibility appears when a partner is given | all envelopes |
+| **Provenance and data** | versions, assumptions, rule packs, refusals (**Not computed**), the raw envelopes | all envelopes |
 
-The **Copy summary** button puts a plain-text list of positions and the current daśā on the clipboard, for notes or for
-an assistant. **Chakra SVG** and **Export JSON** save the wheel and the data.
+**Copy summary** puts a plain-text list of positions and the current daśā on the clipboard. **JSON** saves the data,
+and **Print** gives a clean layout of the current page.
+
+Choose the defaults for a file with `--icons`, `--chart-style south|north|both` and `--centre south|north|lanes`. Pick
+pages with `--sections` (for example `--sections overview,chakra,charts,planets,dasha`). The graha and bhāva pages come
+with Grahas and Bhāvas.
+
+### Tested in a real browser
+
+`make studio-journeys` drives the generated file in headless Chrome ([`acceptance/studio/journeys.mjs`](../../acceptance/studio/journeys.mjs)),
+with no extra dependency. The checks:
+
+- every page renders without console errors;
+- the chakra draws 27, 108 and 12 segments and one point per graha;
+- the South Indian centre sits wholly inside the wheel, with every graha in the box of its sign;
+- the South and North charts place grahas correctly and show translucent aspect marks;
+- clicking a graha opens its page with aspects, yogas and vargas;
+- all 19 vargas are drawn;
+- the Nadi matrix holds every graha and draws links;
+- the command palette jumps to a bhāva;
+- the theme is remembered;
+- nothing scrolls sideways at phone width.
+
+CI runs it on every pull request.
 
 ### Planet icons
 
@@ -134,5 +156,5 @@ only values the page computes itself, and they are labelled `report.markers@0.1`
 ## Privacy
 
 A report contains birth data. ESHANA writes it only where you tell it to and sends it nowhere. Leave out `--name` and
-`--place`, or use `--sections` to drop the summary, when you share a chart publicly. See
+`--place`, or use `--sections` to leave out the overview, when you share a chart publicly. See
 [privacy and ethics](../concepts/privacy-and-ethics.md).

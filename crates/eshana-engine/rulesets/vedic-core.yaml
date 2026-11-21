@@ -3,7 +3,7 @@
 # combustion orbs and directional strength. Values follow Brihat Parashara Hora Shastra (BPHS) as commonly
 # taught. Where schools differ, the convention used here is named in `conventions`.
 id: vedic.core
-version: "0.2"
+version: "0.3"
 conventions:
   scorpio_aquarius_lords: "Primary lords only: Scorpio -> Mars, Aquarius -> Saturn (Ketu and Rahu co-lordship not used)"
   node_aspects: "Rahu and Ketu aspect the 5th, 7th and 9th from their sign (a common convention; some schools use the 7th only)"
@@ -75,3 +75,35 @@ naisargika_bala:
   mercury: 25.71
   mars: 17.14
   saturn: 8.57
+
+# Special points (BPHS and common practice).
+# Indu lagna: kalas of the 9th lords from the lagna and from the Moon, summed, remainder of 12 counted from the Moon.
+indu_kalas: {sun: 30, moon: 16, mars: 6, mercury: 8, jupiter: 10, venus: 12, saturn: 1}
+# Yogi point: Sun + Moon + 93 deg 20 min (sidereal); avayogi point: yogi point + 186 deg 40 min.
+yogi_offset_deg: 93.33333333333333
+avayogi_offset_deg: 186.66666666666666
+# Dagdha (burnt) rashis by tithi number in the paksha (1-15; 15 and 30 have none). Sign indices, 0 = Mesha.
+dagdha_rashi_by_tithi:
+  1: [6, 9]
+  2: [8, 11]
+  3: [4, 9]
+  4: [1, 10]
+  5: [2, 5]
+  6: [0, 4]
+  7: [3, 8]
+  8: [2, 5]
+  9: [4, 7]
+  10: [4, 7]
+  11: [8, 11]
+  12: [6, 9]
+  13: [1, 4]
+  14: [2, 5, 8, 11]
+  15: []
+natural_benefics: [jupiter, venus, mercury, moon]
+natural_malefics: [sun, mars, saturn, rahu, ketu]
+# Functional nature from the lagna (BPHS, simplified and stated): lagna and trikona lords benefic; lords of 3, 6
+# and 11 malefic; the 8th lord malefic unless it also owns the lagna; kendra lords neutral; 2 and 12 neutral.
+functional:
+  benefic_houses: [1, 5, 9]
+  malefic_houses: [3, 6, 8, 11]
+  neutral_houses: [2, 4, 7, 10, 12]

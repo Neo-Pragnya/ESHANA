@@ -1,0 +1,88 @@
+---
+// ESHANA sigils: line-drawn celestial marks (not morphing blobs). Each has moving parts that wake when the enclosing
+// link, card or heading is hovered or focused: orbits counter-rotate, constellations draw and twinkle, the yantra's
+// triangles turn against each other, the rāśi wheel spins, the moon goes through a phase. `live` keeps it moving.
+// Styles live in src/styles/sigil.css; motion stops under prefers-reduced-motion.
+interface Props {
+  name?: "eshana" | "bindu" | "nakshatra" | "yantra" | "chakra" | "crescent" | "comet";
+  tint?: string;
+  class?: string;
+  live?: boolean;
+}
+const { name = "bindu", tint, class: cls = "glyph", live = false } = Astro.props;
+const spokes = Array.from({ length: 12 }, (_, i) => {
+  const a = (i * Math.PI) / 6;
+  return { x1: 24 + Math.cos(a) * 7, y1: 24 + Math.sin(a) * 7, x2: 24 + Math.cos(a) * 17, y2: 24 + Math.sin(a) * 17 };
+});
+const stars = [
+  [9, 33], [16, 21], [25, 25], [33, 13], [40, 21],
+];
+---
+
+<svg
+  class:list={["sigil", `sg-${name}`, cls, tint && `t-${tint}`, live && "sg-live"]}
+  viewBox="0 0 48 48"
+  aria-hidden="true"
+  focusable="false"
+>
+  {name === "eshana" && (
+    <g>
+      <circle class="sg-halo" cx="24" cy="24" r="21" />
+      <g class="sg-spin"><ellipse class="sg-orbit" cx="24" cy="24" rx="20" ry="7.5" transform="rotate(-28 24 24)" /><circle class="sg-rider" cx="41.6" cy="14.6" r="2.4" /></g>
+      <g class="sg-spin-rev"><ellipse class="sg-orbit sg-b" cx="24" cy="24" rx="20" ry="7.5" transform="rotate(32 24 24)" /><circle class="sg-rider sg-b" cx="7.4" cy="13" r="1.8" /></g>
+      <path class="sg-tick" d="M24 1.5v4M24 42.5v4M1.5 24h4M42.5 24h4" />
+      <circle class="sg-bindu" cx="24" cy="24" r="3.6" />
+    </g>
+  )}
+  {name === "bindu" && (
+    <g>
+      <circle class="sg-ring sg-r1" cx="24" cy="24" r="8" />
+      <circle class="sg-ring sg-r2" cx="24" cy="24" r="14" />
+      <circle class="sg-ring sg-r3" cx="24" cy="24" r="20" />
+      <circle class="sg-bindu" cx="24" cy="24" r="3.4" />
+    </g>
+  )}
+  {name === "nakshatra" && (
+    <g>
+      <polyline class="sg-link" points={stars.map((s) => s.join(",")).join(" ")} />
+      <line class="sg-link sg-l2" x1="25" y1="25" x2="30" y2="37" />
+      {stars.map(([x, y], i) => <path class="sg-star" style={`--i:${i}`} d={`M${x} ${y - 3.4}L${x + 1} ${y - 1}L${x + 3.4} ${y}L${x + 1} ${y + 1}L${x} ${y + 3.4}L${x - 1} ${y + 1}L${x - 3.4} ${y}L${x - 1} ${y - 1}Z`} />)}
+      <circle class="sg-bindu" cx="30" cy="37" r="2" />
+    </g>
+  )}
+  {name === "yantra" && (
+    <g>
+      <circle class="sg-ring" cx="24" cy="24" r="20.5" />
+      <g class="sg-spin"><path class="sg-tri" d="M24 7L39 33H9Z" /></g>
+      <g class="sg-spin-rev"><path class="sg-tri sg-b" d="M24 41L9 15H39Z" /></g>
+      <circle class="sg-bindu" cx="24" cy="24" r="2.6" />
+    </g>
+  )}
+  {name === "chakra" && (
+    <g>
+      <circle class="sg-ring" cx="24" cy="24" r="20" />
+      <g class="sg-spin">
+        <circle class="sg-ring sg-b" cx="24" cy="24" r="17" />
+        {spokes.map((s, i) => <line class:list={["sg-spoke", i % 3 === 0 && "sg-key"]} x1={s.x1.toFixed(2)} y1={s.y1.toFixed(2)} x2={s.x2.toFixed(2)} y2={s.y2.toFixed(2)} />)}
+      </g>
+      <circle class="sg-ring" cx="24" cy="24" r="7" />
+      <circle class="sg-bindu" cx="24" cy="24" r="2.6" />
+    </g>
+  )}
+  {name === "crescent" && (
+    <g>
+      <defs><clipPath id="sg-moon-clip"><circle cx="24" cy="24" r="15" /></clipPath></defs>
+      <circle class="sg-moon" cx="24" cy="24" r="15" />
+      <circle class="sg-shadow" cx="31" cy="20" r="14" clip-path="url(#sg-moon-clip)" />
+      <circle class="sg-ring sg-dash" cx="24" cy="24" r="21" />
+    </g>
+  )}
+  {name === "comet" && (
+    <g>
+      <path class="sg-tail" d="M10 38C18 32 24 26 31 17" />
+      <path class="sg-tail sg-b" d="M6 31C14 27 20 23 29 15" />
+      <circle class="sg-bindu sg-head" cx="33" cy="15" r="4.4" />
+      <circle class="sg-ring sg-dash" cx="33" cy="15" r="9" />
+    </g>
+  )}
+</svg>
