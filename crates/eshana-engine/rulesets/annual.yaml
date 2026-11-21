@@ -1,0 +1,108 @@
+# Annual and daily tables (ADR-012): Tājika varṣaphala and Tamil pañca pakṣī. Data only; crate::annual applies it.
+#
+# ── Tājika (varṣaphala) ──────────────────────────────────────────────────────────────────────────────────────────
+# Source: the Tājika tradition as summarised in Nīlakaṇṭha's Tājika Nīlakaṇṭhī (Saṃjñā Tantra), 16th century,
+# public domain. Convention choices, each checked against the "Varshaphala strengths" table of a published reference
+# chart (Sri Ramana Maharishi, all 35 cells reproduced):
+#   * relationship for gṛha, hudda, drekkāṇa and navāṃśa bala is the Tājika one judged from the chart itself:
+#     counting signs from the graha to the lord of the division, 3/5/9/11 = friend, 2/6/8/12 = neutral,
+#     1/4/7/10 = enemy; a graha in its own division is "own".
+#   * hudda (terms) are the Egyptian terms; drekkāṇa lords follow the Chaldean decans (Aries 1st decan Mars, then
+#     Sun, Venus, Mercury, Moon, Saturn, Jupiter, repeating); navāṃśa is the usual D9.
+#   * uchcha bala = maximum × (distance from the debilitation point) / 180°.
+#   * the five balas are added and divided by four (maximum total 20).
+id: vedic.annual
+version: "0.1"
+
+tajika:
+  # maximum of each bala and the fraction earned by each relationship
+  maxima: {griha: 30.0, uchcha: 20.0, hudda: 15.0, drekkana: 10.0, navamsha: 5.0}
+  fraction: {own: 1.0, friend: 0.75, neutral: 0.5, enemy: 0.25}
+  divisor: 4.0
+  friend_houses: [3, 5, 9, 11]
+  enemy_houses: [1, 4, 7, 10]
+  # Egyptian terms: per sign, [lord, end degree] in order
+  hudda:
+    - [[jupiter, 6], [venus, 12], [mercury, 20], [mars, 25], [saturn, 30]]
+    - [[venus, 8], [mercury, 14], [jupiter, 22], [saturn, 27], [mars, 30]]
+    - [[mercury, 6], [jupiter, 12], [venus, 17], [mars, 24], [saturn, 30]]
+    - [[mars, 7], [venus, 13], [mercury, 19], [jupiter, 26], [saturn, 30]]
+    - [[jupiter, 6], [venus, 11], [saturn, 18], [mercury, 24], [mars, 30]]
+    - [[mercury, 7], [venus, 17], [jupiter, 21], [mars, 28], [saturn, 30]]
+    - [[saturn, 6], [mercury, 14], [jupiter, 21], [venus, 28], [mars, 30]]
+    - [[mars, 7], [venus, 11], [mercury, 19], [jupiter, 24], [saturn, 30]]
+    - [[jupiter, 12], [venus, 17], [mercury, 21], [saturn, 26], [mars, 30]]
+    - [[mercury, 7], [jupiter, 14], [venus, 22], [saturn, 26], [mars, 30]]
+    - [[mercury, 7], [venus, 13], [jupiter, 20], [mars, 25], [saturn, 30]]
+    - [[venus, 12], [jupiter, 16], [mercury, 19], [mars, 28], [saturn, 30]]
+  # Chaldean decan lords, cycling from Aries' first decan
+  drekkana_cycle: [mars, sun, venus, mercury, moon, saturn, jupiter]
+  # Trirāśi pati by varṣa lagna sign: [day, night]
+  trirashi:
+    - [sun, jupiter]
+    - [venus, moon]
+    - [saturn, mercury]
+    - [venus, mars]
+    - [jupiter, sun]
+    - [moon, venus]
+    - [mercury, saturn]
+    - [mars, venus]
+    - [saturn, saturn]
+    - [mars, mars]
+    - [jupiter, jupiter]
+    - [moon, moon]
+  # Signs counted from an office-bearer to the varṣa lagna through which it aspects the lagna (Tājika: every
+  # house except the 2/6/8/12 "no aspect" houses). Year lord = the strongest office-bearer (pañcavargīya total)
+  # that aspects the varṣa lagna; if none does, the strongest of them.
+  aspect_houses: [1, 3, 4, 5, 7, 9, 10, 11]
+
+# ── Pañca pakṣī ──────────────────────────────────────────────────────────────────────────────────────────────────
+# Source: the Tamil pañca pakṣī śāstra (traditional; tables as commonly reprinted in Tamil almanacs and summarised
+# in the Encyclopedia of Hinduism, vol. VIII). Sources vary in detail; the choices here are named:
+#   * birth bird by the Moon's nakṣatra in groups 1-5, 6-11, 12-16, 17-21, 22-27, reversed in the dark half
+#     (all sources agree).
+#   * day-ruling, night-ruling and dying birds by weekday and pakṣa: the widely reprinted weekday table.
+#   * the bird ruling a day (or night) is Ruling in its first yāma (as in several printed
+#     tables); the other birds, taken in the half's bird order after it, take the next
+#     activities of the half's activity cycle; each bird moves one step along the cycle per yāma. Printed weekday
+#     tables disagree here: the published reference chart starts the Monday dark-half day with Cock ruling.
+#   * the bird order is the one that reproduces the sub-periods of the published reference chart (dark-half day:
+#     Cock, Owl, Peacock, Crow, Vulture); one popular secondary source prints the reverse order.
+#   * each yāma (one fifth of the day or the night) is split along the activity cycle starting at the bird's
+#     activity, in parts Eating 30, Walking 36, Ruling 48, Sleeping 18, Dying 12 of 144, the sub-periods going
+#     to the birds in the half's bird order starting with the bird itself.
+pakshi:
+  birds: [vulture, owl, crow, cock, peacock]
+  activities: [ruling, eating, walking, sleeping, dying]
+  # nakṣatra (0-based) group ends (exclusive), and the bird of each group
+  nakshatra_groups: [5, 11, 16, 21, 27]
+  birth_bird:
+    shukla: [vulture, owl, crow, cock, peacock]
+    krishna: [peacock, cock, crow, owl, vulture]
+  relations:
+    vulture: {friends: [peacock, owl], enemies: [crow, cock]}
+    owl: {friends: [vulture, crow], enemies: [cock, peacock]}
+    crow: {friends: [cock, owl], enemies: [vulture, peacock]}
+    cock: {friends: [owl, peacock], enemies: [vulture, crow]}
+    peacock: {friends: [vulture, cock], enemies: [owl, crow]}
+  # by weekday, 0 = Sunday
+  day_ruler:
+    shukla: [vulture, owl, vulture, owl, crow, cock, peacock]
+    krishna: [cock, peacock, cock, crow, owl, vulture, peacock]
+  night_ruler:
+    shukla: [crow, cock, crow, cock, peacock, vulture, owl]
+    krishna: [vulture, cock, vulture, owl, crow, peacock, cock]
+  dying:
+    shukla: [owl, crow, cock, peacock, vulture, owl, vulture]
+    krishna: [crow, owl, vulture, peacock, cock, peacock, cock]
+  cycle:
+    shukla_day: [eating, walking, ruling, sleeping, dying]
+    shukla_night: [eating, ruling, dying, walking, sleeping]
+    krishna_day: [eating, dying, sleeping, ruling, walking]
+    krishna_night: [eating, sleeping, walking, dying, ruling]
+  order:
+    shukla_day: [vulture, peacock, cock, crow, owl]
+    shukla_night: [vulture, owl, crow, cock, peacock]
+    krishna_day: [vulture, cock, owl, peacock, crow]
+    krishna_night: [vulture, crow, peacock, owl, cock]
+  parts: {eating: 30, walking: 36, ruling: 48, sleeping: 18, dying: 12}

@@ -415,3 +415,49 @@ a:hover .bm-node{transform:scale(1.12)}
 .dz-running{flex-wrap:wrap}.dz-running .link{display:flex;flex-direction:column;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
 .dz-conv summary .ep{margin-left:6px}
 @media (prefers-reduced-motion: reduce){.dz-row,.dz-bracket,.dz-tabs .tab{animation:none;transition:none}}
+/* ── annual (varṣaphala, pañca pakṣī, KP significators) ── */
+:root{--act-ruling:#f2a33a;--act-eating:#4ad08a;--act-walking:#4f8cff;--act-sleeping:#8a86a8;--act-dying:#e0564f;
+  --pv-griha:#a48bff;--pv-uchcha:#f2a33a;--pv-hudda:#4ad08a;--pv-drekkana:#4f8cff;--pv-navamsha:#e86fb5}
+.seg-toggle{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.annual-chart .cell.lag .cellbg{fill:var(--chip2)}
+.annual-chart .ann-g{cursor:default;animation:rise .5s ease both;animation-delay:calc(var(--i) * 70ms)}
+.annual-chart .ann-g.year-lord{paint-order:stroke;stroke:var(--accent);stroke-width:.8px;filter:drop-shadow(0 0 4px var(--accent))}
+.ann-lord-stat{border-color:var(--accent);box-shadow:0 0 0 2px var(--chip2)}
+.ann-is-lord{font-weight:800;color:var(--accent)}
+.ann-office{border-bottom:1px dotted var(--muted);cursor:help}
+.ann-bars{display:grid;gap:8px}
+.ann-row{display:grid;grid-template-columns:110px 1fr 52px;align-items:center;gap:10px;animation:rise .5s ease both;animation-delay:calc(var(--i) * 60ms)}
+.ann-row.is-lord .ann-track{box-shadow:0 0 0 2px var(--accent)}
+.ann-track{display:flex;height:16px;border-radius:6px;background:var(--chip);overflow:hidden}
+.ann-seg{display:block;height:100%;transform-origin:left;animation:grow .9s ease both;animation-delay:calc(var(--i, 0) * 60ms + .2s);cursor:help}
+.ann-seg:hover{filter:brightness(1.2)}
+.ann-tot{text-align:right;font-variant-numeric:tabular-nums}
+.seg-griha{background:var(--pv-griha)}.seg-uchcha{background:var(--pv-uchcha)}.seg-hudda{background:var(--pv-hudda)}
+.seg-drekkana{background:var(--pv-drekkana)}.seg-navamsha{background:var(--pv-navamsha)}
+.ann-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.pk-head{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:12px}
+.pk-bird{display:flex;gap:10px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:10px 14px;animation:rise .5s ease both}
+.pk-bird.self{border-color:var(--accent);box-shadow:0 0 0 2px var(--chip2)}
+.pk-bird.dying{opacity:.85}.pk-bird.dying .bird{filter:grayscale(.6)}
+.pk-name{font-size:22px;font-weight:800}
+.bird .body,.bird .head{animation:bob 3s ease-in-out infinite}.bird .feather{animation:rise .6s ease both;animation-delay:calc(var(--i) * 90ms)}
+@keyframes bob{50%{transform:translateY(-1.5px)}}
+.bird-chip svg{vertical-align:middle}.chip.rel-friend{border-color:var(--good)}.chip.rel-enemy{border-color:var(--bad)}.chip.rel-self{border-color:var(--accent)}
+.pk-rel{margin-bottom:12px;align-items:center}
+.pakshi-tl{width:100%;height:auto;display:block}
+.pk-night{fill:color-mix(in srgb,var(--accent2) 10%,transparent)}
+.pk-yama{cursor:pointer}
+.pk-band{transform-origin:left center;animation:grow .7s ease both;animation-delay:calc(var(--i) * 70ms);stroke:rgba(0,0,0,.2)}
+.pk-yama:hover .pk-band,.pk-yama.picked .pk-band{stroke:var(--ink);stroke-width:2}
+.pk-yama.current .pk-band{stroke:var(--accent);stroke-width:3}
+.pk-sub{opacity:.75;animation:rise .6s ease both;animation-delay:calc(var(--i) * 70ms + .3s)}
+.pk-lbl{fill:#1b1b1b;pointer-events:none}
+.pk-now{stroke:var(--accent);stroke-width:3}
+.act-ruling{fill:var(--act-ruling);background:var(--act-ruling)}.act-eating{fill:var(--act-eating);background:var(--act-eating)}
+.act-walking{fill:var(--act-walking);background:var(--act-walking)}.act-sleeping{fill:var(--act-sleeping);background:var(--act-sleeping)}
+.act-dying{fill:var(--act-dying);background:var(--act-dying)}
+g.pk-yama{background:none}
+.pk-act{display:inline-block;padding:1px 8px;border-radius:999px;color:#1b1b1b;font-size:12.5px;font-weight:600}
+.kp-chip{padding:1px 7px;font-size:12px}
+.kp-lvl{cursor:help;border-bottom:1px dotted var(--muted)}.kp-very_strong{font-weight:800;color:var(--accent)}.kp-weak{color:var(--muted)}
+@media (max-width:640px){.ann-row{grid-template-columns:80px 1fr 44px}.pk-name{font-size:18px}}

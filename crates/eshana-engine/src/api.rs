@@ -1131,6 +1131,7 @@ impl Engine {
                             if cfg.ayanamsha != Some(Ayanamsha::Krishnamurti) {
                                 v["note"] = json!("KP is normally used with the krishnamurti ayanamsha; this chart uses another one");
                             }
+                            v["significator_table"] = crate::annual::kp_significator_table(&vc, &v);
                             push("vedic.kp", &core_rule, v, &["positions", "houses"]);
                         }
                         Err(e) => need("kp", &e.to_string()),
