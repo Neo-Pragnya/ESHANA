@@ -7,6 +7,7 @@ export const site = {
   description:
     "ESHANA is a Rust-first computation layer for celestial positions, civil time and symbolic traditions. It keeps measurement, tradition and interpretation apart, with provenance on every result.",
   repo: "https://github.com/Neo-Pragnya/ESHANA",
+  pypi: "https://pypi.org/project/eshana/",
   docsDir: "docs",
   expansion: stats.expansion,
   version: stats.version,
@@ -15,7 +16,7 @@ export const site = {
   highlight: "Interpret transparently.",
   lede: "Positions are calculated. Tradition rules are labelled as rules. Interpretation is never the engine's job. One JSON entry point serves a Rust CLI and a Python package, and every result carries the versions and assumptions that produced it.",
   footer: `ESHANA ${stats.version} · Open source, Apache-2.0 · Not a prediction service: calculation is not validation.`,
-  footerLinks: [{ label: "GitHub ↗", href: "https://github.com/Neo-Pragnya/ESHANA" }],
+  footerLinks: [{ label: "PyPI ↗", href: "https://pypi.org/project/eshana/" }, { label: "GitHub ↗", href: "https://github.com/Neo-Pragnya/ESHANA" }],
 } as const;
 
 export const NAV: { label: string; href: string }[] = [
@@ -24,6 +25,7 @@ export const NAV: { label: string; href: string }[] = [
   { label: "Reports", href: "reports/example-birth-chart.html" },
   { label: "Accuracy", href: "docs/guides/accuracy-suite/" },
   { label: "Roadmap", href: "docs/roadmap/" },
+  { label: "PyPI ↗", href: "https://pypi.org/project/eshana/" },
   { label: "GitHub ↗", href: "https://github.com/Neo-Pragnya/ESHANA" },
 ];
 
@@ -64,6 +66,7 @@ export const DOC_NAV: { section: string; items: string[]; sigil: SigilName; tint
       "guides/html-report",
       "guides/vedic-features",
       "guides/strength",
+      "guides/aspects",
       "guides/nadi",
       "guides/panchanga",
       "guides/matching",

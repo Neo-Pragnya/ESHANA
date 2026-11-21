@@ -215,7 +215,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-cli"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "clap",
  "eshana-core",
@@ -227,7 +227,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-core"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -236,7 +236,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-engine"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eshana-core",
  "eshana-ephemeris",
@@ -249,7 +249,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-ephemeris"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eshana-core",
  "eshana-time",
@@ -259,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-python"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eshana-engine",
  "pyo3",
@@ -268,7 +268,7 @@ dependencies = [
 
 [[package]]
 name = "eshana-time"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eshana-core",
  "jiff",

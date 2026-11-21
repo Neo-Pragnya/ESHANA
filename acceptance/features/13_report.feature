@@ -8,7 +8,7 @@ Feature: Self-contained HTML chart reports
     When I run "eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 --name Tester -o chart.html"
     Then it succeeds
     And the file "chart.html" exists
-    And the file "chart.html" contains "Panchang chakra"
+    And the file "chart.html" contains "Jyotish Chakra (Graha-Nakshatra Mandala)"
     And the file "chart.html" contains "South and North Indian"
     And the file "chart.html" contains "vedic.moon.d9"
     And the file "chart.html" contains "vedic.moon.d60"

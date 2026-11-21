@@ -5,6 +5,89 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-21
+
+Review rounds 1–4: everything below ships in 0.3.1. Schema 0.3.1 adds fields only.
+
+### Added (review round 4)
+- **Rāśi drishti for Uranus, Neptune and Pluto**, matching their graha drishti.
+- **Additional aspects** (`vedic.drishti.additional`, off by default in the studio): a retrograde graha's shadow
+  casts aspects from the previous sign, and grahas in parivartana cast aspects from their exchanged signs. They
+  appear in chakra and chart marks (ʳ and ⇄), hover flows, the legend, an Aspects page table and the graha pages.
+- **Docs:** a new guide, [Aspects (drishti)](docs/guides/aspects.md), covering every kind of aspect and convention.
+
+### Added (review round 3)
+- **Upagrahas** (`vedic.upagrahas`): Dhūma, Vyatīpāta, Pariveṣa, Indracāpa, Upaketu, Gulika and Māndi. All seven
+  signs match the reference software for the Ramana Maharishi chart, which is now an accuracy check. They are shown
+  on the Jyotish Chakra and charts and have their own point page.
+- **Include switches:** Uranus, Neptune and Pluto, and the upagrahas, can be hidden everywhere (chakra, charts,
+  legend, aspects).
+- **Outer-planet aspects:** Uranus, Neptune and Pluto aspect the 5th, 7th and 9th (convention named in
+  `vedic-core.yaml`).
+- **Rename:** the chakra tab is now the **Jyotish Chakra**; the wheel is the **Graha-Nakshatra Mandala**.
+- **Daśā:** a five-level zoom. Levels 4 and 5 are subdivided in the page by the engine's Vimśottarī proportions.
+- **Bhāvas:**
+  - lords in houses with bhāvāt bhāvam, exchanges and Vipareeta Rāja yogas;
+  - each bhāva read as its own lagna, with a renumbered chart.
+- **Concentric squares** (chalit and progression): the birth chart inside, an even band of twelve sectors outside.
+
+### Changed (review round 3)
+- **Aspects:** the page opens on the graha × graha matrix.
+- **Strength:** the ratio cut-off sits in the ṣaḍbala table; the separate chart is gone.
+- **Human Design:**
+  - the standard chart is the default and the diagram has priority;
+  - the silhouette is symmetric;
+  - the schematic view is removed.
+
+### Added (review round 2)
+- **Aspects page:**
+  - percent bar charts for D1 and D9: on houses, house + lord, on and from grahas, from each graha to the houses;
+  - the virūpa table to the Śrīpati cusps.
+  - Engine: `vedic.aspects` gains `houses`, `house_and_lord` and `house_madhya`, and D9 now uses navāṃśa
+    longitudes.
+- **Chakra:**
+  - a markers ring (vargottama, pushkara navāṃśa and bhāga, gaṇḍānta, mūlatrikoṇa, uccha and nīca degrees);
+  - nakshatra and rāśi names along the circle;
+  - a graha legend with dignity, motion, combustion, speed and aspects.
+- **Charts:** bhāva chalit over the rāśi chart, as concentric squares or a circle.
+- **Bhāva pages:** bhāvāt bhāvam, the lord's story, occupants, kāraka, an animated connection map, and the bearing
+  on the house and its significations.
+- **Strength:** a ratio chart with a dotted cut-off at 1.0.
+- **Progressions:** by completed revolutions (`report.revolutions@0.1`), with a natal and progressed overlay (square
+  or circle), a date picker, play and a life timeline.
+- **Numerology:**
+  - `extended` numbers for every school (`numerology.extended@0.1`, `numerology.vedic@0.1`, `numerology.lo_shu@0.1`);
+  - a filtered page where each number opens its meaning.
+- **Human Design:**
+  - the standard chart layout with variables and properties;
+  - activations gain `tone` and `base` (schema 0.3.1).
+- **Website:** PyPI links (navigation, hero, footer), `pip install eshana` in the hero, and an up-to-date status.
+- **Tooling:**
+  - `make preview` builds a local review folder;
+  - `planning/PROGRESS.md` tracks progress against the plan (`make tracking`);
+  - the reference chart library (CHK-01…22) is added to the tracker.
+- **Journeys:** 25 studio journeys and 8 site journeys. The site suite renders without the GPU and samples a small
+  canvas region; that fixed an intermittent headless hang.
+
+### Added
+- Studio: **yoga pages**. The yogas page lists only the yogas and doshas that hold. Each one opens a page showing:
+  - its formation in this chart and strength checks for the grahas involved;
+  - the chart with its signs lit and when it is active in Vimśottarī;
+  - attributed reading notes (effects, how it is read, cancellations).
+- Studio: **point pages**. Every lagna and special point has a tile and a page: what it is, why it matters, how to
+  read it, its value here and the elements around its sign.
+- Chakra:
+  - hovering a graha animates its aspects (flowing curves, lit signs, outlined boxes);
+  - **◇ rāśi drishti marks** in the chakra and the charts;
+  - a **turn to selection** switch;
+  - **transit date picker, from/to range and speed**.
+- `eshana-report --transit-start/--transit-end/--transit-step-days`. By default the transit series runs daily, from a
+  year before to two years after the reference.
+- Website: a three-ring **gimbal** mark (site, studio and favicon); the headline drawn in **particles**; letter waves
+  on headings. The motion kit gains `data-particles-max`.
+- Journeys: 6 new studio journeys (17 in all) and a site journey for particles and the gimbal (8 in all). Every
+  DevTools call now has a deadline, so a stuck call fails its journey instead of hanging the run.
+
 ## [0.3.0] - 2026-11-21
 
 ### Added

@@ -384,6 +384,102 @@ pub fn shadbala(vc: &VChart, sky: &Sky) -> Value {
     })
 }
 
+/// The five Sun-based upagrahas (aprakāśa grahas) of BPHS, from the Sun's sidereal longitude.
+#[must_use]
+pub fn sun_upagrahas(sun: f64) -> Vec<(&'static str, f64)> {
+    let dhuma = norm360(sun + 133.0 + 20.0 / 60.0);
+    let vyatipata = norm360(360.0 - dhuma);
+    let parivesha = norm360(vyatipata + 180.0);
+    let indrachapa = norm360(360.0 - parivesha);
+    let upaketu = norm360(indrachapa + 16.0 + 40.0 / 60.0);
+    vec![
+        ("dhuma", dhuma),
+        ("vyatipata", vyatipata),
+        ("parivesha", parivesha),
+        ("indrachapa", indrachapa),
+        ("upaketu", upaketu),
+    ]
+}
+
+/// When Gulika and Mandi rise. `weekday` 0 = Sunday; the day runs sunrise → sunset → next sunrise.
+/// Gulika: the start of Saturn's eighth of the day (or night), the eighths ruled in weekday order from the day's lord
+/// (at night from the lord of the fifth weekday). Mandi: the classical ghaṭī after sunrise (or sunset) for the weekday,
+/// scaled to the length of that day or night (30 ghaṭīs each).
+#[must_use]
+pub fn gulika_mandi_times(
+    birth: f64,
+    sunrise: f64,
+    sunset: f64,
+    next_sunrise: f64,
+    weekday: usize,
+) -> (f64, f64, bool) {
+    let day = birth >= sunrise && birth < sunset;
+    let (start, len) = if day {
+        (sunrise, sunset - sunrise)
+    } else {
+        (sunset, next_sunrise - sunset)
+    };
+    let first = if day { weekday } else { (weekday + 4) % 7 };
+    let saturn_part = (6 + 7 - first) % 7;
+    let gulika = start + len * saturn_part as f64 / 8.0;
+    let ghati = if day {
+        [26.0, 22.0, 18.0, 14.0, 10.0, 6.0, 2.0][weekday % 7]
+    } else {
+        [10.0, 6.0, 2.0, 26.0, 22.0, 18.0, 14.0][weekday % 7]
+    };
+    let mandi = start + len * ghati / 30.0;
+    (gulika, mandi, day)
+}
+
+/// Aspects from each graha onto named points (the lagna, house madhyas): whole-sign house count, graha drishti
+/// fraction and sputa drishti in virūpas (0 for the nodes, which have no sputa drishti in BPHS).
+pub fn aspects_on_points(vc: &VChart, points: &[(String, f64)]) -> Value {
+    let mut out = Map::new();
+    for a in SEVEN.iter().chain(["rahu", "ketu"].iter()) {
+        let Some(la) = vc.lon.get(*a) else { continue };
+        let mut row = Map::new();
+        for (name, lp) in points {
+            let h = house_from(sign_of(*la), sign_of(*lp));
+            let virupa = if SEVEN.contains(a) {
+                sputa_drishti(a, *la, *lp)
+            } else {
+                0.0
+            };
+            row.insert(
+                name.clone(),
+                json!({"house": h, "fraction": drishti_fraction(a, h).map(|f| f.1), "virupa": virupa}),
+            );
+        }
+        out.insert((*a).into(), Value::Object(row));
+    }
+    Value::Object(out)
+}
+
+/// "Aspect on house + lord": for each graha and house, the mean of its virūpas on the house madhya and on the
+/// house's sign lord; when the graha is that lord, the house madhya alone.
+pub fn aspects_house_and_lord(vc: &VChart, madhya: &[f64; 12]) -> Value {
+    let mut out = Map::new();
+    for a in SEVEN.iter().chain(["rahu", "ketu"].iter()) {
+        let Some(la) = vc.lon.get(*a) else { continue };
+        let mut row = Map::new();
+        for (k, m) in madhya.iter().enumerate() {
+            let on_house = if SEVEN.contains(a) {
+                sputa_drishti(a, *la, *m)
+            } else {
+                0.0
+            };
+            let lord = lord_of(sign_of(*m));
+            let v = match vc.lon.get(lord) {
+                Some(ll) if lord != *a && SEVEN.contains(a) => (on_house + sputa_drishti(a, *la, *ll)) / 2.0,
+                _ => on_house,
+            };
+            row.insert((k + 1).to_string(), json!(v));
+        }
+        out.insert((*a).into(), Value::Object(row));
+    }
+    Value::Object(out)
+}
+
 /// Porphyry cusps (bhāva madhyas) from a sidereal Ascendant and Midheaven.
 #[must_use]
 pub fn bhava_madhyas(asc: f64, mc: f64) -> [f64; 12] {
@@ -655,6 +751,26 @@ mod tests {
             c.speed.insert(g.into(), sp);
         }
         c
+    }
+
+    #[test]
+    fn sun_upagrahas_chain() {
+        let u = sun_upagrahas(0.0);
+        let get = |n: &str| u.iter().find(|x| x.0 == n).unwrap().1;
+        assert!((get("dhuma") - 133.333_333).abs() < 1e-5);
+        assert!((get("vyatipata") - 226.666_667).abs() < 1e-5);
+        assert!((get("parivesha") - 46.666_667).abs() < 1e-5);
+        assert!((get("indrachapa") - 313.333_333).abs() < 1e-5);
+        assert!((get("upaketu") - 330.0).abs() < 1e-5); // Upaketu is always 30 degrees behind the Sun
+    }
+
+    #[test]
+    fn gulika_on_a_sunday_by_day_is_the_seventh_eighth() {
+        // Sunday by day: eighths ruled Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn -> Saturn's starts at 6/8
+        let (g, m, day) = gulika_mandi_times(0.3, 0.0, 0.5, 1.0, 0);
+        assert!(day);
+        assert!((g - 0.5 * 6.0 / 8.0).abs() < 1e-12);
+        assert!((m - 0.5 * 26.0 / 30.0).abs() < 1e-12);
     }
 
     #[test]

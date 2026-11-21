@@ -11,6 +11,7 @@ pub mod hd;
 pub mod jyotish;
 pub mod matching;
 pub mod numerology;
+pub mod numerology_ext;
 pub mod packs;
 pub mod panchanga;
 pub mod vedic;

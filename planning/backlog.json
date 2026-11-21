@@ -1136,8 +1136,9 @@
       "id": "VED-13",
       "area": "vedic",
       "title": "Upagrahas (Gulika, Mandi)",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "vedic.upagrahas; accuracy/test_reference_software.py::test_upagrahas matches the reference program's signs; studio journeys."
     },
     {
       "id": "KP-02",
@@ -1260,6 +1261,532 @@
       "status": "verified",
       "track": "primary",
       "evidence": "acceptance/site/journeys.mjs: 7 real-Chrome journeys incl. cursor reaction, sigil hover, reduced motion, phone width."
+    },
+    {
+      "id": "REP-15",
+      "area": "docs",
+      "title": "Yoga pages: present yogas only; formation, strength checks, daśā timing, attributed reading notes",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Studio journey 'yogas: only those present, each with a full reading page'.",
+      "milestone": "0.4 · review round 1"
+    },
+    {
+      "id": "REP-16",
+      "area": "docs",
+      "title": "Point pages for every lagna and special point: meaning, how to read, value, sign elements",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Studio journey 'lagnas and points: every point explained on its own page' (20 points).",
+      "milestone": "0.4 · review round 1"
+    },
+    {
+      "id": "REP-17",
+      "area": "docs",
+      "title": "Chakra: aspects animate on graha hover; ◇ rāśi drishti marks; optional turn to selection",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Three studio journeys (aspect flow, rāśi marks toggle, turn on/off).",
+      "milestone": "0.4 · review round 1"
+    },
+    {
+      "id": "REP-18",
+      "area": "docs",
+      "title": "Transit date picker, from/to animation range and speed; --transit-start/--transit-end/--transit-step-days",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Studio journey 'transits: pick a date and animate over a chosen range'.",
+      "milestone": "0.4 · review round 1"
+    },
+    {
+      "id": "DOC-09",
+      "area": "docs",
+      "title": "Three-ring gimbal mark (site, studio, favicon); particle headline and letter waves on the site",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Site journey 'the headline is drawn as particles and the logo is a live three-ring gimbal'.",
+      "milestone": "0.4 · review round 1"
+    },
+    {
+      "id": "FB-01",
+      "area": "docs",
+      "title": "Website: link the PyPI package",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "Website navigation, hero and footer link PyPI; hero shows pip install eshana; site journeys 8/8."
+    },
+    {
+      "id": "FB-02",
+      "area": "docs",
+      "title": "Chakra: a markers ring for gaṇḍānta, vargottama, pushkara navāṃśa/bhāga and other notable points",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'chakra: markers ring, curved names, graha legend' (61 segments, 14 uccha/nīca points)."
+    },
+    {
+      "id": "FB-03",
+      "area": "docs",
+      "title": "Chakra: nakshatra names written along the circle so they fit (curved text)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'chakra: markers ring, curved names, graha legend' (39 curved names)."
+    },
+    {
+      "id": "FB-04",
+      "area": "docs",
+      "title": "Planet legend: uccha, nīca, mūlatrikoṇa, own, friend/enemy signs with retrograde, combust, speed, aspects",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'chakra: markers ring, curved names, graha legend' (legend on chakra and charts pages)."
+    },
+    {
+      "id": "FB-05",
+      "area": "docs",
+      "title": "Charts: bhāva chalit as a concentric overlay on the rāśi chart (South square, or circular)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'charts: bhāva chalit as concentric squares and as a circle'."
+    },
+    {
+      "id": "FB-06",
+      "area": "docs",
+      "title": "Bhāva pages: bhāvāt bhāvam, occupants, aspects, lord's placement and yogas, and how they bear on the house",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'bhāva pages: bhāvāt bhāvam, connections and bearing'."
+    },
+    {
+      "id": "FB-07",
+      "area": "docs",
+      "title": "Aspects: on houses, house + lord, on and from planets, to Śrīpati cusps, for D1 and D9 (percent charts)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'aspects: every view draws for D1 and D9'; engine vedic.aspects houses/house_and_lord."
+    },
+    {
+      "id": "FB-08",
+      "area": "vedic",
+      "title": "Progression by completed revolutions: each graha advances a sign per return; overlay, date picker, timeline",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'progressions: by completed revolutions, with a date and a timeline'; report.revolutions@0.1."
+    },
+    {
+      "id": "FB-09",
+      "area": "docs",
+      "title": "Strength: dotted cut-off line at ratio 1",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'strength: ratio chart with a dotted cut-off at 1'."
+    },
+    {
+      "id": "FB-10",
+      "area": "hd",
+      "title": "Human Design: industry-standard BodyGraph over a human silhouette, profile-chart layout",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "studio journey 'Human Design: the standard chart with columns, arrows and properties'; tone and base in the engine."
+    },
+    {
+      "id": "FB-11",
+      "area": "num",
+      "title": "Numerology: every number in every school, with meanings and filters",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "numerology_ext.rs unit tests; studio journey 'numerology: every school, numbers open their meaning'."
+    },
+    {
+      "id": "FB-12",
+      "area": "docs",
+      "title": "Skills: carry the studio's animation system (live icons, motion) into the web skills",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "Skills/interactive-web-motion: living-ui.js/.css + living-gallery.html (checked in real Chrome), SKILL.md section; living-diagrams and astro-docs-site cross-references; .skill repackaged."
+    },
+    {
+      "id": "FB-13",
+      "area": "docs",
+      "title": "Local preview folder and progress tracker for review rounds",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 2",
+      "source": "owner review round 2",
+      "evidence": "make preview → preview/index.html; scripts/progress_report.py → planning/PROGRESS.md, checked in CI."
+    },
+    {
+      "id": "CHK-01",
+      "area": "vedic",
+      "title": "Aspects on houses (percent of full aspect), D1 and D9, plus 'aspect on house + lord'",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "studio journey 'aspects: every view draws for D1 and D9'."
+    },
+    {
+      "id": "CHK-02",
+      "area": "vedic",
+      "title": "Aspects on and from each graha and the lagna, D1 and D9",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "studio journey 'aspects: every view draws for D1 and D9'."
+    },
+    {
+      "id": "CHK-03",
+      "area": "vedic",
+      "title": "Aspects from each graha to the twelve houses, D1 and D9",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "studio journey 'aspects: every view draws for D1 and D9'."
+    },
+    {
+      "id": "CHK-04",
+      "area": "vedic",
+      "title": "Table: aspects from grahas to Śrīpati house cusps in virūpas, D1 and D9",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "studio journey 'aspects: every view draws for D1 and D9'."
+    },
+    {
+      "id": "CHK-05",
+      "area": "vedic",
+      "title": "Lordships per varga ('lord of 1 in 3') with sign exchanges (parivartana), D1, D9, D10",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-06",
+      "area": "vedic",
+      "title": "Upagrahas: Dhūma, Vyatīpāta, Pariveṣa, Indracāpa, Upaketu, Gulika, Māndi (with VED-13)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.upagrahas; accuracy/test_reference_software.py::test_upagrahas matches the reference program's signs; studio journeys."
+    },
+    {
+      "id": "CHK-07",
+      "area": "vedic",
+      "title": "Pada navāṃśa chart",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-08",
+      "area": "vedic",
+      "title": "KP: bhāva significators table and graha strong / normal / weak significators",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-09",
+      "area": "vedic",
+      "title": "Pañca pakṣī: ruling and dying birds, activities by day and night",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-10",
+      "area": "vedic",
+      "title": "Male and female rāśis",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-11",
+      "area": "vedic",
+      "title": "Varṣaphala: year lord, muntha, pañcādhikārīs, harṣa/hudda strengths (with VAR-01)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-12",
+      "area": "vedic",
+      "title": "Avakahaḍā chakra",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-13",
+      "area": "vedic",
+      "title": "Sahams (37)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-14",
+      "area": "vedic",
+      "title": "Sarvatobhadra chakra with vedha",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-15",
+      "area": "vedic",
+      "title": "Kota chakra",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-16",
+      "area": "vedic",
+      "title": "Saṅghaṭṭa chakra",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-17",
+      "area": "vedic",
+      "title": "Ghāta chakra",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-18",
+      "area": "vedic",
+      "title": "Śodhana (aṣṭakavarga reductions and piṇḍa)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-19",
+      "area": "vedic",
+      "title": "Jīva and deha",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-20",
+      "area": "vedic",
+      "title": "Mṛtyu bhāga",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-21",
+      "area": "vedic",
+      "title": "Vedhasthāna (transits from the Moon)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-22",
+      "area": "docs",
+      "title": "Website: a chart gallery that shows each of these from a real run",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "reference-software screenshots, 2026-11-21"
+    },
+    {
+      "id": "CHK-23",
+      "area": "vedic",
+      "title": "Reconcile sputa drishti with the reference program: Jupiter's special aspects and node aspects (it prints Rāhu/Ketu values BPHS does not define)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "aspect screenshots 2026-11-21",
+      "note": "Cusp table matches within a virūpa for Su, Mo, Ma, Sa; Jupiter differs (e.g. 39 vs 51 on house 1)."
+    },
+    {
+      "id": "CHK-24",
+      "area": "hd",
+      "title": "Human Design: incarnation cross names and exaltation / detriment arrows per gate.line",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.5 · reference chart library",
+      "source": "owner HD templates 2026-11-21"
+    },
+    {
+      "id": "CHK-25",
+      "area": "num",
+      "title": "Numerology: Kua number, compound-number readings, name-change cycles, other alphabets",
+      "status": "proposed",
+      "track": "secondary",
+      "milestone": "0.5 · reference chart library",
+      "source": "owner review round 2"
+    },
+    {
+      "id": "FB-14",
+      "area": "docs",
+      "title": "Rename the chakra tab to Jyotish Chakra; the wheel is the Graha-Nakshatra Mandala",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'outer planets aspect … Jyotish Chakra'."
+    },
+    {
+      "id": "FB-15",
+      "area": "docs",
+      "title": "Uranus, Neptune and Pluto aspect the 5th, 7th and 9th",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey checks Uranus aspects 5, 7, 9; convention in vedic-core.yaml."
+    },
+    {
+      "id": "FB-16",
+      "area": "docs",
+      "title": "Bhāvāt bhāvam for the whole chart (lords in houses, exchanges, Vipareeta Rāja yogas) and each bhāva read as its own lagna",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'bhāvas: lords in houses … own lagna'."
+    },
+    {
+      "id": "FB-17",
+      "area": "docs",
+      "title": "Aspects page opens on the graha × graha matrix",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey (fresh load)."
+    },
+    {
+      "id": "FB-18",
+      "area": "docs",
+      "title": "Even concentric squares for chalit and progression (birth chart inside, twelve sectors outside)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'concentric squares are even'."
+    },
+    {
+      "id": "FB-19",
+      "area": "docs",
+      "title": "Daśā zoom through five levels with thinner rows, a zoom bracket and level names",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'daśā zooms through five levels' (rule matches engine level 3)."
+    },
+    {
+      "id": "FB-20",
+      "area": "docs",
+      "title": "Strength: ratio cut-off inside the ṣaḍbala table, no separate chart",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'strength: the ratio column shows a dotted cut-off'."
+    },
+    {
+      "id": "FB-21",
+      "area": "docs",
+      "title": "Human Design: standard default, diagram priority, symmetric silhouette, no schematic",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'Human Design: standard by default …'."
+    },
+    {
+      "id": "FB-22",
+      "area": "docs",
+      "title": "All upagrahas, and switches to hide Uranus/Neptune/Pluto and the upagrahas everywhere",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 3",
+      "source": "owner review round 3",
+      "evidence": "studio journey 'filters …'; accuracy test_upagrahas."
+    },
+    {
+      "id": "FB-23",
+      "area": "vedic",
+      "title": "Rāśi drishti for Uranus, Neptune and Pluto",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 4",
+      "source": "owner review round 4",
+      "evidence": "jyotish::rashi_drishti includes the outer planets; studio journey checks Uranus."
+    },
+    {
+      "id": "FB-24",
+      "area": "vedic",
+      "title": "Additional aspects: retrograde shadow and parivartana, in chakra, charts, legend, tables; off by default",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 4",
+      "source": "owner review round 4",
+      "evidence": "jyotish::additional_drishti unit test; studio journey 'additional aspects … off by default'."
+    },
+    {
+      "id": "FB-25",
+      "area": "vedic",
+      "title": "Document every aspect convention (new Aspects guide) and release 0.3.1",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 4",
+      "source": "owner review round 4",
+      "evidence": "docs/guides/aspects.md; 0.3.1 published."
     }
   ]
 }

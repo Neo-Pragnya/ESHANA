@@ -42,18 +42,19 @@ const href = (h: string) => `${base}${h}`;
     <div class="hero-content">
       <p class="eyebrow" data-reveal>{site.eyebrow}</p>
       <h1 data-reveal style="--d: .05s">
-        <span class="h1-lead">{site.headline}</span>
-        <span class="hl">{site.highlight}</span>
+        <span class="h1-lead">{site.headline.split(" ").map((w) => <span class="pline" data-particles="#ffffff,#e9e4ff,#ffe08a" data-particles-max="2400">{w}</span>)}</span>
+        <span class="hl">{site.highlight.split(" ").map((w) => <span class="pline" data-particles="#ffe08a,#f5c451,#b78bff" data-particles-max="2400">{w}</span>)}</span>
       </h1>
       <p class="lede" data-reveal style="--d: .1s">{site.lede}</p>
       <div class="hero-actions" data-reveal style="--d: .15s">
         <a class="btn" data-magnetic href={`${base}docs/guides/getting-started/`}>Get started →</a>
         <a class="btn ghost" data-magnetic href={`${base}demos/`}>See the demos</a>
+        <a class="btn ghost" data-magnetic href={site.pypi}>PyPI</a>
         <a class="btn ghost" data-magnetic href={site.repo}>GitHub</a>
       </div>
       <div class="install-row" data-reveal style="--d: .2s">
-        <div class="install-line"><span>$ make install &amp;&amp; cargo build --release -p eshana-cli</span></div>
-        <span class="chip-version"><span>version</span><strong>{site.version}</strong></span>
+        <div class="install-line"><span>$ pip install eshana</span></div>
+        <a class="chip-version" href={site.pypi} title="eshana on PyPI"><span>PyPI</span><strong>{site.version}</strong></a>
       </div>
     </div>
     <div data-reveal style="--d: .12s">
@@ -74,7 +75,7 @@ const href = (h: string) => `${base}${h}`;
     <div class="card stat t-coral" data-tilt data-reveal style="--d:.15s"><strong>0.3″</strong><span>spk provider vs an independent JPL DE440s pipeline</span></div>
   </div>
 
-  <h2 data-reveal>Three layers, kept apart in the data</h2>
+  <h2 data-reveal data-letters>Three layers, kept apart in the data</h2>
   <p class="section-lede" data-reveal>A calculation is not an endorsement. Every value says which layer it belongs to.</p>
   <div class="layers">
     <div class="layer calc" data-reveal>
@@ -98,7 +99,7 @@ const href = (h: string) => `${base}${h}`;
     </div>
   </div>
 
-  <h2 data-reveal>See it work</h2>
+  <h2 data-reveal data-letters>See it work</h2>
   <p class="section-lede" data-reveal>Real output, regenerated from the binary on every site build (CI fails if it drifts).</p>
   <div class="term" data-reveal>
     <div class="term-bar"><i></i><i></i><i></i><span>eshana chart vedic --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 --divisions 9 --dasha</span></div>
@@ -113,7 +114,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
 {dual.vedic.provenance.assumptions.map((a) => `assumption: ${a}`).join("\n")}</pre>
   </div>
 
-  <h2 data-reveal>It would rather refuse than guess</h2>
+  <h2 data-reveal data-letters>It would rather refuse than guess</h2>
   <p class="section-lede" data-reveal>Each of these is a scenario in the release gate, with the legitimate twin that must still work.</p>
   {refusals.map((r) => (
     <div class="term refusal" data-reveal>
@@ -122,7 +123,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
     </div>
   ))}
 
-  <h2 data-reveal>What ESHANA can do today</h2>
+  <h2 data-reveal data-letters>What ESHANA can do today</h2>
   <div class="caps">
     {caps.map((c, i) => (
       <a class="cap" href={href(c.href)} data-reveal style={`--d:${i * 0.04}s`}>
@@ -131,7 +132,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
     ))}
   </div>
 
-  <h2 data-reveal>Measured, not promised</h2>
+  <h2 data-reveal data-letters>Measured, not promised</h2>
   <p class="section-lede" data-reveal>
     Maximum longitude error against JPL DE440s (computed independently with Skyfield), in arc-seconds. The analytic provider is honest
     about Jupiter and Saturn; the kernel provider is arc-second class.
@@ -152,7 +153,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
   </div>
   <p class="hint" data-reveal>Ayanāṃśa, Ascendant, houses, nodes and sidereal Sun and Moon are checked against the Swiss Ephemeris as an offline oracle. <a href={`${base}docs/reference/accuracy/`}>Method and caveats →</a></p>
 
-  <h2 data-reveal>How it works</h2>
+  <h2 data-reveal data-letters>How it works</h2>
   <div class="pipeline" data-reveal>
     <div class="pipe"><span class="who">you</span><b>A moment and a place</b><span>Civil time in a named zone, or UTC. Or a name. Or parameters.</span></div>
     <div class="pipe"><span class="who">eshana-time · -ephemeris</span><b>Calculate</b><span>UTC → TT, apparent geocentric positions in one frame.</span></div>
@@ -160,7 +161,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
     <div class="pipe"><span class="who">envelope</span><b>One JSON result</b><span>CLI and Python return identical bytes, with provenance.</span></div>
   </div>
 
-  <h2 data-reveal>Guarantees</h2>
+  <h2 data-reveal data-letters>Guarantees</h2>
   <div class="promises">
     <div class="promise" data-reveal><span class="ic">◇</span><b>No silent defaults</b><p>Sidereal needs an explicit ayanāṃśa. A local time needs a zone. Defaults that exist are recorded as assumptions.</p></div>
     <div class="promise" data-reveal style="--d:.05s"><span class="ic">◈</span><b>Reproducible</b><p>Same request, same bytes. Results carry engine, provider, tz database and rule versions.</p></div>
@@ -168,9 +169,9 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
     <div class="promise" data-reveal style="--d:.15s"><span class="ic">◐</span><b>Licence-clean</b><p>Apache-2.0. The AGPL Swiss Ephemeris is an offline test oracle only, never bundled.</p></div>
   </div>
 
-  <h2 data-reveal>Status, stated plainly</h2>
+  <h2 data-reveal data-letters>Status, stated plainly</h2>
   <p class="section-lede" data-reveal>
-    Version {stats.version}, not yet published. The name is not cleared or reserved. {stats.tasks} tasks are tracked by exact status:
+    Version {stats.version} is on <a href={site.pypi}>PyPI</a> (<code>pip install eshana</code>), open source under Apache-2.0. {stats.tasks} tasks are tracked by exact status:
     {" "}<span class="pill">{byStatus.verified ?? 0} verified</span>
     <span class="pill">{byStatus.implemented ?? 0} implemented</span>
     <span class="pill off">{byStatus.proposed ?? 0} proposed</span>
@@ -178,7 +179,7 @@ interpretations  <span class="r">[]</span>   <span class="c">always empty from t
     <a href={`${base}docs/roadmap/`}>Roadmap →</a>
   </p>
 
-  <h2 data-reveal>Browse the documentation</h2>
+  <h2 data-reveal data-letters>Browse the documentation</h2>
   <div class="grid-cards">
     {DOC_NAV.map((section, i) => (
       <section class={`card t-${section.tint}`} data-reveal style={`--d:${i * 0.05}s`}>

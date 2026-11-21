@@ -45,7 +45,7 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 
 const port = 9500 + Math.floor(Math.random() * 400);
 const chrome = spawn(CHROME, ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), "site-"))}`,
-  "--no-first-run", "--no-default-browser-check", "--use-mock-keychain", "--password-store=basic", "--hide-scrollbars", "about:blank"], { stdio: "ignore" });
+  "--no-first-run", "--no-default-browser-check", "--disable-gpu", "--use-mock-keychain", "--password-store=basic", "--hide-scrollbars", "about:blank"], { stdio: "ignore" });
 const WATCHDOG_MS = Number(process.env.JOURNEYS_TIMEOUT_MS || 240000);
 setTimeout(() => { console.log(`✗ journeys timed out after ${WATCHDOG_MS / 1000}s`); chrome.kill(); process.exit(1); }, WATCHDOG_MS).unref();
 let target;
@@ -60,7 +60,14 @@ ws.addEventListener("message", (m) => {
   if (msg.method === "Runtime.exceptionThrown") problems.push("exception: " + (msg.params.exceptionDetails.exception?.description || msg.params.exceptionDetails.text).split("\n")[0]);
   if (msg.method === "Runtime.consoleAPICalled" && msg.params.type === "error") problems.push("console.error: " + msg.params.args.map((a) => a.value ?? a.description).join(" ").slice(0, 200));
 });
-const send = (method, params = {}) => new Promise((r) => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
+// every DevTools call has a deadline, so a call that never answers fails its journey (named) instead of hanging the run
+const CALL_MS = Number(process.env.JOURNEYS_CALL_TIMEOUT_MS || 30000);
+const send = (method, params = {}) => new Promise((r, reject) => {
+  const i = ++id;
+  const timer = setTimeout(() => { pending.delete(i); reject(new Error(`DevTools ${method} did not answer within ${CALL_MS / 1000}s`)); }, CALL_MS);
+  pending.set(i, (msg) => { clearTimeout(timer); r(msg); });
+  ws.send(JSON.stringify({ id: i, method, params }));
+});
 const evaluate = async (expr) => {
   const r = await send("Runtime.evaluate", { expression: expr, returnByValue: true, awaitPromise: true });
   if (r.result?.exceptionDetails) throw new Error("eval failed: " + (r.result.exceptionDetails.exception?.description || r.result.exceptionDetails.text));
@@ -97,7 +104,7 @@ await journey("home hero runs the universe and the plexus answers the cursor", a
   expect(s.nak === 27, "nakshatra nodes " + s.nak);
   expect(s.frames >= 30 && s.w > 0 && s.h > 0, "universe is not animating: " + JSON.stringify(s));
   // sample pixels before and after moving the pointer into the band: the frame must change
-  const sample = `(() => { const c = document.getElementById('universe'); const x = c.getContext('2d'); const d = x.getImageData(0, 0, c.width, c.height).data; let lit = 0, sum = 0; for (let i = 0; i < d.length; i += 4 * 37) { if (d[i + 3] > 30) lit++; sum += d[i] + d[i + 1] + d[i + 2]; } return { lit, sum }; })()`;
+  const sample = `(() => { const c = document.getElementById('universe'); const x = c.getContext('2d'); const sw = Math.min(c.width, 480), sh = Math.min(c.height, 320), d = x.getImageData(Math.max(0, (c.width * .72 | 0) - sw / 2), Math.max(0, (c.height / 2 | 0) - sh / 2), sw, sh).data; let lit = 0, sum = 0; for (let i = 0; i < d.length; i += 4 * 7) { if (d[i + 3] > 30) lit++; sum += d[i] + d[i + 1] + d[i + 2]; } return { lit, sum }; })()`;
   const a = await evaluate(sample);
   expect(a.lit > 200, "too few lit pixels: " + a.lit);
   const box = await evaluate(`(() => { const r = document.getElementById('universe').getBoundingClientRect(); return { x: r.left + r.width * 0.72, y: r.top + r.height * 0.5, w: r.width }; })()`);
@@ -111,6 +118,20 @@ await journey("home hero runs the universe and the plexus answers the cursor", a
   const pe = await evaluate(`getComputedStyle(document.getElementById('universe-front')).pointerEvents`);
   expect(pe === "none", "front ring would block clicks");
   return `27 nakshatras, ${s.frames}+ frames, ${a.lit} lit samples, ${front.lit} in front`;
+});
+
+await journey("the headline is drawn as particles and the logo is a live three-ring gimbal", async () => {
+  await open("/", 2500);
+  const r = await evaluate(`(() => ({ on: document.querySelectorAll('.hero h1 .mk-particles-on').length, lines: document.querySelectorAll('.hero h1 .pline').length,
+    rings: [...document.querySelectorAll('.brand .sg-eshana .gb')].map(g => getComputedStyle(g).animationName),
+    letters: document.querySelectorAll('h2[data-letters]').length }))()`);
+  expect(r.lines === 4 && r.on === 4, `particle lines ${r.on}/${r.lines}`);
+  expect(r.rings.length === 3 && r.rings.every((n) => n && n !== "none"), "gimbal rings: " + r.rings.join(","));
+  const a = await evaluate(`getComputedStyle(document.querySelector('.brand .sg-eshana .gb1')).transform`);
+  await sleep(700);
+  const b = await evaluate(`getComputedStyle(document.querySelector('.brand .sg-eshana .gb1')).transform`);
+  expect(a !== b, "gimbal is not moving");
+  return `${r.on} particle lines, rings ${r.rings.join(" ")}, ${r.letters} letter headings`;
 });
 
 await journey("every page carries the ambient sky", async () => {

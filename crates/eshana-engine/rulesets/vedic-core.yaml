@@ -7,6 +7,8 @@ version: "0.3"
 conventions:
   scorpio_aquarius_lords: "Primary lords only: Scorpio -> Mars, Aquarius -> Saturn (Ketu and Rahu co-lordship not used)"
   node_aspects: "Rahu and Ketu aspect the 5th, 7th and 9th from their sign (a common convention; some schools use the 7th only)"
+  additional_aspects: "Optional, shown only on request: a retrograde graha (not the nodes) also casts graha and rasi drishti from the sign before it (its shadow); two grahas in parivartana (each in the other's sign) cast their aspects from the exchanged signs"
+  outer_aspects: "Uranus, Neptune and Pluto, where shown, aspect the 5th, 7th and 9th from their sign (a modern convention, by analogy with the nodes; classical texts do not use the outer planets)"
   combustion: "Orbs in degrees from the Sun; Mercury and Venus use smaller orbs when retrograde"
 
 # Sign index 0 = Aries (Mesha). Lords by graha id.
@@ -47,6 +49,9 @@ drishti:
     saturn: [3, 10]
     rahu: [5, 9]
     ketu: [5, 9]
+    uranus: [5, 9]
+    neptune: [5, 9]
+    pluto: [5, 9]
 
 combustion_orbs:
   moon: 12

@@ -12,7 +12,7 @@ names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](..
 | Pack | Covers | Data |
 |---|---|---|
 | `vedic.parashari@0.3` | rāśi, nakshatra/pada, bhāva, vargas D1–D60 (D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60) with the degree in each varga, Vimśottarī (five levels), Yoginī | algorithms in code (`vedic.rs`) |
-| `vedic.core@0.3` | sign lords, dignity (exaltation, debilitation, moolatrikoṇa, own), natural and five-fold relationships, graha drishti, combustion, dig bala, naisargika bala, avasthā; Jaimini kārakas, ārūḍhas, rāśi drishti; KP; natural and functional benefics, yogi and avayogi offsets, dagdha rāśis by tithi, Indu lagna kalās | `vedic-core.yaml` |
+| `vedic.core@0.3` | sign lords, dignity (exaltation, debilitation, moolatrikoṇa, own), natural and five-fold relationships, graha drishti, combustion, dig bala, naisargika bala, avasthā; Jaimini kārakas, ārūḍhas, rāśi drishti; KP; upagrahas (Sun-based, Gulika, Māndi); outer planets aspect 5th, 7th and 9th (a modern convention); optional additional aspects from a retrograde graha's shadow and from parivartana; natural and functional benefics, yogi and avayogi offsets, dagdha rāśis by tithi, Indu lagna kalās | `vedic-core.yaml` |
 | `vedic.bala@0.3` | ṣaḍbala (six components with named conventions), bhāva bala, viṃśopaka (four schemes, each summing to 20), sputa drishti in virūpas ([guide](../guides/strength.md)) | `bala.yaml` |
 | `vedic.ashtakavarga@0.2` | bhinna- and sarvāṣṭakavarga | `ashtakavarga.yaml` |
 | `vedic.panchanga@0.2` | tithi, vāra, nakṣatra, yoga, karaṇa; horā, choghaḍiyā, Rāhu kālam, Yamagaṇḍam, Gulika kālam; Tārā and Candra bala | `panchanga.yaml` |
@@ -21,8 +21,12 @@ names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](..
 | `western.basic@0.1` | signs, house placement, Ptolemaic aspects | code |
 | `human_design.basic@0.1` | design instant, wheel, channels, centres, type, authority, profile, definition | code |
 | `numerology.pythagorean@0.1`, `numerology.chaldean@0.1` | letter tables, reductions, life path, personal year | code |
+| `numerology.extended@0.1` | every Pythagorean and Chaldean number: core, karmic, planes, pinnacles, challenges, cycles ([guide](../guides/numerology.md)) | code (`numerology_ext.rs`) |
+| `numerology.vedic@0.1`, `numerology.lo_shu@0.1` | mulank, bhagyank, name number, planets and number friendships; the Lo Shu grid and arrows | code (`numerology_ext.rs`) |
 | `ayanamsha-<id>@0.1` | Lahiri, Raman, Krishnamurti, Fagan–Bradley | code |
 | `report.markers@0.1` | pushkara navāṃśa, vargottama, gaṇḍānta markers in HTML reports | report renderer |
+| `report.markers@0.2` | the chakra's markers ring: also pushkara bhāga degrees, mūlatrikoṇa ranges, uccha and nīca degrees | report renderer |
+| `report.revolutions@0.1` | progression by completed revolutions: each sidereal return after birth moves a graha one sign on (the nodes backwards) | `eshana.report` |
 | `report.nadi@0.1` | Nadi links: conjunct, trine, 2nd, 12th, 7th; retrograde reach ([guide](../guides/nadi.md)) | report renderer |
 
 ## Conventions named in the packs

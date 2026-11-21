@@ -139,7 +139,8 @@
       "lon": 78.1167,
       "assumptions": [
         "latitude and longitude printed to the minute (9°56' N, 78°07' E)",
-        "Rahu printed at 23:20 Sg matches the true node, so the true node is compared"
+        "Rahu printed at 23:20 Sg matches the true node, so the true node is compared",
+        "upagraha signs read from the program's birth-chart page (Dh, Vy, Pv, Cp, Uk, Gk, Man)"
       ],
       "printed": {
         "longitudes": {
@@ -205,6 +206,15 @@
           "jupiter": 1.16,
           "venus": 1.22,
           "saturn": 1.32
+        },
+        "upagraha_signs": {
+          "dhuma": 0,
+          "vyatipata": 11,
+          "parivesha": 5,
+          "indrachapa": 6,
+          "upaketu": 7,
+          "gulika": 3,
+          "mandi": 3
         }
       }
     }

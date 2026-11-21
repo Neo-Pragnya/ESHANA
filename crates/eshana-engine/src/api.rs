@@ -3,7 +3,7 @@
 //! cross-language parity a property of the design rather than something to re-test per language.
 
 use crate::astro::{self, RASHIS, SIGNS};
-use crate::{graph, hd, numerology, vedic};
+use crate::{graph, hd, numerology, numerology_ext, vedic};
 use eshana_core::{
     angular_diff, dms_in_sign, norm360, Ayanamsha, Body, CalculationConfig, DerivedAttribute, Epistemic,
     EshanaError, HouseSystem, NodeModel, Provenance, Result, ZodiacSystem, FRAME_APPARENT_ECLIPTIC_OF_DATE,
@@ -121,7 +121,7 @@ pub struct ChartRequest {
 }
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 15] = [
+pub const FEATURES: [&str; 16] = [
     "panchanga",
     "strength",
     "relationships",
@@ -137,6 +137,7 @@ pub const FEATURES: [&str; 15] = [
     "special_points",
     "aspects",
     "bhava_chalit",
+    "upagrahas",
 ];
 
 /// An ephemeris table request.
@@ -193,6 +194,10 @@ pub struct NumerologyRequest {
     pub life_path_method: Option<String>,
     /// Calendar year for the personal-year cycle.
     pub reference_year: Option<i32>,
+    /// Also compute every school's extended numbers (default false).
+    pub extended: Option<bool>,
+    /// `YYYY-MM-DD` for the personal year, month and day cycles in the extended numbers.
+    pub reference_date: Option<String>,
 }
 
 /// A request, tagged by `op`.
@@ -1019,6 +1024,12 @@ impl Engine {
                 &["positions"],
             );
             push(
+                "vedic.drishti.additional",
+                &core_rule,
+                jyotish::additional_drishti(&vc),
+                &["positions"],
+            );
+            push(
                 "vedic.drishti.rashi",
                 &core_rule,
                 json!({"rule": "movable signs aspect fixed signs except the adjacent one; fixed aspect movable except the adjacent one; dual aspect dual",
@@ -1080,6 +1091,7 @@ impl Engine {
             || feats.contains("kp")
             || feats.contains("shadbala")
             || feats.contains("bhava_bala")
+            || feats.contains("upagrahas")
         {
             match site {
                 Some(site) => {
@@ -1136,6 +1148,7 @@ impl Engine {
             || feats.contains("special_points")
             || feats.contains("aspects")
             || feats.contains("bhava_chalit")
+            || feats.contains("upagrahas")
         {
             let bp = packs::bala();
             let bala_rule = packs::rule_id(&bp.id, &bp.version);
@@ -1221,6 +1234,51 @@ impl Engine {
                     &["positions"],
                 );
             }
+            if feats.contains("upagrahas") {
+                let mut u = Map::new();
+                let one = |l: f64| json!({"longitude_deg": l, "sign": astro::sign_index(l)});
+                if let Some(sun) = vc.lon.get("sun") {
+                    for (n, l) in bala::sun_upagrahas(*sun) {
+                        u.insert(n.into(), one(l));
+                    }
+                }
+                let mut gm_note = "Gulika and Mandi need the place and the day's sunrise and sunset";
+                if let (Some(pc), Some(pl)) = (&pc_value, r.place.as_ref()) {
+                    let jd = |v: &Value| v["jd_ut"].as_f64();
+                    if let (Some(a), Some(b), Some(c), Some(wd)) = (
+                        jd(&pc["sunrise"]),
+                        jd(&pc["sunset"]),
+                        jd(&pc["next_sunrise"]),
+                        pc["vara"]["index"].as_u64(),
+                    ) {
+                        let (g, m, by_day) = bala::gulika_mandi_times(inst.jd_ut, a, b, c, wd as usize);
+                        let asc_at = |jd_ut: f64| -> f64 {
+                            let at = Instant::from_jd_utc(jd_ut);
+                            let t = at.t_tt();
+                            let lst = astro::local_apparent_sidereal_deg(at.gmst_deg(), pl.longitude, t);
+                            norm360(
+                                astro::asc_mc(lst, pl.latitude, t).0
+                                    - frames::nutation_deg(t).0
+                                    - astro::ayanamsha_deg(ayan, t),
+                            )
+                        };
+                        for (n, t) in [("gulika", g), ("mandi", m)] {
+                            let mut v = one(asc_at(t));
+                            v["rises_jd_ut"] = json!(t);
+                            u.insert(n.into(), v);
+                        }
+                        u.insert("birth_in".into(), json!(if by_day { "day" } else { "night" }));
+                        gm_note = "Gulika: the lagna at the start of Saturn's eighth of the day or night (eighths ruled in weekday order from the day's lord; at night from the fifth weekday's lord). Mandi: the lagna at the classical ghati for the weekday (day 26, 22, 18, 14, 10, 6, 2; night 10, 6, 2, 26, 22, 18, 14 from Sunday), scaled to that day or night";
+                    }
+                }
+                u.insert("conventions".into(), json!({"sun_based": "BPHS: Dhuma = Sun + 133 deg 20 min; Vyatipata = 360 - Dhuma; Parivesha = Vyatipata + 180; Indrachapa = 360 - Parivesha; Upaketu = Indrachapa + 16 deg 40 min", "gulika_mandi": gm_note}));
+                push(
+                    "vedic.upagrahas",
+                    &core_rule,
+                    Value::Object(u),
+                    &["sun", "place", "panchanga"],
+                );
+            }
             if feats.contains("special_points") {
                 push(
                     "vedic.special_points",
@@ -1230,20 +1288,43 @@ impl Engine {
                 );
             }
             if feats.contains("aspects") {
+                // D9 positions are navamsa longitudes: the D9 sign plus the degree within it (deg_in_sign x 9)
+                let nav = |l: f64| -> Option<f64> {
+                    vedic::divisional_sign(l, 9)
+                        .ok()
+                        .map(|s| s as f64 * 30.0 + (l.rem_euclid(30.0) * 9.0) % 30.0)
+                };
                 let mut d9 = vc.clone();
                 for (g, l) in &vc.lon {
-                    if let Ok(s) = vedic::divisional_sign(*l, 9) {
-                        d9.lon.insert(g.clone(), s as f64 * 30.0 + 15.0);
+                    if let Some(x) = nav(*l) {
+                        d9.lon.insert(g.clone(), x);
                     }
                 }
-                push(
-                    "vedic.aspects",
-                    &bala_rule,
-                    json!({"d1": bala::aspect_matrix(&vc),
-                    "d9": bala::aspect_matrix(&d9),
-                    "note": "fraction: whole-sign graha drishti (3rd/10th 1/4, 5th/9th 1/2, 4th/8th 3/4, 7th and special aspects full); virupa: sputa drishti of D1 longitudes (D9: sign centres)"}),
-                    &["positions"],
-                );
+                let mut v = json!({"d1": bala::aspect_matrix(&vc), "d9": bala::aspect_matrix(&d9),
+                    "note": "fraction: whole-sign graha drishti (3rd/10th 1/4, 5th/9th 1/2, 4th/8th 3/4, 7th and special aspects full); virupa: sputa drishti (0-60) of D1 longitudes, and of navamsa longitudes for D9; the nodes have no sputa drishti"});
+                if let (Some(a), Some(m)) = (asc, mc) {
+                    if hw == 0.0 {
+                        let madhya = bala::bhava_madhyas(a, m);
+                        let mut pts: Vec<(String, f64)> = vec![("lagna".into(), a)];
+                        pts.extend(madhya.iter().enumerate().map(|(k, x)| ((k + 1).to_string(), *x)));
+                        v["houses"] = json!({"d1": bala::aspects_on_points(&vc, &pts)});
+                        v["house_and_lord"] = json!({"d1": bala::aspects_house_and_lord(&vc, &madhya)});
+                        v["house_madhya"] = json!({"d1": madhya.to_vec()});
+                        if let Some(a9) = nav(a) {
+                            let mut m9 = [0.0; 12];
+                            for (k, x) in m9.iter_mut().enumerate() {
+                                *x = norm360(a9 + 30.0 * k as f64);
+                            }
+                            let mut p9: Vec<(String, f64)> = vec![("lagna".into(), a9)];
+                            p9.extend(m9.iter().enumerate().map(|(k, x)| ((k + 1).to_string(), *x)));
+                            v["houses"]["d9"] = bala::aspects_on_points(&d9, &p9);
+                            v["house_and_lord"]["d9"] = bala::aspects_house_and_lord(&d9, &m9);
+                            v["house_madhya"]["d9"] = json!(m9.to_vec());
+                        }
+                        v["house_conventions"] = json!("D1 houses: Sripati bhava madhyas (Porphyry trisection); D9 houses: equal houses from the navamsa lagna degree; house + lord: mean of the virupas on the madhya and on the house's sign lord (the madhya alone when the aspecting graha is that lord)");
+                    }
+                }
+                push("vedic.aspects", &bala_rule, v, &["positions", "houses"]);
             }
             if feats.contains("bhava_chalit") {
                 match (asc, mc) {
@@ -1509,7 +1590,7 @@ impl Engine {
                 if *name == "sun" {
                     sun_lines.insert(label, a.line);
                 }
-                acts.push(json!({"body": name, "longitude_deg": lon, "gate": a.gate, "line": a.line, "color": a.color,
+                acts.push(json!({"body": name, "longitude_deg": lon, "gate": a.gate, "line": a.line, "color": a.color, "tone": a.tone, "base": a.base,
                                  "center": hd::center_of(a.gate), "epistemic": Epistemic::TraditionRule}));
             }
             sides.insert(
@@ -1708,6 +1789,61 @@ fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
                 numerology::School::Pythagorean.ruleset(),
                 Epistemic::TraditionRule,
                 json!({"calendar_year": cy, "personal_year": numerology::personal_year(mm, dd, cy, keep)}),
+                &["date_of_birth".into()],
+            ));
+        }
+    }
+    if r.extended.unwrap_or(false) {
+        let ymd = |d: &str| -> Option<(i32, u32, u32)> {
+            let p: Vec<&str> = d.split('-').collect();
+            match p.as_slice() {
+                [a, b, c] => Some((a.parse().ok()?, b.parse().ok()?, c.parse().ok()?)),
+                _ => None,
+            }
+        };
+        let dob = r.date_of_birth.as_deref().and_then(ymd);
+        let reference = r.reference_date.as_deref().and_then(ymd);
+        let name = r.name.as_deref();
+        let src: Vec<String> = [
+            r.name.as_ref().map(|_| "name".to_string()),
+            dob.map(|_| "date_of_birth".to_string()),
+        ]
+        .into_iter()
+        .flatten()
+        .collect();
+        let srcs: Vec<&str> = src.iter().map(String::as_str).collect();
+        let owned: Vec<String> = srcs.iter().map(|x| (*x).to_string()).collect();
+        derived.push(attr(
+            "numerology.pythagorean.extended",
+            "numerology.pythagorean",
+            "numerology.extended@0.1",
+            Epistemic::TraditionRule,
+            numerology_ext::pythagorean(name, dob, reference, y, keep),
+            &owned,
+        ));
+        derived.push(attr(
+            "numerology.chaldean.extended",
+            "numerology.chaldean",
+            "numerology.extended@0.1",
+            Epistemic::TraditionRule,
+            numerology_ext::chaldean(name, dob),
+            &owned,
+        ));
+        derived.push(attr(
+            "numerology.vedic",
+            "numerology.vedic",
+            "numerology.vedic@0.1",
+            Epistemic::TraditionRule,
+            numerology_ext::vedic(name, dob),
+            &owned,
+        ));
+        if let Some(d) = dob {
+            derived.push(attr(
+                "numerology.lo_shu",
+                "numerology.lo_shu",
+                "numerology.lo_shu@0.1",
+                Epistemic::TraditionRule,
+                numerology_ext::lo_shu(d),
                 &["date_of_birth".into()],
             ));
         }

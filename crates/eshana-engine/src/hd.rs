@@ -105,6 +105,10 @@ pub struct Activation {
     pub line: u8,
     /// 1–6.
     pub color: u8,
+    /// 1–6 (each colour divides into six tones).
+    pub tone: u8,
+    /// 1–5 (each tone divides into five bases).
+    pub base: u8,
 }
 
 /// Map a longitude onto the wheel.
@@ -115,11 +119,19 @@ pub fn activation_at(lon_deg: f64) -> Activation {
     let in_gate = off - gi as f64 * GATE_SPAN;
     let line = ((in_gate / LINE_SPAN).floor() as u8).min(5);
     let in_line = in_gate - f64::from(line) * LINE_SPAN;
-    let color = ((in_line / (LINE_SPAN / 6.0)).floor() as u8).min(5);
+    let color_span = LINE_SPAN / 6.0;
+    let color = ((in_line / color_span).floor() as u8).min(5);
+    let in_color = in_line - f64::from(color) * color_span;
+    let tone_span = color_span / 6.0;
+    let tone = ((in_color / tone_span).floor() as u8).min(5);
+    let in_tone = in_color - f64::from(tone) * tone_span;
+    let base = ((in_tone / (tone_span / 5.0)).floor() as u8).min(4);
     Activation {
         gate: WHEEL[gi],
         line: line + 1,
         color: color + 1,
+        tone: tone + 1,
+        base: base + 1,
     }
 }
 

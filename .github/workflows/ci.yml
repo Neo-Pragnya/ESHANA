@@ -94,6 +94,7 @@ jobs:
       - name: Tracker, docs links, demo data
         run: |
           python3 scripts/tracking_report.py --check
+          python3 scripts/progress_report.py --check
           python3 scripts/check_docs.py
 
   accuracy:

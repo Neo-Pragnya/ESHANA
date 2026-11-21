@@ -9,6 +9,7 @@
  *   <span data-words="a|b|c">a</span>          the word itself changes: letters tip out, the next word rises in
  *   <h2 data-letters>                         hover wave: nearby letters lift, gain weight, shift colour / typeface
  *   <span data-particles="#c1,#c2">           text drawn as particles that assemble, diffuse from the cursor, return
+ *         data-particles-max="2000"          optional cap on the particle count (default 9000)
  *   <h1 data-rise>                            letters rise into place when revealed (data-scramble is an alias)
  *   <div data-reveal style="--d:.1s">         fades + un-blurs + rises into view on scroll
  *   <span data-countup>968</span>             counts up from 0 when visible
@@ -500,7 +501,8 @@
         for (let y = 0; y < off.height; y += step) for (let x = 0; x < off.width; x += step) if (data[(y * off.width + x) * 4 + 3] > 140) n++;
         return n;
       };
-      while (count() > 9000) step++;
+      const maxParts = parseInt(el.dataset.particlesMax || "9000", 10) || 9000; // data-particles-max caps the cost
+      while (count() > maxParts) step++;
       const prev = parts;
       parts = [];
       for (let y = 0; y < off.height; y += step) {

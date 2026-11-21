@@ -81,6 +81,16 @@ def test_special_points(provider, spk, c):
 
 
 @pytest.mark.parametrize("provider,spk,c", CASES)
+def test_upagrahas(provider, spk, c):
+    if "upagraha_signs" not in c["printed"]:
+        pytest.skip("no printed upagrahas")
+    env = chart(c, provider, spk, features=["upagrahas"], sunrise="centre_unrefracted")
+    up = next(a["value"] for a in env["derived_attributes"] if a["id"] == "vedic.upagrahas")
+    got = {k: up[k]["sign"] for k in c["printed"]["upagraha_signs"]}
+    assert got == c["printed"]["upagraha_signs"]
+
+
+@pytest.mark.parametrize("provider,spk,c", CASES)
 def test_panchanga_and_special_lagnas(provider, spk, c):
     conv = c["printed"]["special_lagna_conventions"]
     req = {"op": "panchanga", "chart": {"when": {"date": c["date"], "time": c["time"], "utc_offset_minutes": c["utc_offset_minutes"]},
