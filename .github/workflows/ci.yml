@@ -120,7 +120,7 @@ jobs:
       - name: Run the suite and check every tolerance keeps its margin
         run: |
           uv venv -q --python 3.12 .venv
-          uv pip install -q --python .venv/bin/python maturin pytest pytest-xdist
+          uv pip install -q --python .venv/bin/python maturin pytest pytest-xdist pyyaml
           (cd crates/eshana-python && VIRTUAL_ENV="$GITHUB_WORKSPACE/.venv" "$GITHUB_WORKSPACE/.venv/bin/maturin" develop -q --uv --release)
           ESHANA_SPK="$PWD/de440s.bsp" .venv/bin/python -m pytest accuracy -q -n auto -p no:cacheprovider
           ESHANA_SPK="$PWD/de440s.bsp" .venv/bin/python scripts/accuracy_report.py --check
