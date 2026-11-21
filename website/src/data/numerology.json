@@ -1,0 +1,279 @@
+{
+ "chaldean": {
+  "calculation": {
+   "keep_master_numbers": true,
+   "school": "chaldean",
+   "y_policy": "consonant"
+  },
+  "derived_attributes": [
+   {
+    "derived_from": [
+     "name"
+    ],
+    "epistemic": "tradition_rule",
+    "id": "numerology.name",
+    "rule_version": "numerology.chaldean@0.1",
+    "tradition_id": "numerology.chaldean",
+    "value": {
+     "expression": {
+      "compound": 39,
+      "reduced": 3
+     },
+     "ignored_characters": [],
+     "letters": [
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "D",
+       "value": 4,
+       "vowel": false
+      },
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "L",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "O",
+       "value": 7,
+       "vowel": true
+      },
+      {
+       "letter": "V",
+       "value": 6,
+       "vowel": false
+      },
+      {
+       "letter": "E",
+       "value": 5,
+       "vowel": true
+      },
+      {
+       "letter": "L",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "C",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "E",
+       "value": 5,
+       "vowel": true
+      }
+     ],
+     "normalized": "ADALOVELACE",
+     "personality": {
+      "compound": 19,
+      "reduced": 1
+     },
+     "policy": {
+      "keep_master_numbers": false,
+      "y": "consonant"
+     },
+     "ruleset": "numerology.chaldean@0.1",
+     "school": "chaldean",
+     "soul_urge": {
+      "compound": 20,
+      "reduced": 2
+     }
+    }
+   }
+  ],
+  "input": {
+   "date_of_birth": null,
+   "name": "Ada Lovelace"
+  },
+  "interpretations": [],
+  "kind": "numerology_analysis",
+  "positions": [],
+  "provenance": {
+   "assumptions": [
+    "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
+   ],
+   "engine_version": "0.1.0",
+   "provider": null,
+   "rulesets": [
+    "numerology.chaldean@0.1"
+   ]
+  },
+  "schema_version": "0.1.0",
+  "warnings": []
+ },
+ "pythagorean": {
+  "calculation": {
+   "keep_master_numbers": true,
+   "school": "pythagorean",
+   "y_policy": "consonant"
+  },
+  "derived_attributes": [
+   {
+    "derived_from": [
+     "name"
+    ],
+    "epistemic": "tradition_rule",
+    "id": "numerology.name",
+    "rule_version": "numerology.pythagorean@0.1",
+    "tradition_id": "numerology.pythagorean",
+    "value": {
+     "expression": {
+      "compound": 36,
+      "reduced": 9
+     },
+     "ignored_characters": [],
+     "letters": [
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "D",
+       "value": 4,
+       "vowel": false
+      },
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "L",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "O",
+       "value": 6,
+       "vowel": true
+      },
+      {
+       "letter": "V",
+       "value": 4,
+       "vowel": false
+      },
+      {
+       "letter": "E",
+       "value": 5,
+       "vowel": true
+      },
+      {
+       "letter": "L",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "A",
+       "value": 1,
+       "vowel": true
+      },
+      {
+       "letter": "C",
+       "value": 3,
+       "vowel": false
+      },
+      {
+       "letter": "E",
+       "value": 5,
+       "vowel": true
+      }
+     ],
+     "normalized": "ADALOVELACE",
+     "personality": {
+      "compound": 17,
+      "reduced": 8
+     },
+     "policy": {
+      "keep_master_numbers": true,
+      "y": "consonant"
+     },
+     "ruleset": "numerology.pythagorean@0.1",
+     "school": "pythagorean",
+     "soul_urge": {
+      "compound": 19,
+      "reduced": 1
+     }
+    }
+   },
+   {
+    "derived_from": [
+     "date_of_birth"
+    ],
+    "epistemic": "tradition_rule",
+    "id": "numerology.life_path",
+    "rule_version": "numerology.pythagorean@0.1",
+    "tradition_id": "numerology.pythagorean",
+    "value": {
+     "keep_master_numbers": true,
+     "life_path": 1,
+     "method": "reduce_parts",
+     "parts": {
+      "day": 1,
+      "month": 3,
+      "year": 6
+     }
+    }
+   },
+   {
+    "derived_from": [
+     "date_of_birth"
+    ],
+    "epistemic": "tradition_rule",
+    "id": "numerology.birth_day",
+    "rule_version": "numerology.pythagorean@0.1",
+    "tradition_id": "numerology.pythagorean",
+    "value": {
+     "day": 10,
+     "reduced": 1
+    }
+   },
+   {
+    "derived_from": [
+     "date_of_birth"
+    ],
+    "epistemic": "tradition_rule",
+    "id": "numerology.personal_year",
+    "rule_version": "numerology.pythagorean@0.1",
+    "tradition_id": "numerology.pythagorean",
+    "value": {
+     "calendar_year": 2026,
+     "personal_year": 5
+    }
+   }
+  ],
+  "input": {
+   "date_of_birth": "1815-12-10",
+   "name": "Ada Lovelace"
+  },
+  "interpretations": [],
+  "kind": "numerology_analysis",
+  "positions": [],
+  "provenance": {
+   "assumptions": [
+    "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
+   ],
+   "engine_version": "0.1.0",
+   "provider": null,
+   "rulesets": [
+    "numerology.pythagorean@0.1"
+   ]
+  },
+  "schema_version": "0.1.0",
+  "warnings": []
+ }
+}

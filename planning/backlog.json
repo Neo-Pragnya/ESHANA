@@ -1,0 +1,963 @@
+{
+  "project": "ESHANA",
+  "areas": [
+    {
+      "id": "gov",
+      "title": "Governance and naming",
+      "summary": "Name clearance, licences, registry names and the decisions the master plan left open."
+    },
+    {
+      "id": "core",
+      "title": "Core types, time and providers",
+      "summary": "Typed units, civil time, the provider trait and the ephemeris providers."
+    },
+    {
+      "id": "astro",
+      "title": "Astronomical kernel and geometry",
+      "summary": "Ayanamsha, nodes, houses, aspects and the events still to come."
+    },
+    {
+      "id": "vedic",
+      "title": "Vedic rule pack",
+      "summary": "vedic.parashari: nakshatra, divisional charts, dasha and what is next."
+    },
+    {
+      "id": "western",
+      "title": "Western rule pack",
+      "summary": "western.basic: signs, houses, aspects and the staged additions."
+    },
+    {
+      "id": "hd",
+      "title": "Human Design",
+      "summary": "human_design.basic: the solver, wheel, bodygraph, and the open rights question."
+    },
+    {
+      "id": "num",
+      "title": "Numerology",
+      "summary": "Pythagorean and Chaldean, normalisation, and later cycles."
+    },
+    {
+      "id": "graph",
+      "title": "Symbolic graph and comparison",
+      "summary": "Typed graph exports, comparison, and the Chitkala consumer."
+    },
+    {
+      "id": "bind",
+      "title": "Bindings and distribution",
+      "summary": "CLI, Python, and the surfaces still to come."
+    },
+    {
+      "id": "qa",
+      "title": "Quality and release gate",
+      "summary": "Unit, golden, differential, acceptance, performance and fuzzing."
+    },
+    {
+      "id": "docs",
+      "title": "Documentation and website",
+      "summary": "Docs, the Astro site, demos and the cookbook."
+    },
+    {
+      "id": "sec",
+      "title": "Security and supply chain",
+      "summary": "Licence allow-list, advisories, dist scan, CI and release provenance."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "NAME-01",
+      "area": "gov",
+      "title": "Trademark and naming clearance for ESHANA in the intended jurisdictions",
+      "status": "verified",
+      "track": "primary",
+      "note": "Existing commercial users of 'Eshana' noted in the master plan; needs a search and counsel.",
+      "source": "master plan 0, 15",
+      "evidence": "Closed by ADR-011 (2026-11-20): open-source, non-commercial release; owner accepted residual naming risk instead of a trademark search."
+    },
+    {
+      "id": "NAME-02",
+      "area": "gov",
+      "title": "Confirm registry names: eshana on PyPI and crates.io, @neo-pragnya/eshana on npm",
+      "status": "verified",
+      "track": "primary",
+      "note": "Nothing is reserved. Do before 0.2.",
+      "source": "master plan 0",
+      "evidence": "PyPI eshana and crates.io eshana both returned 404 on 2026-11-20 (docs/concepts/naming.md)."
+    },
+    {
+      "id": "NAME-03",
+      "area": "gov",
+      "title": "GitHub repository exists under Neo-Pragnya",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "git remote origin = https://github.com/Neo-Pragnya/ESHANA (Apache-2.0 LICENSE present)"
+    },
+    {
+      "id": "NAME-04",
+      "area": "gov",
+      "title": "Canonical expansion fixed once and asserted",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "eshana doctor prints it; acceptance scenario 'doctor shows the environment' asserts the string",
+      "evidence_paths": [
+        "acceptance/features/00_smoke.feature"
+      ]
+    },
+    {
+      "id": "ADR-01",
+      "area": "gov",
+      "title": "Write the ten ADRs from the master plan",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "docs/adr/001-010 with statuses; ADR-001, 007, 009 carry open items",
+      "evidence_paths": [
+        "docs/adr/index.md"
+      ]
+    },
+    {
+      "id": "LIC-01",
+      "area": "gov",
+      "title": "Licence matrix: allow-list, third-party notices",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "cargo deny check: advisories, bans, licenses, sources all ok (run locally 2026-11-20); allow-list in deny.toml",
+      "evidence_paths": [
+        "deny.toml",
+        "THIRD_PARTY_NOTICES.md"
+      ]
+    },
+    {
+      "id": "CORE-01",
+      "area": "core",
+      "title": "Typed Angle helpers, Body, CalculationConfig, Epistemic, Provenance, DerivedAttribute",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "eshana-core unit tests (7); config validation refuses sidereal without ayanamsha",
+      "evidence_paths": [
+        "crates/eshana-core/src/lib.rs"
+      ]
+    },
+    {
+      "id": "CORE-02",
+      "area": "core",
+      "title": "Errors with stable ESH-* codes and a catalogue",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "unit test proves every variant is catalogued; acceptance 'explain knows every code'",
+      "evidence_paths": [
+        "acceptance/features/12_errors.feature"
+      ]
+    },
+    {
+      "id": "CORE-03",
+      "area": "core",
+      "title": "Provenance block on every result (engine, provider, tzdb, time model, rulesets, assumptions)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance @cap_provenance; behaviour test 'every derived attribute names its rule'",
+      "evidence_paths": [
+        "acceptance/features/11_provenance.feature"
+      ]
+    },
+    {
+      "id": "CORE-04",
+      "area": "core",
+      "title": "JSON Schema for the envelope",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "schemas/envelope.schema.json; python tests validate every envelope kind",
+      "evidence_paths": [
+        "schemas/envelope.schema.json"
+      ]
+    },
+    {
+      "id": "TIME-01",
+      "area": "core",
+      "title": "IANA civil time to UTC with historical offsets; fold and gap errors",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "eshana-time tests + acceptance @cap_civil_time (8 scenarios)",
+      "evidence_paths": [
+        "acceptance/features/02_civil_time.feature"
+      ]
+    },
+    {
+      "id": "TIME-02",
+      "area": "core",
+      "title": "Leap seconds, delta-T polynomials, TT, JD, GMST",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Meeus worked examples, leap boundary, continuity and property tests",
+      "evidence_paths": [
+        "crates/eshana-time/src/lib.rs"
+      ]
+    },
+    {
+      "id": "TIME-03",
+      "area": "core",
+      "title": "Julian/Gregorian cut-over and BCE dates",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Proleptic Gregorian only in 0.1; providers' ranges avoid 1582.",
+      "source": "master plan 6.1"
+    },
+    {
+      "id": "TIME-04",
+      "area": "core",
+      "title": "Birth-time uncertainty as a window; intervals and stability flags",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance @cap_uncertain_time; behaviour tests",
+      "evidence_paths": [
+        "acceptance/features/08_uncertain_time.feature"
+      ]
+    },
+    {
+      "id": "TIME-05",
+      "area": "core",
+      "title": "Forecast delta-T beyond 2027 validated against IERS predictions",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Currently Espenak-Meeus continuation; differs from Skyfield by up to 28 s in 2060."
+    },
+    {
+      "id": "PROV-01",
+      "area": "core",
+      "title": "EphemerisProvider trait with one frame",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "both providers pass the same golden gate",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/lib.rs"
+      ]
+    },
+    {
+      "id": "PROV-02",
+      "area": "core",
+      "title": "analytic provider (Standish elements + Meeus lunar series)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "measured vs DE440s: Sun 16 arcsec ... Saturn 1026 arcsec; golden test enforces the stated tolerances",
+      "evidence_paths": [
+        "benchmarks/golden/accuracy.md",
+        "crates/eshana-ephemeris/tests/golden.rs"
+      ]
+    },
+    {
+      "id": "PROV-03",
+      "area": "core",
+      "title": "Optional Swiss Ephemeris adapter as a separate AGPL-3.0 package (eshana-swisseph)",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Decided by ADR-011: separate distribution, never linked into the Apache-2.0 core.",
+      "source": "master plan 4.2, 7"
+    },
+    {
+      "id": "PROV-04",
+      "area": "core",
+      "title": "SPK type 3 (Chebyshev with velocity) and other segment types",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Only type 2 is read; planetary DE kernels use it."
+    },
+    {
+      "id": "PROV-05",
+      "area": "core",
+      "title": "spk provider: DAF/SPK type-2 reader against a user-supplied kernel",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "0.3 arcsec max vs the independent fixture with de440s.bsp; 2 arcsec enforced; span regression test",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/spk.rs"
+      ]
+    },
+    {
+      "id": "PROV-06",
+      "area": "core",
+      "title": "Distribute or auto-fetch a kernel with checksum verification",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Deliberately manual in 0.1 (local-first, no network). Needs a design."
+    },
+    {
+      "id": "AST-01",
+      "area": "astro",
+      "title": "Ayanamsha: Lahiri, Raman, Krishnamurti, Fagan-Bradley",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "within 0.0006 degrees of the Swiss oracle, 1950-2040",
+      "evidence_paths": [
+        "crates/eshana-engine/src/astro.rs"
+      ]
+    },
+    {
+      "id": "AST-02",
+      "area": "astro",
+      "title": "Ascendant, Midheaven; whole-sign, equal and Placidus houses",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "vs Swiss oracle at 6 places x 8 instants; polar refusal scenario",
+      "evidence_paths": [
+        "crates/eshana-engine/src/astro.rs",
+        "acceptance/features/05_western.feature"
+      ]
+    },
+    {
+      "id": "AST-03",
+      "area": "astro",
+      "title": "More house systems (Koch, Regiomontanus, Campanus, Porphyry)",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 4.4"
+    },
+    {
+      "id": "AST-04",
+      "area": "astro",
+      "title": "Ptolemaic aspects with orb, applying and separating",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "unit tests incl. wrap at 0 degrees; behaviour test at J2000",
+      "evidence_paths": [
+        "crates/eshana-engine/src/astro.rs"
+      ]
+    },
+    {
+      "id": "AST-05",
+      "area": "astro",
+      "title": "Mean and osculating true lunar node; south node",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "mean 0.01 degrees, true 0.06 degrees vs the Swiss oracle",
+      "evidence_paths": [
+        "crates/eshana-engine/tests/oracle.rs"
+      ]
+    },
+    {
+      "id": "AST-06",
+      "area": "astro",
+      "title": "Event search: transits, ingresses, stations, returns, eclipses",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 8.2"
+    },
+    {
+      "id": "AST-07",
+      "area": "astro",
+      "title": "Chiron, asteroids and other optional bodies",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "AST-08",
+      "area": "astro",
+      "title": "Rise, set and topocentric positions",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 4.1"
+    },
+    {
+      "id": "VED-01",
+      "area": "vedic",
+      "title": "Rashi, nakshatra, pada, whole-sign bhava",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "unit tests for boundaries and lord cycle; acceptance @cap_vedic",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vedic.rs",
+        "acceptance/features/04_vedic.feature"
+      ]
+    },
+    {
+      "id": "VED-02",
+      "area": "vedic",
+      "title": "Divisional charts D1, D3, D4, D7, D9, D10, D12",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "unit tests with hand-derived values for D9 and D10",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vedic.rs"
+      ]
+    },
+    {
+      "id": "VED-03",
+      "area": "vedic",
+      "title": "D30 and D60 with a documented school choice",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Returns ESH-RULES today rather than guessing.",
+      "source": "master plan 4.3"
+    },
+    {
+      "id": "VED-04",
+      "area": "vedic",
+      "title": "Vimshottari dasha with named year convention",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "structure, balance, clipping and convention tests",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vedic.rs"
+      ]
+    },
+    {
+      "id": "VED-05",
+      "area": "vedic",
+      "title": "Graha drishti, dignities, relationships, strengths as separate packs",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 4.3"
+    },
+    {
+      "id": "VED-06",
+      "area": "vedic",
+      "title": "Transits, gochara, retrograde windows, combustion",
+      "status": "proposed",
+      "track": "primary",
+      "depends_on": [
+        "AST-06"
+      ]
+    },
+    {
+      "id": "VED-07",
+      "area": "vedic",
+      "title": "Jaimini and Tajika as named adapters",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 4.3"
+    },
+    {
+      "id": "VED-08",
+      "area": "vedic",
+      "title": "Cross-check nakshatra, pada and dasha against a published reference chart",
+      "status": "verified",
+      "track": "primary",
+      "note": "Needs a reference with documented conventions.",
+      "evidence": "accuracy/ suite: nakshatra, pada, lord, D3-D12 and Vimshottari against Swiss on 44 charts and a recorded ProKerala chart; 972 checks pass (benchmarks/accuracy/birth-chart-accuracy.md)."
+    },
+    {
+      "id": "WES-01",
+      "area": "western",
+      "title": "Tropical natal chart with houses and aspects",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance @cap_western; oracle comparisons",
+      "evidence_paths": [
+        "acceptance/features/05_western.feature"
+      ]
+    },
+    {
+      "id": "WES-02",
+      "area": "western",
+      "title": "Synastry and composite charts",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 4.4"
+    },
+    {
+      "id": "WES-03",
+      "area": "western",
+      "title": "Progressions, solar and lunar returns",
+      "status": "proposed",
+      "track": "secondary",
+      "depends_on": [
+        "AST-06"
+      ]
+    },
+    {
+      "id": "WES-04",
+      "area": "western",
+      "title": "Dignities as a separate rule pack",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "HD-01",
+      "area": "hd",
+      "title": "Design instant: 88-degree solar-arc solve",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "solver returns 88.0000000001 degrees; uniform-Sun test is exact; acceptance 'not 88 days'",
+      "evidence_paths": [
+        "crates/eshana-engine/src/hd.rs",
+        "acceptance/features/06_human_design.feature"
+      ]
+    },
+    {
+      "id": "HD-02",
+      "area": "hd",
+      "title": "Gate wheel, lines and colours; 13 activations per side",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "wheel is a permutation of 1-64; 6 lines per gate; boundary tests",
+      "evidence_paths": [
+        "crates/eshana-engine/src/hd.rs"
+      ]
+    },
+    {
+      "id": "HD-03",
+      "area": "hd",
+      "title": "Channels, centres, type, authority, profile, definition",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "36 unique channels, centres partition the gates, every gate in a channel; type/authority/definition tests",
+      "evidence_paths": [
+        "crates/eshana-engine/src/hd.rs"
+      ]
+    },
+    {
+      "id": "HD-04",
+      "area": "hd",
+      "title": "Validate against an external reference chart with documented conventions",
+      "status": "proposed",
+      "track": "primary",
+      "note": "No external reference yet; structure is verified, whole-chart agreement is not."
+    },
+    {
+      "id": "HD-05",
+      "area": "hd",
+      "title": "Rights review: nomenclature, mapping, field names (ADR-009)",
+      "status": "verified",
+      "track": "primary",
+      "note": "Counsel needed before commercial use.",
+      "source": "master plan 4.5, 7",
+      "evidence": "Closed by ADR-011: open source, no commercial launch; no copied descriptive text, art or tables ship."
+    },
+    {
+      "id": "HD-06",
+      "area": "hd",
+      "title": "Sub-arc-minute gate-boundary golden set with spk",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 6.1",
+      "depends_on": [
+        "HD-04"
+      ]
+    },
+    {
+      "id": "NUM-01",
+      "area": "num",
+      "title": "Pythagorean and Chaldean schools; name totals; life path; personal year",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "worked examples; acceptance @cap_numerology",
+      "evidence_paths": [
+        "crates/eshana-engine/src/numerology.rs",
+        "acceptance/features/07_numerology.feature"
+      ]
+    },
+    {
+      "id": "NUM-02",
+      "area": "num",
+      "title": "Explicit normalisation with ignored characters reported",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "unit tests for diacritics, ligatures and Devanagari",
+      "evidence_paths": [
+        "crates/eshana-engine/src/numerology.rs"
+      ]
+    },
+    {
+      "id": "NUM-03",
+      "area": "num",
+      "title": "Cycles, pinnacles, karmic debts",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "NUM-04",
+      "area": "num",
+      "title": "Other alphabets (Hebrew gematria, abjad) as named packs",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "GRA-01",
+      "area": "graph",
+      "title": "Typed graph with relation classes; JSON, Mermaid, GraphML",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance @cap_graph (4 scenarios); no causal edges asserted",
+      "evidence_paths": [
+        "acceptance/features/10_graph.feature"
+      ]
+    },
+    {
+      "id": "GRA-02",
+      "area": "graph",
+      "title": "Method comparison with diff and configuration attribution",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance @cap_compare; behaviour tests",
+      "evidence_paths": [
+        "acceptance/features/09_compare_graph.feature"
+      ]
+    },
+    {
+      "id": "GRA-03",
+      "area": "graph",
+      "title": "Chitkala consumer: render the graph interactively",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 5.4, 10 Demo D"
+    },
+    {
+      "id": "GRA-04",
+      "area": "graph",
+      "title": "SVG and draw.io exports",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "master plan 4.7"
+    },
+    {
+      "id": "BIND-01",
+      "area": "bind",
+      "title": "eshana CLI over the single JSON entry point",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "11/11 CLI commands exercised by the acceptance gate",
+      "evidence_paths": [
+        "crates/eshana-cli/src/main.rs"
+      ]
+    },
+    {
+      "id": "BIND-02",
+      "area": "bind",
+      "title": "Python package via PyO3 and maturin; parity with the CLI",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "21 python tests; acceptance @cap_python_parity",
+      "evidence_paths": [
+        "crates/eshana-python/tests/test_eshana.py"
+      ]
+    },
+    {
+      "id": "BIND-03",
+      "area": "bind",
+      "title": "Node.js bindings (NAPI-RS)",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 8.2"
+    },
+    {
+      "id": "BIND-04",
+      "area": "bind",
+      "title": "Browser WASM bindings",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 8.2"
+    },
+    {
+      "id": "BIND-05",
+      "area": "bind",
+      "title": "MCP server: compute_positions, create_vedic_chart, compare_charts, compute_human_design, compute_numerology, explain_derivation",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 5.4"
+    },
+    {
+      "id": "BIND-06",
+      "area": "bind",
+      "title": "Publish eshana to PyPI",
+      "status": "released",
+      "track": "primary",
+      "evidence": "eshana 0.1.0 on PyPI 2026-11-21 (macOS arm64 abi3 wheel + sdist); TestPyPI first; fresh `uv run --with eshana==0.1.0` imports and renders a report. Linux/Windows wheels follow via release.yml."
+    },
+    {
+      "id": "BIND-07",
+      "area": "bind",
+      "title": "Publish crates to crates.io",
+      "status": "proposed",
+      "track": "primary",
+      "depends_on": [
+        "NAME-01",
+        "NAME-02"
+      ]
+    },
+    {
+      "id": "BIND-08",
+      "area": "bind",
+      "title": "Wheels for Linux, macOS and Windows",
+      "status": "proposed",
+      "track": "primary",
+      "depends_on": [
+        "BIND-06"
+      ]
+    },
+    {
+      "id": "RULE-01",
+      "area": "bind",
+      "title": "Data-driven rule packs with validator and mandatory source",
+      "status": "proposed",
+      "track": "secondary",
+      "source": "ADR-004"
+    },
+    {
+      "id": "QA-01",
+      "area": "qa",
+      "title": "Unit and property tests (time, angles, rules)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "cargo test: 103 tests across five crates; proptest properties in eshana-time"
+    },
+    {
+      "id": "QA-02",
+      "area": "qa",
+      "title": "Golden positions vs JPL DE440s from an independent pipeline",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "9 instants x 10 bodies; both providers",
+      "evidence_paths": [
+        "benchmarks/golden/positions_de440s.json"
+      ]
+    },
+    {
+      "id": "QA-03",
+      "area": "qa",
+      "title": "Differential tests vs the Swiss Ephemeris as an offline oracle",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "ayanamsha, ASC/MC, houses, nodes, sidereal Sun and Moon",
+      "evidence_paths": [
+        "benchmarks/golden/swiss_oracle.json"
+      ]
+    },
+    {
+      "id": "QA-04",
+      "area": "qa",
+      "title": "Capability acceptance suite and PROMOTE/CONDITIONAL/BLOCK gate",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "74 scenarios, 17 capabilities, 11/11 CLI surface, decision PROMOTE",
+      "evidence_paths": [
+        "acceptance/capabilities.yaml"
+      ]
+    },
+    {
+      "id": "QA-05",
+      "area": "qa",
+      "title": "Acceptance against the built wheel in a fresh venv",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "make acceptance-wheel: PROMOTE, 74 scenarios against the wheel in a fresh venv",
+      "evidence_paths": [
+        "Makefile"
+      ]
+    },
+    {
+      "id": "QA-06",
+      "area": "qa",
+      "title": "Fuzzing of input and time parsers (cargo-fuzz)",
+      "status": "proposed",
+      "track": "primary",
+      "note": "proptest 'never panics on text' covers the first level."
+    },
+    {
+      "id": "ACC-03",
+      "area": "qa",
+      "title": "Wider golden sampling and a randomised differential test",
+      "status": "verified",
+      "track": "primary",
+      "note": "9 instants only in the position fixture.",
+      "evidence": "44-chart Swiss reference set (16 cities, 1852-2140) plus independent re-derivation; tolerances with measured margins, checked by scripts/accuracy_report.py --check."
+    },
+    {
+      "id": "PERF-01",
+      "area": "qa",
+      "title": "Benchmarks: cold start, single chart, batch 100/1000; regression threshold",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 6.2, 11"
+    },
+    {
+      "id": "QA-07",
+      "area": "qa",
+      "title": "Browser journeys for the website (real Chrome)",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "DOC-01",
+      "area": "docs",
+      "title": "Docs: concepts, guides, reference, ADRs, accuracy",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "scripts/check_docs.py: 41 pages, front matter (valid YAML), links, ADR index, every error code documented"
+    },
+    {
+      "id": "DOC-02",
+      "area": "docs",
+      "title": "Astro docs site with interactive landing and demos",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "astro check 0 errors; astro build 44 pages; landing and demos viewed in headless Chrome (wheel, graph, tables render)"
+    },
+    {
+      "id": "DOC-03",
+      "area": "docs",
+      "title": "Demos A-E from the master plan, generated from real runs",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "scripts/build_demo.py regenerates 9 data files from the real binary; --check fails on drift"
+    },
+    {
+      "id": "DOC-04",
+      "area": "docs",
+      "title": "Cookbook: notebooks and agent recipes",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "DOC-05",
+      "area": "docs",
+      "title": "API docs for the Rust crates on docs.rs",
+      "status": "proposed",
+      "track": "primary",
+      "depends_on": [
+        "BIND-07"
+      ]
+    },
+    {
+      "id": "SEC-01",
+      "area": "sec",
+      "title": "cargo deny (licences, advisories, bans) and cargo audit in CI",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "cargo deny and cargo audit pass locally; they found chrono and chrono-tz unmaintained (RUSTSEC-2026-0543/-0555), fixed by moving to jiff, not by ignoring. CI run still pending",
+      "evidence_paths": [
+        "deny.toml",
+        ".github/workflows/security.yml"
+      ]
+    },
+    {
+      "id": "SEC-02",
+      "area": "sec",
+      "title": "Distribution scan of the built wheel (secrets, vulns, heuristics)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "scripts/scan_dist.py over the built wheel: PASS on secrets, vulns (pip-audit, grype, osv), bundled, signatures, heuristics, metadata, bounds, licences, mentions; it found a missing licence classifier, fixed",
+      "evidence_paths": [
+        "scripts/scan_dist.py"
+      ]
+    },
+    {
+      "id": "SEC-03",
+      "area": "sec",
+      "title": "Signed releases, SBOM, provenance attestations",
+      "status": "proposed",
+      "track": "primary",
+      "source": "master plan 7"
+    },
+    {
+      "id": "SEC-04",
+      "area": "sec",
+      "title": "CI: build, test, lint, acceptance, docs, security",
+      "status": "implemented",
+      "track": "primary",
+      "evidence": "workflows written; first run pending",
+      "evidence_paths": [
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "id": "TIME-06",
+      "area": "core",
+      "title": "Replace unmaintained chrono and chrono-tz with jiff (bundled tz database)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "RUSTSEC-2026-0543 and -0555 cleared; all 18 time tests and 74 acceptance scenarios pass on jiff; bundled tzdb 2026f"
+    },
+    {
+      "id": "REP-01",
+      "area": "docs",
+      "title": "Self-contained HTML chart report (eshana-report, Chart.to_html, Jupyter)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "crates/eshana-python/tests/test_report.py (14 tests); acceptance capability 'report' (5 scenarios) PROMOTE; examples/reports/*.html viewed in Chrome."
+    },
+    {
+      "id": "REP-02",
+      "area": "docs",
+      "title": "Panchang Chakra wheel, South and North Indian charts, varga tabs, dasha, nakshatra reference in the report",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Rendered and inspected in headless Chrome; North Indian house 1 holds the lagna sign (test)."
+    },
+    {
+      "id": "REP-03",
+      "area": "docs",
+      "title": "Report renders saved CLI envelopes (--from-json)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "acceptance scenario 'Saved CLI envelopes render without recomputing'."
+    },
+    {
+      "id": "REP-04",
+      "area": "docs",
+      "title": "Report on the website: demos section G and /reports/",
+      "status": "implemented",
+      "track": "primary",
+      "note": "Verified when the Pages site deploys."
+    },
+    {
+      "id": "REP-05",
+      "area": "docs",
+      "title": "Report extras: Panchanga day section, more vargas, PDF preset",
+      "status": "proposed",
+      "track": "secondary"
+    },
+    {
+      "id": "ACC-04",
+      "area": "qa",
+      "title": "More published reference charts (sites that print full input and output)",
+      "status": "proposed",
+      "track": "primary",
+      "note": "Recipe in docs/guides/accuracy-suite.md."
+    },
+    {
+      "id": "ACC-05",
+      "area": "qa",
+      "title": "Accuracy suite in CI with the JPL kernel",
+      "status": "implemented",
+      "track": "primary",
+      "note": "ci.yml job 'accuracy'; verified on the first GitHub run."
+    },
+    {
+      "id": "FIX-01",
+      "area": "astro",
+      "title": "Sidereal whole-sign cusps one sign early near sign boundaries",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Found by the accuracy suite; regression test whole_sign_cusps_start_at_the_ascendant_sign_in_both_zodiacs."
+    },
+    {
+      "id": "FIX-02",
+      "area": "vedic",
+      "title": "Antardasha seam: last sub-period ends exactly at its mahadasha",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "dasha_structure_and_balance asserts exact tiling; accuracy suite checks every period."
+    },
+    {
+      "id": "DOC-06",
+      "area": "docs",
+      "title": "Architecture diagrams as code (5 animated SVGs, draw.io, interactive page)",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "make diagrams; docs/architecture/; screenshots checked."
+    },
+    {
+      "id": "DOC-07",
+      "area": "docs",
+      "title": "Guides: ways to use, HTML report, accuracy suite, publishing; next steps; ADR-011",
+      "status": "verified",
+      "track": "primary",
+      "evidence": "scripts/check_docs.py passes."
+    },
+    {
+      "id": "SEC-05",
+      "area": "sec",
+      "title": "Release workflow with PyPI trusted publishing (no token in GitHub)",
+      "status": "implemented",
+      "track": "primary",
+      "note": "Needs the GitHub publisher added on PyPI."
+    }
+  ]
+}

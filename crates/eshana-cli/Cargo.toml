@@ -1,0 +1,26 @@
+[package]
+name = "eshana-cli"
+description = "ESHANA command line: positions, charts, Human Design, numerology, method comparison and graph export as JSON"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[[bin]]
+name = "eshana"
+path = "src/main.rs"
+
+[dependencies]
+eshana-core.workspace = true
+eshana-time.workspace = true
+eshana-ephemeris.workspace = true
+eshana-engine.workspace = true
+serde_json.workspace = true
+clap.workspace = true
+
+[lints]
+workspace = true

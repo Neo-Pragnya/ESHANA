@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1933 628" width="1933" height="628" font-family="Amazon Ember, Inter, Arial, Helvetica, sans-serif" class="archviz-svg" data-uid="av-02-doctrine" role="img" aria-label="Compute, Derive, Interpret: the engine stops after Derive">
+<title>Compute, Derive, Interpret: the engine stops after Derive</title>
+<defs>
+<marker id="av-02-doctrine-ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545B64"/></marker>
+<marker id="av-02-doctrine-mn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E7157B"/></marker>
+<marker id="av-02-doctrine-mh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FF9900"/></marker>
+<marker id="av-02-doctrine-mc0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B4322A"/></marker>
+<marker id="av-02-doctrine-mc1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B7791F"/></marker>
+<filter id="av-02-doctrine-glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FF9900" flood-opacity=".9"/></filter>
+<filter id="av-02-doctrine-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F1B2D" flood-opacity=".12"/></filter>
+</defs>
+<style>
+.av-02-doctrine text{fill:#232F3E}
+.av-02-doctrine .fl .ln{fill:none;stroke:#545B64;stroke-width:1.7}
+.av-02-doctrine .fl.dsh .ln{stroke-dasharray:5 4}
+.av-02-doctrine .fl .ant{fill:none;stroke:#FF9900;stroke-width:3;stroke-dasharray:7 11;opacity:0}
+.av-02-doctrine .bdg circle{fill:#232F3E}
+.av-02-doctrine .bdg text{fill:#fff;font-weight:700;font-size:12px}
+.av-02-doctrine .future{opacity:.13;filter:grayscale(1)}
+.av-02-doctrine .deleted{opacity:.35;filter:grayscale(1)}
+.av-02-doctrine .new .ln{stroke:#E7157B;stroke-width:2.4}
+.av-02-doctrine .new .ant{opacity:1;stroke:#E7157B;animation:av-02-doctrine-ants 1.1s linear infinite}
+.av-02-doctrine .new .bdg circle{fill:#E7157B}
+.av-02-doctrine .nd.new .halo{opacity:1;animation:av-02-doctrine-pulse 1.6s ease-in-out infinite}
+.av-02-doctrine .nd .halo{opacity:0;fill:none;stroke:#E7157B;stroke-width:3}
+.av-02-doctrine .lg.new text{fill:#E7157B}
+.av-02-doctrine .lg.future{opacity:.25}
+.av-02-doctrine .cap text{fill:#fff}
+@keyframes av-02-doctrine-ants{to{stroke-dashoffset:-36}}
+@keyframes av-02-doctrine-pulse{0%,100%{stroke-opacity:.25}50%{stroke-opacity:1}}
+@media (prefers-reduced-motion:reduce){.av-02-doctrine *{animation:none!important}}
+.av-02-doctrine .fl.c0 .ln{stroke:#B4322A;stroke-width:2.2}.av-02-doctrine .fl.c1 .ln{stroke:#B7791F;stroke-width:2.2}.av-02-doctrine .fl .ant{animation:av-02-doctrine-ants 1.1s linear infinite}</style>
+<g class="av-02-doctrine">
+<rect x="0" y="0" width="1933" height="628" fill="#FFFFFF"/>
+<text x="36" y="44" font-size="22" font-weight="700">Compute, Derive, Interpret: the engine stops after Derive</text>
+<text x="36" y="68" font-size="13" fill="#5F6B7A">Each value carries an epistemic label. Interpretation is a separate, opt-in layer that ESHANA does not ship.</text>
+<g class="cap"><rect x="36" y="82" width="1399" height="32" rx="7" fill="#232F3E"/>
+<rect x="36" y="110" width="0" height="4" rx="2" fill="#FF9900"><animate attributeName="width" values="0;1399" dur="9.60s" repeatCount="indefinite"/></rect>
+<text x="48" y="103" font-size="13" font-weight="700" style="fill:#FF9900">▶ NOW</text>
+<text x="108" y="103" font-size="13.5" opacity="0">1 · Computed numbers feed the tradition rules; the rule version travels with every result<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0100;0.2400;0.2500;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">2 · The engine does not cross this line: interpretations is always an empty list<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0100;0.2400;0.2500;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">3 · Anything beyond the line is yours, and has to say what kind of claim it is<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0100;0.2400;0.2500;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">4 · When the input cannot support an answer, ESHANA refuses with a stable ESH- error code<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0100;0.2400;0.2500;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></text>
+</g>
+<g class="fl f1 built " data-n="1" data-stage="0">
+<path class="ln" d="M451.0,297.6 L561.8,297.6" marker-end="url(#av-02-doctrine-ma)"/>
+<path class="ant" d="M451.0,297.6 L561.8,297.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="475.4" cy="297.6" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></circle><text x="475.4" y="301.6" text-anchor="middle">1</text></g></g>
+<g class="fl f2 built c0 dsh" data-n="2" data-stage="0">
+<path class="ln" d="M921.4,297.6 L1032.2,297.6" marker-end="url(#av-02-doctrine-mc0)"/>
+<path class="ant" d="M921.4,297.6 L1032.2,297.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="945.8" cy="297.6" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></circle><text x="945.8" y="301.6" text-anchor="middle">2</text></g></g>
+<g class="fl f3 built " data-n="3" data-stage="0">
+<path class="ln" d="M1228.8,346.6 L1228.8,453.4" marker-end="url(#av-02-doctrine-ma)"/>
+<path class="ant" d="M1228.8,346.6 L1228.8,453.4" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1228.8" cy="370.1" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></circle><text x="1228.8" y="374.1" text-anchor="middle">3</text></g></g>
+<g class="fl f4 built c1 dsh" data-n="4" data-stage="0">
+<path class="ln" d="M741.6,346.6 L741.6,453.4" marker-end="url(#av-02-doctrine-mc1)"/>
+<path class="ant" d="M741.6,346.6 L741.6,453.4" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="741.6" cy="370.1" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></circle><text x="741.6" y="374.1" text-anchor="middle">4</text></g></g>
+<g class="nd built" data-id="c" data-stage="0">
+<rect class="halo" x="89.4" y="246.6" width="363.6" height="102.0" rx="12"/>
+<rect x="95.4" y="252.6" width="351.6" height="90.0" rx="9" fill="#FFFFFF" stroke="#3B48CC" stroke-width="1.5" filter="url(#av-02-doctrine-shadow)"/>
+<path d="M95.4,280.6 V261.6 Q95.4,252.6 104.4,252.6 H438.0 Q447.0,252.6 447.0,261.6 V280.6 Z" fill="#3B48CC"/>
+<text x="105.4" y="271.6" font-size="13" font-weight="700" style="fill:#FFFFFF">1 · Compute</text>
+<text x="105.4" y="298.6" font-size="12.3">positions, houses, time scales</text>
+<text x="105.4" y="314.6" font-size="12.3">label: calculated</text>
+<text x="105.4" y="330.6" font-size="12.3">checked against JPL DE440s</text>
+</g>
+<g class="nd built" data-id="d" data-stage="0">
+<rect class="halo" x="559.8" y="246.6" width="363.6" height="102.0" rx="12"/>
+<rect x="565.8" y="252.6" width="351.6" height="90.0" rx="9" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#av-02-doctrine-shadow)"/>
+<path d="M565.8,280.6 V261.6 Q565.8,252.6 574.8,252.6 H908.4 Q917.4,252.6 917.4,261.6 V280.6 Z" fill="#6D28D9"/>
+<text x="575.8" y="271.6" font-size="13" font-weight="700" style="fill:#FFFFFF">2 · Derive</text>
+<text x="575.8" y="298.6" font-size="12.3">nakshatra, bhava, dasha, gates</text>
+<text x="575.8" y="314.6" font-size="12.3">label: tradition_rule</text>
+<text x="575.8" y="330.6" font-size="12.3">rule pack and version recorded</text>
+</g>
+<g class="nd built" data-id="i" data-stage="0">
+<rect class="halo" x="1030.2" y="246.6" width="397.2" height="102.0" rx="12"/>
+<rect x="1036.2" y="252.6" width="385.2" height="90.0" rx="9" fill="#FFFFFF" stroke="#B4322A" stroke-width="1.5" filter="url(#av-02-doctrine-shadow)"/>
+<path d="M1036.2,280.6 V261.6 Q1036.2,252.6 1045.2,252.6 H1412.4 Q1421.4,252.6 1421.4,261.6 V280.6 Z" fill="#B4322A"/>
+<text x="1046.2" y="271.6" font-size="13" font-weight="700" style="fill:#FFFFFF">3 · Interpret</text>
+<text x="1046.2" y="298.6" font-size="12.3">meanings, predictions, advice</text>
+<text x="1046.2" y="314.6" font-size="12.3">labels: speculative / hypothesis</text>
+<text x="1046.2" y="330.6" font-size="12.3">NOT in the engine: interpretations = []</text>
+</g>
+<g class="nd built" data-id="u" data-stage="0">
+<rect class="halo" x="1030.2" y="451.4" width="397.2" height="102.0" rx="12"/>
+<rect x="1036.2" y="457.4" width="385.2" height="90.0" rx="9" fill="#FFFFFF" stroke="#334155" stroke-width="1.5" filter="url(#av-02-doctrine-shadow)"/>
+<path d="M1036.2,485.4 V466.4 Q1036.2,457.4 1045.2,457.4 H1412.4 Q1421.4,457.4 1421.4,466.4 V485.4 Z" fill="#334155"/>
+<text x="1046.2" y="476.4" font-size="13" font-weight="700" style="fill:#FFFFFF">Your layer</text>
+<text x="1046.2" y="503.4" font-size="12.3">a plugin, notebook or app</text>
+<text x="1046.2" y="519.4" font-size="12.3">must label what it adds</text>
+<text x="1046.2" y="535.4" font-size="12.3">can cite rule ids from the envelope</text>
+</g>
+<g class="nd built" data-id="g" data-stage="0">
+<rect class="halo" x="559.8" y="451.4" width="363.6" height="102.0" rx="12"/>
+<rect x="565.8" y="457.4" width="351.6" height="90.0" rx="9" fill="#FFFFFF" stroke="#B7791F" stroke-width="1.5" filter="url(#av-02-doctrine-shadow)"/>
+<path d="M565.8,485.4 V466.4 Q565.8,457.4 574.8,457.4 H908.4 Q917.4,457.4 917.4,466.4 V485.4 Z" fill="#B7791F"/>
+<text x="575.8" y="476.4" font-size="13" font-weight="700" style="fill:#FFFFFF">Refusals</text>
+<text x="575.8" y="503.4" font-size="12.3">sidereal without ayanamsha</text>
+<text x="575.8" y="519.4" font-size="12.3">ambiguous or skipped local time</text>
+<text x="575.8" y="535.4" font-size="12.3">polar Placidus houses</text>
+</g>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-02-doctrine-glow)"/><rect x="-42.0" y="-27" width="84.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">calculated</text><animateMotion path="M451.0,297.6 L561.8,297.6" dur="9.60s" begin="0.00s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.2050;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.2050;0.2052;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></g>
+<circle cx="561.8" cy="297.6" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1988;0.2972;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1987;0.1988;0.2972;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#B4322A" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-02-doctrine-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">stop</text><animateMotion path="M921.4,297.6 L1032.2,297.6" dur="9.60s" begin="2.40s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.2050;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.2050;0.2052;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></g>
+<circle cx="1032.2" cy="297.6" r="10" fill="none" stroke="#B4322A" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1988;0.2972;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1987;0.1988;0.2972;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-02-doctrine-glow)"/><rect x="-24.5" y="-27" width="49.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">label</text><animateMotion path="M1228.8,346.6 L1228.8,453.4" dur="9.60s" begin="4.80s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.2050;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.2050;0.2052;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></g>
+<circle cx="1228.8" cy="453.4" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1988;0.2972;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1987;0.1988;0.2972;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#B7791F" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-02-doctrine-glow)"/><rect x="-24.5" y="-27" width="49.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">ESH-*</text><animateMotion path="M741.6,346.6 L741.6,453.4" dur="9.60s" begin="7.20s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.2050;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.2050;0.2052;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></g>
+<circle cx="741.6" cy="453.4" r="10" fill="none" stroke="#B7791F" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1988;0.2972;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1987;0.1988;0.2972;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></circle>
+<rect x="1459.2" y="0" width="473.79999999999995" height="628" fill="#F2F3F3"/>
+<text x="1471.2" y="44" font-size="15" font-weight="700">How it flows</text>
+<g class="lg l1 built" data-n="1"><g class="lb"><circle cx="1482.2" cy="72" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="0.00s" repeatCount="indefinite"/></circle><text x="1482.2" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">1</text></g>
+<text x="1501.2" y="76" font-size="12.5">Computed numbers feed the tradition rules; the rule</text>
+<text x="1501.2" y="91" font-size="12.5">version travels with every result</text>
+</g>
+<g class="lg l2 built" data-n="2"><g class="lb"><circle cx="1482.2" cy="111" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="2.40s" repeatCount="indefinite"/></circle><text x="1482.2" y="115" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">2</text></g>
+<text x="1501.2" y="115" font-size="12.5">The engine does not cross this line: interpretations is</text>
+<text x="1501.2" y="130" font-size="12.5">always an empty list</text>
+</g>
+<g class="lg l3 built" data-n="3"><g class="lb"><circle cx="1482.2" cy="150" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="4.80s" repeatCount="indefinite"/></circle><text x="1482.2" y="154" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">3</text></g>
+<text x="1501.2" y="154" font-size="12.5">Anything beyond the line is yours, and has to say what</text>
+<text x="1501.2" y="169" font-size="12.5">kind of claim it is</text>
+</g>
+<g class="lg l4 built" data-n="4"><g class="lb"><circle cx="1482.2" cy="189" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.2425;0.2500;1" dur="9.60s" begin="7.20s" repeatCount="indefinite"/></circle><text x="1482.2" y="193" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">4</text></g>
+<text x="1501.2" y="193" font-size="12.5">When the input cannot support an answer, ESHANA refuses</text>
+<text x="1501.2" y="208" font-size="12.5">with a stable ESH- error code</text>
+</g>
+</g></svg>

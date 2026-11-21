@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2142 717" width="2142" height="717" font-family="Amazon Ember, Inter, Arial, Helvetica, sans-serif" class="archviz-svg" data-uid="av-01-system-overview" role="img" aria-label="ESHANA: one JSON entry point, three thin shells">
+<title>ESHANA: one JSON entry point, three thin shells</title>
+<defs>
+<marker id="av-01-system-overview-ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545B64"/></marker>
+<marker id="av-01-system-overview-mn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E7157B"/></marker>
+<marker id="av-01-system-overview-mh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FF9900"/></marker>
+<filter id="av-01-system-overview-glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FF9900" flood-opacity=".9"/></filter>
+<filter id="av-01-system-overview-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F1B2D" flood-opacity=".12"/></filter>
+</defs>
+<style>
+.av-01-system-overview text{fill:#232F3E}
+.av-01-system-overview .fl .ln{fill:none;stroke:#545B64;stroke-width:1.7}
+.av-01-system-overview .fl.dsh .ln{stroke-dasharray:5 4}
+.av-01-system-overview .fl .ant{fill:none;stroke:#FF9900;stroke-width:3;stroke-dasharray:7 11;opacity:0}
+.av-01-system-overview .bdg circle{fill:#232F3E}
+.av-01-system-overview .bdg text{fill:#fff;font-weight:700;font-size:12px}
+.av-01-system-overview .future{opacity:.13;filter:grayscale(1)}
+.av-01-system-overview .deleted{opacity:.35;filter:grayscale(1)}
+.av-01-system-overview .new .ln{stroke:#E7157B;stroke-width:2.4}
+.av-01-system-overview .new .ant{opacity:1;stroke:#E7157B;animation:av-01-system-overview-ants 1.1s linear infinite}
+.av-01-system-overview .new .bdg circle{fill:#E7157B}
+.av-01-system-overview .nd.new .halo{opacity:1;animation:av-01-system-overview-pulse 1.6s ease-in-out infinite}
+.av-01-system-overview .nd .halo{opacity:0;fill:none;stroke:#E7157B;stroke-width:3}
+.av-01-system-overview .lg.new text{fill:#E7157B}
+.av-01-system-overview .lg.future{opacity:.25}
+.av-01-system-overview .cap text{fill:#fff}
+@keyframes av-01-system-overview-ants{to{stroke-dashoffset:-36}}
+@keyframes av-01-system-overview-pulse{0%,100%{stroke-opacity:.25}50%{stroke-opacity:1}}
+@media (prefers-reduced-motion:reduce){.av-01-system-overview *{animation:none!important}}
+.av-01-system-overview .fl .ant{animation:av-01-system-overview-ants 1.1s linear infinite}</style>
+<g class="av-01-system-overview">
+<rect x="0" y="0" width="2142" height="717" fill="#FFFFFF"/>
+<text x="36" y="44" font-size="22" font-weight="700">ESHANA: one JSON entry point, three thin shells</text>
+<text x="36" y="68" font-size="13" fill="#5F6B7A">Every surface calls Engine::execute_json, so the CLI, the Python package and the HTML report cannot disagree.</text>
+<g class="cap"><rect x="36" y="82" width="1609" height="32" rx="7" fill="#232F3E"/>
+<rect x="36" y="110" width="0" height="4" rx="2" fill="#FF9900"><animate attributeName="width" values="0;1609" dur="16.80s" repeatCount="indefinite"/></rect>
+<text x="48" y="103" font-size="13" font-weight="700" style="fill:#FF9900">▶ NOW</text>
+<text x="108" y="103" font-size="13.5" opacity="0">1 · A request names an instant (UTC, or civil time plus zone) and the settings used<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">2 · The instant becomes TT and UT time scales and Julian dates<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">3 · A provider returns apparent ecliptic positions in one frame<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">4 · Rule packs derive signs, houses, nakshatra, dasha and gates; each value is labelled<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">5 · The CLI prints the envelope as JSON<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">6 · Python returns the same data as a dict or a Chart<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">7 · The report renderer turns the envelope into one self-contained HTML file<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0057;0.1371;0.1429;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></text>
+</g>
+<g class="fl f1 built " data-n="1" data-stage="0">
+<path class="ln" d="M358.6,425.6 L409.8,425.6 L409.8,272.0 L461.0,272.0" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M358.6,425.6 L409.8,425.6 L409.8,272.0 L461.0,272.0" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="409.8" cy="420.5" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></circle><text x="409.8" y="424.5" text-anchor="middle">1</text></g></g>
+<g class="fl f2 built " data-n="2" data-stage="0">
+<path class="ln" d="M624.0,321.0 L624.0,440.6" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M624.0,321.0 L624.0,440.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="624.0" cy="347.3" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></circle><text x="624.0" y="351.3" text-anchor="middle">2</text></g></g>
+<g class="fl f3 built " data-n="3" data-stage="0">
+<path class="ln" d="M787.0,489.6 L842.4,489.6 L842.4,374.4 L897.8,374.4" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M787.0,489.6 L842.4,489.6 L842.4,374.4 L897.8,374.4" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="836.7" cy="489.6" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></circle><text x="836.7" y="493.6" text-anchor="middle">3</text></g></g>
+<g class="fl f4 built " data-n="4" data-stage="0">
+<path class="ln" d="M1060.8,423.4 L1060.8,543.0" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M1060.8,423.4 L1060.8,543.0" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1060.8" cy="449.7" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></circle><text x="1060.8" y="453.7" text-anchor="middle">4</text></g></g>
+<g class="fl f5 built " data-n="5" data-stage="0">
+<path class="ln" d="M1223.8,592.0 L1312.8,592.0 L1312.8,259.2 L1385.0,259.2" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M1223.8,592.0 L1312.8,592.0 L1312.8,259.2 L1385.0,259.2" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1312.8" cy="384.6" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></circle><text x="1312.8" y="388.6" text-anchor="middle">5</text></g></g>
+<g class="fl f6 built " data-n="6" data-stage="0">
+<path class="ln" d="M1223.8,592.0 L1346.4,592.0 L1346.4,425.6 L1385.0,425.6" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M1223.8,592.0 L1346.4,592.0 L1346.4,425.6 L1385.0,425.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1346.4" cy="468.9" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></circle><text x="1346.4" y="472.9" text-anchor="middle">6</text></g></g>
+<g class="fl f7 built " data-n="7" data-stage="0">
+<path class="ln" d="M1223.8,592.0 L1385.0,592.0" marker-end="url(#av-01-system-overview-ma)"/>
+<path class="ant" d="M1223.8,592.0 L1385.0,592.0" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1360.8" cy="592.0" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></circle><text x="1360.8" y="596.0" text-anchor="middle">7</text></g></g>
+<g class="nd built" data-id="req" data-stage="0">
+<rect class="halo" x="47.4" y="374.6" width="313.2" height="102.0" rx="12"/>
+<rect x="53.4" y="380.6" width="301.2" height="90.0" rx="9" fill="#FFFFFF" stroke="#334155" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M53.4,408.6 V389.6 Q53.4,380.6 62.4,380.6 H345.6 Q354.6,380.6 354.6,389.6 V408.6 Z" fill="#334155"/>
+<text x="63.4" y="399.6" font-size="13" font-weight="700" style="fill:#FFFFFF">Request (JSON)</text>
+<text x="63.4" y="426.6" font-size="12.3">when + place + settings</text>
+<text x="63.4" y="442.6" font-size="12.3">positions · chart · human_design</text>
+<text x="63.4" y="458.6" font-size="12.3">numerology · compare · graph</text>
+</g>
+<g class="nd built" data-id="time" data-stage="0">
+<rect class="halo" x="459.0" y="221.0" width="330.0" height="102.0" rx="12"/>
+<rect x="465.0" y="227.0" width="318.0" height="90.0" rx="9" fill="#FFFFFF" stroke="#3B48CC" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M465.0,255.0 V236.0 Q465.0,227.0 474.0,227.0 H774.0 Q783.0,227.0 783.0,236.0 V255.0 Z" fill="#3B48CC"/>
+<text x="475.0" y="246.0" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana-time</text>
+<text x="475.0" y="273.0" font-size="12.3">civil time to UTC with tz rules</text>
+<text x="475.0" y="289.0" font-size="12.3">fold / gap refused, never guessed</text>
+<text x="475.0" y="305.0" font-size="12.3">leap seconds, delta-T</text>
+</g>
+<g class="nd built" data-id="eph" data-stage="0">
+<rect class="halo" x="459.0" y="438.6" width="330.0" height="102.0" rx="12"/>
+<rect x="465.0" y="444.6" width="318.0" height="90.0" rx="9" fill="#FFFFFF" stroke="#3B48CC" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M465.0,472.6 V453.6 Q465.0,444.6 474.0,444.6 H774.0 Q783.0,444.6 783.0,453.6 V472.6 Z" fill="#3B48CC"/>
+<text x="475.0" y="463.6" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana-ephemeris</text>
+<text x="475.0" y="490.6" font-size="12.3">analytic provider (no files)</text>
+<text x="475.0" y="506.6" font-size="12.3">spk provider (your DE440s)</text>
+<text x="475.0" y="522.6" font-size="12.3">precession, nutation, aberration</text>
+</g>
+<g class="nd built" data-id="rules" data-stage="0">
+<rect class="halo" x="895.8" y="323.4" width="330.0" height="102.0" rx="12"/>
+<rect x="901.8" y="329.4" width="318.0" height="90.0" rx="9" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M901.8,357.4 V338.4 Q901.8,329.4 910.8,329.4 H1210.8 Q1219.8,329.4 1219.8,338.4 V357.4 Z" fill="#6D28D9"/>
+<text x="911.8" y="348.4" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana-engine</text>
+<text x="911.8" y="375.4" font-size="12.3">vedic.parashari@0.1</text>
+<text x="911.8" y="391.4" font-size="12.3">human_design.basic@0.1</text>
+<text x="911.8" y="407.4" font-size="12.3">numerology, houses, graph</text>
+</g>
+<g class="nd built" data-id="env" data-stage="0">
+<rect class="halo" x="895.8" y="541.0" width="330.0" height="102.0" rx="12"/>
+<rect x="901.8" y="547.0" width="318.0" height="90.0" rx="9" fill="#FFFFFF" stroke="#2F7D32" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M901.8,575.0 V556.0 Q901.8,547.0 910.8,547.0 H1210.8 Q1219.8,547.0 1219.8,556.0 V575.0 Z" fill="#2F7D32"/>
+<text x="911.8" y="566.0" font-size="13" font-weight="700" style="fill:#FFFFFF">Envelope (JSON)</text>
+<text x="911.8" y="593.0" font-size="12.3">calculated values, labelled</text>
+<text x="911.8" y="609.0" font-size="12.3">provenance + assumptions</text>
+<text x="911.8" y="625.0" font-size="12.3">interpretations: always []</text>
+</g>
+<g class="nd built" data-id="cli" data-stage="0">
+<rect class="halo" x="1383.0" y="224.2" width="262.8" height="70.0" rx="12"/>
+<rect x="1389.0" y="230.2" width="250.8" height="58.0" rx="9" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M1389.0,258.2 V239.2 Q1389.0,230.2 1398.0,230.2 H1630.8 Q1639.8,230.2 1639.8,239.2 V258.2 Z" fill="#0E7490"/>
+<text x="1399.0" y="249.2" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana CLI</text>
+<text x="1399.0" y="276.2" font-size="12.3">JSON in the terminal</text>
+</g>
+<g class="nd built" data-id="py" data-stage="0">
+<rect class="halo" x="1383.0" y="382.6" width="262.8" height="86.0" rx="12"/>
+<rect x="1389.0" y="388.6" width="250.8" height="74.0" rx="9" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M1389.0,416.6 V397.6 Q1389.0,388.6 1398.0,388.6 H1630.8 Q1639.8,388.6 1639.8,397.6 V416.6 Z" fill="#0E7490"/>
+<text x="1399.0" y="407.6" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana (Python)</text>
+<text x="1399.0" y="434.6" font-size="12.3">Chart objects</text>
+<text x="1399.0" y="450.6" font-size="12.3">execute(request)</text>
+</g>
+<g class="nd built" data-id="rep" data-stage="0">
+<rect class="halo" x="1383.0" y="557.0" width="262.8" height="70.0" rx="12"/>
+<rect x="1389.0" y="563.0" width="250.8" height="58.0" rx="9" fill="#FFFFFF" stroke="#B7791F" stroke-width="1.5" filter="url(#av-01-system-overview-shadow)"/>
+<path d="M1389.0,591.0 V572.0 Q1389.0,563.0 1398.0,563.0 H1630.8 Q1639.8,563.0 1639.8,572.0 V591.0 Z" fill="#B7791F"/>
+<text x="1399.0" y="582.0" font-size="13" font-weight="700" style="fill:#FFFFFF">eshana-report</text>
+<text x="1399.0" y="609.0" font-size="12.3">one HTML file, every chart</text>
+</g>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-31.5" y="-27" width="63.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">request</text><animateMotion path="M358.6,425.6 L409.8,425.6 L409.8,272.0 L461.0,272.0" dur="16.80s" begin="0.00s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></g>
+<circle cx="461.0" cy="272.0" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-14.0" y="-27" width="28.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">JD</text><animateMotion path="M624.0,321.0 L624.0,440.6" dur="16.80s" begin="2.40s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></g>
+<circle cx="624.0" cy="440.6" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-31.5" y="-27" width="63.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">lon/lat</text><animateMotion path="M787.0,489.6 L842.4,489.6 L842.4,374.4 L897.8,374.4" dur="16.80s" begin="4.80s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></g>
+<circle cx="897.8" cy="374.4" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-31.5" y="-27" width="63.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">derived</text><animateMotion path="M1060.8,423.4 L1060.8,543.0" dur="16.80s" begin="7.20s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></g>
+<circle cx="1060.8" cy="543.0" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">JSON</text><animateMotion path="M1223.8,592.0 L1312.8,592.0 L1312.8,259.2 L1385.0,259.2" dur="16.80s" begin="9.60s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></g>
+<circle cx="1385.0" cy="259.2" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">dict</text><animateMotion path="M1223.8,592.0 L1346.4,592.0 L1346.4,425.6 L1385.0,425.6" dur="16.80s" begin="12.00s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></g>
+<circle cx="1385.0" cy="425.6" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#av-01-system-overview-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">HTML</text><animateMotion path="M1223.8,592.0 L1385.0,592.0" dur="16.80s" begin="14.40s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1171;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1171;0.1173;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></g>
+<circle cx="1385.0" cy="592.0" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1136;0.1699;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1135;0.1136;0.1699;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></circle>
+<rect x="1668.6000000000001" y="0" width="473.39999999999986" height="717" fill="#F2F3F3"/>
+<text x="1680.6000000000001" y="44" font-size="15" font-weight="700">How it flows</text>
+<g class="lg l1 built" data-n="1"><g class="lb"><circle cx="1691.6000000000001" cy="72" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="0.00s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">1</text></g>
+<text x="1710.6000000000001" y="76" font-size="12.5">A request names an instant (UTC, or civil time plus zone)</text>
+<text x="1710.6000000000001" y="91" font-size="12.5">and the settings used</text>
+</g>
+<g class="lg l2 built" data-n="2"><g class="lb"><circle cx="1691.6000000000001" cy="111" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="2.40s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="115" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">2</text></g>
+<text x="1710.6000000000001" y="115" font-size="12.5">The instant becomes TT and UT time scales and Julian dates</text>
+</g>
+<g class="lg l3 built" data-n="3"><g class="lb"><circle cx="1691.6000000000001" cy="135" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="4.80s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">3</text></g>
+<text x="1710.6000000000001" y="139" font-size="12.5">A provider returns apparent ecliptic positions in one</text>
+<text x="1710.6000000000001" y="154" font-size="12.5">frame</text>
+</g>
+<g class="lg l4 built" data-n="4"><g class="lb"><circle cx="1691.6000000000001" cy="174" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="7.20s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">4</text></g>
+<text x="1710.6000000000001" y="178" font-size="12.5">Rule packs derive signs, houses, nakshatra, dasha and</text>
+<text x="1710.6000000000001" y="193" font-size="12.5">gates; each value is labelled</text>
+</g>
+<g class="lg l5 built" data-n="5"><g class="lb"><circle cx="1691.6000000000001" cy="213" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="9.60s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="217" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">5</text></g>
+<text x="1710.6000000000001" y="217" font-size="12.5">The CLI prints the envelope as JSON</text>
+</g>
+<g class="lg l6 built" data-n="6"><g class="lb"><circle cx="1691.6000000000001" cy="237" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="12.00s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="241" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">6</text></g>
+<text x="1710.6000000000001" y="241" font-size="12.5">Python returns the same data as a dict or a Chart</text>
+</g>
+<g class="lg l7 built" data-n="7"><g class="lb"><circle cx="1691.6000000000001" cy="261" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1386;0.1429;1" dur="16.80s" begin="14.40s" repeatCount="indefinite"/></circle><text x="1691.6000000000001" y="265" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">7</text></g>
+<text x="1710.6000000000001" y="265" font-size="12.5">The report renderer turns the envelope into one</text>
+<text x="1710.6000000000001" y="280" font-size="12.5">self-contained HTML file</text>
+</g>
+</g></svg>

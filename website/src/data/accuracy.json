@@ -1,0 +1,106 @@
+{
+ "analytic": {
+  "jupiter": {
+   "max_lat_arcsec": 9.5,
+   "max_lon_arcsec": 342.3,
+   "median_lon_arcsec": 137.5
+  },
+  "mars": {
+   "max_lat_arcsec": 1.6,
+   "max_lon_arcsec": 31.5,
+   "median_lon_arcsec": 7.2
+  },
+  "mercury": {
+   "max_lat_arcsec": 1.9,
+   "max_lon_arcsec": 27.8,
+   "median_lon_arcsec": 4.2
+  },
+  "moon": {
+   "max_lat_arcsec": 7.6,
+   "max_lon_arcsec": 2.9,
+   "median_lon_arcsec": 1.9
+  },
+  "neptune": {
+   "max_lat_arcsec": 1.3,
+   "max_lon_arcsec": 44.0,
+   "median_lon_arcsec": 21.7
+  },
+  "pluto": {
+   "max_lat_arcsec": 6.7,
+   "max_lon_arcsec": 49.2,
+   "median_lon_arcsec": 21.0
+  },
+  "saturn": {
+   "max_lat_arcsec": 36.1,
+   "max_lon_arcsec": 1025.6,
+   "median_lon_arcsec": 286.9
+  },
+  "sun": {
+   "max_lat_arcsec": 1.1,
+   "max_lon_arcsec": 15.8,
+   "median_lon_arcsec": 5.9
+  },
+  "uranus": {
+   "max_lat_arcsec": 2.9,
+   "max_lon_arcsec": 103.3,
+   "median_lon_arcsec": 51.3
+  },
+  "venus": {
+   "max_lat_arcsec": 3.2,
+   "max_lon_arcsec": 22.4,
+   "median_lon_arcsec": 8.6
+  }
+ },
+ "spk": {
+  "jupiter": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "mars": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "mercury": {
+   "max_lat_arcsec": 0.1,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "moon": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "neptune": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "pluto": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "saturn": {
+   "max_lat_arcsec": 0.2,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "sun": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "uranus": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  },
+  "venus": {
+   "max_lat_arcsec": 0.0,
+   "max_lon_arcsec": 0.3,
+   "median_lon_arcsec": 0.1
+  }
+ }
+}

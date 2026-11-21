@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="ESHANA 0.1.0">
+<title>Sample Western · birth chart</title>
+<style>
+:root{--paper:#f7f5f0;--panel:#fff;--ink:#1f1d1a;--muted:#6b665e;--line:#e3ded3;--accent:#c8102e;--chip:#f1ede4;
+--shadow:0 10px 30px rgba(40,30,10,.12);--disc:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#16151a;--panel:#211f26;--ink:#f0ece4;
+--muted:#a59f95;--line:#37343d;--accent:#ff5c70;--chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}}
+:root[data-theme="dark"]{--paper:#16151a;--panel:#211f26;--ink:#f0ece4;--muted:#a59f95;--line:#37343d;--accent:#ff5c70;
+--chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.45 "Open Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header.top{max-width:1240px;margin:0 auto;padding:22px 16px 6px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+header.top h1{margin:0;font-style:italic;font-weight:800;font-size:clamp(22px,3vw,34px)}
+header.top .sub{color:var(--muted);font-size:14px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px;box-shadow:var(--shadow)}
+.btn:hover{border-color:var(--ink)}
+nav.toc{max-width:1240px;margin:6px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px}
+nav.toc a{background:var(--chip);color:var(--ink);text-decoration:none;border-radius:999px;padding:3px 10px;font-size:13px}
+main{max-width:1240px;margin:0 auto;padding:10px 16px 40px;display:grid;gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px;min-width:0}
+.card h2{margin:0 0 6px;font-style:italic;font-weight:800;font-size:22px}
+.card h3{font-size:15px;margin:14px 0 6px}
+p.lead,.note{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start;margin-bottom:12px}
+.figure svg{width:100%;height:auto;display:block}
+.figure.small{max-width:300px}
+.figure .chakra{max-width:760px;margin:0 auto}
+.lbl{text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.seg{stroke:#fff;stroke-width:1.2}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:6px 0 10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 9px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--chip);font-size:12.5px;position:sticky;top:0}
+tbody tr:hover,tr.hl{background:var(--chip)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.35);margin-right:6px;vertical-align:middle}
+.facts{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:4px 12px;margin:0 0 10px;font-size:13.5px}
+.facts dt{color:var(--muted)}.facts dd{margin:0;overflow-wrap:anywhere}
+.flags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.flag{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:3px 10px;font-size:13px}
+.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mini h3{margin-top:0}
+.hd{display:grid;grid-template-columns:minmax(200px,300px) 1fr;gap:16px;align-items:start}
+@media (max-width:720px){.hd{grid-template-columns:1fr}}
+.red{color:var(--accent)}
+.ep{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;background:var(--chip);border:1px solid var(--line)}
+.ep-calculated{color:#2563EB}.ep-tradition_rule{color:#7C3AED}
+details{border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0}
+details.cur{border-color:var(--accent)}
+summary{cursor:pointer}
+ul.ants{columns:2;font-size:13px;margin:6px 0}
+@media (max-width:720px){ul.ants{columns:1}}
+ul.ants li.cur{color:var(--accent);font-weight:700}
+ul.warn li{color:var(--accent)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.tab{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:3px 11px;cursor:pointer;font:inherit;font-size:13px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--panel)}
+.pane{max-width:520px}
+[data-body].hl circle,[data-body].hl{filter:drop-shadow(0 0 6px var(--accent))}
+line.asp.dim{opacity:.08}
+pre.raw{max-height:420px;overflow:auto;background:var(--chip);border-radius:10px;padding:10px;font-size:12px}
+footer{max-width:1240px;margin:0 auto 30px;padding:0 16px;color:var(--muted);font-size:12.5px}
+code{font-size:12px}
+@media print{.tools,nav.toc{display:none}.card{box-shadow:none;break-inside:avoid}body{background:#fff}
+details{break-inside:avoid}details>*{display:block}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>Sample Western · birth chart</h1><div class="sub">Sample Western · 1985-11-03 06:45 (Europe/London) · London, UK</div></div>
+<div class="tools"><button class="btn" id="theme" type="button">◐ Theme</button>
+<button class="btn" id="print" type="button">⎙ Print / PDF</button>
+<button class="btn" id="json" type="button">⤓ Export JSON</button></div></header>
+<nav class="toc" aria-label="Sections"><a href="#summary">Birth data</a><a href="#western">Western</a><a href="#numerology">Numerology</a><a href="#provenance">Provenance</a><a href="#raw">JSON</a></nav>
+<main>
+<section class="card" id="summary"><h2>Birth data</h2><p class="lead">Computed by ESHANA. Values are labelled calculated or tradition_rule; nothing here is an interpretation.</p><div class="flags"></div><dl class="facts"><dt>Name</dt><dd>Sample Western</dd><dt>Place</dt><dd>London, UK</dd><dt>Local date and time</dt><dd>1985-11-03 06:45 (Europe/London)</dd><dt>Instant (UTC)</dt><dd>1985-11-03T06:45:00Z</dd><dt>Time zone</dt><dd>Europe/London (+0.00 h)</dd><dt>Latitude, longitude</dt><dd>51.5074°, -0.1278°</dd><dt>Birth time quality</dt><dd>exact</dd><dt>Julian day (UT / TT)</dt><dd>2446372.781250 / 2446372.781889</dd><dt>ΔT</dt><dd>55.18 s</dd></dl></section><section class="card" id="western"><h2>Western chart (tropical)</h2><p class="lead">Zodiac tropical · houses placidus · aspects western.basic@0.1</p><div class="charts"><div class="figure"><svg class="wheel" viewBox="-430 -430 860 860" role="img" aria-label="Western chart wheel"><circle r="420" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/><path d="M416.30 55.62A420 420 0 0 1 332.72 256.32L277.27 213.60A350 350 0 0 0 346.92 46.35Z" fill="#FFE24D" stroke="#fff" stroke-width="1.5"><title>Aries</title></path><text class="lbl" x="355.4" y="148.0" font-size="30" fill="#1b1b1b">♈&#xFE0E;</text><path d="M388.34 -159.99A420 420 0 0 1 416.30 55.62L346.92 46.35A350 350 0 0 0 323.61 -133.32Z" fill="#A6EDD5" stroke="#fff" stroke-width="1.5"><title>Taurus</title></path><text class="lbl" x="381.8" y="-49.5" font-size="30" fill="#1b1b1b">♉&#xFE0E;</text><path d="M256.32 -332.72A420 420 0 0 1 388.34 -159.99L323.61 -133.32A350 350 0 0 0 213.60 -277.27Z" fill="#C5EBA0" stroke="#fff" stroke-width="1.5"><title>Gemini</title></path><text class="lbl" x="305.9" y="-233.8" font-size="30" fill="#1b1b1b">♊&#xFE0E;</text><path d="M55.62 -416.30A420 420 0 0 1 256.32 -332.72L213.60 -277.27A350 350 0 0 0 46.35 -346.92Z" fill="#6FE2EE" stroke="#fff" stroke-width="1.5"><title>Cancer</title></path><text class="lbl" x="148.0" y="-355.4" font-size="30" fill="#1b1b1b">♋&#xFE0E;</text><path d="M-159.99 -388.34A420 420 0 0 1 55.62 -416.30L46.35 -346.92A350 350 0 0 0 -133.32 -323.61Z" fill="#FFE24D" stroke="#fff" stroke-width="1.5"><title>Leo</title></path><text class="lbl" x="-49.5" y="-381.8" font-size="30" fill="#1b1b1b">♌&#xFE0E;</text><path d="M-332.72 -256.32A420 420 0 0 1 -159.99 -388.34L-133.32 -323.61A350 350 0 0 0 -277.27 -213.60Z" fill="#A6EDD5" stroke="#fff" stroke-width="1.5"><title>Virgo</title></path><text class="lbl" x="-233.8" y="-305.9" font-size="30" fill="#1b1b1b">♍&#xFE0E;</text><path d="M-416.30 -55.62A420 420 0 0 1 -332.72 -256.32L-277.27 -213.60A350 350 0 0 0 -346.92 -46.35Z" fill="#C5EBA0" stroke="#fff" stroke-width="1.5"><title>Libra</title></path><text class="lbl" x="-355.4" y="-148.0" font-size="30" fill="#1b1b1b">♎&#xFE0E;</text><path d="M-388.34 159.99A420 420 0 0 1 -416.30 -55.62L-346.92 -46.35A350 350 0 0 0 -323.61 133.32Z" fill="#6FE2EE" stroke="#fff" stroke-width="1.5"><title>Scorpio</title></path><text class="lbl" x="-381.8" y="49.5" font-size="30" fill="#1b1b1b">♏&#xFE0E;</text><path d="M-256.32 332.72A420 420 0 0 1 -388.34 159.99L-323.61 133.32A350 350 0 0 0 -213.60 277.27Z" fill="#FFE24D" stroke="#fff" stroke-width="1.5"><title>Sagittarius</title></path><text class="lbl" x="-305.9" y="233.8" font-size="30" fill="#1b1b1b">♐&#xFE0E;</text><path d="M-55.62 416.30A420 420 0 0 1 -256.32 332.72L-213.60 277.27A350 350 0 0 0 -46.35 346.92Z" fill="#A6EDD5" stroke="#fff" stroke-width="1.5"><title>Capricorn</title></path><text class="lbl" x="-148.0" y="355.4" font-size="30" fill="#1b1b1b">♑&#xFE0E;</text><path d="M159.99 388.34A420 420 0 0 1 -55.62 416.30L-46.35 346.92A350 350 0 0 0 133.32 323.61Z" fill="#C5EBA0" stroke="#fff" stroke-width="1.5"><title>Aquarius</title></path><text class="lbl" x="49.5" y="381.8" font-size="30" fill="#1b1b1b">♒&#xFE0E;</text><path d="M332.72 256.32A420 420 0 0 1 159.99 388.34L133.32 323.61A350 350 0 0 0 277.27 213.60Z" fill="#6FE2EE" stroke="#fff" stroke-width="1.5"><title>Pisces</title></path><text class="lbl" x="233.8" y="305.9" font-size="30" fill="#1b1b1b">♓&#xFE0E;</text><line x1="-120.0" y1="0.0" x2="-350.0" y2="0.0" stroke="var(--ink)" stroke-width="3"/><text class="lbl" x="-130.9" y="33.0" font-size="15" fill="var(--muted)">1</text><line x1="-105.6" y1="56.9" x2="-308.1" y2="166.0" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="-93.3" y="97.6" font-size="15" fill="var(--muted)">2</text><line x1="-52.1" y1="108.1" x2="-152.1" y2="315.2" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="-14.3" y="134.2" font-size="15" fill="var(--muted)">3</text><line x1="28.2" y1="116.6" x2="82.3" y2="340.2" stroke="var(--ink)" stroke-width="3"/><text class="lbl" x="67.6" y="116.9" font-size="15" fill="var(--muted)">4</text><line x1="87.0" y1="82.6" x2="253.8" y2="241.0" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="115.5" y="69.8" font-size="15" fill="var(--muted)">5</text><line x1="113.6" y1="38.7" x2="331.3" y2="112.8" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="133.2" y="22.0" font-size="15" fill="var(--muted)">6</text><line x1="120.0" y1="-0.0" x2="350.0" y2="-0.0" stroke="var(--ink)" stroke-width="3"/><text class="lbl" x="130.9" y="-33.0" font-size="15" fill="var(--muted)">7</text><line x1="105.6" y1="-56.9" x2="308.1" y2="-166.0" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="93.3" y="-97.6" font-size="15" fill="var(--muted)">8</text><line x1="52.1" y1="-108.1" x2="152.1" y2="-315.2" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="14.3" y="-134.2" font-size="15" fill="var(--muted)">9</text><line x1="-28.2" y1="-116.6" x2="-82.3" y2="-340.2" stroke="var(--ink)" stroke-width="3"/><text class="lbl" x="-67.6" y="-116.9" font-size="15" fill="var(--muted)">10</text><line x1="-87.0" y1="-82.6" x2="-253.8" y2="-241.0" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="-115.5" y="-69.8" font-size="15" fill="var(--muted)">11</text><line x1="-113.6" y1="-38.7" x2="-331.3" y2="-112.8" stroke="var(--ink)" stroke-width="1"/><text class="lbl" x="-133.2" y="-22.0" font-size="15" fill="var(--muted)">12</text><circle r="120" fill="none" stroke="var(--line)"/><line class="asp" data-body="jupiter mars" x1="2.2" y1="118.0" x2="-98.5" y2="-65.0" stroke="#2563EB" stroke-width="1.6" opacity=".75"><title>jupiter trine mars · orb 4.54°</title></line><line class="asp" data-body="jupiter pluto" x1="2.2" y1="118.0" x2="-117.9" y2="-5.5" stroke="#C8102E" stroke-width="1.6" opacity=".75"><title>jupiter square pluto · orb 3.78°</title></line><line class="asp" data-body="jupiter sun" x1="2.2" y1="118.0" x2="-117.8" y2="6.5" stroke="#C8102E" stroke-width="1.6" opacity=".75"><title>jupiter square sun · orb 2.09°</title></line><line class="asp" data-body="mars mercury" x1="-98.5" y1="-65.0" x2="-106.4" y2="51.0" stroke="#2563EB" stroke-width="1.6" opacity=".75"><title>mars sextile mercury · orb 0.95°</title></line><line class="asp" data-body="mars neptune" x1="-98.5" y1="-65.0" x2="-69.4" y2="95.4" stroke="#C8102E" stroke-width="1.6" opacity=".75"><title>mars square neptune · orb 2.60°</title></line><line class="asp" data-body="mercury saturn" x1="-106.4" y1="51.0" x2="-110.3" y2="41.8" stroke="#777" stroke-width="1.6" opacity=".75"><title>mercury conjunction saturn · orb 4.85°</title></line><line class="asp" data-body="moon sun" x1="52.4" y1="-105.7" x2="-117.8" y2="6.5" stroke="#2563EB" stroke-width="1.6" opacity=".75"><title>moon trine sun · orb 0.44°</title></line><line class="asp" data-body="neptune pluto" x1="-69.4" y1="95.4" x2="-117.9" y2="-5.5" stroke="#2563EB" stroke-width="1.6" opacity=".75"><title>neptune sextile pluto · orb 3.35°</title></line><line class="asp" data-body="pluto sun" x1="-117.9" y1="-5.5" x2="-117.8" y2="6.5" stroke="#777" stroke-width="1.6" opacity=".75"><title>pluto conjunction sun · orb 5.88°</title></line><g class="pl" data-body="moon"><circle cx="141.3" cy="-284.9" r="19" fill="#FFFFFF" stroke="#222"/><text class="lbl" x="141.3" y="-284.9" font-size="14" font-weight="800" fill="#1b1b1b">Mo</text><title>Moon 11°13′58″ Cancer</title></g><g class="pl" data-body="mean_node"><circle cx="317.9" cy="-7.3" r="19" fill="#6B4FA8" stroke="#222"/><text class="lbl" x="317.9" y="-7.3" font-size="14" font-weight="800" fill="#ffffff">Ra</text><title>Rahu (mean node) 8°55′47″ Taurus</title></g><g class="pl" data-body="jupiter"><circle cx="6.0" cy="317.9" r="19" fill="#FFE81A" stroke="#222"/><text class="lbl" x="6.0" y="317.9" font-size="14" font-weight="800" fill="#1b1b1b">Ju</text><title>Jupiter 8°41′57″ Aquarius</title></g><g class="pl" data-body="neptune"><circle cx="-187.1" cy="257.1" r="19" fill="#3AA6A0" stroke="#222"/><text class="lbl" x="-187.1" y="257.1" font-size="14" font-weight="800" fill="#ffffff">Ne</text><title>Neptune 1°33′34″ Capricorn</title></g><g class="pl" data-body="uranus"><circle cx="-249.1" cy="197.6" r="19" fill="#5B8DEF" stroke="#222"/><text class="lbl" x="-249.1" y="197.6" font-size="14" font-weight="800" fill="#ffffff">Ur</text><title>Uranus 16°02′03″ Sagittarius</title></g><g class="pl" data-body="mercury"><circle cx="-286.8" cy="137.4" r="19" fill="#C4D84B" stroke="#222"/><text class="lbl" x="-286.8" y="137.4" font-size="14" font-weight="800" fill="#1b1b1b">Me</text><title>Mercury 3°12′29″ Sagittarius</title></g><g class="pl" data-body="saturn"><circle cx="-256.2" cy="97.1" r="19" fill="#7E99C9" stroke="#222"/><text class="lbl" x="-256.2" y="97.1" font-size="14" font-weight="800" fill="#ffffff">Sa</text><title>Saturn 28°21′39″ Scorpio</title></g><g class="pl" data-body="sun"><circle cx="-317.5" cy="17.7" r="19" fill="#F39A1E" stroke="#222"/><text class="lbl" x="-317.5" y="17.7" font-size="14" font-weight="800" fill="#1b1b1b">Su</text><title>Sun 10°47′28″ Scorpio</title></g><g class="pl" data-body="south_node"><circle cx="-273.9" cy="6.3" r="19" fill="#9C9C9C" stroke="#222"/><text class="lbl" x="-273.9" y="6.3" font-size="14" font-weight="800" fill="#ffffff">Ke</text><title>Ketu 8°55′47″ Scorpio</title></g><g class="pl" data-body="pluto"><circle cx="-229.7" cy="-10.8" r="19" fill="#8B5E3C" stroke="#222"/><text class="lbl" x="-229.7" y="-10.8" font-size="14" font-weight="800" fill="#ffffff">Pl</text><title>Pluto 4°54′51″ Scorpio</title></g><g class="pl" data-body="venus"><circle cx="-306.4" cy="-85.2" r="19" fill="#3FE0E0" stroke="#222"/><text class="lbl" x="-306.4" y="-85.2" font-size="14" font-weight="800" fill="#1b1b1b">Ve</text><title>Venus 22°03′36″ Libra</title></g><g class="pl" data-body="mars"><circle cx="-265.3" cy="-175.3" r="19" fill="#D3133F" stroke="#222"/><text class="lbl" x="-265.3" y="-175.3" font-size="14" font-weight="800" fill="#ffffff">Ma</text><title>Mars 4°09′45″ Libra</title></g><text class="lbl" x="-410.0" y="-14.0" font-size="15" font-weight="800" fill="var(--accent)">ASC</text></svg></div></div><div class="tbl-wrap"><table class="planets"><thead><tr><th>Body</th><th>Longitude</th><th>Sign</th><th>In sign</th><th>House</th><th>℞</th><th>Latitude</th></tr></thead><tbody><tr data-body="sun"><td><i class="dot" style="background:#F39A1E"></i>Sun</td><td>220.7911°</td><td>Scorpio</td><td>10°47′28″</td><td>1</td><td></td><td>+0.0003°</td></tr><tr data-body="moon"><td><i class="dot" style="background:#FFFFFF"></i>Moon</td><td>101.2328°</td><td>Cancer</td><td>11°13′58″</td><td>8</td><td></td><td>+4.6839°</td></tr><tr data-body="mercury"><td><i class="dot" style="background:#C4D84B"></i>Mercury</td><td>243.2079°</td><td>Sagittarius</td><td>3°12′29″</td><td>1</td><td></td><td>-2.6306°</td></tr><tr data-body="venus"><td><i class="dot" style="background:#3FE0E0"></i>Venus</td><td>202.0600°</td><td>Libra</td><td>22°03′36″</td><td>12</td><td></td><td>+1.5222°</td></tr><tr data-body="mars"><td><i class="dot" style="background:#D3133F"></i>Mars</td><td>184.1626°</td><td>Libra</td><td>4°09′45″</td><td>11</td><td></td><td>+1.1973°</td></tr><tr data-body="jupiter"><td><i class="dot" style="background:#FFE81A"></i>Jupiter</td><td>308.6990°</td><td>Aquarius</td><td>8°41′57″</td><td>3</td><td></td><td>-0.8442°</td></tr><tr data-body="saturn"><td><i class="dot" style="background:#7E99C9"></i>Saturn</td><td>238.3609°</td><td>Scorpio</td><td>28°21′39″</td><td>1</td><td></td><td>+1.8257°</td></tr><tr data-body="uranus"><td><i class="dot" style="background:#5B8DEF"></i>Uranus</td><td>256.0342°</td><td>Sagittarius</td><td>16°02′03″</td><td>2</td><td></td><td>-0.0493°</td></tr><tr data-body="neptune"><td><i class="dot" style="background:#3AA6A0"></i>Neptune</td><td>271.5595°</td><td>Capricorn</td><td>1°33′34″</td><td>2</td><td></td><td>+1.0834°</td></tr><tr data-body="pluto"><td><i class="dot" style="background:#8B5E3C"></i>Pluto</td><td>214.9142°</td><td>Scorpio</td><td>4°54′51″</td><td>12</td><td></td><td>+16.0910°</td></tr><tr data-body="mean_node"><td><i class="dot" style="background:#6B4FA8"></i>North node</td><td>38.9297°</td><td>Taurus</td><td>8°55′47″</td><td>7</td><td>℞</td><td>+0.0000°</td></tr><tr data-body="south_node"><td><i class="dot" style="background:#9C9C9C"></i>Ketu</td><td>218.9297°</td><td>Scorpio</td><td>8°55′47″</td><td>1</td><td>℞</td><td>+0.0000°</td></tr></tbody></table></div><h3>Aspects</h3><div class="tbl-wrap"><table class=""><thead><tr><th>Body</th><th>Aspect</th><th>Body</th><th>Orb</th><th>Phase</th></tr></thead><tbody><tr><td>Jupiter</td><td><b>trine</b></td><td>Mars</td><td>4.54°</td><td>applying</td></tr><tr><td>Jupiter</td><td><b>square</b></td><td>Pluto</td><td>3.78°</td><td>separating</td></tr><tr><td>Jupiter</td><td><b>square</b></td><td>Sun</td><td>2.09°</td><td>separating</td></tr><tr><td>Mars</td><td><b>sextile</b></td><td>Mercury</td><td>0.95°</td><td>applying</td></tr><tr><td>Mars</td><td><b>square</b></td><td>Neptune</td><td>2.60°</td><td>separating</td></tr><tr><td>Mercury</td><td><b>conjunction</b></td><td>Saturn</td><td>4.85°</td><td>separating</td></tr><tr><td>Moon</td><td><b>trine</b></td><td>Sun</td><td>0.44°</td><td>separating</td></tr><tr><td>Neptune</td><td><b>sextile</b></td><td>Pluto</td><td>3.35°</td><td>separating</td></tr><tr><td>Pluto</td><td><b>conjunction</b></td><td>Sun</td><td>5.88°</td><td>separating</td></tr></tbody></table></div><h3>House cusps</h3><div class="tbl-wrap"><table class=""><thead><tr><th>House</th><th>Cusp</th><th>Sign</th><th>In sign</th></tr></thead><tbody><tr><td>1</td><td>217.6093°</td><td>Scorpio</td><td>7°36′34″</td></tr><tr><td>2</td><td>245.9175°</td><td>Sagittarius</td><td>5°55′03″</td></tr><tr><td>3</td><td>281.8599°</td><td>Capricorn</td><td>11°51′36″</td></tr><tr><td>4</td><td>321.2107°</td><td>Aquarius</td><td>21°12′39″</td></tr><tr><td>5</td><td>354.0958°</td><td>Pisces</td><td>24°05′45″</td></tr><tr><td>6</td><td>18.8109°</td><td>Aries</td><td>18°48′39″</td></tr><tr><td>7</td><td>37.6093°</td><td>Taurus</td><td>7°36′34″</td></tr><tr><td>8</td><td>65.9175°</td><td>Gemini</td><td>5°55′03″</td></tr><tr><td>9</td><td>101.8599°</td><td>Cancer</td><td>11°51′36″</td></tr><tr><td>10</td><td>141.2107°</td><td>Leo</td><td>21°12′39″</td></tr><tr><td>11</td><td>174.0958°</td><td>Virgo</td><td>24°05′45″</td></tr><tr><td>12</td><td>198.8109°</td><td>Libra</td><td>18°48′39″</td></tr></tbody></table></div></section><section class="card" id="numerology"><h2>Numerology</h2><p class="lead">Each school is a separate rule pack; numbers are shown as reduced (compound).</p><div class="minis"><div class="mini"><h3>numerology.name</h3><dl class="facts"><dt>expression</dt><dd><b>8</b> <small>(53)</small></dd><dt>ignored characters</dt><dd><code>[]</code></dd><dt>normalized</dt><dd>SAMPLEWESTERN</dd><dt>personality</dt><dd><b>1</b> <small>(37)</small></dd><dt>policy</dt><dd><code>{&quot;keep_master_numbers&quot;: true, &quot;y&quot;: &quot;consonant&quot;}</code></dd><dt>ruleset</dt><dd>numerology.pythagorean@0.1</dd><dt>school</dt><dd>pythagorean</dd><dt>soul urge</dt><dd><b>7</b> <small>(16)</small></dd></dl><p class="note"><span class="ep ep-tradition_rule">tradition_rule</span> numerology.pythagorean@0.1</p></div><div class="mini"><h3>numerology.life_path</h3><dl class="facts"><dt>keep master numbers</dt><dd>True</dd><dt>life path</dt><dd>1</dd><dt>method</dt><dd>reduce_parts</dd><dt>parts</dt><dd><code>{&quot;day&quot;: 3, &quot;month&quot;: 11, &quot;year&quot;: 5}</code></dd></dl><p class="note"><span class="ep ep-tradition_rule">tradition_rule</span> numerology.pythagorean@0.1</p></div><div class="mini"><h3>numerology.birth_day</h3><dl class="facts"><dt>day</dt><dd>3</dd><dt>reduced</dt><dd>3</dd></dl><p class="note"><span class="ep ep-tradition_rule">tradition_rule</span> numerology.pythagorean@0.1</p></div></div><details><summary>Letter values</summary><div class="tbl-wrap"><table class=""><thead><tr><th>Letter</th><th>Value</th><th>Vowel</th></tr></thead><tbody><tr><td>S</td><td>1</td><td></td></tr><tr><td>A</td><td>1</td><td>yes</td></tr><tr><td>M</td><td>4</td><td></td></tr><tr><td>P</td><td>7</td><td></td></tr><tr><td>L</td><td>3</td><td></td></tr><tr><td>E</td><td>5</td><td>yes</td></tr><tr><td>W</td><td>5</td><td></td></tr><tr><td>E</td><td>5</td><td>yes</td></tr><tr><td>S</td><td>1</td><td></td></tr><tr><td>T</td><td>2</td><td></td></tr><tr><td>E</td><td>5</td><td>yes</td></tr><tr><td>R</td><td>9</td><td></td></tr><tr><td>N</td><td>5</td><td></td></tr></tbody></table></div></details></section><section class="card" id="provenance"><h2>Provenance</h2><p class="lead">Every setting, data source and assumption behind the numbers above, as the engine recorded it.</p><div class="minis"><div class="mini"><h3>western</h3><dl class="facts"><dt>ayanamsha</dt><dd>None</dd><dt>ayanamsha deg</dt><dd>None</dd><dt>frame</dt><dd>geocentric_apparent_ecliptic_true_equinox_of_date</dd><dt>house system</dt><dd>placidus</dd><dt>node model</dt><dd>mean</dd><dt>provider</dt><dd>analytic</dd><dt>system</dt><dd>western</dd><dt>zodiac</dt><dd>tropical</dd><dt>engine version</dt><dd>0.1.0</dd><dt>provider</dt><dd>analytic</dd><dt>provider accuracy</dt><dd>Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.</dd><dt>provider data</dt><dd>JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files</dd><dt>provider version</dt><dd>0.1.0</dd><dt>time model</dt><dd>leap-seconds-1972-2017+37s-to-2027</dd><dt>tzdb version</dt><dd>2026f</dd><dt>rulesets</dt><dd>western.basic@0.1</dd></dl><h4>Assumptions</h4><ul><li>UTC is used as UT1 (differs by under 0.9 s)</li><li>civil time resolved with IANA tzdb 2026f</li><li>coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date</li></ul></div><div class="mini"><h3>numerology</h3><dl class="facts"><dt>keep master numbers</dt><dd>True</dd><dt>school</dt><dd>pythagorean</dd><dt>y policy</dt><dd>consonant</dd><dt>engine version</dt><dd>0.1.0</dd><dt>provider</dt><dd>None</dd><dt>rulesets</dt><dd>numerology.pythagorean@0.1</dd></dl><h4>Assumptions</h4><ul><li>numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements</li></ul></div></div></section><section class="card" id="raw"><h2>Raw envelopes</h2><p class="lead">Exactly what the engine returned. The Export JSON button saves the same data.</p><details><summary>Show JSON (22,200 characters)</summary><pre class="raw">{
+ &quot;western&quot;: {
+  &quot;calculation&quot;: {
+   &quot;ayanamsha&quot;: null,
+   &quot;ayanamsha_deg&quot;: null,
+   &quot;frame&quot;: &quot;geocentric_apparent_ecliptic_true_equinox_of_date&quot;,
+   &quot;house_system&quot;: &quot;placidus&quot;,
+   &quot;node_model&quot;: &quot;mean&quot;,
+   &quot;provider&quot;: &quot;analytic&quot;,
+   &quot;system&quot;: &quot;western&quot;,
+   &quot;zodiac&quot;: &quot;tropical&quot;
+  },
+  &quot;derived_attributes&quot;: [
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.jupiter.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 8.699045675210186,
+     &quot;dms&quot;: &quot;8°41′57″&quot;,
+     &quot;index&quot;: 10,
+     &quot;name&quot;: &quot;Aquarius&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.jupiter.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 3,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mars.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 4.1626194597197355,
+     &quot;dms&quot;: &quot;4°09′45″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Libra&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mars.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 11,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mean_node.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 8.929740408101793,
+     &quot;dms&quot;: &quot;8°55′47″&quot;,
+     &quot;index&quot;: 1,
+     &quot;name&quot;: &quot;Taurus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mean_node.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 7,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mercury.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 3.2079233249190224,
+     &quot;dms&quot;: &quot;3°12′29″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Sagittarius&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.mercury.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.moon.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 11.232755228964379,
+     &quot;dms&quot;: &quot;11°13′58″&quot;,
+     &quot;index&quot;: 3,
+     &quot;name&quot;: &quot;Cancer&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.moon.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 8,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.neptune.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 1.5595089122961099,
+     &quot;dms&quot;: &quot;1°33′34″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Capricorn&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.neptune.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 2,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.pluto.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 4.914196532907397,
+     &quot;dms&quot;: &quot;4°54′51″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.pluto.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 12,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.saturn.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 28.3608769314705,
+     &quot;dms&quot;: &quot;28°21′39″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.saturn.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.south_node.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 8.929740408101793,
+     &quot;dms&quot;: &quot;8°55′47″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.south_node.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.sun.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 10.791113485398768,
+     &quot;dms&quot;: &quot;10°47′28″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.sun.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.uranus.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 16.034163773573766,
+     &quot;dms&quot;: &quot;16°02′03″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Sagittarius&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.uranus.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 2,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.venus.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 22.05995274113309,
+     &quot;dms&quot;: &quot;22°03′36″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Libra&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.venus.house&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 12,
+     &quot;house_system&quot;: &quot;placidus&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.ascendant.sign&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.tropical&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 7.609338165427715,
+     &quot;dms&quot;: &quot;7°36′34″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;,
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.jupiter-mars&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: true,
+     &quot;aspect&quot;: &quot;trine&quot;,
+     &quot;exact_angle&quot;: 120.0,
+     &quot;orb_deg&quot;: 4.536426215490451,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 124.53642621549045
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;,
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.jupiter-pluto&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;square&quot;,
+     &quot;exact_angle&quot;: 90.0,
+     &quot;orb_deg&quot;: 3.7848491423027895,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 93.78484914230279
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;,
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.jupiter-sun&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;square&quot;,
+     &quot;exact_angle&quot;: 90.0,
+     &quot;orb_deg&quot;: 2.0920678101886097,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 87.90793218981139
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;,
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.mars-mercury&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: true,
+     &quot;aspect&quot;: &quot;sextile&quot;,
+     &quot;exact_angle&quot;: 60.0,
+     &quot;orb_deg&quot;: 0.954696134800713,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 59.04530386519929
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;,
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.mars-neptune&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;square&quot;,
+     &quot;exact_angle&quot;: 90.0,
+     &quot;orb_deg&quot;: 2.6031105474236256,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 87.39688945257637
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;,
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.mercury-saturn&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;conjunction&quot;,
+     &quot;exact_angle&quot;: 0.0,
+     &quot;orb_deg&quot;: 4.847046393448522,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 4.847046393448522
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;,
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.moon-sun&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;trine&quot;,
+     &quot;exact_angle&quot;: 120.0,
+     &quot;orb_deg&quot;: 0.4416417435656115,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 119.55835825643439
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;,
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.neptune-pluto&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;sextile&quot;,
+     &quot;exact_angle&quot;: 60.0,
+     &quot;orb_deg&quot;: 3.354687620611287,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 56.64531237938871
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;,
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;western.aspect.pluto-sun&quot;,
+    &quot;rule_version&quot;: &quot;western.basic@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;western.ptolemaic&quot;,
+    &quot;value&quot;: {
+     &quot;applying&quot;: false,
+     &quot;aspect&quot;: &quot;conjunction&quot;,
+     &quot;exact_angle&quot;: 0.0,
+     &quot;orb_deg&quot;: 5.876916952491371,
+     &quot;orb_scale&quot;: 1.0,
+     &quot;separation_deg&quot;: 5.876916952491371
+    }
+   }
+  ],
+  &quot;houses&quot;: {
+   &quot;ascendant&quot;: {
+    &quot;longitude_deg&quot;: 217.60933816542772,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 7.609338165427715,
+     &quot;dms&quot;: &quot;7°36′34″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    }
+   },
+   &quot;cusps_deg&quot;: [
+    217.60933816542772,
+    245.9175184922014,
+    281.8598847861912,
+    321.2107290287397,
+    354.0958140848137,
+    18.810928142612738,
+    37.609338165427744,
+    65.9175184922014,
+    101.85988478619117,
+    141.21072902873968,
+    174.0958140848137,
+    198.8109281426127
+   ],
+   &quot;epistemic&quot;: &quot;calculated&quot;,
+   &quot;local_apparent_sidereal_time_deg&quot;: 143.59603296202593,
+   &quot;midheaven&quot;: {
+    &quot;longitude_deg&quot;: 141.21072902873968,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 21.210729028739678,
+     &quot;dms&quot;: &quot;21°12′39″&quot;,
+     &quot;index&quot;: 4,
+     &quot;name&quot;: &quot;Leo&quot;
+    }
+   },
+   &quot;system&quot;: &quot;placidus&quot;
+  },
+  &quot;input&quot;: {
+   &quot;birth_time_quality&quot;: &quot;exact&quot;,
+   &quot;civil_offset_s&quot;: 0,
+   &quot;civil_zone&quot;: &quot;Europe/London&quot;,
+   &quot;delta_t_s&quot;: 55.184,
+   &quot;instant_utc&quot;: &quot;1985-11-03T06:45:00Z&quot;,
+   &quot;jd_tt&quot;: 2446372.781888704,
+   &quot;jd_ut&quot;: 2446372.78125,
+   &quot;place&quot;: {
+    &quot;altitude_m&quot;: null,
+    &quot;latitude_deg&quot;: 51.5074,
+    &quot;longitude_deg&quot;: -0.1278
+   },
+   &quot;time_window_minutes&quot;: null
+  },
+  &quot;interpretations&quot;: [],
+  &quot;kind&quot;: &quot;computed_chart&quot;,
+  &quot;positions&quot;: [
+   {
+    &quot;body&quot;: &quot;sun&quot;,
+    &quot;distance_au&quot;: 0.9918940390224643,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;sun&quot;,
+    &quot;latitude_deg&quot;: 0.0002920366159516647,
+    &quot;longitude_deg&quot;: 220.79111348539877,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 10.791113485398768,
+     &quot;dms&quot;: &quot;10°47′28″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.001513955257849,
+    &quot;tropical_longitude_deg&quot;: 220.79111348539877
+   },
+   {
+    &quot;body&quot;: &quot;moon&quot;,
+    &quot;distance_au&quot;: 0.002666149335231506,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;moon&quot;,
+    &quot;latitude_deg&quot;: 4.683933979961746,
+    &quot;longitude_deg&quot;: 101.23275522896438,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 11.232755228964379,
+     &quot;dms&quot;: &quot;11°13′58″&quot;,
+     &quot;index&quot;: 3,
+     &quot;name&quot;: &quot;Cancer&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 12.21529343893053,
+    &quot;tropical_longitude_deg&quot;: 101.23275522896438
+   },
+   {
+    &quot;body&quot;: &quot;mercury&quot;,
+    &quot;distance_au&quot;: 1.1138202517095719,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mercury&quot;,
+    &quot;latitude_deg&quot;: -2.630648279198138,
+    &quot;longitude_deg&quot;: 243.20792332491902,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 3.2079233249190224,
+     &quot;dms&quot;: &quot;3°12′29″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Sagittarius&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.2062416434687862,
+    &quot;tropical_longitude_deg&quot;: 243.20792332491902
+   },
+   {
+    &quot;body&quot;: &quot;venus&quot;,
+    &quot;distance_au&quot;: 1.5840392311711629,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;venus&quot;,
+    &quot;latitude_deg&quot;: 1.5221522313460996,
+    &quot;longitude_deg&quot;: 202.0599527411331,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 22.05995274113309,
+     &quot;dms&quot;: &quot;22°03′36″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Libra&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.2487191424341404,
+    &quot;tropical_longitude_deg&quot;: 202.0599527411331
+   },
+   {
+    &quot;body&quot;: &quot;mars&quot;,
+    &quot;distance_au&quot;: 2.351500942752704,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mars&quot;,
+    &quot;latitude_deg&quot;: 1.1972717708647094,
+    &quot;longitude_deg&quot;: 184.16261945971974,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 4.1626194597197355,
+     &quot;dms&quot;: &quot;4°09′45″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Libra&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.6262804907450459,
+    &quot;tropical_longitude_deg&quot;: 184.16261945971974
+   },
+   {
+    &quot;body&quot;: &quot;jupiter&quot;,
+    &quot;distance_au&quot;: 4.9867214497667804,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;jupiter&quot;,
+    &quot;latitude_deg&quot;: -0.8441840017200847,
+    &quot;longitude_deg&quot;: 308.6990456752102,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 8.699045675210186,
+     &quot;dms&quot;: &quot;8°41′57″&quot;,
+     &quot;index&quot;: 10,
+     &quot;name&quot;: &quot;Aquarius&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.0969225692983855,
+    &quot;tropical_longitude_deg&quot;: 308.6990456752102
+   },
+   {
+    &quot;body&quot;: &quot;saturn&quot;,
+    &quot;distance_au&quot;: 10.903430404663407,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;saturn&quot;,
+    &quot;latitude_deg&quot;: 1.8256844200655258,
+    &quot;longitude_deg&quot;: 238.3608769314705,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 28.3608769314705,
+     &quot;dms&quot;: &quot;28°21′39″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.1153270958354824,
+    &quot;tropical_longitude_deg&quot;: 238.3608769314705
+   },
+   {
+    &quot;body&quot;: &quot;uranus&quot;,
+    &quot;distance_au&quot;: 19.90181352000552,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;uranus&quot;,
+    &quot;latitude_deg&quot;: -0.04928429892595753,
+    &quot;longitude_deg&quot;: 256.03416377357377,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 16.034163773573766,
+     &quot;dms&quot;: &quot;16°02′03″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Sagittarius&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.052546591669511145,
+    &quot;tropical_longitude_deg&quot;: 256.03416377357377
+   },
+   {
+    &quot;body&quot;: &quot;neptune&quot;,
+    &quot;distance_au&quot;: 30.858170893433577,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;neptune&quot;,
+    &quot;latitude_deg&quot;: 1.0834208219274133,
+    &quot;longitude_deg&quot;: 271.5595089122961,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 1.5595089122961099,
+     &quot;dms&quot;: &quot;1°33′34″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Capricorn&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.026501073281792742,
+    &quot;tropical_longitude_deg&quot;: 271.5595089122961
+   },
+   {
+    &quot;body&quot;: &quot;pluto&quot;,
+    &quot;distance_au&quot;: 30.690934926614215,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;pluto&quot;,
+    &quot;latitude_deg&quot;: 16.09098896688693,
+    &quot;longitude_deg&quot;: 214.9141965329074,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 4.914196532907397,
+     &quot;dms&quot;: &quot;4°54′51″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.04035905760702008,
+    &quot;tropical_longitude_deg&quot;: 214.9141965329074
+   },
+   {
+    &quot;body&quot;: &quot;mean_node&quot;,
+    &quot;distance_au&quot;: null,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mean_node&quot;,
+    &quot;latitude_deg&quot;: 0.0,
+    &quot;longitude_deg&quot;: 38.92974040810179,
+    &quot;retrograde&quot;: true,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 8.929740408101793,
+     &quot;dms&quot;: &quot;8°55′47″&quot;,
+     &quot;index&quot;: 1,
+     &quot;name&quot;: &quot;Taurus&quot;
+    },
+    &quot;speed_deg_per_day&quot;: -0.052927182744610946,
+    &quot;tropical_longitude_deg&quot;: 38.92974040810179
+   },
+   {
+    &quot;body&quot;: &quot;south_node&quot;,
+    &quot;derived_from&quot;: &quot;mean_node&quot;,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;south_node&quot;,
+    &quot;latitude_deg&quot;: 0.0,
+    &quot;longitude_deg&quot;: 218.9297404081018,
+    &quot;retrograde&quot;: true,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 8.929740408101793,
+     &quot;dms&quot;: &quot;8°55′47″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Scorpio&quot;
+    },
+    &quot;speed_deg_per_day&quot;: -0.052927182744610946,
+    &quot;tropical_longitude_deg&quot;: 218.9297404081018
+   }
+  ],
+  &quot;provenance&quot;: {
+   &quot;assumptions&quot;: [
+    &quot;UTC is used as UT1 (differs by under 0.9 s)&quot;,
+    &quot;civil time resolved with IANA tzdb 2026f&quot;,
+    &quot;coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date&quot;
+   ],
+   &quot;engine_version&quot;: &quot;0.1.0&quot;,
+   &quot;provider&quot;: &quot;analytic&quot;,
+   &quot;provider_accuracy&quot;: &quot;Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.&quot;,
+   &quot;provider_data&quot;: &quot;JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files&quot;,
+   &quot;provider_version&quot;: &quot;0.1.0&quot;,
+   &quot;rulesets&quot;: [
+    &quot;western.basic@0.1&quot;
+   ],
+   &quot;time_model&quot;: &quot;leap-seconds-1972-2017+37s-to-2027&quot;,
+   &quot;tzdb_version&quot;: &quot;2026f&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1.0&quot;,
+  &quot;warnings&quot;: []
+ },
+ &quot;numerology&quot;: {
+  &quot;calculation&quot;: {
+   &quot;keep_master_numbers&quot;: true,
+   &quot;school&quot;: &quot;pythagorean&quot;,
+   &quot;y_policy&quot;: &quot;consonant&quot;
+  },
+  &quot;derived_attributes&quot;: [
+   {
+    &quot;derived_from&quot;: [
+     &quot;name&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;numerology.name&quot;,
+    &quot;rule_version&quot;: &quot;numerology.pythagorean@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;numerology.pythagorean&quot;,
+    &quot;value&quot;: {
+     &quot;expression&quot;: {
+      &quot;compound&quot;: 53,
+      &quot;reduced&quot;: 8
+     },
+     &quot;ignored_characters&quot;: [],
+     &quot;letters&quot;: [
+      {
+       &quot;letter&quot;: &quot;S&quot;,
+       &quot;value&quot;: 1,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;A&quot;,
+       &quot;value&quot;: 1,
+       &quot;vowel&quot;: true
+      },
+      {
+       &quot;letter&quot;: &quot;M&quot;,
+       &quot;value&quot;: 4,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;P&quot;,
+       &quot;value&quot;: 7,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;L&quot;,
+       &quot;value&quot;: 3,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;E&quot;,
+       &quot;value&quot;: 5,
+       &quot;vowel&quot;: true
+      },
+      {
+       &quot;letter&quot;: &quot;W&quot;,
+       &quot;value&quot;: 5,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;E&quot;,
+       &quot;value&quot;: 5,
+       &quot;vowel&quot;: true
+      },
+      {
+       &quot;letter&quot;: &quot;S&quot;,
+       &quot;value&quot;: 1,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;T&quot;,
+       &quot;value&quot;: 2,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;E&quot;,
+       &quot;value&quot;: 5,
+       &quot;vowel&quot;: true
+      },
+      {
+       &quot;letter&quot;: &quot;R&quot;,
+       &quot;value&quot;: 9,
+       &quot;vowel&quot;: false
+      },
+      {
+       &quot;letter&quot;: &quot;N&quot;,
+       &quot;value&quot;: 5,
+       &quot;vowel&quot;: false
+      }
+     ],
+     &quot;normalized&quot;: &quot;SAMPLEWESTERN&quot;,
+     &quot;personality&quot;: {
+      &quot;compound&quot;: 37,
+      &quot;reduced&quot;: 1
+     },
+     &quot;policy&quot;: {
+      &quot;keep_master_numbers&quot;: true,
+      &quot;y&quot;: &quot;consonant&quot;
+     },
+     &quot;ruleset&quot;: &quot;numerology.pythagorean@0.1&quot;,
+     &quot;school&quot;: &quot;pythagorean&quot;,
+     &quot;soul_urge&quot;: {
+      &quot;compound&quot;: 16,
+      &quot;reduced&quot;: 7
+     }
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;date_of_birth&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;numerology.life_path&quot;,
+    &quot;rule_version&quot;: &quot;numerology.pythagorean@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;numerology.pythagorean&quot;,
+    &quot;value&quot;: {
+     &quot;keep_master_numbers&quot;: true,
+     &quot;life_path&quot;: 1,
+     &quot;method&quot;: &quot;reduce_parts&quot;,
+     &quot;parts&quot;: {
+      &quot;day&quot;: 3,
+      &quot;month&quot;: 11,
+      &quot;year&quot;: 5
+     }
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;date_of_birth&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;numerology.birth_day&quot;,
+    &quot;rule_version&quot;: &quot;numerology.pythagorean@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;numerology.pythagorean&quot;,
+    &quot;value&quot;: {
+     &quot;day&quot;: 3,
+     &quot;reduced&quot;: 3
+    }
+   }
+  ],
+  &quot;input&quot;: {
+   &quot;date_of_birth&quot;: &quot;1985-11-03&quot;,
+   &quot;name&quot;: &quot;Sample Western&quot;
+  },
+  &quot;interpretations&quot;: [],
+  &quot;kind&quot;: &quot;numerology_analysis&quot;,
+  &quot;positions&quot;: [],
+  &quot;provenance&quot;: {
+   &quot;assumptions&quot;: [
+    &quot;numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements&quot;
+   ],
+   &quot;engine_version&quot;: &quot;0.1.0&quot;,
+   &quot;provider&quot;: null,
+   &quot;rulesets&quot;: [
+    &quot;numerology.pythagorean@0.1&quot;
+   ]
+  },
+  &quot;schema_version&quot;: &quot;0.1.0&quot;,
+  &quot;warnings&quot;: []
+ }
+}</pre></details></section>
+</main>
+<footer>Generated 2026-11-21 05:08 UTC by ESHANA 0.1.0 (Extensible Spatiotemporal Hypersystem for Astroinformatics,
+Natural Cycles &amp; Associations). Open source, Apache-2.0. Chart markers follow report.markers@0.1. This file is
+self-contained and makes no network requests.</footer>
+<script type="application/json" id="eshana-data">{"western": {"calculation": {"ayanamsha": null, "ayanamsha_deg": null, "frame": "geocentric_apparent_ecliptic_true_equinox_of_date", "house_system": "placidus", "node_model": "mean", "provider": "analytic", "system": "western", "zodiac": "tropical"}, "derived_attributes": [{"derived_from": ["jupiter"], "epistemic": "tradition_rule", "id": "western.jupiter.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 8.699045675210186, "dms": "8°41′57″", "index": 10, "name": "Aquarius"}}, {"derived_from": ["jupiter"], "epistemic": "tradition_rule", "id": "western.jupiter.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 3, "house_system": "placidus"}}, {"derived_from": ["mars"], "epistemic": "tradition_rule", "id": "western.mars.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 4.1626194597197355, "dms": "4°09′45″", "index": 6, "name": "Libra"}}, {"derived_from": ["mars"], "epistemic": "tradition_rule", "id": "western.mars.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 11, "house_system": "placidus"}}, {"derived_from": ["mean_node"], "epistemic": "tradition_rule", "id": "western.mean_node.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 8.929740408101793, "dms": "8°55′47″", "index": 1, "name": "Taurus"}}, {"derived_from": ["mean_node"], "epistemic": "tradition_rule", "id": "western.mean_node.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 7, "house_system": "placidus"}}, {"derived_from": ["mercury"], "epistemic": "tradition_rule", "id": "western.mercury.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 3.2079233249190224, "dms": "3°12′29″", "index": 8, "name": "Sagittarius"}}, {"derived_from": ["mercury"], "epistemic": "tradition_rule", "id": "western.mercury.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 1, "house_system": "placidus"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "western.moon.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 11.232755228964379, "dms": "11°13′58″", "index": 3, "name": "Cancer"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "western.moon.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 8, "house_system": "placidus"}}, {"derived_from": ["neptune"], "epistemic": "tradition_rule", "id": "western.neptune.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 1.5595089122961099, "dms": "1°33′34″", "index": 9, "name": "Capricorn"}}, {"derived_from": ["neptune"], "epistemic": "tradition_rule", "id": "western.neptune.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 2, "house_system": "placidus"}}, {"derived_from": ["pluto"], "epistemic": "tradition_rule", "id": "western.pluto.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 4.914196532907397, "dms": "4°54′51″", "index": 7, "name": "Scorpio"}}, {"derived_from": ["pluto"], "epistemic": "tradition_rule", "id": "western.pluto.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 12, "house_system": "placidus"}}, {"derived_from": ["saturn"], "epistemic": "tradition_rule", "id": "western.saturn.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 28.3608769314705, "dms": "28°21′39″", "index": 7, "name": "Scorpio"}}, {"derived_from": ["saturn"], "epistemic": "tradition_rule", "id": "western.saturn.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 1, "house_system": "placidus"}}, {"derived_from": ["south_node"], "epistemic": "tradition_rule", "id": "western.south_node.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 8.929740408101793, "dms": "8°55′47″", "index": 7, "name": "Scorpio"}}, {"derived_from": ["south_node"], "epistemic": "tradition_rule", "id": "western.south_node.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 1, "house_system": "placidus"}}, {"derived_from": ["sun"], "epistemic": "tradition_rule", "id": "western.sun.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 10.791113485398768, "dms": "10°47′28″", "index": 7, "name": "Scorpio"}}, {"derived_from": ["sun"], "epistemic": "tradition_rule", "id": "western.sun.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 1, "house_system": "placidus"}}, {"derived_from": ["uranus"], "epistemic": "tradition_rule", "id": "western.uranus.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 16.034163773573766, "dms": "16°02′03″", "index": 8, "name": "Sagittarius"}}, {"derived_from": ["uranus"], "epistemic": "tradition_rule", "id": "western.uranus.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 2, "house_system": "placidus"}}, {"derived_from": ["venus"], "epistemic": "tradition_rule", "id": "western.venus.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 22.05995274113309, "dms": "22°03′36″", "index": 6, "name": "Libra"}}, {"derived_from": ["venus"], "epistemic": "tradition_rule", "id": "western.venus.house", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"house": 12, "house_system": "placidus"}}, {"derived_from": ["houses"], "epistemic": "tradition_rule", "id": "western.ascendant.sign", "rule_version": "western.basic@0.1", "tradition_id": "western.tropical", "value": {"degree_in_sign": 7.609338165427715, "dms": "7°36′34″", "index": 7, "name": "Scorpio"}}, {"derived_from": ["jupiter", "mars"], "epistemic": "tradition_rule", "id": "western.aspect.jupiter-mars", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": true, "aspect": "trine", "exact_angle": 120.0, "orb_deg": 4.536426215490451, "orb_scale": 1.0, "separation_deg": 124.53642621549045}}, {"derived_from": ["jupiter", "pluto"], "epistemic": "tradition_rule", "id": "western.aspect.jupiter-pluto", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "square", "exact_angle": 90.0, "orb_deg": 3.7848491423027895, "orb_scale": 1.0, "separation_deg": 93.78484914230279}}, {"derived_from": ["jupiter", "sun"], "epistemic": "tradition_rule", "id": "western.aspect.jupiter-sun", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "square", "exact_angle": 90.0, "orb_deg": 2.0920678101886097, "orb_scale": 1.0, "separation_deg": 87.90793218981139}}, {"derived_from": ["mars", "mercury"], "epistemic": "tradition_rule", "id": "western.aspect.mars-mercury", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": true, "aspect": "sextile", "exact_angle": 60.0, "orb_deg": 0.954696134800713, "orb_scale": 1.0, "separation_deg": 59.04530386519929}}, {"derived_from": ["mars", "neptune"], "epistemic": "tradition_rule", "id": "western.aspect.mars-neptune", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "square", "exact_angle": 90.0, "orb_deg": 2.6031105474236256, "orb_scale": 1.0, "separation_deg": 87.39688945257637}}, {"derived_from": ["mercury", "saturn"], "epistemic": "tradition_rule", "id": "western.aspect.mercury-saturn", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "conjunction", "exact_angle": 0.0, "orb_deg": 4.847046393448522, "orb_scale": 1.0, "separation_deg": 4.847046393448522}}, {"derived_from": ["moon", "sun"], "epistemic": "tradition_rule", "id": "western.aspect.moon-sun", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "trine", "exact_angle": 120.0, "orb_deg": 0.4416417435656115, "orb_scale": 1.0, "separation_deg": 119.55835825643439}}, {"derived_from": ["neptune", "pluto"], "epistemic": "tradition_rule", "id": "western.aspect.neptune-pluto", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "sextile", "exact_angle": 60.0, "orb_deg": 3.354687620611287, "orb_scale": 1.0, "separation_deg": 56.64531237938871}}, {"derived_from": ["pluto", "sun"], "epistemic": "tradition_rule", "id": "western.aspect.pluto-sun", "rule_version": "western.basic@0.1", "tradition_id": "western.ptolemaic", "value": {"applying": false, "aspect": "conjunction", "exact_angle": 0.0, "orb_deg": 5.876916952491371, "orb_scale": 1.0, "separation_deg": 5.876916952491371}}], "houses": {"ascendant": {"longitude_deg": 217.60933816542772, "sign": {"degree_in_sign": 7.609338165427715, "dms": "7°36′34″", "index": 7, "name": "Scorpio"}}, "cusps_deg": [217.60933816542772, 245.9175184922014, 281.8598847861912, 321.2107290287397, 354.0958140848137, 18.810928142612738, 37.609338165427744, 65.9175184922014, 101.85988478619117, 141.21072902873968, 174.0958140848137, 198.8109281426127], "epistemic": "calculated", "local_apparent_sidereal_time_deg": 143.59603296202593, "midheaven": {"longitude_deg": 141.21072902873968, "sign": {"degree_in_sign": 21.210729028739678, "dms": "21°12′39″", "index": 4, "name": "Leo"}}, "system": "placidus"}, "input": {"birth_time_quality": "exact", "civil_offset_s": 0, "civil_zone": "Europe/London", "delta_t_s": 55.184, "instant_utc": "1985-11-03T06:45:00Z", "jd_tt": 2446372.781888704, "jd_ut": 2446372.78125, "place": {"altitude_m": null, "latitude_deg": 51.5074, "longitude_deg": -0.1278}, "time_window_minutes": null}, "interpretations": [], "kind": "computed_chart", "positions": [{"body": "sun", "distance_au": 0.9918940390224643, "epistemic": "calculated", "id": "sun", "latitude_deg": 0.0002920366159516647, "longitude_deg": 220.79111348539877, "retrograde": false, "sign": {"degree_in_sign": 10.791113485398768, "dms": "10°47′28″", "index": 7, "name": "Scorpio"}, "speed_deg_per_day": 1.001513955257849, "tropical_longitude_deg": 220.79111348539877}, {"body": "moon", "distance_au": 0.002666149335231506, "epistemic": "calculated", "id": "moon", "latitude_deg": 4.683933979961746, "longitude_deg": 101.23275522896438, "retrograde": false, "sign": {"degree_in_sign": 11.232755228964379, "dms": "11°13′58″", "index": 3, "name": "Cancer"}, "speed_deg_per_day": 12.21529343893053, "tropical_longitude_deg": 101.23275522896438}, {"body": "mercury", "distance_au": 1.1138202517095719, "epistemic": "calculated", "id": "mercury", "latitude_deg": -2.630648279198138, "longitude_deg": 243.20792332491902, "retrograde": false, "sign": {"degree_in_sign": 3.2079233249190224, "dms": "3°12′29″", "index": 8, "name": "Sagittarius"}, "speed_deg_per_day": 1.2062416434687862, "tropical_longitude_deg": 243.20792332491902}, {"body": "venus", "distance_au": 1.5840392311711629, "epistemic": "calculated", "id": "venus", "latitude_deg": 1.5221522313460996, "longitude_deg": 202.0599527411331, "retrograde": false, "sign": {"degree_in_sign": 22.05995274113309, "dms": "22°03′36″", "index": 6, "name": "Libra"}, "speed_deg_per_day": 1.2487191424341404, "tropical_longitude_deg": 202.0599527411331}, {"body": "mars", "distance_au": 2.351500942752704, "epistemic": "calculated", "id": "mars", "latitude_deg": 1.1972717708647094, "longitude_deg": 184.16261945971974, "retrograde": false, "sign": {"degree_in_sign": 4.1626194597197355, "dms": "4°09′45″", "index": 6, "name": "Libra"}, "speed_deg_per_day": 0.6262804907450459, "tropical_longitude_deg": 184.16261945971974}, {"body": "jupiter", "distance_au": 4.9867214497667804, "epistemic": "calculated", "id": "jupiter", "latitude_deg": -0.8441840017200847, "longitude_deg": 308.6990456752102, "retrograde": false, "sign": {"degree_in_sign": 8.699045675210186, "dms": "8°41′57″", "index": 10, "name": "Aquarius"}, "speed_deg_per_day": 0.0969225692983855, "tropical_longitude_deg": 308.6990456752102}, {"body": "saturn", "distance_au": 10.903430404663407, "epistemic": "calculated", "id": "saturn", "latitude_deg": 1.8256844200655258, "longitude_deg": 238.3608769314705, "retrograde": false, "sign": {"degree_in_sign": 28.3608769314705, "dms": "28°21′39″", "index": 7, "name": "Scorpio"}, "speed_deg_per_day": 0.1153270958354824, "tropical_longitude_deg": 238.3608769314705}, {"body": "uranus", "distance_au": 19.90181352000552, "epistemic": "calculated", "id": "uranus", "latitude_deg": -0.04928429892595753, "longitude_deg": 256.03416377357377, "retrograde": false, "sign": {"degree_in_sign": 16.034163773573766, "dms": "16°02′03″", "index": 8, "name": "Sagittarius"}, "speed_deg_per_day": 0.052546591669511145, "tropical_longitude_deg": 256.03416377357377}, {"body": "neptune", "distance_au": 30.858170893433577, "epistemic": "calculated", "id": "neptune", "latitude_deg": 1.0834208219274133, "longitude_deg": 271.5595089122961, "retrograde": false, "sign": {"degree_in_sign": 1.5595089122961099, "dms": "1°33′34″", "index": 9, "name": "Capricorn"}, "speed_deg_per_day": 0.026501073281792742, "tropical_longitude_deg": 271.5595089122961}, {"body": "pluto", "distance_au": 30.690934926614215, "epistemic": "calculated", "id": "pluto", "latitude_deg": 16.09098896688693, "longitude_deg": 214.9141965329074, "retrograde": false, "sign": {"degree_in_sign": 4.914196532907397, "dms": "4°54′51″", "index": 7, "name": "Scorpio"}, "speed_deg_per_day": 0.04035905760702008, "tropical_longitude_deg": 214.9141965329074}, {"body": "mean_node", "distance_au": null, "epistemic": "calculated", "id": "mean_node", "latitude_deg": 0.0, "longitude_deg": 38.92974040810179, "retrograde": true, "sign": {"degree_in_sign": 8.929740408101793, "dms": "8°55′47″", "index": 1, "name": "Taurus"}, "speed_deg_per_day": -0.052927182744610946, "tropical_longitude_deg": 38.92974040810179}, {"body": "south_node", "derived_from": "mean_node", "epistemic": "calculated", "id": "south_node", "latitude_deg": 0.0, "longitude_deg": 218.9297404081018, "retrograde": true, "sign": {"degree_in_sign": 8.929740408101793, "dms": "8°55′47″", "index": 7, "name": "Scorpio"}, "speed_deg_per_day": -0.052927182744610946, "tropical_longitude_deg": 218.9297404081018}], "provenance": {"assumptions": ["UTC is used as UT1 (differs by under 0.9 s)", "civil time resolved with IANA tzdb 2026f", "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"], "engine_version": "0.1.0", "provider": "analytic", "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.", "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files", "provider_version": "0.1.0", "rulesets": ["western.basic@0.1"], "time_model": "leap-seconds-1972-2017+37s-to-2027", "tzdb_version": "2026f"}, "schema_version": "0.1.0", "warnings": []}, "numerology": {"calculation": {"keep_master_numbers": true, "school": "pythagorean", "y_policy": "consonant"}, "derived_attributes": [{"derived_from": ["name"], "epistemic": "tradition_rule", "id": "numerology.name", "rule_version": "numerology.pythagorean@0.1", "tradition_id": "numerology.pythagorean", "value": {"expression": {"compound": 53, "reduced": 8}, "ignored_characters": [], "letters": [{"letter": "S", "value": 1, "vowel": false}, {"letter": "A", "value": 1, "vowel": true}, {"letter": "M", "value": 4, "vowel": false}, {"letter": "P", "value": 7, "vowel": false}, {"letter": "L", "value": 3, "vowel": false}, {"letter": "E", "value": 5, "vowel": true}, {"letter": "W", "value": 5, "vowel": false}, {"letter": "E", "value": 5, "vowel": true}, {"letter": "S", "value": 1, "vowel": false}, {"letter": "T", "value": 2, "vowel": false}, {"letter": "E", "value": 5, "vowel": true}, {"letter": "R", "value": 9, "vowel": false}, {"letter": "N", "value": 5, "vowel": false}], "normalized": "SAMPLEWESTERN", "personality": {"compound": 37, "reduced": 1}, "policy": {"keep_master_numbers": true, "y": "consonant"}, "ruleset": "numerology.pythagorean@0.1", "school": "pythagorean", "soul_urge": {"compound": 16, "reduced": 7}}}, {"derived_from": ["date_of_birth"], "epistemic": "tradition_rule", "id": "numerology.life_path", "rule_version": "numerology.pythagorean@0.1", "tradition_id": "numerology.pythagorean", "value": {"keep_master_numbers": true, "life_path": 1, "method": "reduce_parts", "parts": {"day": 3, "month": 11, "year": 5}}}, {"derived_from": ["date_of_birth"], "epistemic": "tradition_rule", "id": "numerology.birth_day", "rule_version": "numerology.pythagorean@0.1", "tradition_id": "numerology.pythagorean", "value": {"day": 3, "reduced": 3}}], "input": {"date_of_birth": "1985-11-03", "name": "Sample Western"}, "interpretations": [], "kind": "numerology_analysis", "positions": [], "provenance": {"assumptions": ["numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"], "engine_version": "0.1.0", "provider": null, "rulesets": ["numerology.pythagorean@0.1"]}, "schema_version": "0.1.0", "warnings": []}}</script>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{var t=localStorage.getItem('eshana-theme'); if(t) root.setAttribute('data-theme',t);}catch(e){}
+  var tb=document.getElementById('theme');
+  if(tb) tb.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
+    try{localStorage.setItem('eshana-theme',nx);}catch(e){}
+  });
+  var pb=document.getElementById('print'); if(pb) pb.addEventListener('click',function(){
+    document.querySelectorAll('details').forEach(function(d){d.open=true}); window.print();});
+  var jb=document.getElementById('json'); if(jb) jb.addEventListener('click',function(){
+    var raw=document.getElementById('eshana-data').textContent;
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+    a.download='eshana-envelopes.json'; document.body.appendChild(a); a.click(); a.remove();});
+  function mark(id,on){
+    document.querySelectorAll('[data-body]').forEach(function(el){
+      var ids=el.getAttribute('data-body').split(' ');
+      if(ids.indexOf(id)>=0) el.classList.toggle('hl',on);
+      if(el.classList.contains('asp')) el.classList.toggle('dim',on&&ids.indexOf(id)<0);
+    });
+  }
+  document.querySelectorAll('[data-body]').forEach(function(el){
+    var id=el.getAttribute('data-body').split(' ')[0];
+    if(el.classList.contains('asp')) return;
+    el.addEventListener('mouseenter',function(){mark(id,true)});
+    el.addEventListener('mouseleave',function(){mark(id,false)});
+  });
+  document.querySelectorAll('.tabs').forEach(function(tabs){
+    var card=tabs.closest('.card');
+    tabs.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){
+      tabs.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',String(x===b))});
+      card.querySelectorAll('.pane').forEach(function(p){p.hidden=p.getAttribute('data-pane')!==b.getAttribute('data-tab')});
+    })});
+  });
+})();
+</script>
+</body>
+</html>

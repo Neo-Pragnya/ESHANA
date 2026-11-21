@@ -1,0 +1,46 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "eshana"
+version = "0.1.0"
+description = "ESHANA - Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations. A Rust-first computation layer for celestial positions, traditions and traceable derived knowledge."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Neo-Pragnya" }]
+keywords = ["astronomy", "ephemeris", "astrology", "jyotish", "numerology", "human-design", "provenance"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Rust",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = []
+
+[project.scripts]
+eshana-report = "eshana.report:main"
+
+[project.optional-dependencies]
+test = ["pytest>=8", "jsonschema>=4"]
+
+[project.urls]
+Homepage = "https://neo-pragnya.github.io/ESHANA/"
+Repository = "https://github.com/Neo-Pragnya/ESHANA"
+Documentation = "https://neo-pragnya.github.io/ESHANA/docs/"
+
+[tool.maturin]
+python-source = "python"
+module-name = "eshana._native"
+# Tests drive the CLI and block the network to prove privacy; they are not part of the library, so they stay in the
+# repository and out of the sdist (dist scan, GuardDog heuristics).
+exclude = [{ path = "tests/**/*", format = "sdist" }]
+features = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

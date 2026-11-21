@@ -1,0 +1,77 @@
+name: release
+
+# Builds abi3 wheels for Linux (x86_64, aarch64), macOS (arm64, x86_64) and Windows plus the sdist on a version tag,
+# and publishes them to PyPI with trusted publishing (OIDC): no token is stored in GitHub.
+# One-time setup on PyPI: project eshana -> Publishing -> add a GitHub publisher for this repository,
+# workflow "release.yml", environment "pypi".
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  wheels:
+    name: wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081
+        with:
+          version: "latest"
+          enable-cache: false
+
+      - name: Build (Linux, manylinux2014 via zig, both architectures)
+        if: runner.os == 'Linux'
+        run: |
+          rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+          cd crates/eshana-python
+          for t in x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu; do
+            uvx --with ziglang maturin build --release --zig --target "$t" --compatibility manylinux2014 --out ../../dist
+          done
+          uvx maturin sdist --out ../../dist
+
+      - name: Build (macOS, Windows)
+        if: runner.os != 'Linux'
+        shell: bash
+        run: cd crates/eshana-python && uvx maturin build --release --out ../../dist
+
+      - name: Upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/
+
+  publish:
+    name: publish to PyPI
+    needs: wheels
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081
+        with:
+          version: "latest"
+          enable-cache: false
+
+      - name: Publish (trusted publishing)
+        run: uv publish --trusted-publishing always dist/*

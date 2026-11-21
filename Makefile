@@ -1,0 +1,135 @@
+.PHONY: help install fmt fmt-check lint test py-test verify build build-release wheel acceptance acceptance-wheel \
+        scan deny audit golden accuracy demo docs-check docs-site tracking tracking-check clean \
+        accuracy-suite accuracy-report reference diagrams reports dist dist-linux publish publish-test
+
+VERSION := $(shell sed -n 's/^version = "\(.*\)"/\1/p' crates/eshana-python/pyproject.toml | head -1)
+
+help:
+	@echo "make install | verify | accuracy-suite | acceptance | acceptance-wheel | reports | diagrams | dist | publish | docs-site | tracking | scan"
+
+# ── toolchain ────────────────────────────────────────────────────────────────────────────────────────────────
+install:
+	command -v cargo >/dev/null || { echo "Install Rust: https://rustup.rs"; exit 1; }
+	uv venv -q .venv
+	uv pip install -q --python .venv/bin/python maturin ziglang pytest pytest-bdd pytest-xdist pyyaml jsonschema
+
+fmt:
+	cargo fmt --all
+fmt-check:
+	cargo fmt --all -- --check
+lint:
+	cargo clippy --workspace --exclude eshana-python --all-targets -- -D warnings
+test:
+	cargo test --workspace --exclude eshana-python
+py-test: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv
+	ESHANA_BIN=$(CURDIR)/target/release/eshana .venv/bin/python -m pytest crates/eshana-python/tests -q
+
+# fmt + clippy (deny warnings) + every Rust test + Python tests + tracker freshness
+verify: fmt-check lint test py-test tracking-check accuracy-suite
+
+build:
+	cargo build --workspace --exclude eshana-python
+build-release:
+	cargo build --release -p eshana-cli
+
+# ── wheel (Python) ───────────────────────────────────────────────────────────────────────────────────────────
+wheel:
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
+
+# ── accuracy and golden data ─────────────────────────────────────────────────────────────────────────────────
+# Measured error of each provider against JPL DE440s. The spk run needs a kernel: ESHANA_SPK=/path/de440s.bsp
+accuracy:
+	cargo run -q -p eshana-ephemeris --example accuracy -- analytic
+golden:
+	ESHANA_SPK=$(ESHANA_SPK) cargo test -p eshana-ephemeris --test golden
+
+# ── birth-chart accuracy suite (docs/guides/accuracy-suite.md) ───────────────────────────────────────────────
+# Add ESHANA_SPK=/path/de440s.bsp to include the spk provider.
+accuracy-suite:
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv --release
+	.venv/bin/python -m pytest accuracy -q -n auto -p no:cacheprovider
+accuracy-report:
+	.venv/bin/python scripts/accuracy_report.py --check
+# Rebuild the Swiss Ephemeris reference set (offline oracle; numbers only, nothing ships)
+reference:
+	uv run --no-project --with pyswisseph python scripts/build_reference.py
+
+# ── diagrams + example reports ────────────────────────────────────────────────────────────────────────────────
+diagrams:
+	ARCHLIB_ICONS=diagrams/icons python3 diagrams/build_arch.py diagrams/arch_specs.py --out docs/architecture --no-stages \
+	  --title "ESHANA architecture" --intro "Concept diagrams generated from diagrams/arch_specs.py. Press play to walk each numbered flow."
+reports: build-release
+	mkdir -p dist
+	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
+	  --name "Example Person" --place "New Delhi, India" -o examples/reports/example-birth-chart.html
+	.venv/bin/eshana-report --date 1990-05-15 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 --name "Example Person" \
+	  --place "New Delhi, India (time unknown)" --title "Unknown birth time" -o examples/reports/example-unknown-time.html
+	.venv/bin/eshana-report --date 1985-11-03 --time 06:45 --tz Europe/London --lat 51.5074 --lon=-0.1278 \
+	  --systems western,numerology --name "Sample Western" --place "London, UK" --theme light \
+	  -o examples/reports/example-western.html
+	./target/release/eshana chart vedic --date 1996-12-07 --time 10:34 --tz Asia/Kolkata --lat 13.0878 --lon 80.2785 \
+	  --divisions 9 --dasha > dist/vedic-chennai.json
+	.venv/bin/eshana-report --from-json dist/vedic-chennai.json --title "From the CLI" --place "Chennai" \
+	  -o examples/reports/example-from-cli.html
+
+# ── release (docs/guides/publishing.md) ───────────────────────────────────────────────────────────────────────
+# Files are versioned, so publish uploads only this version's files from dist/.
+dist: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin sdist --out ../../dist
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
+dist-linux:
+	rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --zig \
+	  --target x86_64-unknown-linux-gnu --compatibility manylinux2014 --out ../../dist
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --zig \
+	  --target aarch64-unknown-linux-gnu --compatibility manylinux2014 --out ../../dist
+# Only the UV_PUBLISH_TOKEN* lines of .env are read; the token is never printed.
+publish-test:
+	@set -a; eval "$$(grep -E '^UV_PUBLISH_TOKEN_TESTPYPI=' .env)"; set +a; \
+	  UV_PUBLISH_TOKEN="$$UV_PUBLISH_TOKEN_TESTPYPI" uv publish --publish-url https://test.pypi.org/legacy/ \
+	  dist/eshana-$(VERSION)*
+publish:
+	@set -a; eval "$$(grep -E '^UV_PUBLISH_TOKEN=' .env)"; set +a; uv publish dist/eshana-$(VERSION)*
+
+# ── acceptance (capability scenarios + release gate) ─────────────────────────────────────────────────────────
+# See acceptance/README.md. The gate writes acceptance/report/{acceptance.json,summary.md}; BLOCK fails.
+ACCEPTANCE_ARGS ?=
+acceptance: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv
+	ln -sf $(CURDIR)/target/release/eshana $(CURDIR)/.venv/bin/eshana
+	ACCEPTANCE_BIN_DIR=$(CURDIR)/.venv/bin .venv/bin/python -m pytest acceptance -n auto -p no:cacheprovider $(ACCEPTANCE_ARGS)
+
+# The same against the built wheel in a fresh venv (what ships)
+ACCEPTANCE_VENV := .acceptance-venv
+acceptance-wheel: build-release wheel
+	uv venv -q --allow-existing --python 3.12 $(ACCEPTANCE_VENV)
+	uv pip install -q --python $(ACCEPTANCE_VENV)/bin/python --force-reinstall "$$(ls -t dist/*.whl | head -1)" pytest pytest-bdd pytest-xdist pyyaml
+	ln -sf $(CURDIR)/target/release/eshana $(ACCEPTANCE_VENV)/bin/eshana
+	ACCEPTANCE_BIN_DIR=$(CURDIR)/$(ACCEPTANCE_VENV)/bin $(ACCEPTANCE_VENV)/bin/python -m pytest acceptance -n auto -p no:cacheprovider $(ACCEPTANCE_ARGS)
+
+# ── supply chain ─────────────────────────────────────────────────────────────────────────────────────────────
+deny:
+	cargo deny check
+audit:
+	cargo audit
+scan: wheel
+	uv run --no-project python scripts/scan_dist.py --dist dist --out scan-report $(SCAN_ARGS)
+
+# ── demo + docs site ─────────────────────────────────────────────────────────────────────────────────────────
+demo: build-release
+	python3 scripts/build_demo.py website/src/data
+docs-check:
+	python3 scripts/check_docs.py
+docs-site: demo docs-check
+	cd website && npm ci && npm run build
+
+# ── tracking ─────────────────────────────────────────────────────────────────────────────────────────────────
+tracking:
+	python3 scripts/tracking_report.py
+tracking-check:
+	python3 scripts/tracking_report.py --check
+
+clean:
+	cargo clean
+	@echo "also remove dist, scan-report, .acceptance-venv, acceptance/report, website/dist, website/.astro by hand if wanted"

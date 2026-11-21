@@ -1,0 +1,62 @@
+[
+ {
+  "command": "eshana positions --utc 2000-01-01T12:00:00Z --zodiac sidereal",
+  "result": {
+   "error": {
+    "code": "ESH-CONFIG",
+    "message": "invalid configuration: sidereal zodiac requires an explicit ayanamsha (lahiri, raman, krishnamurti, fagan_bradley); ESHANA never picks one silently"
+   },
+   "kind": "error",
+   "schema_version": "0.1.0"
+  },
+  "title": "A sidereal zodiac without an ayanamsha"
+ },
+ {
+  "command": "eshana positions --date 2024-11-03 --time 01:30 --tz America/New_York",
+  "result": {
+   "error": {
+    "code": "ESH-TIME-AMBIGUOUS",
+    "message": "ambiguous local time: 2024-11-03T01:30:00 in America/New_York occurs twice (UTC-04 and UTC-05); pass fold=earliest or fold=latest"
+   },
+   "kind": "error",
+   "schema_version": "0.1.0"
+  },
+  "title": "A local time that happens twice"
+ },
+ {
+  "command": "eshana positions --date 2024-03-10 --time 02:30 --tz America/New_York --fold latest",
+  "result": {
+   "error": {
+    "code": "ESH-TIME-NONEXISTENT",
+    "message": "non-existent local time: 2024-03-10T02:30:00 in America/New_York was skipped by a clock change; the instant does not exist"
+   },
+   "kind": "error",
+   "schema_version": "0.1.0"
+  },
+  "title": "A local time that never happened"
+ },
+ {
+  "command": "eshana chart western --utc 2000-01-01T12:00:00Z --lat 75 --lon 10 --houses placidus",
+  "result": {
+   "error": {
+    "code": "ESH-LATITUDE",
+    "message": "unsupported latitude: Placidus houses are undefined at latitude 75.00° (polar circle is 66.56°); use whole_sign or equal"
+   },
+   "kind": "error",
+   "schema_version": "0.1.0"
+  },
+  "title": "Placidus houses inside the polar circle"
+ },
+ {
+  "command": "eshana human-design --date 1992-05-28 --tz Asia/Kolkata",
+  "result": {
+   "error": {
+    "code": "ESH-TIME-UNCERTAIN",
+    "message": "birth time too uncertain: Human Design needs the exact birth time: the design instant and gate lines move with it"
+   },
+   "kind": "error",
+   "schema_version": "0.1.0"
+  },
+  "title": "Human Design with an unknown birth time"
+ }
+]

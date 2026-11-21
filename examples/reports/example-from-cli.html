@@ -1,0 +1,1763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="ESHANA 0.1.0">
+<title>From the CLI</title>
+<style>
+:root{--paper:#f7f5f0;--panel:#fff;--ink:#1f1d1a;--muted:#6b665e;--line:#e3ded3;--accent:#c8102e;--chip:#f1ede4;
+--shadow:0 10px 30px rgba(40,30,10,.12);--disc:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#16151a;--panel:#211f26;--ink:#f0ece4;
+--muted:#a59f95;--line:#37343d;--accent:#ff5c70;--chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}}
+:root[data-theme="dark"]{--paper:#16151a;--panel:#211f26;--ink:#f0ece4;--muted:#a59f95;--line:#37343d;--accent:#ff5c70;
+--chip:#2c2a31;--shadow:0 10px 30px rgba(0,0,0,.5);--disc:#2a2830}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.45 "Open Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+header.top{max-width:1240px;margin:0 auto;padding:22px 16px 6px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+header.top h1{margin:0;font-style:italic;font-weight:800;font-size:clamp(22px,3vw,34px)}
+header.top .sub{color:var(--muted);font-size:14px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px;box-shadow:var(--shadow)}
+.btn:hover{border-color:var(--ink)}
+nav.toc{max-width:1240px;margin:6px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:6px}
+nav.toc a{background:var(--chip);color:var(--ink);text-decoration:none;border-radius:999px;padding:3px 10px;font-size:13px}
+main{max-width:1240px;margin:0 auto;padding:10px 16px 40px;display:grid;gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px;min-width:0}
+.card h2{margin:0 0 6px;font-style:italic;font-weight:800;font-size:22px}
+.card h3{font-size:15px;margin:14px 0 6px}
+p.lead,.note{color:var(--muted);font-size:13.5px;margin:0 0 10px}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start;margin-bottom:12px}
+.figure svg{width:100%;height:auto;display:block}
+.figure.small{max-width:300px}
+.figure .chakra{max-width:760px;margin:0 auto}
+.lbl{text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.seg{stroke:#fff;stroke-width:1.2}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:6px 0 10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 9px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--chip);font-size:12.5px;position:sticky;top:0}
+tbody tr:hover,tr.hl{background:var(--chip)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.35);margin-right:6px;vertical-align:middle}
+.facts{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:4px 12px;margin:0 0 10px;font-size:13.5px}
+.facts dt{color:var(--muted)}.facts dd{margin:0;overflow-wrap:anywhere}
+.flags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.flag{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:3px 10px;font-size:13px}
+.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mini h3{margin-top:0}
+.hd{display:grid;grid-template-columns:minmax(200px,300px) 1fr;gap:16px;align-items:start}
+@media (max-width:720px){.hd{grid-template-columns:1fr}}
+.red{color:var(--accent)}
+.ep{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:1px 8px;background:var(--chip);border:1px solid var(--line)}
+.ep-calculated{color:#2563EB}.ep-tradition_rule{color:#7C3AED}
+details{border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0}
+details.cur{border-color:var(--accent)}
+summary{cursor:pointer}
+ul.ants{columns:2;font-size:13px;margin:6px 0}
+@media (max-width:720px){ul.ants{columns:1}}
+ul.ants li.cur{color:var(--accent);font-weight:700}
+ul.warn li{color:var(--accent)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.tab{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:3px 11px;cursor:pointer;font:inherit;font-size:13px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--panel)}
+.pane{max-width:520px}
+[data-body].hl circle,[data-body].hl{filter:drop-shadow(0 0 6px var(--accent))}
+line.asp.dim{opacity:.08}
+pre.raw{max-height:420px;overflow:auto;background:var(--chip);border-radius:10px;padding:10px;font-size:12px}
+footer{max-width:1240px;margin:0 auto 30px;padding:0 16px;color:var(--muted);font-size:12.5px}
+code{font-size:12px}
+@media print{.tools,nav.toc{display:none}.card{box-shadow:none;break-inside:avoid}body{background:#fff}
+details{break-inside:avoid}details>*{display:block}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>From the CLI</h1><div class="sub">Chennai</div></div>
+<div class="tools"><button class="btn" id="theme" type="button">◐ Theme</button>
+<button class="btn" id="print" type="button">⎙ Print / PDF</button>
+<button class="btn" id="json" type="button">⤓ Export JSON</button></div></header>
+<nav class="toc" aria-label="Sections"><a href="#summary">Birth data</a><a href="#chakra">Chakra</a><a href="#vedic">Vedic</a><a href="#divisional">Vargas</a><a href="#dasha">Daśā</a><a href="#nakshatra">Nakshatra</a><a href="#provenance">Provenance</a><a href="#raw">JSON</a></nav>
+<main>
+<section class="card" id="summary"><h2>Birth data</h2><p class="lead">Computed by ESHANA. Values are labelled calculated or tradition_rule; nothing here is an interpretation.</p><div class="flags"><span class="flag">Lagna: <b>Makara</b></span><span class="flag">Moon rāśi: <b>Tula</b></span><span class="flag">Sun rāśi: <b>Vrishchika</b></span><span class="flag">Janma nakshatra: <b>Swati 1</b></span></div><dl class="facts"><dt>Name</dt><dd>None</dd><dt>Place</dt><dd>Chennai</dd><dt>Instant (UTC)</dt><dd>1996-12-07T05:04:00Z</dd><dt>Time zone</dt><dd>Asia/Kolkata (+5.50 h)</dd><dt>Latitude, longitude</dt><dd>13.0878°, 80.2785°</dd><dt>Birth time quality</dt><dd>exact</dd><dt>Julian day (UT / TT)</dt><dd>2450424.711111 / 2450424.711831</dd><dt>ΔT</dt><dd>62.18 s</dd></dl></section><section class="card" id="chakra"><h2>Panchang chakra</h2><p class="lead">Sidereal positions on the rāśi, nakshatra and pada rings (palette from the Panchang Chakra template). Hover a planet anywhere in the report to find it on every chart.</p><div class="figure"><svg class="chakra" viewBox="-540 -540 1080 1080" role="img" aria-label="Rāśi chakra: rashi, nakshatra and pada rings with planet positions"><path class="seg" d="M-262.50 -454.66A525 525 0 0 1 -150.57 -502.94L-134.80 -450.26A470 470 0 0 0 -235.00 -407.03Z" fill="#DCDCDC"><title>Ashwini (lord Ketu)</title></path><text class="lbl" x="-197.0" y="-456.8" font-size="14" fill="#1b1b1b" transform="rotate(66.7 -197.0 -456.8)">Ashwini</text><path class="seg" d="M-150.57 -502.94A525 525 0 0 1 -30.53 -524.11L-27.33 -469.20A470 470 0 0 0 -134.80 -450.26Z" fill="#E39479"><title>Bharani (lord Venus)</title></path><text class="lbl" x="-86.4" y="-489.9" font-size="14" fill="#ffffff" transform="rotate(80.0 -86.4 -489.9)">Bharani</text><path class="seg" d="M-30.53 -524.11A525 525 0 0 1 91.17 -517.02L81.61 -462.86A470 470 0 0 0 -27.33 -469.20Z" fill="#F4B31B"><title>Krittika (lord Sun)</title></path><text class="lbl" x="28.9" y="-496.7" font-size="14" fill="#1b1b1b" transform="rotate(-86.7 28.9 -496.7)">Krittika</text><path class="seg" d="M91.17 -517.02A525 525 0 0 1 207.94 -482.06L186.16 -431.56A470 470 0 0 0 81.61 -462.86Z" fill="#FFFFFF"><title>Rohini (lord Moon)</title></path><text class="lbl" x="142.7" y="-476.6" font-size="14" fill="#1b1b1b" transform="rotate(-73.3 142.7 -476.6)">Rohini</text><path class="seg" d="M207.94 -482.06A525 525 0 0 1 313.51 -421.11L280.66 -377.00A470 470 0 0 0 186.16 -431.56Z" fill="#E0583B"><title>Mrigashirsha (lord Mars)</title></path><text class="lbl" x="248.7" y="-430.8" font-size="14" fill="#ffffff" transform="rotate(-60.0 248.7 -430.8)">Mrigashira</text><path class="seg" d="M313.51 -421.11A525 525 0 0 1 402.17 -337.46L360.04 -302.11A470 470 0 0 0 280.66 -377.00Z" fill="#B6A8DA"><title>Ardra (lord Rahu)</title></path><text class="lbl" x="341.4" y="-361.9" font-size="14" fill="#1b1b1b" transform="rotate(-46.7 341.4 -361.9)">Ardra</text><path class="seg" d="M402.17 -337.46A525 525 0 0 1 469.16 -235.62L420.01 -210.94A470 470 0 0 0 360.04 -302.11Z" fill="#FFE21C"><title>Punarvasu (lord Jupiter)</title></path><text class="lbl" x="415.7" y="-273.4" font-size="14" fill="#1b1b1b" transform="rotate(-33.3 415.7 -273.4)">Punarvasu</text><path class="seg" d="M469.16 -235.62A525 525 0 0 1 510.85 -121.07L457.33 -108.39A470 470 0 0 0 420.01 -210.94Z" fill="#8DA2D0"><title>Pushya (lord Saturn)</title></path><text class="lbl" x="467.5" y="-170.2" font-size="14" fill="#ffffff" transform="rotate(-20.0 467.5 -170.2)">Pushya</text><path class="seg" d="M510.85 -121.07A525 525 0 0 1 525.00 -0.00L470.00 -0.00A470 470 0 0 0 457.33 -108.39Z" fill="#A9C79A"><title>Ashlesha (lord Mercury)</title></path><text class="lbl" x="494.1" y="-57.8" font-size="14" fill="#1b1b1b" transform="rotate(-6.7 494.1 -57.8)">Ashlesha</text><path class="seg" d="M525.00 -0.00A525 525 0 0 1 510.85 121.07L457.33 108.39A470 470 0 0 0 470.00 -0.00Z" fill="#DCDCDC"><title>Magha (lord Ketu)</title></path><text class="lbl" x="494.1" y="57.8" font-size="14" fill="#1b1b1b" transform="rotate(6.7 494.1 57.8)">Magha</text><path class="seg" d="M510.85 121.07A525 525 0 0 1 469.16 235.62L420.01 210.94A470 470 0 0 0 457.33 108.39Z" fill="#E39479"><title>Purva Phalguni (lord Venus)</title></path><text class="lbl" x="467.5" y="170.2" font-size="14" fill="#ffffff" transform="rotate(20.0 467.5 170.2)">P. Phalguni</text><path class="seg" d="M469.16 235.62A525 525 0 0 1 402.17 337.46L360.04 302.11A470 470 0 0 0 420.01 210.94Z" fill="#F4B31B"><title>Uttara Phalguni (lord Sun)</title></path><text class="lbl" x="415.7" y="273.4" font-size="14" fill="#1b1b1b" transform="rotate(33.3 415.7 273.4)">U. Phalguni</text><path class="seg" d="M402.17 337.46A525 525 0 0 1 313.51 421.11L280.66 377.00A470 470 0 0 0 360.04 302.11Z" fill="#FFFFFF"><title>Hasta (lord Moon)</title></path><text class="lbl" x="341.4" y="361.9" font-size="14" fill="#1b1b1b" transform="rotate(46.7 341.4 361.9)">Hasta</text><path class="seg" d="M313.51 421.11A525 525 0 0 1 207.94 482.06L186.16 431.56A470 470 0 0 0 280.66 377.00Z" fill="#E0583B"><title>Chitra (lord Mars)</title></path><text class="lbl" x="248.7" y="430.8" font-size="14" fill="#ffffff" transform="rotate(60.0 248.7 430.8)">Chitra</text><path class="seg" d="M207.94 482.06A525 525 0 0 1 91.17 517.02L81.61 462.86A470 470 0 0 0 186.16 431.56Z" fill="#B6A8DA"><title>Swati (lord Rahu)</title></path><text class="lbl" x="142.7" y="476.6" font-size="14" fill="#1b1b1b" transform="rotate(73.3 142.7 476.6)">Swati</text><path class="seg" d="M91.17 517.02A525 525 0 0 1 -30.53 524.11L-27.33 469.20A470 470 0 0 0 81.61 462.86Z" fill="#FFE21C"><title>Vishakha (lord Jupiter)</title></path><text class="lbl" x="28.9" y="496.7" font-size="14" fill="#1b1b1b" transform="rotate(86.7 28.9 496.7)">Vishakha</text><path class="seg" d="M-30.53 524.11A525 525 0 0 1 -150.57 502.94L-134.80 450.26A470 470 0 0 0 -27.33 469.20Z" fill="#8DA2D0"><title>Anuradha (lord Saturn)</title></path><text class="lbl" x="-86.4" y="489.9" font-size="14" fill="#ffffff" transform="rotate(-80.0 -86.4 489.9)">Anuradha</text><path class="seg" d="M-150.57 502.94A525 525 0 0 1 -262.50 454.66L-235.00 407.03A470 470 0 0 0 -134.80 450.26Z" fill="#A9C79A"><title>Jyeshtha (lord Mercury)</title></path><text class="lbl" x="-197.0" y="456.8" font-size="14" fill="#1b1b1b" transform="rotate(-66.7 -197.0 456.8)">Jyeshtha</text><path class="seg" d="M-262.50 454.66A525 525 0 0 1 -360.28 381.87L-322.53 341.87A470 470 0 0 0 -235.00 407.03Z" fill="#DCDCDC"><title>Mula (lord Ketu)</title></path><text class="lbl" x="-297.1" y="399.1" font-size="14" fill="#1b1b1b" transform="rotate(-53.3 -297.1 399.1)">Mula</text><path class="seg" d="M-360.28 381.87A525 525 0 0 1 -438.63 288.49L-392.68 258.27A470 470 0 0 0 -322.53 341.87Z" fill="#E39479"><title>Purva Ashadha (lord Venus)</title></path><text class="lbl" x="-381.1" y="319.8" font-size="14" fill="#ffffff" transform="rotate(-40.0 -381.1 319.8)">P. Ashadha</text><path class="seg" d="M-438.63 288.49A525 525 0 0 1 -493.34 179.56L-441.66 160.75A470 470 0 0 0 -392.68 258.27Z" fill="#F4B31B"><title>Uttara Ashadha (lord Sun)</title></path><text class="lbl" x="-444.6" y="223.3" font-size="14" fill="#1b1b1b" transform="rotate(-26.7 -444.6 223.3)">U. Ashadha</text><path class="seg" d="M-493.34 179.56A525 525 0 0 1 -521.45 60.95L-466.82 54.56A470 470 0 0 0 -441.66 160.75Z" fill="#FFFFFF"><title>Shravana (lord Moon)</title></path><text class="lbl" x="-484.1" y="114.7" font-size="14" fill="#1b1b1b" transform="rotate(-13.3 -484.1 114.7)">Shravana</text><path class="seg" d="M-521.45 60.95A525 525 0 0 1 -521.45 -60.95L-466.82 -54.56A470 470 0 0 0 -466.82 54.56Z" fill="#E0583B"><title>Dhanishtha (lord Mars)</title></path><text class="lbl" x="-497.5" y="0.0" font-size="14" fill="#ffffff" transform="rotate(0.0 -497.5 0.0)">Dhanishtha</text><path class="seg" d="M-521.45 -60.95A525 525 0 0 1 -493.34 -179.56L-441.66 -160.75A470 470 0 0 0 -466.82 -54.56Z" fill="#B6A8DA"><title>Shatabhisha (lord Rahu)</title></path><text class="lbl" x="-484.1" y="-114.7" font-size="14" fill="#1b1b1b" transform="rotate(13.3 -484.1 -114.7)">Shatabhisha</text><path class="seg" d="M-493.34 -179.56A525 525 0 0 1 -438.63 -288.49L-392.68 -258.27A470 470 0 0 0 -441.66 -160.75Z" fill="#FFE21C"><title>Purva Bhadrapada (lord Jupiter)</title></path><text class="lbl" x="-444.6" y="-223.3" font-size="14" fill="#1b1b1b" transform="rotate(26.7 -444.6 -223.3)">P. Bhadra</text><path class="seg" d="M-438.63 -288.49A525 525 0 0 1 -360.28 -381.87L-322.53 -341.87A470 470 0 0 0 -392.68 -258.27Z" fill="#8DA2D0"><title>Uttara Bhadrapada (lord Saturn)</title></path><text class="lbl" x="-381.1" y="-319.8" font-size="14" fill="#ffffff" transform="rotate(40.0 -381.1 -319.8)">U. Bhadra</text><path class="seg" d="M-360.28 -381.87A525 525 0 0 1 -262.50 -454.66L-235.00 -407.03A470 470 0 0 0 -322.53 -341.87Z" fill="#A9C79A"><title>Revati (lord Mercury)</title></path><text class="lbl" x="-297.1" y="-399.1" font-size="14" fill="#1b1b1b" transform="rotate(53.3 -297.1 -399.1)">Revati</text><path class="seg" d="M-235.00 -407.03A470 470 0 0 1 -210.94 -420.01L-197.47 -393.20A440 440 0 0 0 -220.00 -381.05Z" fill="#FFE24D"><title>Ashwini pada 1 · navamsha Aries</title></path><path class="seg" d="M-210.94 -420.01A470 470 0 0 1 -186.16 -431.56L-174.28 -404.02A440 440 0 0 0 -197.47 -393.20Z" fill="#A6EDD5"><title>Ashwini pada 2 · navamsha Taurus</title></path><path class="seg" d="M-186.16 -431.56A470 470 0 0 1 -160.75 -441.66L-150.49 -413.46A440 440 0 0 0 -174.28 -404.02Z" fill="#C5EBA0"><title>Ashwini pada 3 · navamsha Gemini</title></path><path class="seg" d="M-160.75 -441.66A470 470 0 0 1 -134.80 -450.26L-126.19 -421.52A440 440 0 0 0 -150.49 -413.46Z" fill="#6FE2EE"><title>Ashwini pada 4 · navamsha Cancer</title></path><path class="seg" d="M-134.80 -450.26A470 470 0 0 1 -108.39 -457.33L-101.47 -428.14A440 440 0 0 0 -126.19 -421.52Z" fill="#FFE24D"><title>Bharani pada 1 · navamsha Leo</title></path><path class="seg" d="M-108.39 -457.33A470 470 0 0 1 -81.61 -462.86L-76.41 -433.32A440 440 0 0 0 -101.47 -428.14Z" fill="#A6EDD5"><title>Bharani pada 2 · navamsha Virgo</title></path><path class="seg" d="M-81.61 -462.86A470 470 0 0 1 -54.56 -466.82L-51.08 -437.02A440 440 0 0 0 -76.41 -433.32Z" fill="#C5EBA0"><title>Bharani pada 3 · navamsha Libra</title></path><path class="seg" d="M-54.56 -466.82A470 470 0 0 1 -27.33 -469.20L-25.58 -439.26A440 440 0 0 0 -51.08 -437.02Z" fill="#6FE2EE"><title>Bharani pada 4 · navamsha Scorpio</title></path><path class="seg" d="M-27.33 -469.20A470 470 0 0 1 -0.00 -470.00L-0.00 -440.00A440 440 0 0 0 -25.58 -439.26Z" fill="#FFE24D"><title>Krittika pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M0.00 -470.00A470 470 0 0 1 27.33 -469.20L25.58 -439.26A440 440 0 0 0 0.00 -440.00Z" fill="#A6EDD5"><title>Krittika pada 2 · navamsha Capricorn</title></path><path class="seg" d="M27.33 -469.20A470 470 0 0 1 54.56 -466.82L51.08 -437.02A440 440 0 0 0 25.58 -439.26Z" fill="#C5EBA0"><title>Krittika pada 3 · navamsha Aquarius</title></path><path class="seg" d="M54.56 -466.82A470 470 0 0 1 81.61 -462.86L76.41 -433.32A440 440 0 0 0 51.08 -437.02Z" fill="#6FE2EE"><title>Krittika pada 4 · navamsha Pisces</title></path><path class="seg" d="M81.61 -462.86A470 470 0 0 1 108.39 -457.33L101.47 -428.14A440 440 0 0 0 76.41 -433.32Z" fill="#FFE24D"><title>Rohini pada 1 · navamsha Aries</title></path><path class="seg" d="M108.39 -457.33A470 470 0 0 1 134.80 -450.26L126.19 -421.52A440 440 0 0 0 101.47 -428.14Z" fill="#A6EDD5"><title>Rohini pada 2 · navamsha Taurus</title></path><path class="seg" d="M134.80 -450.26A470 470 0 0 1 160.75 -441.66L150.49 -413.46A440 440 0 0 0 126.19 -421.52Z" fill="#C5EBA0"><title>Rohini pada 3 · navamsha Gemini</title></path><path class="seg" d="M160.75 -441.66A470 470 0 0 1 186.16 -431.56L174.28 -404.02A440 440 0 0 0 150.49 -413.46Z" fill="#6FE2EE"><title>Rohini pada 4 · navamsha Cancer</title></path><path class="seg" d="M186.16 -431.56A470 470 0 0 1 210.94 -420.01L197.47 -393.20A440 440 0 0 0 174.28 -404.02Z" fill="#FFE24D"><title>Mrigashirsha pada 1 · navamsha Leo</title></path><path class="seg" d="M210.94 -420.01A470 470 0 0 1 235.00 -407.03L220.00 -381.05A440 440 0 0 0 197.47 -393.20Z" fill="#A6EDD5"><title>Mrigashirsha pada 2 · navamsha Virgo</title></path><path class="seg" d="M235.00 -407.03A470 470 0 0 1 258.27 -392.68L241.78 -367.61A440 440 0 0 0 220.00 -381.05Z" fill="#C5EBA0"><title>Mrigashirsha pada 3 · navamsha Libra</title></path><path class="seg" d="M258.27 -392.68A470 470 0 0 1 280.66 -377.00L262.75 -352.93A440 440 0 0 0 241.78 -367.61Z" fill="#6FE2EE"><title>Mrigashirsha pada 4 · navamsha Scorpio</title></path><path class="seg" d="M280.66 -377.00A470 470 0 0 1 302.11 -360.04L282.83 -337.06A440 440 0 0 0 262.75 -352.93Z" fill="#FFE24D"><title>Ardra pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M302.11 -360.04A470 470 0 0 1 322.53 -341.87L301.95 -320.04A440 440 0 0 0 282.83 -337.06Z" fill="#A6EDD5"><title>Ardra pada 2 · navamsha Capricorn</title></path><path class="seg" d="M322.53 -341.87A470 470 0 0 1 341.87 -322.53L320.04 -301.95A440 440 0 0 0 301.95 -320.04Z" fill="#C5EBA0"><title>Ardra pada 3 · navamsha Aquarius</title></path><path class="seg" d="M341.87 -322.53A470 470 0 0 1 360.04 -302.11L337.06 -282.83A440 440 0 0 0 320.04 -301.95Z" fill="#6FE2EE"><title>Ardra pada 4 · navamsha Pisces</title></path><path class="seg" d="M360.04 -302.11A470 470 0 0 1 377.00 -280.66L352.93 -262.75A440 440 0 0 0 337.06 -282.83Z" fill="#FFE24D"><title>Punarvasu pada 1 · navamsha Aries</title></path><path class="seg" d="M377.00 -280.66A470 470 0 0 1 392.68 -258.27L367.61 -241.78A440 440 0 0 0 352.93 -262.75Z" fill="#A6EDD5"><title>Punarvasu pada 2 · navamsha Taurus</title></path><path class="seg" d="M392.68 -258.27A470 470 0 0 1 407.03 -235.00L381.05 -220.00A440 440 0 0 0 367.61 -241.78Z" fill="#C5EBA0"><title>Punarvasu pada 3 · navamsha Gemini</title></path><path class="seg" d="M407.03 -235.00A470 470 0 0 1 420.01 -210.94L393.20 -197.47A440 440 0 0 0 381.05 -220.00Z" fill="#6FE2EE"><title>Punarvasu pada 4 · navamsha Cancer</title></path><path class="seg" d="M420.01 -210.94A470 470 0 0 1 431.56 -186.16L404.02 -174.28A440 440 0 0 0 393.20 -197.47Z" fill="#FFE24D"><title>Pushya pada 1 · navamsha Leo</title></path><path class="seg" d="M431.56 -186.16A470 470 0 0 1 441.66 -160.75L413.46 -150.49A440 440 0 0 0 404.02 -174.28Z" fill="#A6EDD5"><title>Pushya pada 2 · navamsha Virgo</title></path><path class="seg" d="M441.66 -160.75A470 470 0 0 1 450.26 -134.80L421.52 -126.19A440 440 0 0 0 413.46 -150.49Z" fill="#C5EBA0"><title>Pushya pada 3 · navamsha Libra</title></path><path class="seg" d="M450.26 -134.80A470 470 0 0 1 457.33 -108.39L428.14 -101.47A440 440 0 0 0 421.52 -126.19Z" fill="#6FE2EE"><title>Pushya pada 4 · navamsha Scorpio</title></path><path class="seg" d="M457.33 -108.39A470 470 0 0 1 462.86 -81.61L433.32 -76.41A440 440 0 0 0 428.14 -101.47Z" fill="#FFE24D"><title>Ashlesha pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M462.86 -81.61A470 470 0 0 1 466.82 -54.56L437.02 -51.08A440 440 0 0 0 433.32 -76.41Z" fill="#A6EDD5"><title>Ashlesha pada 2 · navamsha Capricorn</title></path><path class="seg" d="M466.82 -54.56A470 470 0 0 1 469.20 -27.33L439.26 -25.58A440 440 0 0 0 437.02 -51.08Z" fill="#C5EBA0"><title>Ashlesha pada 3 · navamsha Aquarius</title></path><path class="seg" d="M469.20 -27.33A470 470 0 0 1 470.00 -0.00L440.00 -0.00A440 440 0 0 0 439.26 -25.58Z" fill="#6FE2EE"><title>Ashlesha pada 4 · navamsha Pisces</title></path><path class="seg" d="M470.00 -0.00A470 470 0 0 1 469.20 27.33L439.26 25.58A440 440 0 0 0 440.00 -0.00Z" fill="#FFE24D"><title>Magha pada 1 · navamsha Aries</title></path><path class="seg" d="M469.20 27.33A470 470 0 0 1 466.82 54.56L437.02 51.08A440 440 0 0 0 439.26 25.58Z" fill="#A6EDD5"><title>Magha pada 2 · navamsha Taurus</title></path><path class="seg" d="M466.82 54.56A470 470 0 0 1 462.86 81.61L433.32 76.41A440 440 0 0 0 437.02 51.08Z" fill="#C5EBA0"><title>Magha pada 3 · navamsha Gemini</title></path><path class="seg" d="M462.86 81.61A470 470 0 0 1 457.33 108.39L428.14 101.47A440 440 0 0 0 433.32 76.41Z" fill="#6FE2EE"><title>Magha pada 4 · navamsha Cancer</title></path><path class="seg" d="M457.33 108.39A470 470 0 0 1 450.26 134.80L421.52 126.19A440 440 0 0 0 428.14 101.47Z" fill="#FFE24D"><title>Purva Phalguni pada 1 · navamsha Leo</title></path><path class="seg" d="M450.26 134.80A470 470 0 0 1 441.66 160.75L413.46 150.49A440 440 0 0 0 421.52 126.19Z" fill="#A6EDD5"><title>Purva Phalguni pada 2 · navamsha Virgo</title></path><path class="seg" d="M441.66 160.75A470 470 0 0 1 431.56 186.16L404.02 174.28A440 440 0 0 0 413.46 150.49Z" fill="#C5EBA0"><title>Purva Phalguni pada 3 · navamsha Libra</title></path><path class="seg" d="M431.56 186.16A470 470 0 0 1 420.01 210.94L393.20 197.47A440 440 0 0 0 404.02 174.28Z" fill="#6FE2EE"><title>Purva Phalguni pada 4 · navamsha Scorpio</title></path><path class="seg" d="M420.01 210.94A470 470 0 0 1 407.03 235.00L381.05 220.00A440 440 0 0 0 393.20 197.47Z" fill="#FFE24D"><title>Uttara Phalguni pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M407.03 235.00A470 470 0 0 1 392.68 258.27L367.61 241.78A440 440 0 0 0 381.05 220.00Z" fill="#A6EDD5"><title>Uttara Phalguni pada 2 · navamsha Capricorn</title></path><path class="seg" d="M392.68 258.27A470 470 0 0 1 377.00 280.66L352.93 262.75A440 440 0 0 0 367.61 241.78Z" fill="#C5EBA0"><title>Uttara Phalguni pada 3 · navamsha Aquarius</title></path><path class="seg" d="M377.00 280.66A470 470 0 0 1 360.04 302.11L337.06 282.83A440 440 0 0 0 352.93 262.75Z" fill="#6FE2EE"><title>Uttara Phalguni pada 4 · navamsha Pisces</title></path><path class="seg" d="M360.04 302.11A470 470 0 0 1 341.87 322.53L320.04 301.95A440 440 0 0 0 337.06 282.83Z" fill="#FFE24D"><title>Hasta pada 1 · navamsha Aries</title></path><path class="seg" d="M341.87 322.53A470 470 0 0 1 322.53 341.87L301.95 320.04A440 440 0 0 0 320.04 301.95Z" fill="#A6EDD5"><title>Hasta pada 2 · navamsha Taurus</title></path><path class="seg" d="M322.53 341.87A470 470 0 0 1 302.11 360.04L282.83 337.06A440 440 0 0 0 301.95 320.04Z" fill="#C5EBA0"><title>Hasta pada 3 · navamsha Gemini</title></path><path class="seg" d="M302.11 360.04A470 470 0 0 1 280.66 377.00L262.75 352.93A440 440 0 0 0 282.83 337.06Z" fill="#6FE2EE"><title>Hasta pada 4 · navamsha Cancer</title></path><path class="seg" d="M280.66 377.00A470 470 0 0 1 258.27 392.68L241.78 367.61A440 440 0 0 0 262.75 352.93Z" fill="#FFE24D"><title>Chitra pada 1 · navamsha Leo</title></path><path class="seg" d="M258.27 392.68A470 470 0 0 1 235.00 407.03L220.00 381.05A440 440 0 0 0 241.78 367.61Z" fill="#A6EDD5"><title>Chitra pada 2 · navamsha Virgo</title></path><path class="seg" d="M235.00 407.03A470 470 0 0 1 210.94 420.01L197.47 393.20A440 440 0 0 0 220.00 381.05Z" fill="#C5EBA0"><title>Chitra pada 3 · navamsha Libra</title></path><path class="seg" d="M210.94 420.01A470 470 0 0 1 186.16 431.56L174.28 404.02A440 440 0 0 0 197.47 393.20Z" fill="#6FE2EE"><title>Chitra pada 4 · navamsha Scorpio</title></path><path class="seg" d="M186.16 431.56A470 470 0 0 1 160.75 441.66L150.49 413.46A440 440 0 0 0 174.28 404.02Z" fill="#FFE24D"><title>Swati pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M160.75 441.66A470 470 0 0 1 134.80 450.26L126.19 421.52A440 440 0 0 0 150.49 413.46Z" fill="#A6EDD5"><title>Swati pada 2 · navamsha Capricorn</title></path><path class="seg" d="M134.80 450.26A470 470 0 0 1 108.39 457.33L101.47 428.14A440 440 0 0 0 126.19 421.52Z" fill="#C5EBA0"><title>Swati pada 3 · navamsha Aquarius</title></path><path class="seg" d="M108.39 457.33A470 470 0 0 1 81.61 462.86L76.41 433.32A440 440 0 0 0 101.47 428.14Z" fill="#6FE2EE"><title>Swati pada 4 · navamsha Pisces</title></path><path class="seg" d="M81.61 462.86A470 470 0 0 1 54.56 466.82L51.08 437.02A440 440 0 0 0 76.41 433.32Z" fill="#FFE24D"><title>Vishakha pada 1 · navamsha Aries</title></path><path class="seg" d="M54.56 466.82A470 470 0 0 1 27.33 469.20L25.58 439.26A440 440 0 0 0 51.08 437.02Z" fill="#A6EDD5"><title>Vishakha pada 2 · navamsha Taurus</title></path><path class="seg" d="M27.33 469.20A470 470 0 0 1 -0.00 470.00L-0.00 440.00A440 440 0 0 0 25.58 439.26Z" fill="#C5EBA0"><title>Vishakha pada 3 · navamsha Gemini</title></path><path class="seg" d="M0.00 470.00A470 470 0 0 1 -27.33 469.20L-25.58 439.26A440 440 0 0 0 0.00 440.00Z" fill="#6FE2EE"><title>Vishakha pada 4 · navamsha Cancer</title></path><path class="seg" d="M-27.33 469.20A470 470 0 0 1 -54.56 466.82L-51.08 437.02A440 440 0 0 0 -25.58 439.26Z" fill="#FFE24D"><title>Anuradha pada 1 · navamsha Leo</title></path><path class="seg" d="M-54.56 466.82A470 470 0 0 1 -81.61 462.86L-76.41 433.32A440 440 0 0 0 -51.08 437.02Z" fill="#A6EDD5"><title>Anuradha pada 2 · navamsha Virgo</title></path><path class="seg" d="M-81.61 462.86A470 470 0 0 1 -108.39 457.33L-101.47 428.14A440 440 0 0 0 -76.41 433.32Z" fill="#C5EBA0"><title>Anuradha pada 3 · navamsha Libra</title></path><path class="seg" d="M-108.39 457.33A470 470 0 0 1 -134.80 450.26L-126.19 421.52A440 440 0 0 0 -101.47 428.14Z" fill="#6FE2EE"><title>Anuradha pada 4 · navamsha Scorpio</title></path><path class="seg" d="M-134.80 450.26A470 470 0 0 1 -160.75 441.66L-150.49 413.46A440 440 0 0 0 -126.19 421.52Z" fill="#FFE24D"><title>Jyeshtha pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M-160.75 441.66A470 470 0 0 1 -186.16 431.56L-174.28 404.02A440 440 0 0 0 -150.49 413.46Z" fill="#A6EDD5"><title>Jyeshtha pada 2 · navamsha Capricorn</title></path><path class="seg" d="M-186.16 431.56A470 470 0 0 1 -210.94 420.01L-197.47 393.20A440 440 0 0 0 -174.28 404.02Z" fill="#C5EBA0"><title>Jyeshtha pada 3 · navamsha Aquarius</title></path><path class="seg" d="M-210.94 420.01A470 470 0 0 1 -235.00 407.03L-220.00 381.05A440 440 0 0 0 -197.47 393.20Z" fill="#6FE2EE"><title>Jyeshtha pada 4 · navamsha Pisces</title></path><path class="seg" d="M-235.00 407.03A470 470 0 0 1 -258.27 392.68L-241.78 367.61A440 440 0 0 0 -220.00 381.05Z" fill="#FFE24D"><title>Mula pada 1 · navamsha Aries</title></path><path class="seg" d="M-258.27 392.68A470 470 0 0 1 -280.66 377.00L-262.75 352.93A440 440 0 0 0 -241.78 367.61Z" fill="#A6EDD5"><title>Mula pada 2 · navamsha Taurus</title></path><path class="seg" d="M-280.66 377.00A470 470 0 0 1 -302.11 360.04L-282.83 337.06A440 440 0 0 0 -262.75 352.93Z" fill="#C5EBA0"><title>Mula pada 3 · navamsha Gemini</title></path><path class="seg" d="M-302.11 360.04A470 470 0 0 1 -322.53 341.87L-301.95 320.04A440 440 0 0 0 -282.83 337.06Z" fill="#6FE2EE"><title>Mula pada 4 · navamsha Cancer</title></path><path class="seg" d="M-322.53 341.87A470 470 0 0 1 -341.87 322.53L-320.04 301.95A440 440 0 0 0 -301.95 320.04Z" fill="#FFE24D"><title>Purva Ashadha pada 1 · navamsha Leo</title></path><path class="seg" d="M-341.87 322.53A470 470 0 0 1 -360.04 302.11L-337.06 282.83A440 440 0 0 0 -320.04 301.95Z" fill="#A6EDD5"><title>Purva Ashadha pada 2 · navamsha Virgo</title></path><path class="seg" d="M-360.04 302.11A470 470 0 0 1 -377.00 280.66L-352.93 262.75A440 440 0 0 0 -337.06 282.83Z" fill="#C5EBA0"><title>Purva Ashadha pada 3 · navamsha Libra</title></path><path class="seg" d="M-377.00 280.66A470 470 0 0 1 -392.68 258.27L-367.61 241.78A440 440 0 0 0 -352.93 262.75Z" fill="#6FE2EE"><title>Purva Ashadha pada 4 · navamsha Scorpio</title></path><path class="seg" d="M-392.68 258.27A470 470 0 0 1 -407.03 235.00L-381.05 220.00A440 440 0 0 0 -367.61 241.78Z" fill="#FFE24D"><title>Uttara Ashadha pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M-407.03 235.00A470 470 0 0 1 -420.01 210.94L-393.20 197.47A440 440 0 0 0 -381.05 220.00Z" fill="#A6EDD5"><title>Uttara Ashadha pada 2 · navamsha Capricorn</title></path><path class="seg" d="M-420.01 210.94A470 470 0 0 1 -431.56 186.16L-404.02 174.28A440 440 0 0 0 -393.20 197.47Z" fill="#C5EBA0"><title>Uttara Ashadha pada 3 · navamsha Aquarius</title></path><path class="seg" d="M-431.56 186.16A470 470 0 0 1 -441.66 160.75L-413.46 150.49A440 440 0 0 0 -404.02 174.28Z" fill="#6FE2EE"><title>Uttara Ashadha pada 4 · navamsha Pisces</title></path><path class="seg" d="M-441.66 160.75A470 470 0 0 1 -450.26 134.80L-421.52 126.19A440 440 0 0 0 -413.46 150.49Z" fill="#FFE24D"><title>Shravana pada 1 · navamsha Aries</title></path><path class="seg" d="M-450.26 134.80A470 470 0 0 1 -457.33 108.39L-428.14 101.47A440 440 0 0 0 -421.52 126.19Z" fill="#A6EDD5"><title>Shravana pada 2 · navamsha Taurus</title></path><path class="seg" d="M-457.33 108.39A470 470 0 0 1 -462.86 81.61L-433.32 76.41A440 440 0 0 0 -428.14 101.47Z" fill="#C5EBA0"><title>Shravana pada 3 · navamsha Gemini</title></path><path class="seg" d="M-462.86 81.61A470 470 0 0 1 -466.82 54.56L-437.02 51.08A440 440 0 0 0 -433.32 76.41Z" fill="#6FE2EE"><title>Shravana pada 4 · navamsha Cancer</title></path><path class="seg" d="M-466.82 54.56A470 470 0 0 1 -469.20 27.33L-439.26 25.58A440 440 0 0 0 -437.02 51.08Z" fill="#FFE24D"><title>Dhanishtha pada 1 · navamsha Leo</title></path><path class="seg" d="M-469.20 27.33A470 470 0 0 1 -470.00 0.00L-440.00 0.00A440 440 0 0 0 -439.26 25.58Z" fill="#A6EDD5"><title>Dhanishtha pada 2 · navamsha Virgo</title></path><path class="seg" d="M-470.00 0.00A470 470 0 0 1 -469.20 -27.33L-439.26 -25.58A440 440 0 0 0 -440.00 0.00Z" fill="#C5EBA0"><title>Dhanishtha pada 3 · navamsha Libra</title></path><path class="seg" d="M-469.20 -27.33A470 470 0 0 1 -466.82 -54.56L-437.02 -51.08A440 440 0 0 0 -439.26 -25.58Z" fill="#6FE2EE"><title>Dhanishtha pada 4 · navamsha Scorpio</title></path><path class="seg" d="M-466.82 -54.56A470 470 0 0 1 -462.86 -81.61L-433.32 -76.41A440 440 0 0 0 -437.02 -51.08Z" fill="#FFE24D"><title>Shatabhisha pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M-462.86 -81.61A470 470 0 0 1 -457.33 -108.39L-428.14 -101.47A440 440 0 0 0 -433.32 -76.41Z" fill="#A6EDD5"><title>Shatabhisha pada 2 · navamsha Capricorn</title></path><path class="seg" d="M-457.33 -108.39A470 470 0 0 1 -450.26 -134.80L-421.52 -126.19A440 440 0 0 0 -428.14 -101.47Z" fill="#C5EBA0"><title>Shatabhisha pada 3 · navamsha Aquarius</title></path><path class="seg" d="M-450.26 -134.80A470 470 0 0 1 -441.66 -160.75L-413.46 -150.49A440 440 0 0 0 -421.52 -126.19Z" fill="#6FE2EE"><title>Shatabhisha pada 4 · navamsha Pisces</title></path><path class="seg" d="M-441.66 -160.75A470 470 0 0 1 -431.56 -186.16L-404.02 -174.28A440 440 0 0 0 -413.46 -150.49Z" fill="#FFE24D"><title>Purva Bhadrapada pada 1 · navamsha Aries</title></path><path class="seg" d="M-431.56 -186.16A470 470 0 0 1 -420.01 -210.94L-393.20 -197.47A440 440 0 0 0 -404.02 -174.28Z" fill="#A6EDD5"><title>Purva Bhadrapada pada 2 · navamsha Taurus</title></path><path class="seg" d="M-420.01 -210.94A470 470 0 0 1 -407.03 -235.00L-381.05 -220.00A440 440 0 0 0 -393.20 -197.47Z" fill="#C5EBA0"><title>Purva Bhadrapada pada 3 · navamsha Gemini</title></path><path class="seg" d="M-407.03 -235.00A470 470 0 0 1 -392.68 -258.27L-367.61 -241.78A440 440 0 0 0 -381.05 -220.00Z" fill="#6FE2EE"><title>Purva Bhadrapada pada 4 · navamsha Cancer</title></path><path class="seg" d="M-392.68 -258.27A470 470 0 0 1 -377.00 -280.66L-352.93 -262.75A440 440 0 0 0 -367.61 -241.78Z" fill="#FFE24D"><title>Uttara Bhadrapada pada 1 · navamsha Leo</title></path><path class="seg" d="M-377.00 -280.66A470 470 0 0 1 -360.04 -302.11L-337.06 -282.83A440 440 0 0 0 -352.93 -262.75Z" fill="#A6EDD5"><title>Uttara Bhadrapada pada 2 · navamsha Virgo</title></path><path class="seg" d="M-360.04 -302.11A470 470 0 0 1 -341.87 -322.53L-320.04 -301.95A440 440 0 0 0 -337.06 -282.83Z" fill="#C5EBA0"><title>Uttara Bhadrapada pada 3 · navamsha Libra</title></path><path class="seg" d="M-341.87 -322.53A470 470 0 0 1 -322.53 -341.87L-301.95 -320.04A440 440 0 0 0 -320.04 -301.95Z" fill="#6FE2EE"><title>Uttara Bhadrapada pada 4 · navamsha Scorpio</title></path><path class="seg" d="M-322.53 -341.87A470 470 0 0 1 -302.11 -360.04L-282.83 -337.06A440 440 0 0 0 -301.95 -320.04Z" fill="#FFE24D"><title>Revati pada 1 · navamsha Sagittarius</title></path><path class="seg" d="M-302.11 -360.04A470 470 0 0 1 -280.66 -377.00L-262.75 -352.93A440 440 0 0 0 -282.83 -337.06Z" fill="#A6EDD5"><title>Revati pada 2 · navamsha Capricorn</title></path><path class="seg" d="M-280.66 -377.00A470 470 0 0 1 -258.27 -392.68L-241.78 -367.61A440 440 0 0 0 -262.75 -352.93Z" fill="#C5EBA0"><title>Revati pada 3 · navamsha Aquarius</title></path><path class="seg" d="M-258.27 -392.68A470 470 0 0 1 -235.00 -407.03L-220.00 -381.05A440 440 0 0 0 -241.78 -367.61Z" fill="#6FE2EE"><title>Revati pada 4 · navamsha Pisces</title></path><path class="seg" d="M-220.00 -381.05A440 440 0 0 1 -0.00 -440.00L-0.00 -350.00A350 350 0 0 0 -175.00 -303.11Z" fill="#F2A6AD"><title>Mesha / Aries · lord Mars</title></path><text class="lbl" x="-105.6" y="-394.1" font-size="34" fill="#1b1b1b">♈&#xFE0E;</text><text class="lbl" x="-96.3" y="-359.3" font-size="15" font-weight="700" fill="#1b1b1b">Mesha</text><path class="seg" d="M0.00 -440.00A440 440 0 0 1 220.00 -381.05L175.00 -303.11A350 350 0 0 0 0.00 -350.00Z" fill="#52E5E2"><title>Vrishabha / Taurus · lord Venus</title></path><text class="lbl" x="105.6" y="-394.1" font-size="34" fill="#1b1b1b">♉&#xFE0E;</text><text class="lbl" x="96.3" y="-359.3" font-size="15" font-weight="700" fill="#1b1b1b">Vrishabha</text><path class="seg" d="M220.00 -381.05A440 440 0 0 1 381.05 -220.00L303.11 -175.00A350 350 0 0 0 175.00 -303.11Z" fill="#CCDB57"><title>Mithuna / Gemini · lord Mercury</title></path><text class="lbl" x="288.5" y="-288.5" font-size="34" fill="#1b1b1b">♊&#xFE0E;</text><text class="lbl" x="263.0" y="-263.0" font-size="15" font-weight="700" fill="#1b1b1b">Mithuna</text><path class="seg" d="M381.05 -220.00A440 440 0 0 1 440.00 -0.00L350.00 -0.00A350 350 0 0 0 303.11 -175.00Z" fill="#FFFFFF"><title>Karka / Cancer · lord Moon</title></path><text class="lbl" x="394.1" y="-105.6" font-size="34" fill="#1b1b1b">♋&#xFE0E;</text><text class="lbl" x="359.3" y="-96.3" font-size="15" font-weight="700" fill="#1b1b1b">Karka</text><path class="seg" d="M440.00 -0.00A440 440 0 0 1 381.05 220.00L303.11 175.00A350 350 0 0 0 350.00 -0.00Z" fill="#F4B31B"><title>Simha / Leo · lord Sun</title></path><text class="lbl" x="394.1" y="105.6" font-size="34" fill="#1b1b1b">♌&#xFE0E;</text><text class="lbl" x="359.3" y="96.3" font-size="15" font-weight="700" fill="#1b1b1b">Simha</text><path class="seg" d="M381.05 220.00A440 440 0 0 1 220.00 381.05L175.00 303.11A350 350 0 0 0 303.11 175.00Z" fill="#CCDB57"><title>Kanya / Virgo · lord Mercury</title></path><text class="lbl" x="288.5" y="288.5" font-size="34" fill="#1b1b1b">♍&#xFE0E;</text><text class="lbl" x="263.0" y="263.0" font-size="15" font-weight="700" fill="#1b1b1b">Kanya</text><path class="seg" d="M220.00 381.05A440 440 0 0 1 0.00 440.00L0.00 350.00A350 350 0 0 0 175.00 303.11Z" fill="#52E5E2"><title>Tula / Libra · lord Venus</title></path><text class="lbl" x="105.6" y="394.1" font-size="34" fill="#1b1b1b">♎&#xFE0E;</text><text class="lbl" x="96.3" y="359.3" font-size="15" font-weight="700" fill="#1b1b1b">Tula</text><path class="seg" d="M0.00 440.00A440 440 0 0 1 -220.00 381.05L-175.00 303.11A350 350 0 0 0 0.00 350.00Z" fill="#F2A6AD"><title>Vrischika / Scorpio · lord Mars</title></path><text class="lbl" x="-105.6" y="394.1" font-size="34" fill="#1b1b1b">♏&#xFE0E;</text><text class="lbl" x="-96.3" y="359.3" font-size="15" font-weight="700" fill="#1b1b1b">Vrischika</text><path class="seg" d="M-220.00 381.05A440 440 0 0 1 -381.05 220.00L-303.11 175.00A350 350 0 0 0 -175.00 303.11Z" fill="#FFEE1E"><title>Dhanu / Sagittarius · lord Jupiter</title></path><text class="lbl" x="-288.5" y="288.5" font-size="34" fill="#1b1b1b">♐&#xFE0E;</text><text class="lbl" x="-263.0" y="263.0" font-size="15" font-weight="700" fill="#1b1b1b">Dhanu</text><path class="seg" d="M-381.05 220.00A440 440 0 0 1 -440.00 0.00L-350.00 0.00A350 350 0 0 0 -303.11 175.00Z" fill="#C8D5EA"><title>Makara / Capricorn · lord Saturn</title></path><text class="lbl" x="-394.1" y="105.6" font-size="34" fill="#1b1b1b">♑&#xFE0E;</text><text class="lbl" x="-359.3" y="96.3" font-size="15" font-weight="700" fill="#1b1b1b">Makara</text><path class="seg" d="M-440.00 0.00A440 440 0 0 1 -381.05 -220.00L-303.11 -175.00A350 350 0 0 0 -350.00 0.00Z" fill="#C8D5EA"><title>Kumbha / Aquarius · lord Saturn</title></path><text class="lbl" x="-394.1" y="-105.6" font-size="34" fill="#1b1b1b">♒&#xFE0E;</text><text class="lbl" x="-359.3" y="-96.3" font-size="15" font-weight="700" fill="#1b1b1b">Kumbha</text><path class="seg" d="M-381.05 -220.00A440 440 0 0 1 -220.00 -381.05L-175.00 -303.11A350 350 0 0 0 -303.11 -175.00Z" fill="#FFEE1E"><title>Meena / Pisces · lord Jupiter</title></path><text class="lbl" x="-288.5" y="-288.5" font-size="34" fill="#1b1b1b">♓&#xFE0E;</text><text class="lbl" x="-263.0" y="-263.0" font-size="15" font-weight="700" fill="#1b1b1b">Meena</text><circle r="350" fill="var(--disc)" stroke="var(--line)"/><line x1="-55.0" y1="-95.3" x2="-175.0" y2="-303.1" stroke="var(--line)"/><line x1="0.0" y1="-110.0" x2="0.0" y2="-350.0" stroke="var(--line)"/><line x1="55.0" y1="-95.3" x2="175.0" y2="-303.1" stroke="var(--line)"/><line x1="95.3" y1="-55.0" x2="303.1" y2="-175.0" stroke="var(--line)"/><line x1="110.0" y1="-0.0" x2="350.0" y2="-0.0" stroke="var(--line)"/><line x1="95.3" y1="55.0" x2="303.1" y2="175.0" stroke="var(--line)"/><line x1="55.0" y1="95.3" x2="175.0" y2="303.1" stroke="var(--line)"/><line x1="0.0" y1="110.0" x2="0.0" y2="350.0" stroke="var(--line)"/><line x1="-55.0" y1="95.3" x2="-175.0" y2="303.1" stroke="var(--line)"/><line x1="-95.3" y1="55.0" x2="-303.1" y2="175.0" stroke="var(--line)"/><line x1="-110.0" y1="0.0" x2="-350.0" y2="0.0" stroke="var(--line)"/><line x1="-95.3" y1="-55.0" x2="-303.1" y2="-175.0" stroke="var(--line)"/><g data-body="lagna"><line x1="-109.0" y1="14.5" x2="-525.4" y2="69.7" stroke="var(--accent)" stroke-width="5"/><circle cx="-315.2" cy="41.8" r="22" fill="var(--accent)"/><text class="lbl" x="-315.2" y="41.8" font-size="16" font-weight="800" fill="#fff">Asc</text><title>Lagna 292°26′45″ sidereal</title></g><g class="pl" data-body="mars"><line x1="270.7" y1="129.3" x2="314.0" y2="150.0" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="270.7" cy="129.3" r="23" fill="#D3133F" stroke="#222" stroke-width="1.5"/><text class="lbl" x="270.7" y="129.3" font-size="16" font-weight="800" fill="#ffffff">Ma</text><title>Mars 25°31′54″ Simha</title></g><g class="pl" data-body="mean_node"><line x1="227.9" y1="195.0" x2="264.4" y2="226.3" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="227.9" cy="195.0" r="23" fill="#6B4FA8" stroke="#222" stroke-width="1.5"/><text class="lbl" x="227.9" y="195.0" font-size="16" font-weight="800" fill="#ffffff">Ra</text><title>Rahu (mean node) 10°33′14″ Kanya ℞</title></g><g class="pl" data-body="moon"><line x1="117.4" y1="276.1" x2="136.2" y2="320.2" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="117.4" cy="276.1" r="23" fill="#FFFFFF" stroke="#222" stroke-width="1.5"/><text class="lbl" x="117.4" y="276.1" font-size="16" font-weight="800" fill="#1b1b1b">Mo</text><title>Moon 6°57′35″ Tula</title></g><g class="pl" data-body="venus"><line x1="32.9" y1="298.2" x2="38.2" y2="345.9" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="32.9" cy="298.2" r="23" fill="#3FE0E0" stroke="#222" stroke-width="1.5"/><text class="lbl" x="32.9" y="298.2" font-size="16" font-weight="800" fill="#1b1b1b">Ve</text><title>Venus 23°42′21″ Tula</title></g><g class="pl" data-body="pluto"><line x1="-50.3" y1="295.8" x2="-58.3" y2="343.1" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-50.3" cy="295.8" r="23" fill="#8B5E3C" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-50.3" y="295.8" font-size="16" font-weight="800" fill="#ffffff">Pl</text><title>Pluto 9°38′48″ Vrischika</title></g><g class="pl" data-body="sun"><line x1="-110.2" y1="279.0" x2="-127.9" y2="323.7" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-110.2" cy="279.0" r="23" fill="#F39A1E" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-110.2" y="279.0" font-size="16" font-weight="800" fill="#1b1b1b">Su</text><title>Sun 21°33′34″ Vrischika</title></g><g class="pl" data-body="mercury"><line x1="-192.5" y1="230.1" x2="-223.3" y2="266.9" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-192.5" cy="230.1" r="23" fill="#C4D84B" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-192.5" y="230.1" font-size="16" font-weight="800" fill="#1b1b1b">Me</text><title>Mercury 9°55′35″ Dhanu</title></g><g class="pl" data-body="jupiter"><line x1="-248.3" y1="168.4" x2="-288.0" y2="195.3" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-248.3" cy="168.4" r="23" fill="#FFE81A" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-248.3" y="168.4" font-size="16" font-weight="800" fill="#1b1b1b">Ju</text><title>Jupiter 25°51′04″ Dhanu</title></g><g class="pl" data-body="neptune"><line x1="-219.3" y1="115.8" x2="-307.7" y2="162.5" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-219.3" cy="115.8" r="23" fill="#3AA6A0" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-219.3" y="115.8" font-size="16" font-weight="800" fill="#ffffff">Ne</text><title>Neptune 2°09′56″ Makara</title></g><g class="pl" data-body="uranus"><line x1="-278.5" y1="111.4" x2="-323.1" y2="129.2" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-278.5" cy="111.4" r="23" fill="#5B8DEF" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-278.5" y="111.4" font-size="16" font-weight="800" fill="#ffffff">Ur</text><title>Uranus 8°12′04″ Makara</title></g><g class="pl" data-body="saturn"><line x1="-240.6" y1="-179.2" x2="-279.1" y2="-207.9" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-240.6" cy="-179.2" r="23" fill="#7E99C9" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-240.6" y="-179.2" font-size="16" font-weight="800" fill="#ffffff">Sa</text><title>Saturn 6°40′41″ Meena</title></g><g class="pl" data-body="south_node"><line x1="-188.4" y1="-161.2" x2="-264.4" y2="-226.3" stroke="#555" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="-188.4" cy="-161.2" r="23" fill="#9C9C9C" stroke="#222" stroke-width="1.5"/><text class="lbl" x="-188.4" y="-161.2" font-size="16" font-weight="800" fill="#ffffff">Ke</text><title>Ketu 10°33′14″ Meena ℞</title></g><text class="lbl" y="-14" font-size="26" font-weight="800" fill="var(--ink)">Rāśi chakra</text><text class="lbl" y="20" font-size="15" fill="var(--muted)">nakshatra · pada · rāśi</text></svg></div></section><section class="card" id="vedic"><h2>Vedic chart (sidereal)</h2><p class="lead">Ayanāṃśa lahiri = 23.814248° · houses whole_sign · node mean · provider analytic</p><div class="charts"><div class="figure"><svg class="sic" viewBox="-2 -2 484 388" role="img" aria-label="D1 · Rāśi (South Indian)"><rect x="0" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Meena / Pisces</title></rect><text x="114" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Meena</text><text data-body="saturn" x="8" y="34" font-size="13" font-weight="700" fill="var(--ink)">Sa<tspan font-size="10" font-weight="400" fill="var(--muted)"> 6°</tspan></text><text data-body="south_node" x="64" y="34" font-size="13" font-weight="700" fill="var(--ink)">Ke<tspan font-size="10" font-weight="400" fill="var(--muted)"> 10°</tspan></text><rect x="120" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Mesha / Aries</title></rect><text x="234" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Mesha</text><rect x="240" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Vrishabha / Taurus</title></rect><text x="354" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Vrishabha</text><rect x="360" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Mithuna / Gemini</title></rect><text x="474" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Mithuna</text><rect x="360" y="96" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Karka / Cancer</title></rect><text x="474" y="111" text-anchor="end" font-size="11" fill="var(--muted)">Karka</text><rect x="360" y="192" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Simha / Leo</title></rect><text x="474" y="207" text-anchor="end" font-size="11" fill="var(--muted)">Simha</text><text data-body="mars" x="368" y="226" font-size="13" font-weight="700" fill="var(--ink)">Ma<tspan font-size="10" font-weight="400" fill="var(--muted)"> 25°</tspan></text><rect x="360" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Kanya / Virgo</title></rect><text x="474" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Kanya</text><text data-body="mean_node" x="368" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ra<tspan font-size="10" font-weight="400" fill="var(--muted)"> 10°</tspan></text><rect x="240" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Tula / Libra</title></rect><text x="354" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Tula</text><text data-body="moon" x="248" y="322" font-size="13" font-weight="700" fill="var(--ink)">Mo<tspan font-size="10" font-weight="400" fill="var(--muted)"> 6°</tspan></text><text data-body="venus" x="304" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ve<tspan font-size="10" font-weight="400" fill="var(--muted)"> 23°</tspan></text><rect x="120" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Vrischika / Scorpio</title></rect><text x="234" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Vrischika</text><text data-body="sun" x="128" y="322" font-size="13" font-weight="700" fill="var(--ink)">Su<tspan font-size="10" font-weight="400" fill="var(--muted)"> 21°</tspan></text><text data-body="pluto" x="184" y="322" font-size="13" font-weight="700" fill="var(--ink)">Pl<tspan font-size="10" font-weight="400" fill="var(--muted)"> 9°</tspan></text><rect x="0" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Dhanu / Sagittarius</title></rect><text x="114" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Dhanu</text><text data-body="mercury" x="8" y="322" font-size="13" font-weight="700" fill="var(--ink)">Me<tspan font-size="10" font-weight="400" fill="var(--muted)"> 9°</tspan></text><text data-body="jupiter" x="64" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ju<tspan font-size="10" font-weight="400" fill="var(--muted)"> 25°</tspan></text><rect x="0" y="192" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Makara / Capricorn</title></rect><text x="114" y="207" text-anchor="end" font-size="11" fill="var(--muted)">Makara</text><line x1="0" y1="214" x2="22" y2="192" stroke="var(--accent)" stroke-width="2"/><text x="4" y="207" font-size="11" font-weight="800" fill="var(--accent)">As</text><text data-body="uranus" x="8" y="226" font-size="13" font-weight="700" fill="var(--ink)">Ur<tspan font-size="10" font-weight="400" fill="var(--muted)"> 8°</tspan></text><text data-body="neptune" x="64" y="226" font-size="13" font-weight="700" fill="var(--ink)">Ne<tspan font-size="10" font-weight="400" fill="var(--muted)"> 2°</tspan></text><rect x="0" y="96" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Kumbha / Aquarius</title></rect><text x="114" y="111" text-anchor="end" font-size="11" fill="var(--muted)">Kumbha</text><rect x="120" y="96" width="240" height="192" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.4"/><text x="240" y="192" text-anchor="middle" font-size="17" font-weight="800" fill="var(--ink)">D1 · Rāśi (South Indian)</text></svg></div><div class="figure"><svg class="nic" viewBox="-2 -2 404.0 404.0" role="img" aria-label="D1 · Rāśi (North Indian)"><rect width="400.0" height="400.0" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/><polygon points="200.0,0 300.0,100.0 200.0,200.0 100.0,100.0" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.4"><title>House 1: Makara</title></polygon><text x="200.0" y="70.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">10</text><text data-body="uranus" x="178.0" y="92.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ur<tspan font-size="9" fill="var(--muted)"> 8°</tspan></text><text data-body="neptune" x="222.0" y="92.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ne<tspan font-size="9" fill="var(--muted)"> 2°</tspan></text><polygon points="0,0 200.0,0 100.0,100.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 2: Kumbha</title></polygon><text x="100.0" y="19.3" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">11</text><polygon points="0,0 100.0,100.0 0,200.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 3: Meena</title></polygon><text x="33.3" y="86.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">12</text><text data-body="saturn" x="33.3" y="100.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Sa<tspan font-size="9" fill="var(--muted)"> 6°</tspan></text><text data-body="south_node" x="33.3" y="115.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ke<tspan font-size="9" fill="var(--muted)"> 10°</tspan></text><polygon points="0,200.0 100.0,100.0 200.0,200.0 100.0,300.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 4: Mesha</title></polygon><text x="100.0" y="170.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">1</text><polygon points="0,200.0 100.0,300.0 0,400.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 5: Vrishabha</title></polygon><text x="33.3" y="286.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">2</text><polygon points="0,400.0 100.0,300.0 200.0,400.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 6: Mithuna</title></polygon><text x="100.0" y="352.7" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">3</text><polygon points="200.0,400.0 100.0,300.0 200.0,200.0 300.0,300.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 7: Karka</title></polygon><text x="200.0" y="270.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">4</text><polygon points="200.0,400.0 300.0,300.0 400.0,400.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 8: Simha</title></polygon><text x="300.0" y="352.7" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">5</text><text data-body="mars" x="300.0" y="366.7" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ma<tspan font-size="9" fill="var(--muted)"> 25°</tspan></text><polygon points="400.0,400.0 300.0,300.0 400.0,200.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 9: Kanya</title></polygon><text x="366.7" y="286.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">6</text><text data-body="mean_node" x="366.7" y="300.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ra<tspan font-size="9" fill="var(--muted)"> 10°</tspan></text><polygon points="400.0,200.0 300.0,300.0 200.0,200.0 300.0,100.0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 10: Tula</title></polygon><text x="300.0" y="170.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">7</text><text data-body="moon" x="278.0" y="192.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Mo<tspan font-size="9" fill="var(--muted)"> 6°</tspan></text><text data-body="venus" x="322.0" y="192.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ve<tspan font-size="9" fill="var(--muted)"> 23°</tspan></text><polygon points="400.0,200.0 300.0,100.0 400.0,0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 11: Vrischika</title></polygon><text x="366.7" y="86.0" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">8</text><text data-body="sun" x="366.7" y="100.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Su<tspan font-size="9" fill="var(--muted)"> 21°</tspan></text><text data-body="pluto" x="366.7" y="115.0" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Pl<tspan font-size="9" fill="var(--muted)"> 9°</tspan></text><polygon points="400.0,0 300.0,100.0 200.0,0" fill="none" stroke="var(--ink)" stroke-width="1.4"><title>House 12: Dhanu</title></polygon><text x="300.0" y="19.3" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">9</text><text data-body="mercury" x="300.0" y="33.3" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Me<tspan font-size="9" fill="var(--muted)"> 9°</tspan></text><text data-body="jupiter" x="300.0" y="48.3" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Ju<tspan font-size="9" fill="var(--muted)"> 25°</tspan></text><text x="200.0" y="394.0" text-anchor="middle" font-size="11" fill="var(--muted)">D1 · Rāśi (North Indian)</text></svg></div></div><div class="tbl-wrap"><table class="planets"><thead><tr><th>Graha</th><th>Sidereal</th><th>Rāśi</th><th>In sign</th><th>Nakshatra</th><th>Pada</th><th>Nak. lord</th><th>Bhāva</th><th>℞</th><th>Speed °/day</th><th>Tropical</th><th>Markers (report.markers@0.1)</th></tr></thead><tbody><tr data-body="lagna"><td><b>Lagna</b></td><td>292.4458°</td><td>Makara</td><td>22°26′45″</td><td>Shravana</td><td>4</td><td>Moon</td><td>1</td><td></td><td></td><td></td><td></td></tr><tr data-body="sun"><td><i class="dot" style="background:#F39A1E"></i>Sun</td><td>231.5595°</td><td>Vrishchika</td><td>21°33′34″</td><td>Jyeshtha</td><td>2</td><td>Mercury</td><td>11</td><td></td><td>+1.0158</td><td>255.3739°</td><td></td></tr><tr data-body="moon"><td><i class="dot" style="background:#FFFFFF"></i>Moon</td><td>186.9596°</td><td>Tula</td><td>6°57′35″</td><td>Swati</td><td>1</td><td>Rahu</td><td>10</td><td></td><td>+13.0492</td><td>210.7740°</td><td></td></tr><tr data-body="mercury"><td><i class="dot" style="background:#C4D84B"></i>Mercury</td><td>249.9265°</td><td>Dhanu</td><td>9°55′35″</td><td>Mula</td><td>3</td><td>Ketu</td><td>12</td><td></td><td>+1.3956</td><td>273.7409°</td><td></td></tr><tr data-body="venus"><td><i class="dot" style="background:#3FE0E0"></i>Venus</td><td>203.7058°</td><td>Tula</td><td>23°42′21″</td><td>Vishakha</td><td>2</td><td>Jupiter</td><td>10</td><td></td><td>+1.2431</td><td>227.5202°</td><td>pushkara navamsha</td></tr><tr data-body="mars"><td><i class="dot" style="background:#D3133F"></i>Mars</td><td>145.5317°</td><td>Simha</td><td>25°31′54″</td><td>Purva Phalguni</td><td>4</td><td>Venus</td><td>8</td><td></td><td>+0.4542</td><td>169.3461°</td><td></td></tr><tr data-body="jupiter"><td><i class="dot" style="background:#FFE81A"></i>Jupiter</td><td>265.8510°</td><td>Dhanu</td><td>25°51′04″</td><td>Purva Ashadha</td><td>4</td><td>Venus</td><td>12</td><td></td><td>+0.2131</td><td>289.6654°</td><td></td></tr><tr data-body="saturn"><td><i class="dot" style="background:#7E99C9"></i>Saturn</td><td>336.6781°</td><td>Meena</td><td>6°40′41″</td><td>Uttara Bhadrapada</td><td>2</td><td>Saturn</td><td>3</td><td></td><td>+0.0069</td><td>0.4925°</td><td>pushkara navamsha</td></tr><tr data-body="uranus"><td><i class="dot" style="background:#5B8DEF"></i>Uranus</td><td>278.2011°</td><td>Makara</td><td>8°12′04″</td><td>Uttara Ashadha</td><td>4</td><td>Sun</td><td>1</td><td></td><td>+0.0445</td><td>302.0155°</td><td>pushkara navamsha</td></tr><tr data-body="neptune"><td><i class="dot" style="background:#3AA6A0"></i>Neptune</td><td>272.1655°</td><td>Makara</td><td>2°09′56″</td><td>Uttara Ashadha</td><td>2</td><td>Sun</td><td>1</td><td></td><td>+0.0305</td><td>295.9799°</td><td>vargottama</td></tr><tr data-body="pluto"><td><i class="dot" style="background:#8B5E3C"></i>Pluto</td><td>219.6466°</td><td>Vrishchika</td><td>9°38′48″</td><td>Anuradha</td><td>2</td><td>Saturn</td><td>11</td><td></td><td>+0.0390</td><td>243.4610°</td><td>pushkara navamsha</td></tr><tr data-body="mean_node"><td><i class="dot" style="background:#6B4FA8"></i>Rahu (mean node)</td><td>160.5538°</td><td>Kanya</td><td>10°33′14″</td><td>Hasta</td><td>1</td><td>Moon</td><td>9</td><td>℞</td><td>-0.0530</td><td>184.3682°</td><td></td></tr><tr data-body="south_node"><td><i class="dot" style="background:#9C9C9C"></i>Ketu</td><td>340.5538°</td><td>Meena</td><td>10°33′14″</td><td>Uttara Bhadrapada</td><td>3</td><td>Saturn</td><td>3</td><td>℞</td><td>-0.0530</td><td>4.3682°</td><td></td></tr></tbody></table></div><h3>Houses (whole_sign)</h3><div class="tbl-wrap"><table class=""><thead><tr><th>Bhāva</th><th>Cusp</th><th>Rāśi</th><th>In sign</th></tr></thead><tbody><tr><td>1</td><td>270.0000°</td><td>Makara</td><td>0°00′00″</td></tr><tr><td>2</td><td>300.0000°</td><td>Kumbha</td><td>0°00′00″</td></tr><tr><td>3</td><td>330.0000°</td><td>Meena</td><td>0°00′00″</td></tr><tr><td>4</td><td>0.0000°</td><td>Mesha</td><td>0°00′00″</td></tr><tr><td>5</td><td>30.0000°</td><td>Vrishabha</td><td>0°00′00″</td></tr><tr><td>6</td><td>60.0000°</td><td>Mithuna</td><td>0°00′00″</td></tr><tr><td>7</td><td>90.0000°</td><td>Karka</td><td>0°00′00″</td></tr><tr><td>8</td><td>120.0000°</td><td>Simha</td><td>0°00′00″</td></tr><tr><td>9</td><td>150.0000°</td><td>Kanya</td><td>0°00′00″</td></tr><tr><td>10</td><td>180.0000°</td><td>Tula</td><td>0°00′00″</td></tr><tr><td>11</td><td>210.0000°</td><td>Vrischika</td><td>0°00′00″</td></tr><tr><td>12</td><td>240.0000°</td><td>Dhanu</td><td>0°00′00″</td></tr></tbody></table></div><p class="note">Midheaven 211.0680° · local apparent sidereal time 232.5295°</p></section><section class="card" id="divisional"><h2>Divisional charts (vargas)</h2><p class="lead">Each varga sign is computed by the engine under vedic.parashari@0.1. A body whose D1 and D9 signs match is vargottama.</p><div class="tabs" role="tablist"><button class="tab" data-tab="d9" aria-selected="true">D9 · Navāṃśa</button></div><div class="figure"><div class="pane" data-pane="d9"><svg class="sic" viewBox="-2 -2 484 388" role="img" aria-label="D9 · Navāṃśa"><rect x="0" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Meena / Pisces</title></rect><text x="114" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Meena</text><text data-body="uranus" x="8" y="34" font-size="13" font-weight="700" fill="var(--ink)">Ur<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="120" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Mesha / Aries</title></rect><text x="234" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Mesha</text><text data-body="mean_node" x="128" y="34" font-size="13" font-weight="700" fill="var(--ink)">Ra<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="240" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Vrishabha / Taurus</title></rect><text x="354" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Vrishabha</text><text data-body="venus" x="248" y="34" font-size="13" font-weight="700" fill="var(--ink)">Ve<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="360" y="0" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Mithuna / Gemini</title></rect><text x="474" y="15" text-anchor="end" font-size="11" fill="var(--muted)">Mithuna</text><text data-body="mercury" x="368" y="34" font-size="13" font-weight="700" fill="var(--ink)">Me<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="360" y="96" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Karka / Cancer</title></rect><text x="474" y="111" text-anchor="end" font-size="11" fill="var(--muted)">Karka</text><line x1="360" y1="118" x2="382" y2="96" stroke="var(--accent)" stroke-width="2"/><text x="364" y="111" font-size="11" font-weight="800" fill="var(--accent)">As</text><rect x="360" y="192" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Simha / Leo</title></rect><text x="474" y="207" text-anchor="end" font-size="11" fill="var(--muted)">Simha</text><rect x="360" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Kanya / Virgo</title></rect><text x="474" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Kanya</text><text data-body="saturn" x="368" y="322" font-size="13" font-weight="700" fill="var(--ink)">Sa<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><text data-body="pluto" x="424" y="322" font-size="13" font-weight="700" fill="var(--ink)">Pl<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="240" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Tula / Libra</title></rect><text x="354" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Tula</text><text data-body="south_node" x="248" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ke<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="120" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Vrischika / Scorpio</title></rect><text x="234" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Vrischika</text><text data-body="mars" x="128" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ma<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><text data-body="jupiter" x="184" y="322" font-size="13" font-weight="700" fill="var(--ink)">Ju<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="0" y="288" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Dhanu / Sagittarius</title></rect><text x="114" y="303" text-anchor="end" font-size="11" fill="var(--muted)">Dhanu</text><text data-body="moon" x="8" y="322" font-size="13" font-weight="700" fill="var(--ink)">Mo<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="0" y="192" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Makara / Capricorn</title></rect><text x="114" y="207" text-anchor="end" font-size="11" fill="var(--muted)">Makara</text><text data-body="sun" x="8" y="226" font-size="13" font-weight="700" fill="var(--ink)">Su<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><text data-body="neptune" x="64" y="226" font-size="13" font-weight="700" fill="var(--ink)">Ne<tspan font-size="10" font-weight="400" fill="var(--muted)"> </tspan></text><rect x="0" y="96" width="120" height="96" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.4"><title>Kumbha / Aquarius</title></rect><text x="114" y="111" text-anchor="end" font-size="11" fill="var(--muted)">Kumbha</text><rect x="120" y="96" width="240" height="192" fill="var(--chip)" stroke="var(--ink)" stroke-width="1.4"/><text x="240" y="192" text-anchor="middle" font-size="17" font-weight="800" fill="var(--ink)">D9 · Navāṃśa</text></svg></div></div><div class="tbl-wrap"><table class="vargas"><thead><tr><th>Body</th><th>D1</th><th>D9</th></tr></thead><tbody><tr><td><b>Lagna</b></td><td>Makara</td><td>Karka</td></tr><tr><td><b>Sun</b></td><td>Vrischika</td><td>Makara</td></tr><tr><td><b>Moon</b></td><td>Tula</td><td>Dhanu</td></tr><tr><td><b>Mercury</b></td><td>Dhanu</td><td>Mithuna</td></tr><tr><td><b>Venus</b></td><td>Tula</td><td>Vrishabha</td></tr><tr><td><b>Mars</b></td><td>Simha</td><td>Vrishchika</td></tr><tr><td><b>Jupiter</b></td><td>Dhanu</td><td>Vrishchika</td></tr><tr><td><b>Saturn</b></td><td>Meena</td><td>Kanya</td></tr><tr><td><b>Uranus</b></td><td>Makara</td><td>Meena</td></tr><tr><td><b>Neptune</b></td><td>Makara</td><td>Makara</td></tr><tr><td><b>Pluto</b></td><td>Vrischika</td><td>Kanya</td></tr><tr><td><b>Rahu (mean node)</b></td><td>Kanya</td><td>Mesha</td></tr><tr><td><b>Ketu</b></td><td>Meena</td><td>Tula</td></tr></tbody></table></div></section><section class="card" id="dasha"><h2>Vimśottarī daśā</h2><p class="lead"><span class="ep ep-tradition_rule">tradition_rule</span> rule vedic.parashari@0.1. "Current" is marked against the time this file was generated (2026-11-21T05:08:51Z).</p><dl class="facts"><dt>balance at birth years</dt><dd>17.604508664302745</dd><dt>moon nakshatra</dt><dd>Swati</dd><dt>starting lord</dt><dd>Rahu</dd><dt>system</dt><dd>vimshottari</dd><dt>year convention</dt><dd>365.25</dd><dt>year days</dt><dd>365.25</dd></dl><details class=""><summary><b>Rahu</b> mahādaśā · 1996-12-07 → 2014-07-16</summary><ul class="ants"><li class=""><b>Rahu</b> 1996-12-07 → 1999-03-28 <small>(from birth)</small></li><li class=""><b>Jupiter</b> 1999-03-28 → 2001-08-21</li><li class=""><b>Saturn</b> 2001-08-21 → 2004-06-27</li><li class=""><b>Mercury</b> 2004-06-27 → 2007-01-14</li><li class=""><b>Ketu</b> 2007-01-14 → 2008-02-02</li><li class=""><b>Venus</b> 2008-02-02 → 2011-02-02</li><li class=""><b>Sun</b> 2011-02-02 → 2011-12-27</li><li class=""><b>Moon</b> 2011-12-27 → 2013-06-27</li><li class=""><b>Mars</b> 2013-06-27 → 2014-07-16</li></ul></details><details open class="cur"><summary><b>Jupiter</b> mahādaśā · 2014-07-16 → 2030-07-16 · <em>current</em></summary><ul class="ants"><li class=""><b>Jupiter</b> 2014-07-16 → 2016-09-02</li><li class=""><b>Saturn</b> 2016-09-02 → 2019-03-16</li><li class=""><b>Mercury</b> 2019-03-16 → 2021-06-21</li><li class=""><b>Ketu</b> 2021-06-21 → 2022-05-28</li><li class=""><b>Venus</b> 2022-05-28 → 2025-01-26</li><li class=""><b>Sun</b> 2025-01-26 → 2025-11-14</li><li class="cur"><b>Moon</b> 2025-11-14 → 2027-03-16</li><li class=""><b>Mars</b> 2027-03-16 → 2028-02-20</li><li class=""><b>Rahu</b> 2028-02-20 → 2030-07-16</li></ul></details><details class=""><summary><b>Saturn</b> mahādaśā · 2030-07-16 → 2049-07-16</summary><ul class="ants"><li class=""><b>Saturn</b> 2030-07-16 → 2033-07-19</li><li class=""><b>Mercury</b> 2033-07-19 → 2036-03-28</li><li class=""><b>Ketu</b> 2036-03-28 → 2037-05-07</li><li class=""><b>Venus</b> 2037-05-07 → 2040-07-06</li><li class=""><b>Sun</b> 2040-07-06 → 2041-06-18</li><li class=""><b>Moon</b> 2041-06-18 → 2043-01-17</li><li class=""><b>Mars</b> 2043-01-17 → 2044-02-26</li><li class=""><b>Rahu</b> 2044-02-26 → 2047-01-02</li><li class=""><b>Jupiter</b> 2047-01-02 → 2049-07-16</li></ul></details><details class=""><summary><b>Mercury</b> mahādaśā · 2049-07-16 → 2066-07-16</summary><ul class="ants"><li class=""><b>Mercury</b> 2049-07-16 → 2051-12-12</li><li class=""><b>Ketu</b> 2051-12-12 → 2052-12-08</li><li class=""><b>Venus</b> 2052-12-08 → 2055-10-09</li><li class=""><b>Sun</b> 2055-10-09 → 2056-08-15</li><li class=""><b>Moon</b> 2056-08-15 → 2058-01-14</li><li class=""><b>Mars</b> 2058-01-14 → 2059-01-11</li><li class=""><b>Rahu</b> 2059-01-11 → 2061-07-31</li><li class=""><b>Jupiter</b> 2061-07-31 → 2063-11-06</li><li class=""><b>Saturn</b> 2063-11-06 → 2066-07-16</li></ul></details><details class=""><summary><b>Ketu</b> mahādaśā · 2066-07-16 → 2073-07-16</summary><ul class="ants"><li class=""><b>Ketu</b> 2066-07-16 → 2066-12-12</li><li class=""><b>Venus</b> 2066-12-12 → 2068-02-11</li><li class=""><b>Sun</b> 2068-02-11 → 2068-06-18</li><li class=""><b>Moon</b> 2068-06-18 → 2069-01-17</li><li class=""><b>Mars</b> 2069-01-17 → 2069-06-15</li><li class=""><b>Rahu</b> 2069-06-15 → 2070-07-04</li><li class=""><b>Jupiter</b> 2070-07-04 → 2071-06-09</li><li class=""><b>Saturn</b> 2071-06-09 → 2072-07-18</li><li class=""><b>Mercury</b> 2072-07-18 → 2073-07-16</li></ul></details><details class=""><summary><b>Venus</b> mahādaśā · 2073-07-16 → 2093-07-16</summary><ul class="ants"><li class=""><b>Venus</b> 2073-07-16 → 2076-11-14</li><li class=""><b>Sun</b> 2076-11-14 → 2077-11-14</li><li class=""><b>Moon</b> 2077-11-14 → 2079-07-16</li><li class=""><b>Mars</b> 2079-07-16 → 2080-09-14</li><li class=""><b>Rahu</b> 2080-09-14 → 2083-09-15</li><li class=""><b>Jupiter</b> 2083-09-15 → 2086-05-16</li><li class=""><b>Saturn</b> 2086-05-16 → 2089-07-16</li><li class=""><b>Mercury</b> 2089-07-16 → 2092-05-15</li><li class=""><b>Ketu</b> 2092-05-15 → 2093-07-16</li></ul></details><details class=""><summary><b>Sun</b> mahādaśā · 2093-07-16 → 2099-07-16</summary><ul class="ants"><li class=""><b>Sun</b> 2093-07-16 → 2093-11-02</li><li class=""><b>Moon</b> 2093-11-02 → 2094-05-04</li><li class=""><b>Mars</b> 2094-05-04 → 2094-09-09</li><li class=""><b>Rahu</b> 2094-09-09 → 2095-08-03</li><li class=""><b>Jupiter</b> 2095-08-03 → 2096-05-21</li><li class=""><b>Saturn</b> 2096-05-21 → 2097-05-03</li><li class=""><b>Mercury</b> 2097-05-03 → 2098-03-10</li><li class=""><b>Ketu</b> 2098-03-10 → 2098-07-16</li><li class=""><b>Venus</b> 2098-07-16 → 2099-07-16</li></ul></details><details class=""><summary><b>Moon</b> mahādaśā · 2099-07-16 → 2109-07-17</summary><ul class="ants"><li class=""><b>Moon</b> 2099-07-16 → 2100-05-16</li><li class=""><b>Mars</b> 2100-05-16 → 2100-12-15</li><li class=""><b>Rahu</b> 2100-12-15 → 2102-06-16</li><li class=""><b>Jupiter</b> 2102-06-16 → 2103-10-16</li><li class=""><b>Saturn</b> 2103-10-16 → 2105-05-17</li><li class=""><b>Mercury</b> 2105-05-17 → 2106-10-16</li><li class=""><b>Ketu</b> 2106-10-16 → 2107-05-17</li><li class=""><b>Venus</b> 2107-05-17 → 2109-01-15</li><li class=""><b>Sun</b> 2109-01-15 → 2109-07-17</li></ul></details><details class=""><summary><b>Mars</b> mahādaśā · 2109-07-17 → 2116-07-16</summary><ul class="ants"><li class=""><b>Mars</b> 2109-07-17 → 2109-12-13</li><li class=""><b>Rahu</b> 2109-12-13 → 2110-12-31</li><li class=""><b>Jupiter</b> 2110-12-31 → 2111-12-07</li><li class=""><b>Saturn</b> 2111-12-07 → 2113-01-15</li><li class=""><b>Mercury</b> 2113-01-15 → 2114-01-12</li><li class=""><b>Ketu</b> 2114-01-12 → 2114-06-10</li><li class=""><b>Venus</b> 2114-06-10 → 2115-08-10</li><li class=""><b>Sun</b> 2115-08-10 → 2115-12-16</li><li class=""><b>Moon</b> 2115-12-16 → 2116-07-16</li></ul></details></section><section class="card" id="nakshatra"><h2>Nakshatra reference</h2><p class="lead"><span class="ep ep-tradition_rule">tradition_rule</span> Attributes from the Nakshatra Ruler table of the Panchang Chakra template, shown beside the computed nakshatra. ESHANA does not compute or interpret them.</p><div class="minis"><div class="mini"><h3>Janma nakshatra (Moon): Swati pada 1</h3><dl class="facts"><dt>Nature</dt><dd>Chara (movable)</dd><dt>Gana</dt><dd>Devata</dd><dt>Yoni</dt><dd>Buffalo (Male)</dd><dt>Gender</dt><dd>Female</dd><dt>Activity</dt><dd>Passive</dd><dt>Direction</dt><dd>Sideways</dd><dt>Behaviour</dt><dd>Dissolution</dd><dt>Dosha</dt><dd>Kapha</dd><dt>Nadi</dt><dd>Antya</dd><dt>Tattva</dt><dd>Fire</dd><dt>Purpose</dt><dd>Artha</dd><dt>Guna</dt><dd>Tamasic</dd><dt>Gunas</dt><dd>TTS</dd><dt>Gotra</dt><dd>Marichi</dd><dt>Varna</dt><dd>Butcher</dd></dl></div><div class="mini"><h3>Lagna nakshatra: Shravana pada 4</h3><dl class="facts"><dt>Nature</dt><dd>Chara (movable)</dd><dt>Gana</dt><dd>Devata</dd><dt>Yoni</dt><dd>Monkey (Female)</dd><dt>Gender</dt><dd>Male</dd><dt>Activity</dt><dd>Passive</dd><dt>Direction</dt><dd>Upward</dd><dt>Behaviour</dt><dd>Creation</dd><dt>Dosha</dt><dd>Kapha</dd><dt>Nadi</dt><dd>Antya</dd><dt>Tattva</dt><dd>Air</dd><dt>Purpose</dt><dd>Artha</dd><dt>Guna</dt><dd>Rajasic</dd><dt>Gunas</dt><dd>STR</dd><dt>Gotra</dt><dd>Vashishtha</dd><dt>Varna</dt><dd>Mleccha</dd></dl></div></div></section><section class="card" id="provenance"><h2>Provenance</h2><p class="lead">Every setting, data source and assumption behind the numbers above, as the engine recorded it.</p><div class="minis"><div class="mini"><h3>vedic-chennai</h3><dl class="facts"><dt>ayanamsha</dt><dd>lahiri</dd><dt>ayanamsha deg</dt><dd>23.81424755288768</dd><dt>frame</dt><dd>geocentric_apparent_ecliptic_true_equinox_of_date</dd><dt>house system</dt><dd>whole_sign</dd><dt>node model</dt><dd>mean</dd><dt>provider</dt><dd>analytic</dd><dt>system</dt><dd>vedic</dd><dt>zodiac</dt><dd>sidereal</dd><dt>engine version</dt><dd>0.1.0</dd><dt>provider</dt><dd>analytic</dd><dt>provider accuracy</dt><dd>Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.</dd><dt>provider data</dt><dd>JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files</dd><dt>provider version</dt><dd>0.1.0</dd><dt>time model</dt><dd>leap-seconds-1972-2017+37s-to-2027</dd><dt>tzdb version</dt><dd>2026f</dd><dt>rulesets</dt><dd>ayanamsha-lahiri@0.1, vedic.parashari@0.1</dd></dl><h4>Assumptions</h4><ul><li>ayanamsha not given; defaulted to lahiri because assume_defaults was set</li><li>house_system not given; whole_sign used</li><li>node_model not given; mean node used</li><li>UTC is used as UT1 (differs by under 0.9 s)</li><li>civil time resolved with IANA tzdb 2026f</li><li>coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date</li></ul></div></div></section><section class="card" id="raw"><h2>Raw envelopes</h2><p class="lead">Exactly what the engine returned. The Export JSON button saves the same data.</p><details><summary>Show JSON (40,861 characters)</summary><pre class="raw">{
+ &quot;vedic-chennai&quot;: {
+  &quot;calculation&quot;: {
+   &quot;ayanamsha&quot;: &quot;lahiri&quot;,
+   &quot;ayanamsha_deg&quot;: 23.81424755288768,
+   &quot;frame&quot;: &quot;geocentric_apparent_ecliptic_true_equinox_of_date&quot;,
+   &quot;house_system&quot;: &quot;whole_sign&quot;,
+   &quot;node_model&quot;: &quot;mean&quot;,
+   &quot;provider&quot;: &quot;analytic&quot;,
+   &quot;system&quot;: &quot;vedic&quot;,
+   &quot;zodiac&quot;: &quot;sidereal&quot;
+  },
+  &quot;derived_attributes&quot;: [
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.jupiter.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 25.851024769444734,
+     &quot;dms&quot;: &quot;25°51′04″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Dhanu&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.jupiter.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 19,
+     &quot;lord&quot;: &quot;Venus&quot;,
+     &quot;name&quot;: &quot;Purva Ashadha&quot;,
+     &quot;pada&quot;: 4,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.jupiter.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 12,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;jupiter&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.jupiter.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 7,
+     &quot;rashi&quot;: &quot;Vrishchika&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mars.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 25.531661605064528,
+     &quot;dms&quot;: &quot;25°31′54″&quot;,
+     &quot;index&quot;: 4,
+     &quot;name&quot;: &quot;Simha&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mars.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 10,
+     &quot;lord&quot;: &quot;Venus&quot;,
+     &quot;name&quot;: &quot;Purva Phalguni&quot;,
+     &quot;pada&quot;: 4,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mars.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 8,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mars&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mars.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 7,
+     &quot;rashi&quot;: &quot;Vrishchika&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mean_node.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 10.553779431179066,
+     &quot;dms&quot;: &quot;10°33′14″&quot;,
+     &quot;index&quot;: 5,
+     &quot;name&quot;: &quot;Kanya&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mean_node.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 12,
+     &quot;lord&quot;: &quot;Moon&quot;,
+     &quot;name&quot;: &quot;Hasta&quot;,
+     &quot;pada&quot;: 1,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mean_node.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 9,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mean_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mean_node.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 0,
+     &quot;rashi&quot;: &quot;Mesha&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mercury.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 9.92650940066588,
+     &quot;dms&quot;: &quot;9°55′35″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Dhanu&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mercury.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 18,
+     &quot;lord&quot;: &quot;Ketu&quot;,
+     &quot;name&quot;: &quot;Mula&quot;,
+     &quot;pada&quot;: 3,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mercury.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 12,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;mercury&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.mercury.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 2,
+     &quot;rashi&quot;: &quot;Mithuna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.moon.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 6.9596232116276155,
+     &quot;dms&quot;: &quot;6°57′35″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Tula&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.moon.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 14,
+     &quot;lord&quot;: &quot;Rahu&quot;,
+     &quot;name&quot;: &quot;Swati&quot;,
+     &quot;pada&quot;: 1,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.moon.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 10,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.moon.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 8,
+     &quot;rashi&quot;: &quot;Dhanu&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.neptune.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 2.1655086574315305,
+     &quot;dms&quot;: &quot;2°09′56″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.neptune.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 20,
+     &quot;lord&quot;: &quot;Sun&quot;,
+     &quot;name&quot;: &quot;Uttara Ashadha&quot;,
+     &quot;pada&quot;: 2,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.neptune.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;neptune&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.neptune.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 9,
+     &quot;rashi&quot;: &quot;Makara&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.pluto.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 9.646640271859695,
+     &quot;dms&quot;: &quot;9°38′48″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Vrishchika&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.pluto.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 16,
+     &quot;lord&quot;: &quot;Saturn&quot;,
+     &quot;name&quot;: &quot;Anuradha&quot;,
+     &quot;pada&quot;: 2,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.pluto.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 11,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;pluto&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.pluto.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 5,
+     &quot;rashi&quot;: &quot;Kanya&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.saturn.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 6.678121496224662,
+     &quot;dms&quot;: &quot;6°40′41″&quot;,
+     &quot;index&quot;: 11,
+     &quot;name&quot;: &quot;Meena&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.saturn.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 25,
+     &quot;lord&quot;: &quot;Saturn&quot;,
+     &quot;name&quot;: &quot;Uttara Bhadrapada&quot;,
+     &quot;pada&quot;: 2,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.saturn.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 3,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;saturn&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.saturn.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 5,
+     &quot;rashi&quot;: &quot;Kanya&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.south_node.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 10.553779431179066,
+     &quot;dms&quot;: &quot;10°33′14″&quot;,
+     &quot;index&quot;: 11,
+     &quot;name&quot;: &quot;Meena&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.south_node.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 25,
+     &quot;lord&quot;: &quot;Saturn&quot;,
+     &quot;name&quot;: &quot;Uttara Bhadrapada&quot;,
+     &quot;pada&quot;: 3,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.south_node.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 3,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;south_node&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.south_node.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 6,
+     &quot;rashi&quot;: &quot;Tula&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.sun.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 21.55952342909802,
+     &quot;dms&quot;: &quot;21°33′34″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Vrishchika&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.sun.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 17,
+     &quot;lord&quot;: &quot;Mercury&quot;,
+     &quot;name&quot;: &quot;Jyeshtha&quot;,
+     &quot;pada&quot;: 2,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.sun.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 11,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;sun&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.sun.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 9,
+     &quot;rashi&quot;: &quot;Makara&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.uranus.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 8.20107571946619,
+     &quot;dms&quot;: &quot;8°12′04″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.uranus.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 20,
+     &quot;lord&quot;: &quot;Sun&quot;,
+     &quot;name&quot;: &quot;Uttara Ashadha&quot;,
+     &quot;pada&quot;: 4,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.uranus.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 1,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;uranus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.uranus.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 11,
+     &quot;rashi&quot;: &quot;Meena&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.venus.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 23.705786229051085,
+     &quot;dms&quot;: &quot;23°42′21″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Tula&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.venus.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 15,
+     &quot;lord&quot;: &quot;Jupiter&quot;,
+     &quot;name&quot;: &quot;Vishakha&quot;,
+     &quot;pada&quot;: 2,
+     &quot;stable_within_uncertainty&quot;: true
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;,
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.venus.bhava&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;house&quot;: 10,
+     &quot;method&quot;: &quot;whole_sign_from_lagna&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;venus&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.venus.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 1,
+     &quot;rashi&quot;: &quot;Vrishabha&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.lagna.rashi&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;degree_in_sign&quot;: 22.44575134063427,
+     &quot;dms&quot;: &quot;22°26′45″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.lagna.nakshatra&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;index&quot;: 21,
+     &quot;lord&quot;: &quot;Moon&quot;,
+     &quot;name&quot;: &quot;Shravana&quot;,
+     &quot;pada&quot;: 4
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;houses&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.lagna.d9&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;division&quot;: 9,
+     &quot;index&quot;: 3,
+     &quot;rashi&quot;: &quot;Karka&quot;
+    }
+   },
+   {
+    &quot;derived_from&quot;: [
+     &quot;moon&quot;
+    ],
+    &quot;epistemic&quot;: &quot;tradition_rule&quot;,
+    &quot;id&quot;: &quot;vedic.dasha.vimshottari&quot;,
+    &quot;rule_version&quot;: &quot;vedic.parashari@0.1&quot;,
+    &quot;tradition_id&quot;: &quot;vedic.parashari&quot;,
+    &quot;value&quot;: {
+     &quot;balance_at_birth_years&quot;: 17.604508664302745,
+     &quot;mahadashas&quot;: [
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: true,
+         &quot;end_utc&quot;: &quot;1999-03-28T22:23:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;1996-12-07T05:04:00Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2001-08-21T12:47:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;1999-03-28T22:23:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2004-06-27T11:53:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2001-08-21T12:47:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2007-01-14T21:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2004-06-27T11:53:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2008-02-02T09:29:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2007-01-14T21:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2011-02-02T03:29:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2008-02-02T09:29:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2011-12-27T20:53:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2011-02-02T03:29:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2013-06-27T17:53:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2011-12-27T20:53:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2014-07-16T06:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2013-06-27T17:53:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: true,
+       &quot;end_utc&quot;: &quot;2014-07-16T06:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Rahu&quot;,
+       &quot;start_utc&quot;: &quot;1996-12-07T05:04:00Z&quot;,
+       &quot;years&quot;: 18.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2016-09-02T10:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2014-07-16T06:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2019-03-16T18:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2016-09-02T10:59:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2021-06-21T15:47:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2019-03-16T18:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2022-05-28T13:23:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2021-06-21T15:47:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2025-01-26T13:23:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2022-05-28T13:23:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2025-11-14T18:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2025-01-26T13:23:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2027-03-16T18:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2025-11-14T18:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2028-02-20T15:47:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2027-03-16T18:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2030-07-16T06:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2028-02-20T15:47:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2030-07-16T06:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Jupiter&quot;,
+       &quot;start_utc&quot;: &quot;2014-07-16T06:11:22.625Z&quot;,
+       &quot;years&quot;: 16.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2033-07-19T01:14:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2030-07-16T06:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2036-03-28T04:23:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2033-07-19T01:14:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2037-05-07T00:02:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2036-03-28T04:23:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2040-07-06T15:02:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2037-05-07T00:02:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2041-06-18T14:44:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2040-07-06T15:02:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2043-01-17T22:14:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2041-06-18T14:44:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2044-02-26T17:53:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2043-01-17T22:14:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2047-01-02T16:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2044-02-26T17:53:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2049-07-16T00:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2047-01-02T16:59:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2049-07-16T00:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Saturn&quot;,
+       &quot;start_utc&quot;: &quot;2030-07-16T06:11:22.625Z&quot;,
+       &quot;years&quot;: 19.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2051-12-12T15:38:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2049-07-16T00:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2052-12-08T20:35:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2051-12-12T15:38:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2055-10-09T17:35:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2052-12-08T20:35:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2056-08-15T04:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2055-10-09T17:35:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2058-01-14T15:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2056-08-15T04:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2059-01-11T20:08:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2058-01-14T15:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2061-07-31T05:26:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2059-01-11T20:08:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2063-11-06T03:02:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2061-07-31T05:26:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2066-07-16T06:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2063-11-06T03:02:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2066-07-16T06:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Mercury&quot;,
+       &quot;start_utc&quot;: &quot;2049-07-16T00:11:22.625Z&quot;,
+       &quot;years&quot;: 17.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2066-12-12T09:38:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2066-07-16T06:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2068-02-11T12:38:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2066-12-12T09:38:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2068-06-18T08:44:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2068-02-11T12:38:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2069-01-17T10:14:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2068-06-18T08:44:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2069-06-15T13:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2069-01-17T10:14:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2070-07-04T01:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2069-06-15T13:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2071-06-09T23:35:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2070-07-04T01:59:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2072-07-18T19:14:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2071-06-09T23:35:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2073-07-16T00:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2072-07-18T19:14:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2073-07-16T00:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Ketu&quot;,
+       &quot;start_utc&quot;: &quot;2066-07-16T06:11:22.625Z&quot;,
+       &quot;years&quot;: 7.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2076-11-14T12:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2073-07-16T00:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2077-11-14T18:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2076-11-14T12:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2079-07-16T12:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2077-11-14T18:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2080-09-14T15:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2079-07-16T12:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2083-09-15T09:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2080-09-14T15:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2086-05-16T09:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2083-09-15T09:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2089-07-16T00:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2086-05-16T09:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2092-05-15T21:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2089-07-16T00:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2093-07-16T00:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2092-05-15T21:11:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2093-07-16T00:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Venus&quot;,
+       &quot;start_utc&quot;: &quot;2073-07-16T00:11:22.625Z&quot;,
+       &quot;years&quot;: 20.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2093-11-02T13:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2093-07-16T00:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2094-05-04T04:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2093-11-02T13:59:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2094-09-09T01:05:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2094-05-04T04:59:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2095-08-03T18:29:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2094-09-09T01:05:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2096-05-21T23:17:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2095-08-03T18:29:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2097-05-03T22:59:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2096-05-21T23:17:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2098-03-10T10:05:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2097-05-03T22:59:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2098-07-16T06:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2098-03-10T10:05:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2099-07-16T12:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2098-07-16T06:11:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2099-07-16T12:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Sun&quot;,
+       &quot;start_utc&quot;: &quot;2093-07-16T00:11:22.625Z&quot;,
+       &quot;years&quot;: 6.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2100-05-16T21:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2099-07-16T12:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2100-12-15T22:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2100-05-16T21:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2102-06-16T19:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2100-12-15T22:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2103-10-16T19:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2102-06-16T19:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2105-05-17T03:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2103-10-16T19:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2106-10-16T13:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2105-05-17T03:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2107-05-17T15:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2106-10-16T13:41:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2109-01-15T09:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2107-05-17T15:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2109-07-17T00:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2109-01-15T09:11:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2109-07-17T00:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Moon&quot;,
+       &quot;start_utc&quot;: &quot;2099-07-16T12:11:22.625Z&quot;,
+       &quot;years&quot;: 10.0
+      },
+      {
+       &quot;antardashas&quot;: [
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2109-12-13T03:38:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mars&quot;,
+         &quot;start_utc&quot;: &quot;2109-07-17T00:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2110-12-31T15:56:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Rahu&quot;,
+         &quot;start_utc&quot;: &quot;2109-12-13T03:38:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2111-12-07T13:32:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Jupiter&quot;,
+         &quot;start_utc&quot;: &quot;2110-12-31T15:56:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2113-01-15T09:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Saturn&quot;,
+         &quot;start_utc&quot;: &quot;2111-12-07T13:32:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2114-01-12T14:08:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Mercury&quot;,
+         &quot;start_utc&quot;: &quot;2113-01-15T09:11:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2114-06-10T17:35:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Ketu&quot;,
+         &quot;start_utc&quot;: &quot;2114-01-12T14:08:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2115-08-10T20:35:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Venus&quot;,
+         &quot;start_utc&quot;: &quot;2114-06-10T17:35:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2115-12-16T16:41:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Sun&quot;,
+         &quot;start_utc&quot;: &quot;2115-08-10T20:35:22.625Z&quot;
+        },
+        {
+         &quot;clipped_at_birth&quot;: false,
+         &quot;end_utc&quot;: &quot;2116-07-16T18:11:22.625Z&quot;,
+         &quot;lord&quot;: &quot;Moon&quot;,
+         &quot;start_utc&quot;: &quot;2115-12-16T16:41:22.625Z&quot;
+        }
+       ],
+       &quot;clipped_at_birth&quot;: false,
+       &quot;end_utc&quot;: &quot;2116-07-16T18:11:22.625Z&quot;,
+       &quot;lord&quot;: &quot;Mars&quot;,
+       &quot;start_utc&quot;: &quot;2109-07-17T00:11:22.625Z&quot;,
+       &quot;years&quot;: 7.0
+      }
+     ],
+     &quot;moon_nakshatra&quot;: &quot;Swati&quot;,
+     &quot;starting_lord&quot;: &quot;Rahu&quot;,
+     &quot;system&quot;: &quot;vimshottari&quot;,
+     &quot;year_convention&quot;: &quot;365.25&quot;,
+     &quot;year_days&quot;: 365.25
+    }
+   }
+  ],
+  &quot;houses&quot;: {
+   &quot;ascendant&quot;: {
+    &quot;longitude_deg&quot;: 292.4457513406343,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 22.44575134063427,
+     &quot;dms&quot;: &quot;22°26′45″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    }
+   },
+   &quot;cusps_deg&quot;: [
+    270.0,
+    300.0,
+    330.0,
+    0.0,
+    30.0,
+    60.0,
+    90.0,
+    120.0,
+    150.0,
+    180.0,
+    210.0,
+    240.0
+   ],
+   &quot;epistemic&quot;: &quot;calculated&quot;,
+   &quot;local_apparent_sidereal_time_deg&quot;: 232.5294563228732,
+   &quot;midheaven&quot;: {
+    &quot;longitude_deg&quot;: 211.0679646825934,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 1.0679646825934128,
+     &quot;dms&quot;: &quot;1°04′05″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Vrishchika&quot;
+    }
+   },
+   &quot;system&quot;: &quot;whole_sign&quot;
+  },
+  &quot;input&quot;: {
+   &quot;birth_time_quality&quot;: &quot;exact&quot;,
+   &quot;civil_offset_s&quot;: 19800,
+   &quot;civil_zone&quot;: &quot;Asia/Kolkata&quot;,
+   &quot;delta_t_s&quot;: 62.184,
+   &quot;instant_utc&quot;: &quot;1996-12-07T05:04:00Z&quot;,
+   &quot;jd_tt&quot;: 2450424.7118308335,
+   &quot;jd_ut&quot;: 2450424.711111111,
+   &quot;place&quot;: {
+    &quot;altitude_m&quot;: null,
+    &quot;latitude_deg&quot;: 13.0878,
+    &quot;longitude_deg&quot;: 80.2785
+   },
+   &quot;time_window_minutes&quot;: null
+  },
+  &quot;interpretations&quot;: [],
+  &quot;kind&quot;: &quot;computed_chart&quot;,
+  &quot;positions&quot;: [
+   {
+    &quot;body&quot;: &quot;sun&quot;,
+    &quot;distance_au&quot;: 0.985142289189059,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;sun&quot;,
+    &quot;latitude_deg&quot;: 9.403570523557917e-05,
+    &quot;longitude_deg&quot;: 231.559523429098,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 21.55952342909802,
+     &quot;dms&quot;: &quot;21°33′34″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Vrishchika&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.015798377932242,
+    &quot;tropical_longitude_deg&quot;: 255.3739131173134
+   },
+   {
+    &quot;body&quot;: &quot;moon&quot;,
+    &quot;distance_au&quot;: 0.002576476856929496,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;moon&quot;,
+    &quot;latitude_deg&quot;: 2.1619411572006735,
+    &quot;longitude_deg&quot;: 186.9596232116276,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 6.9596232116276155,
+     &quot;dms&quot;: &quot;6°57′35″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Tula&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 13.049160965147166,
+    &quot;tropical_longitude_deg&quot;: 210.774012899843
+   },
+   {
+    &quot;body&quot;: &quot;mercury&quot;,
+    &quot;distance_au&quot;: 1.1879746418964838,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mercury&quot;,
+    &quot;latitude_deg&quot;: -2.355440419968686,
+    &quot;longitude_deg&quot;: 249.92650940066588,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 9.92650940066588,
+     &quot;dms&quot;: &quot;9°55′35″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Dhanu&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.3955554621588817,
+    &quot;tropical_longitude_deg&quot;: 273.74089908888124
+   },
+   {
+    &quot;body&quot;: &quot;venus&quot;,
+    &quot;distance_au&quot;: 1.4245421627221384,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;venus&quot;,
+    &quot;latitude_deg&quot;: 1.6016225195736038,
+    &quot;longitude_deg&quot;: 203.70578622905109,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 23.705786229051085,
+     &quot;dms&quot;: &quot;23°42′21″&quot;,
+     &quot;index&quot;: 6,
+     &quot;name&quot;: &quot;Tula&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 1.243084639499159,
+    &quot;tropical_longitude_deg&quot;: 227.52017591726647
+   },
+   {
+    &quot;body&quot;: &quot;mars&quot;,
+    &quot;distance_au&quot;: 1.3963206504721657,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mars&quot;,
+    &quot;latitude_deg&quot;: 2.173797474092789,
+    &quot;longitude_deg&quot;: 145.53166160506453,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 25.531661605064528,
+     &quot;dms&quot;: &quot;25°31′54″&quot;,
+     &quot;index&quot;: 4,
+     &quot;name&quot;: &quot;Simha&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.4541844453925137,
+    &quot;tropical_longitude_deg&quot;: 169.3460512932799
+   },
+   {
+    &quot;body&quot;: &quot;jupiter&quot;,
+    &quot;distance_au&quot;: 5.926276369936689,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;jupiter&quot;,
+    &quot;latitude_deg&quot;: -0.30112651500322396,
+    &quot;longitude_deg&quot;: 265.85102476944473,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 25.851024769444734,
+     &quot;dms&quot;: &quot;25°51′04″&quot;,
+     &quot;index&quot;: 8,
+     &quot;name&quot;: &quot;Dhanu&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.21308886134363547,
+    &quot;tropical_longitude_deg&quot;: 289.6654144576601
+   },
+   {
+    &quot;body&quot;: &quot;saturn&quot;,
+    &quot;distance_au&quot;: 9.171618600438194,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;saturn&quot;,
+    &quot;latitude_deg&quot;: -2.4517857535455243,
+    &quot;longitude_deg&quot;: 336.67812149622466,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 6.678121496224662,
+     &quot;dms&quot;: &quot;6°40′41″&quot;,
+     &quot;index&quot;: 11,
+     &quot;name&quot;: &quot;Meena&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.00688081856726197,
+    &quot;tropical_longitude_deg&quot;: 0.4925111844400695
+   },
+   {
+    &quot;body&quot;: &quot;uranus&quot;,
+    &quot;distance_au&quot;: 20.44982669664866,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;uranus&quot;,
+    &quot;latitude_deg&quot;: -0.5734961024215682,
+    &quot;longitude_deg&quot;: 278.2010757194662,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 8.20107571946619,
+     &quot;dms&quot;: &quot;8°12′04″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.04449660719956228,
+    &quot;tropical_longitude_deg&quot;: 302.0154654076816
+   },
+   {
+    &quot;body&quot;: &quot;neptune&quot;,
+    &quot;distance_au&quot;: 30.88766928673402,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;neptune&quot;,
+    &quot;latitude_deg&quot;: 0.4341659727717915,
+    &quot;longitude_deg&quot;: 272.16550865743153,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 2.1655086574315305,
+     &quot;dms&quot;: &quot;2°09′56″&quot;,
+     &quot;index&quot;: 9,
+     &quot;name&quot;: &quot;Makara&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.03052732656954049,
+    &quot;tropical_longitude_deg&quot;: 295.9798983456469
+   },
+   {
+    &quot;body&quot;: &quot;pluto&quot;,
+    &quot;distance_au&quot;: 30.88201292936596,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;pluto&quot;,
+    &quot;latitude_deg&quot;: 12.354951548683962,
+    &quot;longitude_deg&quot;: 219.6466402718597,
+    &quot;retrograde&quot;: false,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 9.646640271859695,
+     &quot;dms&quot;: &quot;9°38′48″&quot;,
+     &quot;index&quot;: 7,
+     &quot;name&quot;: &quot;Vrishchika&quot;
+    },
+    &quot;speed_deg_per_day&quot;: 0.038970109902436434,
+    &quot;tropical_longitude_deg&quot;: 243.46102996007508
+   },
+   {
+    &quot;body&quot;: &quot;mean_node&quot;,
+    &quot;distance_au&quot;: null,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;mean_node&quot;,
+    &quot;latitude_deg&quot;: 0.0,
+    &quot;longitude_deg&quot;: 160.55377943117907,
+    &quot;retrograde&quot;: true,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 10.553779431179066,
+     &quot;dms&quot;: &quot;10°33′14″&quot;,
+     &quot;index&quot;: 5,
+     &quot;name&quot;: &quot;Kanya&quot;
+    },
+    &quot;speed_deg_per_day&quot;: -0.05295522947790232,
+    &quot;tropical_longitude_deg&quot;: 184.36816911939445
+   },
+   {
+    &quot;body&quot;: &quot;south_node&quot;,
+    &quot;derived_from&quot;: &quot;mean_node&quot;,
+    &quot;epistemic&quot;: &quot;calculated&quot;,
+    &quot;id&quot;: &quot;south_node&quot;,
+    &quot;latitude_deg&quot;: 0.0,
+    &quot;longitude_deg&quot;: 340.55377943117907,
+    &quot;retrograde&quot;: true,
+    &quot;sign&quot;: {
+     &quot;degree_in_sign&quot;: 10.553779431179066,
+     &quot;dms&quot;: &quot;10°33′14″&quot;,
+     &quot;index&quot;: 11,
+     &quot;name&quot;: &quot;Meena&quot;
+    },
+    &quot;speed_deg_per_day&quot;: -0.05295522947790232,
+    &quot;tropical_longitude_deg&quot;: 4.368169119394452
+   }
+  ],
+  &quot;provenance&quot;: {
+   &quot;assumptions&quot;: [
+    &quot;ayanamsha not given; defaulted to lahiri because assume_defaults was set&quot;,
+    &quot;house_system not given; whole_sign used&quot;,
+    &quot;node_model not given; mean node used&quot;,
+    &quot;UTC is used as UT1 (differs by under 0.9 s)&quot;,
+    &quot;civil time resolved with IANA tzdb 2026f&quot;,
+    &quot;coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date&quot;
+   ],
+   &quot;engine_version&quot;: &quot;0.1.0&quot;,
+   &quot;provider&quot;: &quot;analytic&quot;,
+   &quot;provider_accuracy&quot;: &quot;Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.&quot;,
+   &quot;provider_data&quot;: &quot;JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files&quot;,
+   &quot;provider_version&quot;: &quot;0.1.0&quot;,
+   &quot;rulesets&quot;: [
+    &quot;ayanamsha-lahiri@0.1&quot;,
+    &quot;vedic.parashari@0.1&quot;
+   ],
+   &quot;time_model&quot;: &quot;leap-seconds-1972-2017+37s-to-2027&quot;,
+   &quot;tzdb_version&quot;: &quot;2026f&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1.0&quot;,
+  &quot;warnings&quot;: []
+ }
+}</pre></details></section>
+</main>
+<footer>Generated 2026-11-21 05:08 UTC by ESHANA 0.1.0 (Extensible Spatiotemporal Hypersystem for Astroinformatics,
+Natural Cycles &amp; Associations). Open source, Apache-2.0. Chart markers follow report.markers@0.1. This file is
+self-contained and makes no network requests.</footer>
+<script type="application/json" id="eshana-data">{"vedic-chennai": {"calculation": {"ayanamsha": "lahiri", "ayanamsha_deg": 23.81424755288768, "frame": "geocentric_apparent_ecliptic_true_equinox_of_date", "house_system": "whole_sign", "node_model": "mean", "provider": "analytic", "system": "vedic", "zodiac": "sidereal"}, "derived_attributes": [{"derived_from": ["jupiter"], "epistemic": "tradition_rule", "id": "vedic.jupiter.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 25.851024769444734, "dms": "25°51′04″", "index": 8, "name": "Dhanu"}}, {"derived_from": ["jupiter"], "epistemic": "tradition_rule", "id": "vedic.jupiter.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 19, "lord": "Venus", "name": "Purva Ashadha", "pada": 4, "stable_within_uncertainty": true}}, {"derived_from": ["jupiter", "houses"], "epistemic": "tradition_rule", "id": "vedic.jupiter.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 12, "method": "whole_sign_from_lagna"}}, {"derived_from": ["jupiter"], "epistemic": "tradition_rule", "id": "vedic.jupiter.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 7, "rashi": "Vrishchika"}}, {"derived_from": ["mars"], "epistemic": "tradition_rule", "id": "vedic.mars.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 25.531661605064528, "dms": "25°31′54″", "index": 4, "name": "Simha"}}, {"derived_from": ["mars"], "epistemic": "tradition_rule", "id": "vedic.mars.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 10, "lord": "Venus", "name": "Purva Phalguni", "pada": 4, "stable_within_uncertainty": true}}, {"derived_from": ["mars", "houses"], "epistemic": "tradition_rule", "id": "vedic.mars.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 8, "method": "whole_sign_from_lagna"}}, {"derived_from": ["mars"], "epistemic": "tradition_rule", "id": "vedic.mars.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 7, "rashi": "Vrishchika"}}, {"derived_from": ["mean_node"], "epistemic": "tradition_rule", "id": "vedic.mean_node.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 10.553779431179066, "dms": "10°33′14″", "index": 5, "name": "Kanya"}}, {"derived_from": ["mean_node"], "epistemic": "tradition_rule", "id": "vedic.mean_node.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 12, "lord": "Moon", "name": "Hasta", "pada": 1, "stable_within_uncertainty": true}}, {"derived_from": ["mean_node", "houses"], "epistemic": "tradition_rule", "id": "vedic.mean_node.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 9, "method": "whole_sign_from_lagna"}}, {"derived_from": ["mean_node"], "epistemic": "tradition_rule", "id": "vedic.mean_node.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 0, "rashi": "Mesha"}}, {"derived_from": ["mercury"], "epistemic": "tradition_rule", "id": "vedic.mercury.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 9.92650940066588, "dms": "9°55′35″", "index": 8, "name": "Dhanu"}}, {"derived_from": ["mercury"], "epistemic": "tradition_rule", "id": "vedic.mercury.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 18, "lord": "Ketu", "name": "Mula", "pada": 3, "stable_within_uncertainty": true}}, {"derived_from": ["mercury", "houses"], "epistemic": "tradition_rule", "id": "vedic.mercury.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 12, "method": "whole_sign_from_lagna"}}, {"derived_from": ["mercury"], "epistemic": "tradition_rule", "id": "vedic.mercury.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 2, "rashi": "Mithuna"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "vedic.moon.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 6.9596232116276155, "dms": "6°57′35″", "index": 6, "name": "Tula"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "vedic.moon.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 14, "lord": "Rahu", "name": "Swati", "pada": 1, "stable_within_uncertainty": true}}, {"derived_from": ["moon", "houses"], "epistemic": "tradition_rule", "id": "vedic.moon.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 10, "method": "whole_sign_from_lagna"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "vedic.moon.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 8, "rashi": "Dhanu"}}, {"derived_from": ["neptune"], "epistemic": "tradition_rule", "id": "vedic.neptune.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 2.1655086574315305, "dms": "2°09′56″", "index": 9, "name": "Makara"}}, {"derived_from": ["neptune"], "epistemic": "tradition_rule", "id": "vedic.neptune.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 20, "lord": "Sun", "name": "Uttara Ashadha", "pada": 2, "stable_within_uncertainty": true}}, {"derived_from": ["neptune", "houses"], "epistemic": "tradition_rule", "id": "vedic.neptune.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 1, "method": "whole_sign_from_lagna"}}, {"derived_from": ["neptune"], "epistemic": "tradition_rule", "id": "vedic.neptune.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 9, "rashi": "Makara"}}, {"derived_from": ["pluto"], "epistemic": "tradition_rule", "id": "vedic.pluto.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 9.646640271859695, "dms": "9°38′48″", "index": 7, "name": "Vrishchika"}}, {"derived_from": ["pluto"], "epistemic": "tradition_rule", "id": "vedic.pluto.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 16, "lord": "Saturn", "name": "Anuradha", "pada": 2, "stable_within_uncertainty": true}}, {"derived_from": ["pluto", "houses"], "epistemic": "tradition_rule", "id": "vedic.pluto.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 11, "method": "whole_sign_from_lagna"}}, {"derived_from": ["pluto"], "epistemic": "tradition_rule", "id": "vedic.pluto.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 5, "rashi": "Kanya"}}, {"derived_from": ["saturn"], "epistemic": "tradition_rule", "id": "vedic.saturn.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 6.678121496224662, "dms": "6°40′41″", "index": 11, "name": "Meena"}}, {"derived_from": ["saturn"], "epistemic": "tradition_rule", "id": "vedic.saturn.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 25, "lord": "Saturn", "name": "Uttara Bhadrapada", "pada": 2, "stable_within_uncertainty": true}}, {"derived_from": ["saturn", "houses"], "epistemic": "tradition_rule", "id": "vedic.saturn.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 3, "method": "whole_sign_from_lagna"}}, {"derived_from": ["saturn"], "epistemic": "tradition_rule", "id": "vedic.saturn.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 5, "rashi": "Kanya"}}, {"derived_from": ["south_node"], "epistemic": "tradition_rule", "id": "vedic.south_node.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 10.553779431179066, "dms": "10°33′14″", "index": 11, "name": "Meena"}}, {"derived_from": ["south_node"], "epistemic": "tradition_rule", "id": "vedic.south_node.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 25, "lord": "Saturn", "name": "Uttara Bhadrapada", "pada": 3, "stable_within_uncertainty": true}}, {"derived_from": ["south_node", "houses"], "epistemic": "tradition_rule", "id": "vedic.south_node.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 3, "method": "whole_sign_from_lagna"}}, {"derived_from": ["south_node"], "epistemic": "tradition_rule", "id": "vedic.south_node.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 6, "rashi": "Tula"}}, {"derived_from": ["sun"], "epistemic": "tradition_rule", "id": "vedic.sun.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 21.55952342909802, "dms": "21°33′34″", "index": 7, "name": "Vrishchika"}}, {"derived_from": ["sun"], "epistemic": "tradition_rule", "id": "vedic.sun.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 17, "lord": "Mercury", "name": "Jyeshtha", "pada": 2, "stable_within_uncertainty": true}}, {"derived_from": ["sun", "houses"], "epistemic": "tradition_rule", "id": "vedic.sun.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 11, "method": "whole_sign_from_lagna"}}, {"derived_from": ["sun"], "epistemic": "tradition_rule", "id": "vedic.sun.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 9, "rashi": "Makara"}}, {"derived_from": ["uranus"], "epistemic": "tradition_rule", "id": "vedic.uranus.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 8.20107571946619, "dms": "8°12′04″", "index": 9, "name": "Makara"}}, {"derived_from": ["uranus"], "epistemic": "tradition_rule", "id": "vedic.uranus.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 20, "lord": "Sun", "name": "Uttara Ashadha", "pada": 4, "stable_within_uncertainty": true}}, {"derived_from": ["uranus", "houses"], "epistemic": "tradition_rule", "id": "vedic.uranus.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 1, "method": "whole_sign_from_lagna"}}, {"derived_from": ["uranus"], "epistemic": "tradition_rule", "id": "vedic.uranus.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 11, "rashi": "Meena"}}, {"derived_from": ["venus"], "epistemic": "tradition_rule", "id": "vedic.venus.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 23.705786229051085, "dms": "23°42′21″", "index": 6, "name": "Tula"}}, {"derived_from": ["venus"], "epistemic": "tradition_rule", "id": "vedic.venus.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 15, "lord": "Jupiter", "name": "Vishakha", "pada": 2, "stable_within_uncertainty": true}}, {"derived_from": ["venus", "houses"], "epistemic": "tradition_rule", "id": "vedic.venus.bhava", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"house": 10, "method": "whole_sign_from_lagna"}}, {"derived_from": ["venus"], "epistemic": "tradition_rule", "id": "vedic.venus.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 1, "rashi": "Vrishabha"}}, {"derived_from": ["houses"], "epistemic": "tradition_rule", "id": "vedic.lagna.rashi", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"degree_in_sign": 22.44575134063427, "dms": "22°26′45″", "index": 9, "name": "Makara"}}, {"derived_from": ["houses"], "epistemic": "tradition_rule", "id": "vedic.lagna.nakshatra", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"index": 21, "lord": "Moon", "name": "Shravana", "pada": 4}}, {"derived_from": ["houses"], "epistemic": "tradition_rule", "id": "vedic.lagna.d9", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"division": 9, "index": 3, "rashi": "Karka"}}, {"derived_from": ["moon"], "epistemic": "tradition_rule", "id": "vedic.dasha.vimshottari", "rule_version": "vedic.parashari@0.1", "tradition_id": "vedic.parashari", "value": {"balance_at_birth_years": 17.604508664302745, "mahadashas": [{"antardashas": [{"clipped_at_birth": true, "end_utc": "1999-03-28T22:23:22.625Z", "lord": "Rahu", "start_utc": "1996-12-07T05:04:00Z"}, {"clipped_at_birth": false, "end_utc": "2001-08-21T12:47:22.625Z", "lord": "Jupiter", "start_utc": "1999-03-28T22:23:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2004-06-27T11:53:22.625Z", "lord": "Saturn", "start_utc": "2001-08-21T12:47:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2007-01-14T21:11:22.625Z", "lord": "Mercury", "start_utc": "2004-06-27T11:53:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2008-02-02T09:29:22.625Z", "lord": "Ketu", "start_utc": "2007-01-14T21:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2011-02-02T03:29:22.625Z", "lord": "Venus", "start_utc": "2008-02-02T09:29:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2011-12-27T20:53:22.625Z", "lord": "Sun", "start_utc": "2011-02-02T03:29:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2013-06-27T17:53:22.625Z", "lord": "Moon", "start_utc": "2011-12-27T20:53:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2014-07-16T06:11:22.625Z", "lord": "Mars", "start_utc": "2013-06-27T17:53:22.625Z"}], "clipped_at_birth": true, "end_utc": "2014-07-16T06:11:22.625Z", "lord": "Rahu", "start_utc": "1996-12-07T05:04:00Z", "years": 18.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2016-09-02T10:59:22.625Z", "lord": "Jupiter", "start_utc": "2014-07-16T06:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2019-03-16T18:11:22.625Z", "lord": "Saturn", "start_utc": "2016-09-02T10:59:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2021-06-21T15:47:22.625Z", "lord": "Mercury", "start_utc": "2019-03-16T18:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2022-05-28T13:23:22.625Z", "lord": "Ketu", "start_utc": "2021-06-21T15:47:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2025-01-26T13:23:22.625Z", "lord": "Venus", "start_utc": "2022-05-28T13:23:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2025-11-14T18:11:22.625Z", "lord": "Sun", "start_utc": "2025-01-26T13:23:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2027-03-16T18:11:22.625Z", "lord": "Moon", "start_utc": "2025-11-14T18:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2028-02-20T15:47:22.625Z", "lord": "Mars", "start_utc": "2027-03-16T18:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2030-07-16T06:11:22.625Z", "lord": "Rahu", "start_utc": "2028-02-20T15:47:22.625Z"}], "clipped_at_birth": false, "end_utc": "2030-07-16T06:11:22.625Z", "lord": "Jupiter", "start_utc": "2014-07-16T06:11:22.625Z", "years": 16.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2033-07-19T01:14:22.625Z", "lord": "Saturn", "start_utc": "2030-07-16T06:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2036-03-28T04:23:22.625Z", "lord": "Mercury", "start_utc": "2033-07-19T01:14:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2037-05-07T00:02:22.625Z", "lord": "Ketu", "start_utc": "2036-03-28T04:23:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2040-07-06T15:02:22.625Z", "lord": "Venus", "start_utc": "2037-05-07T00:02:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2041-06-18T14:44:22.625Z", "lord": "Sun", "start_utc": "2040-07-06T15:02:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2043-01-17T22:14:22.625Z", "lord": "Moon", "start_utc": "2041-06-18T14:44:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2044-02-26T17:53:22.625Z", "lord": "Mars", "start_utc": "2043-01-17T22:14:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2047-01-02T16:59:22.625Z", "lord": "Rahu", "start_utc": "2044-02-26T17:53:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2049-07-16T00:11:22.625Z", "lord": "Jupiter", "start_utc": "2047-01-02T16:59:22.625Z"}], "clipped_at_birth": false, "end_utc": "2049-07-16T00:11:22.625Z", "lord": "Saturn", "start_utc": "2030-07-16T06:11:22.625Z", "years": 19.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2051-12-12T15:38:22.625Z", "lord": "Mercury", "start_utc": "2049-07-16T00:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2052-12-08T20:35:22.625Z", "lord": "Ketu", "start_utc": "2051-12-12T15:38:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2055-10-09T17:35:22.625Z", "lord": "Venus", "start_utc": "2052-12-08T20:35:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2056-08-15T04:41:22.625Z", "lord": "Sun", "start_utc": "2055-10-09T17:35:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2058-01-14T15:11:22.625Z", "lord": "Moon", "start_utc": "2056-08-15T04:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2059-01-11T20:08:22.625Z", "lord": "Mars", "start_utc": "2058-01-14T15:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2061-07-31T05:26:22.625Z", "lord": "Rahu", "start_utc": "2059-01-11T20:08:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2063-11-06T03:02:22.625Z", "lord": "Jupiter", "start_utc": "2061-07-31T05:26:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2066-07-16T06:11:22.625Z", "lord": "Saturn", "start_utc": "2063-11-06T03:02:22.625Z"}], "clipped_at_birth": false, "end_utc": "2066-07-16T06:11:22.625Z", "lord": "Mercury", "start_utc": "2049-07-16T00:11:22.625Z", "years": 17.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2066-12-12T09:38:22.625Z", "lord": "Ketu", "start_utc": "2066-07-16T06:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2068-02-11T12:38:22.625Z", "lord": "Venus", "start_utc": "2066-12-12T09:38:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2068-06-18T08:44:22.625Z", "lord": "Sun", "start_utc": "2068-02-11T12:38:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2069-01-17T10:14:22.625Z", "lord": "Moon", "start_utc": "2068-06-18T08:44:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2069-06-15T13:41:22.625Z", "lord": "Mars", "start_utc": "2069-01-17T10:14:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2070-07-04T01:59:22.625Z", "lord": "Rahu", "start_utc": "2069-06-15T13:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2071-06-09T23:35:22.625Z", "lord": "Jupiter", "start_utc": "2070-07-04T01:59:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2072-07-18T19:14:22.625Z", "lord": "Saturn", "start_utc": "2071-06-09T23:35:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2073-07-16T00:11:22.625Z", "lord": "Mercury", "start_utc": "2072-07-18T19:14:22.625Z"}], "clipped_at_birth": false, "end_utc": "2073-07-16T00:11:22.625Z", "lord": "Ketu", "start_utc": "2066-07-16T06:11:22.625Z", "years": 7.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2076-11-14T12:11:22.625Z", "lord": "Venus", "start_utc": "2073-07-16T00:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2077-11-14T18:11:22.625Z", "lord": "Sun", "start_utc": "2076-11-14T12:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2079-07-16T12:11:22.625Z", "lord": "Moon", "start_utc": "2077-11-14T18:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2080-09-14T15:11:22.625Z", "lord": "Mars", "start_utc": "2079-07-16T12:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2083-09-15T09:11:22.625Z", "lord": "Rahu", "start_utc": "2080-09-14T15:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2086-05-16T09:11:22.625Z", "lord": "Jupiter", "start_utc": "2083-09-15T09:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2089-07-16T00:11:22.625Z", "lord": "Saturn", "start_utc": "2086-05-16T09:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2092-05-15T21:11:22.625Z", "lord": "Mercury", "start_utc": "2089-07-16T00:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2093-07-16T00:11:22.625Z", "lord": "Ketu", "start_utc": "2092-05-15T21:11:22.625Z"}], "clipped_at_birth": false, "end_utc": "2093-07-16T00:11:22.625Z", "lord": "Venus", "start_utc": "2073-07-16T00:11:22.625Z", "years": 20.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2093-11-02T13:59:22.625Z", "lord": "Sun", "start_utc": "2093-07-16T00:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2094-05-04T04:59:22.625Z", "lord": "Moon", "start_utc": "2093-11-02T13:59:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2094-09-09T01:05:22.625Z", "lord": "Mars", "start_utc": "2094-05-04T04:59:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2095-08-03T18:29:22.625Z", "lord": "Rahu", "start_utc": "2094-09-09T01:05:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2096-05-21T23:17:22.625Z", "lord": "Jupiter", "start_utc": "2095-08-03T18:29:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2097-05-03T22:59:22.625Z", "lord": "Saturn", "start_utc": "2096-05-21T23:17:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2098-03-10T10:05:22.625Z", "lord": "Mercury", "start_utc": "2097-05-03T22:59:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2098-07-16T06:11:22.625Z", "lord": "Ketu", "start_utc": "2098-03-10T10:05:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2099-07-16T12:11:22.625Z", "lord": "Venus", "start_utc": "2098-07-16T06:11:22.625Z"}], "clipped_at_birth": false, "end_utc": "2099-07-16T12:11:22.625Z", "lord": "Sun", "start_utc": "2093-07-16T00:11:22.625Z", "years": 6.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2100-05-16T21:11:22.625Z", "lord": "Moon", "start_utc": "2099-07-16T12:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2100-12-15T22:41:22.625Z", "lord": "Mars", "start_utc": "2100-05-16T21:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2102-06-16T19:41:22.625Z", "lord": "Rahu", "start_utc": "2100-12-15T22:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2103-10-16T19:41:22.625Z", "lord": "Jupiter", "start_utc": "2102-06-16T19:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2105-05-17T03:11:22.625Z", "lord": "Saturn", "start_utc": "2103-10-16T19:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2106-10-16T13:41:22.625Z", "lord": "Mercury", "start_utc": "2105-05-17T03:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2107-05-17T15:11:22.625Z", "lord": "Ketu", "start_utc": "2106-10-16T13:41:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2109-01-15T09:11:22.625Z", "lord": "Venus", "start_utc": "2107-05-17T15:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2109-07-17T00:11:22.625Z", "lord": "Sun", "start_utc": "2109-01-15T09:11:22.625Z"}], "clipped_at_birth": false, "end_utc": "2109-07-17T00:11:22.625Z", "lord": "Moon", "start_utc": "2099-07-16T12:11:22.625Z", "years": 10.0}, {"antardashas": [{"clipped_at_birth": false, "end_utc": "2109-12-13T03:38:22.625Z", "lord": "Mars", "start_utc": "2109-07-17T00:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2110-12-31T15:56:22.625Z", "lord": "Rahu", "start_utc": "2109-12-13T03:38:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2111-12-07T13:32:22.625Z", "lord": "Jupiter", "start_utc": "2110-12-31T15:56:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2113-01-15T09:11:22.625Z", "lord": "Saturn", "start_utc": "2111-12-07T13:32:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2114-01-12T14:08:22.625Z", "lord": "Mercury", "start_utc": "2113-01-15T09:11:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2114-06-10T17:35:22.625Z", "lord": "Ketu", "start_utc": "2114-01-12T14:08:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2115-08-10T20:35:22.625Z", "lord": "Venus", "start_utc": "2114-06-10T17:35:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2115-12-16T16:41:22.625Z", "lord": "Sun", "start_utc": "2115-08-10T20:35:22.625Z"}, {"clipped_at_birth": false, "end_utc": "2116-07-16T18:11:22.625Z", "lord": "Moon", "start_utc": "2115-12-16T16:41:22.625Z"}], "clipped_at_birth": false, "end_utc": "2116-07-16T18:11:22.625Z", "lord": "Mars", "start_utc": "2109-07-17T00:11:22.625Z", "years": 7.0}], "moon_nakshatra": "Swati", "starting_lord": "Rahu", "system": "vimshottari", "year_convention": "365.25", "year_days": 365.25}}], "houses": {"ascendant": {"longitude_deg": 292.4457513406343, "sign": {"degree_in_sign": 22.44575134063427, "dms": "22°26′45″", "index": 9, "name": "Makara"}}, "cusps_deg": [270.0, 300.0, 330.0, 0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0], "epistemic": "calculated", "local_apparent_sidereal_time_deg": 232.5294563228732, "midheaven": {"longitude_deg": 211.0679646825934, "sign": {"degree_in_sign": 1.0679646825934128, "dms": "1°04′05″", "index": 7, "name": "Vrishchika"}}, "system": "whole_sign"}, "input": {"birth_time_quality": "exact", "civil_offset_s": 19800, "civil_zone": "Asia/Kolkata", "delta_t_s": 62.184, "instant_utc": "1996-12-07T05:04:00Z", "jd_tt": 2450424.7118308335, "jd_ut": 2450424.711111111, "place": {"altitude_m": null, "latitude_deg": 13.0878, "longitude_deg": 80.2785}, "time_window_minutes": null}, "interpretations": [], "kind": "computed_chart", "positions": [{"body": "sun", "distance_au": 0.985142289189059, "epistemic": "calculated", "id": "sun", "latitude_deg": 9.403570523557917e-05, "longitude_deg": 231.559523429098, "retrograde": false, "sign": {"degree_in_sign": 21.55952342909802, "dms": "21°33′34″", "index": 7, "name": "Vrishchika"}, "speed_deg_per_day": 1.015798377932242, "tropical_longitude_deg": 255.3739131173134}, {"body": "moon", "distance_au": 0.002576476856929496, "epistemic": "calculated", "id": "moon", "latitude_deg": 2.1619411572006735, "longitude_deg": 186.9596232116276, "retrograde": false, "sign": {"degree_in_sign": 6.9596232116276155, "dms": "6°57′35″", "index": 6, "name": "Tula"}, "speed_deg_per_day": 13.049160965147166, "tropical_longitude_deg": 210.774012899843}, {"body": "mercury", "distance_au": 1.1879746418964838, "epistemic": "calculated", "id": "mercury", "latitude_deg": -2.355440419968686, "longitude_deg": 249.92650940066588, "retrograde": false, "sign": {"degree_in_sign": 9.92650940066588, "dms": "9°55′35″", "index": 8, "name": "Dhanu"}, "speed_deg_per_day": 1.3955554621588817, "tropical_longitude_deg": 273.74089908888124}, {"body": "venus", "distance_au": 1.4245421627221384, "epistemic": "calculated", "id": "venus", "latitude_deg": 1.6016225195736038, "longitude_deg": 203.70578622905109, "retrograde": false, "sign": {"degree_in_sign": 23.705786229051085, "dms": "23°42′21″", "index": 6, "name": "Tula"}, "speed_deg_per_day": 1.243084639499159, "tropical_longitude_deg": 227.52017591726647}, {"body": "mars", "distance_au": 1.3963206504721657, "epistemic": "calculated", "id": "mars", "latitude_deg": 2.173797474092789, "longitude_deg": 145.53166160506453, "retrograde": false, "sign": {"degree_in_sign": 25.531661605064528, "dms": "25°31′54″", "index": 4, "name": "Simha"}, "speed_deg_per_day": 0.4541844453925137, "tropical_longitude_deg": 169.3460512932799}, {"body": "jupiter", "distance_au": 5.926276369936689, "epistemic": "calculated", "id": "jupiter", "latitude_deg": -0.30112651500322396, "longitude_deg": 265.85102476944473, "retrograde": false, "sign": {"degree_in_sign": 25.851024769444734, "dms": "25°51′04″", "index": 8, "name": "Dhanu"}, "speed_deg_per_day": 0.21308886134363547, "tropical_longitude_deg": 289.6654144576601}, {"body": "saturn", "distance_au": 9.171618600438194, "epistemic": "calculated", "id": "saturn", "latitude_deg": -2.4517857535455243, "longitude_deg": 336.67812149622466, "retrograde": false, "sign": {"degree_in_sign": 6.678121496224662, "dms": "6°40′41″", "index": 11, "name": "Meena"}, "speed_deg_per_day": 0.00688081856726197, "tropical_longitude_deg": 0.4925111844400695}, {"body": "uranus", "distance_au": 20.44982669664866, "epistemic": "calculated", "id": "uranus", "latitude_deg": -0.5734961024215682, "longitude_deg": 278.2010757194662, "retrograde": false, "sign": {"degree_in_sign": 8.20107571946619, "dms": "8°12′04″", "index": 9, "name": "Makara"}, "speed_deg_per_day": 0.04449660719956228, "tropical_longitude_deg": 302.0154654076816}, {"body": "neptune", "distance_au": 30.88766928673402, "epistemic": "calculated", "id": "neptune", "latitude_deg": 0.4341659727717915, "longitude_deg": 272.16550865743153, "retrograde": false, "sign": {"degree_in_sign": 2.1655086574315305, "dms": "2°09′56″", "index": 9, "name": "Makara"}, "speed_deg_per_day": 0.03052732656954049, "tropical_longitude_deg": 295.9798983456469}, {"body": "pluto", "distance_au": 30.88201292936596, "epistemic": "calculated", "id": "pluto", "latitude_deg": 12.354951548683962, "longitude_deg": 219.6466402718597, "retrograde": false, "sign": {"degree_in_sign": 9.646640271859695, "dms": "9°38′48″", "index": 7, "name": "Vrishchika"}, "speed_deg_per_day": 0.038970109902436434, "tropical_longitude_deg": 243.46102996007508}, {"body": "mean_node", "distance_au": null, "epistemic": "calculated", "id": "mean_node", "latitude_deg": 0.0, "longitude_deg": 160.55377943117907, "retrograde": true, "sign": {"degree_in_sign": 10.553779431179066, "dms": "10°33′14″", "index": 5, "name": "Kanya"}, "speed_deg_per_day": -0.05295522947790232, "tropical_longitude_deg": 184.36816911939445}, {"body": "south_node", "derived_from": "mean_node", "epistemic": "calculated", "id": "south_node", "latitude_deg": 0.0, "longitude_deg": 340.55377943117907, "retrograde": true, "sign": {"degree_in_sign": 10.553779431179066, "dms": "10°33′14″", "index": 11, "name": "Meena"}, "speed_deg_per_day": -0.05295522947790232, "tropical_longitude_deg": 4.368169119394452}], "provenance": {"assumptions": ["ayanamsha not given; defaulted to lahiri because assume_defaults was set", "house_system not given; whole_sign used", "node_model not given; mean node used", "UTC is used as UT1 (differs by under 0.9 s)", "civil time resolved with IANA tzdb 2026f", "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"], "engine_version": "0.1.0", "provider": "analytic", "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.", "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files", "provider_version": "0.1.0", "rulesets": ["ayanamsha-lahiri@0.1", "vedic.parashari@0.1"], "time_model": "leap-seconds-1972-2017+37s-to-2027", "tzdb_version": "2026f"}, "schema_version": "0.1.0", "warnings": []}}</script>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{var t=localStorage.getItem('eshana-theme'); if(t) root.setAttribute('data-theme',t);}catch(e){}
+  var tb=document.getElementById('theme');
+  if(tb) tb.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
+    try{localStorage.setItem('eshana-theme',nx);}catch(e){}
+  });
+  var pb=document.getElementById('print'); if(pb) pb.addEventListener('click',function(){
+    document.querySelectorAll('details').forEach(function(d){d.open=true}); window.print();});
+  var jb=document.getElementById('json'); if(jb) jb.addEventListener('click',function(){
+    var raw=document.getElementById('eshana-data').textContent;
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+    a.download='eshana-envelopes.json'; document.body.appendChild(a); a.click(); a.remove();});
+  function mark(id,on){
+    document.querySelectorAll('[data-body]').forEach(function(el){
+      var ids=el.getAttribute('data-body').split(' ');
+      if(ids.indexOf(id)>=0) el.classList.toggle('hl',on);
+      if(el.classList.contains('asp')) el.classList.toggle('dim',on&&ids.indexOf(id)<0);
+    });
+  }
+  document.querySelectorAll('[data-body]').forEach(function(el){
+    var id=el.getAttribute('data-body').split(' ')[0];
+    if(el.classList.contains('asp')) return;
+    el.addEventListener('mouseenter',function(){mark(id,true)});
+    el.addEventListener('mouseleave',function(){mark(id,false)});
+  });
+  document.querySelectorAll('.tabs').forEach(function(tabs){
+    var card=tabs.closest('.card');
+    tabs.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){
+      tabs.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-selected',String(x===b))});
+      card.querySelectorAll('.pane').forEach(function(p){p.hidden=p.getAttribute('data-pane')!==b.getAttribute('data-tab')});
+    })});
+  });
+})();
+</script>
+</body>
+</html>

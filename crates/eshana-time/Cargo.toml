@@ -1,0 +1,23 @@
+[package]
+name = "eshana-time"
+description = "ESHANA time: IANA civil time to UTC, leap seconds, delta-T, TT, Julian day and sidereal time"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+eshana-core.workspace = true
+serde.workspace = true
+jiff.workspace = true
+jiff-tzdb.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true
