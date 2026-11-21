@@ -68,8 +68,8 @@ DIGNITY = {
     60: ["N", "F", "Own", "Ex", "N", "E", "Own", "N", "N"],
 }
 
-# Cells that differ for a stated positional reason (not a convention): Jupiter is printed at Aq 16°29'10"; ESHANA
-# puts it about 3' later, just past the 16°30' start of the 22nd khavedāṃśa, so its D40 sign is Aquarius (neutral)
+# Cells that differ for a stated positional reason (not a convention): Jupiter is printed at Aq 16°29'10"; the
+# built-in ephemeris puts it about 3' later (the JPL kernel agrees with the reference), just past the 16°30' start of the 22nd khavedāṃśa, so its D40 sign is Aquarius (neutral)
 # instead of Capricorn (debilitated).
 KNOWN = {("jupiter", 40)}
 
@@ -123,8 +123,14 @@ def test_dignities_in_sixteen_divisions(provider, spk):
     assert len(got) == 16 * 9
 
 
-@pytest.mark.xfail(strict=True, reason="Jupiter is about 3' later than the printed Aq 16°29'10\", across the D40 boundary at 16°30'")
-@pytest.mark.parametrize("provider,spk", CASES)
+KNOWN_CASES = [
+    pytest.param(p, spk, id=p) if spk else pytest.param(p, spk, id=p, marks=pytest.mark.xfail(
+        strict=True, reason="built-in ephemeris puts Jupiter about 3' later than the printed Aq 16°29'10\", "
+                            "across the D40 boundary at 16°30' (the JPL kernel matches)"))
+    for p, spk in PROVIDERS]
+
+
+@pytest.mark.parametrize("provider,spk", KNOWN_CASES)
 def test_dignity_known_difference(provider, spk):
     got = dignities(provider, spk)
     for g, d in KNOWN:

@@ -5,6 +5,23 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+### Added (review round 5)
+- **Five analysis categories** (features `maitri`, `dashas_extended`, `auxiliary`, `chakras`, `annual`; all included in
+  `features: ["all"]`), each with its own rule pack, guide and studio page, and an accuracy test against the
+  Ramana Maharishi reference chart:
+  - **Maitri** ([guide](docs/guides/maitri.md)): compound relationships for all nine grahas (node friendships named as
+    a convention), the nakshatra tārā matrix and dignities in all 16 divisions.
+  - **More daśās** ([guide](docs/guides/dashas.md)): Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla and
+    Kālachakra, with applicability flags. The Daśā page has a tab per system and the zoom works for sign daśās too.
+  - **Auxiliary** ([guide](docs/guides/auxiliary.md)): 37 sahams, avakahaḍā chakra, male/female rāśis, mṛtyu bhāga,
+    ghāta chakra, vedhasthāna (natal and transit), jīva/deha and śodhana piṇḍas.
+  - **Chakras** ([guide](docs/guides/chakras.md)): Sarvatobhadra with vedha lines, Kota and Saṅghaṭṭa, natal and
+    transit layers.
+  - **Annual** ([guide](docs/guides/annual.md)): varṣaphala (muntha, office-bearers, pañcavargīya bala, year lord),
+    pañca pakṣī and KP significator tables by bhāva and graha.
+- Known differences from the reference are recorded as expected failures with reasons (Kālachakra timing, the
+  reference's office-bearer score, Kota score, Saṅghaṭṭa ring figure, one D40 boundary).
+
 ## [0.3.1] - 2026-11-21
 
 Review rounds 1–4: everything below ships in 0.3.1. Schema 0.3.1 adds fields only.

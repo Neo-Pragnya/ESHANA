@@ -432,7 +432,7 @@ SECTION_TITLES = {
     "aspects": "Aspects",
     "strength": "Strength (ṣaḍbala, bhāva bala, viṃśopaka)",
     "ashtakavarga": "Aṣṭakavarga",
-    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
+    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla, Kālachakra; Sāḍe Sātī)",
     "panchanga": "Pañcāṅga",
     "special": "Lagnas and special points",
     "point": "Lagna or special point",

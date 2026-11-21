@@ -153,3 +153,18 @@ def test_unknown_feature_is_refused():
     with pytest.raises(EshanaError) as e:
         ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", features=["horoscope"])
     assert e.value.code == "ESH-INPUT"
+
+
+def test_studio_assets_share_no_top_level_names():
+    """The studio assets are joined into one script, so a top-level name declared in two of them breaks every page."""
+    import re
+    from eshana import report
+
+    seen: dict[str, str] = {}
+    clashes = []
+    for name in report.ASSETS:
+        for m in re.finditer(r"^(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)", report._asset(name), re.M):
+            if m.group(1) in seen:
+                clashes.append((m.group(1), seen[m.group(1)], name))
+            seen.setdefault(m.group(1), name)
+    assert not clashes, clashes

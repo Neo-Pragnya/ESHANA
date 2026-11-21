@@ -51,7 +51,7 @@ def render() -> str:
     data = json.loads(BACKLOG.read_text(encoding="utf-8"))
     tasks, areas = data["tasks"], {a["id"]: a["title"] for a in data["areas"]}
     groups: "OrderedDict[str, list]" = OrderedDict()
-    order = [DELIVERED, "0.4 · review round 1", "0.4 · review round 2", "0.4 · review round 3", "0.4 · review round 4", "0.5 · reference chart library", ORIGINAL]
+    order = [DELIVERED, "0.4 · review round 1", "0.4 · review round 2", "0.4 · review round 3", "0.4 · review round 4", "0.4 · review round 5", "0.5 · reference chart library", ORIGINAL]
     for name in order:
         groups[name] = []
     for t in tasks:

@@ -88,8 +88,8 @@ descriptive dignity grid.
 
 [`accuracy/test_maitri_reference.py`](../../accuracy/test_maitri_reference.py) compares all three tables, cell by
 cell, with a published reference chart for Sri Ramana Maharshi. All 72 compound relationships and all 90 tārās
-agree, and 143 of the 144 dignity cells agree. The one difference is Jupiter in D40: the reference prints Jupiter
-at Aquarius 16°29′10″, ESHANA's position is about 3′ later, just past the 16°30′ boundary of the 22nd khavedāṃśa,
+agree. With the JPL DE440s kernel all 144 dignity cells agree too. With the built-in ephemeris, 143 of 144 agree. The one difference is Jupiter in D40: the reference prints Jupiter
+at Aquarius 16°29′10″, and the built-in position is about 3′ later, just past the 16°30′ boundary of the 22nd khavedāṃśa,
 so ESHANA puts it in Aquarius (neutral) where the reference has Capricorn (debilitated). That is a position
 difference near a boundary, not a rule difference.
 

@@ -12,8 +12,8 @@ const ANN_ROLE = {
   dinaratri_pati: ['Dinarātri pati', 'Day return: lord of the Sun’s sign; night return: lord of the Moon’s sign.'],
 };
 const ANN_PARTS = [['griha', 'Gṛha', 30], ['uchcha', 'Uchcha', 20], ['hudda', 'Hudda', 15], ['drekkana', 'Drekkāṇa', 10], ['navamsha', 'Navāṃśa', 5]];
-const gname = g => (G[g] || G.lagna).en;
-const gab = g => (G[g] || G.lagna).abbr;
+const annName = g => (G[g] || G.lagna).en;
+const annAb = g => (G[g] || G.lagna).abbr;
 const signDeg = l => `${SIGN_SKT[signOf(l)]} ${inSignDM(l)}`;
 const hoverable = (el, title, rows, sub) => { el.addEventListener('mousemove', ev => tip(ev, title, rows, sub)); el.addEventListener('mouseleave', untip); return el; };
 
@@ -35,9 +35,9 @@ function annualSouth(pos, lagnaLon, extra = {}) {
       const col = i % 2, row = Math.floor(i / 2), tx = x + 8 + col * (W / 2 - 4), ty = y + 32 + row * 17;
       const isM = id === 'muntha', colr = isM ? 'var(--accent2)' : (G[id] || G.lagna).dot;
       const t = s('text', { x: tx, y: ty, 'font-size': 13, 'font-weight': 700, fill: colr, class: 'ann-g ' + (extra.lord === id ? 'year-lord' : ''), style: `--i:${i}` }, g);
-      t.textContent = isM ? 'Mu' : gab(id);
+      t.textContent = isM ? 'Mu' : annAb(id);
       const l = isM ? extra.muntha : pos[id];
-      hoverable(t, isM ? 'Muntha' : gname(id), [['Position', signDeg(l)], ['Nakshatra', NAKSHATRA[nakOf(l)]], ['Varṣa bhāva', house], extra.lord === id ? ['Role', 'year lord'] : null], 'tradition_rule · varṣa chart');
+      hoverable(t, isM ? 'Muntha' : annName(id), [['Position', signDeg(l)], ['Nakshatra', NAKSHATRA[nakOf(l)]], ['Varṣa bhāva', house], extra.lord === id ? ['Role', 'year lord'] : null], 'tradition_rule · varṣa chart');
     });
   }
   return svg;
@@ -52,7 +52,7 @@ function annualBars(bala, lord) {
     for (const [k, nm, max] of ANN_PARTS) {
       const seg = h('span', { class: 'ann-seg seg-' + k, style: `width:${(b[k] / 80 * 100).toFixed(2)}%` });
       const d = (b.detail || {})[k] || {};
-      hoverable(seg, `${gname(g)} · ${nm} bala`, [['Value', `${fix(b[k])} of ${max}`], ['Division lord', d.lord ? gname(d.lord) : null], ['Relationship', d.relation], k === 'uchcha' ? ['From debilitation', fix(d.degrees_from_debilitation, 1) + '°'] : null], 'tradition_rule · Tājika pañcavargīya bala');
+      hoverable(seg, `${annName(g)} · ${nm} bala`, [['Value', `${fix(b[k])} of ${max}`], ['Division lord', d.lord ? annName(d.lord) : null], ['Relationship', d.relation], k === 'uchcha' ? ['From debilitation', fix(d.degrees_from_debilitation, 1) + '°'] : null], 'tradition_rule · Tājika pañcavargīya bala');
       track.append(seg);
     }
     row.append(h('span', { class: 'ann-name' }, glink(g)), track, h('b', { class: 'ann-tot' }, fix(b.total)));
@@ -75,12 +75,12 @@ page('annual', () => 'Varṣaphala', 'Time', (body) => {
   const stats = h('div', { class: 'stats' },
     stat('Solar return', fmtTime(y.return.local).slice(0, 16), y.day_return ? 'by day' : 'by night'),
     stat('Completed years', String(y.completed_years), `year ${y.completed_years + 1} of life`),
-    stat('Varṣa lagna', signDeg(y.varsha_lagna.longitude_deg), `lord ${gname(y.varsha_lagna.lord)}`),
+    stat('Varṣa lagna', signDeg(y.varsha_lagna.longitude_deg), `lord ${annName(y.varsha_lagna.lord)}`),
     stat('Muntha', signDeg(y.muntha.longitude_deg), `varṣa bhāva ${y.muntha.house_from_varsha_lagna}`),
     h('div', { class: 'stat ann-lord-stat' }, h('div', { class: 'stat-l' }, 'Year lord (varṣeśa)'), h('div', { class: 'stat-v' }, glink(lord)), h('div', { class: 'stat-s' }, `pañcavargīya ${fix(y.year_lord.total)}`)));
   const offices = table(['Office', 'Graha', 'Pañcavargīya', 'Aspects varṣa lagna', 'Varṣa bhāva'], y.office_bearers.map(o => {
     const role = ANN_ROLE[o.role] || [o.role, ''];
-    const nm = hoverable(h('span', { class: 'ann-office' }, role[0]), role[0], [['Why', o.why], ['Graha', gname(o.graha)], ['Total', fix(o.total)]], role[1]);
+    const nm = hoverable(h('span', { class: 'ann-office' }, role[0]), role[0], [['Why', o.why], ['Graha', annName(o.graha)], ['Total', fix(o.total)]], role[1]);
     const g = h('span', { class: o.graha === lord ? 'ann-is-lord' : '' }, glink(o.graha), o.graha === lord ? ' ★' : '');
     return [nm, g, fix(o.total), o.aspects_varsha_lagna ? 'yes' : 'no (2/6/8/12)', o.house_from_varsha_lagna];
   }));
