@@ -560,6 +560,54 @@ await journey("phone width has no horizontal scroll", async () => {
   return "6 pages fit 390 px";
 });
 
+await journey("varṣaphala shows the return, the varṣa chart, five office-bearers with the year lord, and growing strength bars", async () => {
+  await go("#/annual", 1500);
+  const r = await evaluate(`(() => { const v = val('vedic.varshaphala'); if (!v) return null; const y = v.current || v.birth_year;
+    return { offices: document.querySelectorAll('#page-annual .ann-office').length || document.querySelectorAll('.ann-office').length,
+      cells: document.querySelectorAll('.annual-chart .cellbg').length, grahas: document.querySelectorAll('.annual-chart .ann-g').length,
+      lordGlow: document.querySelectorAll('.annual-chart .ann-g.year-lord').length, bars: document.querySelectorAll('.ann-row').length,
+      segs: document.querySelectorAll('.ann-seg').length, lord: y.year_lord.graha, lordRow: !!document.querySelector('.ann-row.is-lord'),
+      years: document.querySelectorAll('.ann-pick button').length }; })()`);
+  expect(r, "no vedic.varshaphala in the report");
+  expect(r.offices === 5, `${r.offices} office-bearers`);
+  expect(r.cells === 12, `${r.cells} chart cells`);
+  expect(r.grahas >= 10, `${r.grahas} grahas (+ muntha) in the varṣa chart`);
+  expect(r.lordGlow === 1 && r.lordRow, "year lord not highlighted");
+  expect(r.bars === 7 && r.segs === 35, `${r.bars} bars, ${r.segs} segments`);
+  expect(r.years === 2, "current year and birth year are not both offered");
+  // switching to the birth year redraws with year 0
+  await evaluate(`document.querySelector('.ann-pick button[data-year="birth_year"]').click()`);
+  await sleep(600);
+  const st = await evaluate(`document.querySelector('.ann-lord-stat').closest('.stats').textContent.includes('year 1 of life')`);
+  expect(st, "birth-year view did not show");
+  await shot("annual");
+  return `year lord ${r.lord}`;
+});
+
+await journey("pañca pakṣī draws the birds and ten yāma bands with sub-periods; clicking a yāma opens its detail", async () => {
+  await go("#/pakshi", 1500);
+  const r = await evaluate(`({ birds: document.querySelectorAll('.pk-head svg.bird').length, yamas: document.querySelectorAll('.pk-yama').length,
+    subs: document.querySelectorAll('.pk-sub').length, current: document.querySelectorAll('.pk-yama.current').length,
+    now: document.querySelectorAll('.pk-now').length, tables: document.querySelectorAll('.pk-pick button').length })`);
+  expect(r.birds >= 1, "no bird glyph");
+  expect(r.yamas === 10 && r.subs === 50, `${r.yamas} yāmas, ${r.subs} sub-periods`);
+  expect(r.current === 1 && r.now === 1, "the current period is not marked");
+  await evaluate(`document.querySelectorAll('.pk-yama')[2].dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+  await sleep(400);
+  const d = await evaluate(`({ title: document.querySelector('.pk-detail h3').textContent, rows: document.querySelectorAll('.pk-detail tbody tr').length, picked: document.querySelectorAll('.pk-yama.picked').length })`);
+  expect(/Day yāma 3/.test(d.title) && d.rows === 10 && d.picked === 1, `detail did not open: ${JSON.stringify(d)}`);
+  await shot("pakshi");
+  return `${r.tables} table(s)`;
+});
+
+await journey("the KP page adds the significator tables by bhāva and by graha", async () => {
+  await go("#/kp", 1500);
+  const r = await evaluate(`({ cards: [...document.querySelectorAll('.card h3')].map(x => x.textContent), lvls: document.querySelectorAll('.kp-lvl').length, chips: document.querySelectorAll('.kp-chip').length })`);
+  expect(r.cards.includes("KP significators by bhāva") && r.cards.includes("KP grahas: what each signifies"), "KP significator cards missing");
+  expect(r.lvls === 36, `${r.lvls} strength cells (9 grahas × 4)`);
+  expect(r.chips >= 12, `${r.chips} significator chips`);
+});
+
 // ── journeys: annual (add new journeys for this workstream above this line) ──
 
 ws.close(); chrome.kill(); server.close();

@@ -678,7 +678,27 @@ page('kp', () => 'KP', 'Systems', (b) => {
   put(b, pageHead('kp', 'KP (Krishnamurti Paddhati)', k.note || 'Placidus cusps, Vimśottarī sub-division of every nakshatra.'),
     card('Cusps and house significators', table(['Cusp', 'Position', 'Sign', 'Star', 'Sub', 'Sub-sub', 'A', 'B', 'C', 'D'], cusps)),
     card('Planets and planet-view significators', table(['Graha', 'Sign', 'Star', 'Sub', 'Sub-sub', 'A', 'B', 'C', 'D'], pl)),
-    k.ruling_planets ? card('Ruling planets at the chart instant', facts(Object.entries(k.ruling_planets).map(([kk, v]) => [kk.replaceAll('_', ' '), v]))) : null);
+    k.ruling_planets ? card('Ruling planets at the chart instant', facts(Object.entries(k.ruling_planets).map(([kk, v]) => [kk.replaceAll('_', ' '), v]))) : null,
+    kpSignificators(k.significator_table));
+  /* the significator table (vedic.kp significator_table, built by the annual module from the same KP value) */
+  function kpSignificators(t) {
+    if (!t) return null;
+    const ab = g => g ? (G[g] || G.lagna).abbr : '—';
+    const chips = list => h('span', { class: 'chips' }, (list || []).map(g => h('a', { class: 'chip kp-chip', href: '#/planet/' + g, title: (G[g] || {}).en || g }, dot(g), ab(g))));
+    const hov = (el, title, rows) => { el.addEventListener('mousemove', ev => tip(ev, title, rows, 'tradition_rule · KP significators')); el.addEventListener('mouseleave', untip); return el; };
+    const houses = t.houses.map(r => [hov(h('a', { href: '#/house/' + r.house }, nth(r.house)), `Bhāva ${r.house}`, [['Cusp', `${SIGN_SKT[r.sign]} ${inSign(r.cusp)}`], ['Sign · star · sub · sub-sub', [r.sign_lord, r.star_lord, r.sub_lord, r.sub_sub_lord].map(ab).join(' · ')], ['Significators', (t.significators_by_house[r.house] || []).map(ab).join(' ')]]),
+      `${SIGN_AB[r.sign]} ${inSignDM(r.cusp)}`, ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord), chips(r.in_star_of_occupants), chips(r.occupants), chips(r.in_star_of_owner), chips([r.owner])]);
+    const grahas = t.grahas.map(r => [glink(r.graha), ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord),
+      ...['very_strong', 'strong', 'normal', 'weak'].map(k => hov(h('span', { class: 'kp-lvl kp-' + k }, (r[k] || []).join(', ') || '—'), `${(G[r.graha] || {}).en || r.graha}: ${k.replace('_', ' ')}`, [['Houses', (r[k] || []).join(', ') || 'none'], ['Rule', t.levels[k]]]))]);
+    const eq = (t.equal_cusps_from_ascendant || []).map(r => [nth(r.house), `${SIGN_AB[signOf(r.cusp)]} ${inSignDM(r.cusp)}`, ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord)]);
+    return [
+      card('KP significators by bhāva', table(['Bhāva', 'Cusp', 'Star', 'Sub', 'Sub-sub', 'In stars of occupants', 'Occupants', 'In star of owner', 'Owner'], houses),
+        note(label('tradition_rule'), ' Strongest first: grahas in the stars of the occupants, the occupants, grahas in the star of the owner, the owner. Hover a bhāva for its full list.')),
+      card('KP grahas: what each signifies', table(['Graha', 'Star', 'Sub', 'Sub-sub', 'Very strong', 'Strong', 'Normal', 'Weak'], grahas),
+        note(label('tradition_rule'), ` Very strong: ${t.levels.very_strong}; strong: ${t.levels.strong}; normal: ${t.levels.normal}; weak: ${t.levels.weak}. ${t.note}.`)),
+      eq.length ? h('details', { class: 'card kp-equal' }, h('summary', {}, 'Equal cusps from the Ascendant (an alternative some programs print)'), table(['Bhāva', 'Cusp', 'Star', 'Sub', 'Sub-sub'], eq)) : null,
+    ];
+  }
 }, { blurb: 'sub-lords and significators' });
 
 /* ── Nadi ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
