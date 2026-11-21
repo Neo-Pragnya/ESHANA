@@ -517,6 +517,39 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   return `${on.data} additional aspects (${on.kinds}); ${on.marks} marks; table and planet page`;
 });
 
+await journey("daśā systems: tabs for nine systems, sign-based ones zoom with rāśi labels and a running chain", async () => {
+  await go("#/dasha", 1500);
+  const tabsTxt = await evaluate(`[...document.querySelectorAll("#dasha .dz-tabs .tab")].map(t => t.textContent)`);
+  expect(tabsTxt.length === 9 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra"), "tabs: " + tabsTxt.join("|"));
+  await evaluate(`document.querySelector("#dasha .dz-chain .btn").click()`); await sleep(600); // back to the running chain
+  expect(await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`) === 5, "Vimśottarī lost its five levels");
+  await go("#/dasha/chara", 1500);
+  const r = await evaluate(`({ sel: document.querySelector("#dasha .dz-tabs .tab[aria-selected=true]").textContent, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length,
+    signBars: document.querySelectorAll("#dasha .dzoom .dz-bar.dz-sign").length, glyph: [...document.querySelectorAll("#dasha .dzoom .dz-name")].some(t => /[♈-♓]/.test(t.textContent)),
+    running: document.querySelectorAll("#dasha .dz-running .link").length, conv: /K. N. Rao/.test(document.querySelector("#dasha .dz-conv").textContent),
+    houseLink: !!document.querySelector("#dasha .dz-chain a[href^='#/house/']") })`);
+  expect(r.sel === "Chara" && r.rows === 2 && r.signBars > 12 && r.glyph && r.running === 2 && r.conv && r.houseLink, JSON.stringify(r));
+  const before = await evaluate(`document.querySelector("#dasha .dz-chain").innerText`);
+  await evaluate(`document.querySelectorAll("#dasha .dz-row")[0].querySelectorAll(".dz-bar")[1].dispatchEvent(new MouseEvent("click", { bubbles: true }))`); await sleep(800);
+  const after = await evaluate(`({ chain: document.querySelector("#dasha .dz-chain").innerText, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, bracket: document.querySelectorAll("#dasha .dz-bracket").length })`);
+  expect(after.chain !== before && after.rows === 2 && after.bracket === 1, "clicking a Chara mahādaśā did not open it: " + JSON.stringify(after));
+  // every system renders and its antardaśās tile the mahādaśā above
+  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra"], seen = [];
+  for (const id of sys) {
+    await go("#/dasha/" + id, 900);
+    const x = await evaluate(`(() => { const v = val("vedic.dasha.${id}"); const m = v.mahadashas.find(m => (m.antardashas || []).length);
+      return { rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, conv: !!document.querySelector("#dasha .dz-conv") || "${id}" === "yogini",
+        tiles: m ? m.antardashas[m.antardashas.length - 1].end_utc === m.end_utc : false }; })()`);
+    expect(x.rows >= 2 && x.conv && x.tiles, id + ": " + JSON.stringify(x));
+    seen.push(id + ":" + x.rows);
+  }
+  // Aṣṭottarī opens a third level subdivided in the page, by the 108-year proportions
+  await go("#/dasha/ashtottari", 900);
+  const third = await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`);
+  expect(third === 3, "Aṣṭottarī third level missing: " + third);
+  return `9 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+});
+
 // ── journeys: dashas (add new journeys for this workstream above this line) ──
 
 await journey("the command palette jumps to a bhāva", async () => {
