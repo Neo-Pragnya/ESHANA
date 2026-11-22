@@ -133,6 +133,29 @@ def test_panch_pakshi_birth_bird_day_and_yamas(provider, spk):
         assert birds == want[r:] + want[:r]
 
 
+@pytest.mark.parametrize("provider,spk", CASES)
+def test_panch_pakshi_nearby_days_step_one_vedic_day(provider, spk):
+    # The day picker's tables: three Vedic days either side of the reference day, in order, each a real day of its own
+    # (sunrise about 24 h after the previous, the weekday one later, the previous day's next sunrise is its sunrise),
+    # the day's ruling bird ruling the first yāma, and no yāma marked current except on the reference day.
+    p = chart(provider, spk, "2026-11-21T00:00:00Z")["vedic.panch_pakshi"]
+    by = {d["offset"]: d["table"] for d in p["nearby_days"]}
+    assert sorted(by) == [-3, -2, -1, 1, 2, 3]
+    by[0] = p["reference_day_table"]
+    for k in range(-3, 4):
+        t = by[k]
+        assert len(t["yamas"]) == 10
+        assert any(y["current"] for y in t["yamas"]) == (k == 0), k
+        first = next(b for b in t["yamas"][0]["birds"] if b["activity"] == "ruling")["bird"]
+        assert first == t["day_ruling_bird"], k
+        if k > -3:
+            prev = by[k - 1]
+            gap = t["sunrise"]["jd_ut"] - prev["sunrise"]["jd_ut"]
+            assert abs(gap - 1.0) < 0.01, (k, gap)
+            assert t["weekday"] == (prev["weekday"] + 1) % 7
+            assert abs(t["sunrise"]["jd_ut"] - prev["next_sunrise"]["jd_ut"]) < 1e-6
+
+
 @pytest.mark.xfail(strict=True, reason="printed weekday tables disagree on the activity each bird starts the day "
                    "with; ESHANA lets the day’s ruling bird (Peacock on a dark-half Monday) rule the first yāma, while "
                    "that program starts the Cock ruling (see rulesets/annual.yaml)")

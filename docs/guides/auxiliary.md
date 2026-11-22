@@ -66,8 +66,16 @@ the night form is the one the reference prints, and the day form is inferred: Ā
 reversed at night; Vyāpāra = Mars − Mercury + lagna, not reversed; Prasava = Jupiter − Mercury + lagna, reversed at
 night. Each row carries `day_form_inferred: true`, and the studio marks it.
 
-Each row's `meaning` names what the saham signifies in the Tajika tradition. That is interpretation, paraphrased,
-and the studio labels it as such.
+Each row's `meaning` names what the saham signifies in the Tajika tradition, in a few words. That is
+interpretation, paraphrased, and the studio labels it as such.
+
+The fuller reading notes live outside the engine, in `scripts/build_reading_reference.py` (written to
+`eshana/data/reading_reference.json`, key `sahams`): for every saham id what it signifies and what a varṣaphala reader
+uses it for, a general note on what sahams are and how they are read (mainly through the saham's lord: its strength,
+its house from the varṣa lagna, its link to the saham; the natal saham as the promise and the annual one as the year's
+delivery), and the sources: Tājika Nīlakaṇṭhī (Saṃjñā Tantra, saham chapter), Balabhadra's Hāyana Ratna and B. V.
+Raman's *Varshaphal or the Hindu Progressed Horoscope*. The text is our own paraphrase, never a quotation, and is
+labelled interpretation wherever it is shown. A Python test checks that every saham the engine emits has an entry.
 
 ## Avakahaḍā chakra
 
@@ -178,9 +186,13 @@ reference does not exercise it; the pack states the choice made.
 
 The **Auxiliary analysis** page (group Analysis) has eight tabs, and every value has a hover with its rule:
 
-- **Sahams**: a small South Indian square with each saham written into its sign, and a table of all 37 with formula,
-  degree and lord. Hovering a row lights its sign; hovering a sign lists its sahams. Rows mark the night reversal
-  and the inferred day forms.
+- **Sahams**: a “What sahams are” info box at the top; a small South Indian square with each saham written into its
+  sign, and a table of all 37 with degree, lord, what it signifies and formula. Hovering a row lights its sign;
+  hovering a sign lists its sahams. Rows mark the night reversal and the inferred day forms. Clicking a row, or a
+  saham's name on the square, opens its **info box**: the formula as computed for this chart (with the night swap
+  and the +30° rule when they apply), the longitude, sign and lord, the house from the lagna (whole sign), where the
+  lord is placed (sign, degree, house), what the saham signifies and is used for, and how sahams are read in a
+  varṣaphala. Rows are keyboard reachable (Enter opens the box).
 - **Avakahaḍā**: eleven tiles.
 - **Male/female**: a strip of the twelve signs, and the points grouped as male and female.
 - **Mṛtyu bhāga**: each point's degree (dot) against its sign's mṛtyu bhāga (diamond). The bar between them draws

@@ -149,31 +149,117 @@ function pakshiTimeline(tb, onPick) {
     const rows = [['From', localHM(yy.start)], ['To', localHM(yy.end)]].concat(yy.birds.map(bd => [birdName(bd.bird), `${ACT[bd.activity] || bd.activity} (${bd.relation})`]));
     hoverable(g, `${yy.half === 'day' ? 'Day' : 'Night'} yāma ${yy.yama}: ${ACT[yy.activity] || yy.activity}`, rows, 'tradition_rule · pañca pakṣī');
     g.addEventListener('click', () => onPick(i));
-    if (yy.current) s('line', { x1: (a + b) / 2, x2: (a + b) / 2, y1: y0 - 6, y2: y0 + H + 2, class: 'now pk-now' }, svg);
+    if (yy.current) { /* the reference instant itself, when it lies in this yāma (else the yāma's middle) */
+      const at = PK_REF_JD != null && PK_REF_JD >= yy.start.jd_ut && PK_REF_JD < yy.end.jd_ut ? x(PK_REF_JD) : (a + b) / 2;
+      s('line', { x1: at, x2: at, y1: y0 - 6, y2: y0 + H + 2, class: 'now pk-now' }, svg);
+    }
   });
   return h('div', { class: 'timeline pk-wrap' }, svg);
 }
 
-let PK_TABLE = null, PK_YAMA = null;
+/* reading notes (interpretation, paraphrased, sources named) from reading_reference.json; the engine gives none */
+const PK_READ = (D.reading && D.reading.pakshi) || null;
+const PK_RANK = { ruling: 1, eating: 2, walking: 3, sleeping: 4, dying: 5 };
+const PK_REF_JD = REF_UTC ? Date.parse(REF_UTC) / 864e5 + 2440587.5 : null;
+const PK_WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const PK_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const pkDate = t => { const d = (t.sunrise.local || '').slice(0, 10).split('-'); return d.length === 3 ? `${PK_WD[t.weekday]} ${+d[2]} ${PK_MON[+d[1] - 1]}` : PK_WD[t.weekday]; };
+const pkHM = st => localHM(st).slice(0, 5);
+const pkActName = a => { const r = PK_READ && PK_READ.activities[a]; return (ACT[a] || a) + (r ? ` (${r[0]})` : ''); };
+
+/* an info box: a short paraphrased explanation, labelled interpretation, with its sources */
+function pkInfo(title, text, extra) {
+  if (!text) return null;
+  return h('div', { class: 'pk-info', role: 'note' },
+    h('div', { class: 'pk-info-h' }, h('span', { class: 'pk-i', 'aria-hidden': 'true' }, 'i'), h('b', {}, title), label('interpretation')),
+    h('p', {}, text), extra || null,
+    PK_READ && PK_READ.sources ? h('small', { class: 'pk-src' }, 'Paraphrased from: ', PK_READ.sources.join('; '), '.') : null);
+}
+
+/* the five sub-periods of a yāma (the birth bird's, as the engine gives them), the one holding "now" marked */
+function pkSubs(yy) {
+  return h('div', { class: 'pk-subs' }, yy.sub_periods.map((sp, k) => {
+    const now = PK_REF_JD != null && PK_REF_JD >= sp.start.jd_ut && PK_REF_JD < sp.end.jd_ut;
+    return hoverable(h('div', { class: 'pk-sp' + (now ? ' now' : ''), style: `--i:${k}` },
+      h('small', {}, `${pkHM(sp.start)}–${pkHM(sp.end)}`), h('span', { class: 'pk-act act-' + sp.activity }, ACT[sp.activity] || sp.activity),
+      h('span', { class: 'pk-sp-b' }, birdGlyph(sp.bird, 18), birdName(sp.bird)), now ? h('b', { class: 'pk-nowtag' }, 'now') : null),
+    `Sub-period ${k + 1}: ${ACT[sp.activity] || sp.activity}`, [['From', localHM(sp.start)], ['To', localHM(sp.end)], ['Bird', birdName(sp.bird)], ['Relation', sp.relation], ['Strength', `${PK_RANK[sp.activity]} of 5 (1 = strongest)`]], 'tradition_rule · pañca pakṣī sub-period');
+  }));
+}
+
+/* five yāmas (rows) × the five birds (columns) for one half of the day; a row opens its sub-periods */
+function pkGrid(tb, half, self, onPick) {
+  const ys = tb.yamas.map((y, i) => [y, i]).filter(([y]) => y.half === half);
+  if (!ys.length) return null;
+  const birds = ys[0][0].birds.map(b => b.bird);
+  const body = h('tbody');
+  for (const [y, i] of ys) {
+    const frac = y.current && PK_REF_JD != null ? Math.max(0, Math.min(1, (PK_REF_JD - y.start.jd_ut) / (y.end.jd_ut - y.start.jd_ut))) : null;
+    const sub = h('tr', { class: 'pk-subrow', 'data-yama': i }, h('td', { colspan: 2 + birds.length }, pkSubs(y)));
+    const row = h('tr', { class: 'pk-yrow' + (y.current ? ' pk-cur' : ''), 'data-yama': i, tabindex: 0, 'aria-expanded': 'false' },
+      h('td', { class: 'pk-yn' }, h('span', { class: 'pk-caret', 'aria-hidden': 'true' }, '▸'), ` ${y.yama}`),
+      h('td', { class: 'pk-time' }, `${pkHM(y.start)}–${pkHM(y.end)}`,
+        frac != null ? h('span', { class: 'pk-nowbar', title: 'now' }, h('i', { style: `left:${(frac * 100).toFixed(1)}%` }), h('b', {}, 'now')) : null),
+      y.birds.map(b => hoverable(h('td', { class: 'pk-cell' + (b.bird === self ? ' pk-self' : ''), 'data-bird': b.bird, 'data-act': b.activity },
+        h('span', { class: 'pk-act act-' + b.activity }, ACT[b.activity] || b.activity)),
+      `${birdName(b.bird)} · ${half} yāma ${y.yama}`, [['Activity', pkActName(b.activity)], ['Strength', `${PK_RANK[b.activity]} of 5 (1 = strongest)`], ['Relation to your bird', b.relation], ['Time', `${localHM(y.start)}–${localHM(y.end)}`]], 'tradition_rule · pañca pakṣī')));
+    const flip = () => { const open = !sub.classList.contains('open'); sub.classList.toggle('open', open); row.setAttribute('aria-expanded', String(open)); onPick(i); };
+    row.addEventListener('click', flip);
+    row.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); flip(); } });
+    body.append(row, sub);
+  }
+  const head = h('tr', {}, h('th', {}, 'Yāma'), h('th', {}, 'Time'), birds.map(b => h('th', { class: 'pk-colh' + (b === self ? ' pk-self' : ''), 'data-bird': b },
+    h('span', { class: 'pk-colb' }, birdGlyph(b, 22), birdName(b)), b === self ? h('small', {}, 'your bird') : null)));
+  return h('div', { class: 'pk-grid', 'data-half': half },
+    h('h4', {}, half === 'day' ? `Day · sunrise ${pkHM(tb.sunrise)} to sunset ${pkHM(tb.sunset)}` : `Night · sunset ${pkHM(tb.sunset)} to sunrise ${pkHM(tb.next_sunrise)}`),
+    h('div', { class: 'tbl-wrap pk-tbl' }, h('table', {}, h('thead', {}, head), body)));
+}
+
+/* the strength ladder: Ruling strongest … Dying weakest */
+function pkLadder() {
+  return h('div', { class: 'pk-ladder' }, Object.keys(PK_RANK).map((a, k) => h('div', { class: 'pk-rung', style: `--i:${k}` },
+    h('b', {}, String(k + 1)), h('span', { class: 'pk-act act-' + a, style: `width:${100 - k * 17}%` }, pkActName(a)))));
+}
+
+let PK_DAY = null, PK_YAMA = null;
 page('pakshi', () => 'Pañca pakṣī', 'Time', (body) => {
   const v = val('vedic.panch_pakshi');
   if (!v) return put(body, missing('Pañca pakṣī', 'It needs a place (for sunrise) and the Moon.'));
-  const tables = [['reference', v.reference_day_table, 'Today'], ['birth', v.birth_day_table, 'Birth day']].filter(([, t]) => t && t.yamas);
-  const bd = v.birth_day || {};
+  const R = PK_READ || {};
+  /* the days to choose from: the birth day, and the reference day with the engine's days around it */
+  const days = [];
+  if (v.birth_day_table && v.birth_day_table.yamas) days.push(['birth', v.birth_day_table, 'Birth day']);
+  const near = (v.nearby_days || []).map(n => [n.offset, n.table]);
+  if (v.reference_day_table && v.reference_day_table.yamas) near.push([0, v.reference_day_table]);
+  near.filter(([, t]) => t && t.yamas).sort((a, b) => a[0] - b[0]).forEach(([k, t]) => days.push([String(k), t, k === 0 ? 'Today' : null]));
+  const ph = pageHead('pakshi', 'Pañca pakṣī (five birds)', 'The Tamil five-bird system: your bird from the Moon’s nakṣatra and the pakṣa at birth, and what each of the five birds does through the five yāmas of the day and of the night.');
   const tile = (b, lbl, size, cls) => h('div', { class: 'pk-bird ' + (cls || '') }, birdGlyph(b, size), h('div', {}, h('div', { class: 'stat-l' }, lbl), h('div', { class: 'pk-name' }, birdName(b))));
-  const self = tile(v.birth_bird, 'Birth bird (self)', 96, 'self');
-  self.append(h('div', { class: 'note' }, `${BIRD[v.birth_bird].ta} · Moon in ${v.nakshatra.name}, ${v.paksha === 'krishna' ? 'dark half' : 'bright half'}`));
+  const self = tile(v.birth_bird, 'Birth bird (your bird)', 96, 'self');
   hoverable(self, birdName(v.birth_bird), [['Nakshatra', v.nakshatra.name], ['Pakṣa', v.paksha], ['Friends', v.friends.map(birdName).join(', ')], ['Enemies', v.enemies.map(birdName).join(', ')]], (v.conventions || {}).birth_bird);
-  const head = h('div', { class: 'pk-head' }, self,
-    bd.ruling_bird ? hoverable(tile(bd.ruling_bird, 'Ruling bird of the birth day', 64), 'Ruling bird', [['Bird', birdName(bd.ruling_bird)], ['Night ruler', birdName(bd.night_ruling_bird)]], (v.conventions || {}).birth_day) : null,
-    bd.dying_bird ? hoverable(tile(bd.dying_bird, 'Dying bird of the birth day', 64, 'dying'), 'Dying bird', [['Bird', birdName(bd.dying_bird)]], (v.conventions || {}).birth_day) : null);
-  const rel = h('div', { class: 'chips pk-rel' }, h('span', { class: 'note' }, 'Friends: '), v.friends.map(b => birdChip(b, 'friend')), h('span', { class: 'note' }, ' Enemies: '), v.enemies.map(b => birdChip(b, 'enemy')));
-  const ph = pageHead('pakshi', 'Pañca pakṣī (five birds)', 'The Tamil five-bird system: the birth bird from the Moon’s nakṣatra and the pakṣa, and what each bird does through the five yāmas of the day and of the night.');
-  if (!tables.length) return put(body, ph, head, rel, note('No yāma table: the Sun does not rise or set here on that date.'));
-  if (!PK_TABLE || !tables.some(([k]) => k === PK_TABLE)) PK_TABLE = tables[0][0];
-  const tb = tables.find(([k]) => k === PK_TABLE)[1];
-  const pickT = h('div', { class: 'seg-toggle pk-pick' }, tables.map(([k, t, nm]) => h('button', { class: 'btn' + (k === PK_TABLE ? ' primary' : ''), 'data-table': k, onclick: () => { PK_TABLE = k; PK_YAMA = null; route(); } }, `${nm} · ${dateOnly(t.sunrise.local)}`)));
-  const cur = tb.yamas.findIndex(y => y.current);
+  const birthCard = card('Your bird', h('div', { class: 'pk-head' }, self),
+    facts([['Tamil name', BIRD[v.birth_bird].ta], ['Moon’s nakṣatra', `${v.nakshatra.name} (no. ${v.nakshatra.index + 1} of 27)`],
+      ['Pakṣa at birth', v.paksha === 'krishna' ? 'kṛṣṇa (dark half): bird order reversed' : 'śukla (bright half)'], ['Rule', (v.conventions || {}).birth_bird]]),
+    pkInfo('How the birth bird is found', R.birth_bird));
+  const relCard = card('Friends and enemies',
+    h('div', { class: 'chips pk-rel' }, h('span', { class: 'note' }, 'Friends'), v.friends.map(b => birdChip(b, 'friend'))),
+    h('div', { class: 'chips pk-rel' }, h('span', { class: 'note' }, 'Enemies'), v.enemies.map(b => birdChip(b, 'enemy'))),
+    pkInfo('What friends and enemies mean', R.relations));
+  if (!days.length) return put(body, ph, h('div', { class: 'pk-top' }, birthCard, relCard), note('No yāma table: the Sun does not rise or set here on that date.'));
+  if (!PK_DAY || !days.some(([k]) => k === PK_DAY)) PK_DAY = (days.find(([k]) => k === '0') || days[0])[0];
+  const di = days.findIndex(([k]) => k === PK_DAY), tb = days[di][1];
+  const pickDay = k => { PK_DAY = k; PK_YAMA = null; route(); };
+  const pickT = h('div', { class: 'seg-toggle pk-pick', role: 'group', 'aria-label': 'Day shown' }, days.map(([k, t, nm]) => h('button', { class: 'btn' + (k === PK_DAY ? ' primary' : ''), 'data-day': k, 'aria-pressed': String(k === PK_DAY), onclick: () => pickDay(k) },
+    nm ? `${nm} · ${k === 'birth' ? dateOnly(t.sunrise.local) : pkDate(t)}` : pkDate(t))));
+  const stepper = h('div', { class: 'pk-step' },
+    h('button', { class: 'btn', 'data-step': '-1', disabled: di <= 0 || days[di - 1][0] === 'birth', onclick: () => pickDay(days[di - 1][0]), 'aria-label': 'previous day' }, '‹ previous day'),
+    h('button', { class: 'btn', 'data-step': '1', disabled: di >= days.length - 1 || PK_DAY === 'birth', onclick: () => pickDay(days[di + 1][0]), 'aria-label': 'next day' }, 'next day ›'));
+  const ownDying = tb.dying_bird === v.birth_bird;
+  const dayCard = card(`Birds of ${pkDate(tb)}`, h('div', { class: 'pk-daybirds' },
+    hoverable(tile(tb.day_ruling_bird, 'Ruling bird by day', 54), 'Ruling bird by day', [['Bird', birdName(tb.day_ruling_bird)], ['Weekday', tb.vara], ['Pakṣa', tb.paksha]], 'tradition_rule · weekday table'),
+    hoverable(tile(tb.night_ruling_bird, 'Ruling bird by night', 54), 'Ruling bird by night', [['Bird', birdName(tb.night_ruling_bird)]], 'tradition_rule · weekday table'),
+    hoverable(tile(tb.dying_bird, 'Dying bird', 54, 'dying'), 'Dying bird', [['Bird', birdName(tb.dying_bird)], ['Your bird', ownDying ? 'yes: it is dying all day' : 'no']], 'tradition_rule · weekday table')),
+    ownDying ? h('p', { class: 'pk-warn' }, `Your bird, the ${birdName(v.birth_bird)}, is the dying bird of this day.`) : null,
+    pkInfo('The ruling bird', R.ruling), pkInfo('The dying bird', R.dying));
   const detail = h('div', { class: 'pk-detail' });
   const show = i => {
     PK_YAMA = i; const yy = tb.yamas[i];
@@ -182,13 +268,24 @@ page('pakshi', () => 'Pañca pakṣī', 'Time', (body) => {
         table(['Bird', 'Activity this yāma', 'Relation'], yy.birds.map(b => [birdChip(b.bird, b.relation), h('span', { class: 'pk-act act-' + b.activity }, ACT[b.activity] || b.activity), b.relation])),
         table(['Sub-period', 'Bird', 'Activity', 'Relation'], yy.sub_periods.map(sp => [`${localHM(sp.start)}–${localHM(sp.end)}`, birdChip(sp.bird, sp.relation), h('span', { class: 'pk-act act-' + sp.activity }, ACT[sp.activity] || sp.activity), sp.relation])))));
     body.querySelectorAll('.pk-yama').forEach(el => el.classList.toggle('picked', +el.dataset.yama === i));
+    body.querySelectorAll('.pk-yrow').forEach(el => el.classList.toggle('picked', +el.dataset.yama === i));
   };
+  const cur = tb.yamas.findIndex(y => y.current);
   const legend = h('div', { class: 'ann-legend' }, Object.entries(ACT).map(([k, nm]) => h('span', {}, h('i', { class: 'sw act-' + k }), nm)));
-  put(body, ph, head, rel, pickT,
-    card(`${tb.vara} · ${tb.paksha === 'krishna' ? 'dark half' : 'bright half'} · sunrise ${localHM(tb.sunrise)}, sunset ${localHM(tb.sunset)}`, pakshiTimeline(tb, show), legend,
-      note(label('tradition_rule'), ` Top band: the ${birdName(v.birth_bird)}’s activity in each yāma; lower strip: its sub-periods. Day ruler ${birdName(tb.day_ruling_bird)}, night ruler ${birdName(tb.night_ruling_bird)}, dying bird ${birdName(tb.dying_bird)}. Hover a yāma for every bird’s activity; click it for the sub-periods.`)),
+  const actList = h('div', { class: 'pk-acts' }, Object.keys(PK_RANK).map((a, k) => h('div', { class: 'pk-actrow', style: `--i:${k}` },
+    h('span', { class: 'pk-act act-' + a }, ACT[a]), h('small', {}, R.activities ? R.activities[a][0] : ''), h('p', {}, R.activities ? R.activities[a][1] : ''))));
+  put(body, ph,
+    pkInfo('What pañca pakṣī is', R.what),
+    h('div', { class: 'pk-top' }, birthCard, relCard, dayCard),
+    h('div', { class: 'pk-days' }, pickT, stepper),
+    card(`${tb.vara} ${dateOnly(tb.sunrise.local)} · ${tb.paksha === 'krishna' ? 'dark half' : 'bright half'} · sunrise ${localHM(tb.sunrise)}, sunset ${localHM(tb.sunset)}`, pakshiTimeline(tb, show), legend,
+      note(label('tradition_rule'), ` Top band: the ${birdName(v.birth_bird)}’s activity in each yāma; lower strip: its sub-periods. Hover a yāma for every bird’s activity; click it for the sub-periods.`)),
+    card('The five birds through the day and the night', h('div', { class: 'pk-grids' }, pkGrid(tb, 'day', v.birth_bird, show), pkGrid(tb, 'night', v.birth_bird, show)),
+      note(label('tradition_rule'), ` Your bird’s column is outlined${cur >= 0 ? '; the current yāma is marked with a now bar' : ''}. Click a yāma (or press Enter on it) to open its five sub-periods. Days other than the birth day and the reference day come from the engine’s nearby_days (three either side).`)),
     detail,
-    card('How this is computed', facts(Object.entries(v.conventions || {}).map(([k, t]) => [k.replaceAll('_', ' '), t])), note('Source: ', v.source || '', '. Printed tables differ between almanacs; ESHANA names its choices.')),
-    card('Reading', note(label('interpretation'), ' In the tradition (paraphrased from Tamil almanac practice) the five activities rank from strongest to weakest as ruling, eating, walking, sleeping and dying; work is begun while one’s own bird rules or eats and put off while it sleeps or dies, above all on the dying bird’s day. ESHANA shows the periods; it does not advise.')));
+    h('div', { class: 'pk-top' },
+      card('The five activities', actList, pkInfo('What the activities mean', R.activities ? 'Each activity is a state of the bird’s strength; the text beside each is the usual reading.' : null)),
+      card('How the strength order works', pkLadder(), pkInfo('Strongest to weakest', R.strength, note((v.conventions || {}).sub_periods || '')))),
+    card('How this is computed', facts(Object.entries(v.conventions || {}).map(([k, t]) => [k.replaceAll('_', ' '), t])), note('Source: ', v.source || '', '. Printed tables differ between almanacs; ESHANA names its choices. ESHANA shows the periods; it does not advise.')));
   show(PK_YAMA != null && PK_YAMA < tb.yamas.length ? PK_YAMA : (cur >= 0 ? cur : 0));
 }, { blurb: 'five birds, day and night' });

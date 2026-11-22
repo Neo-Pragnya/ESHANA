@@ -51,25 +51,68 @@ function markSaham(root, id, sign) {
   root.querySelectorAll('.aux-sn').forEach(t => t.classList.toggle('hot', id != null && t.dataset.id === id));
 }
 
+/* saham reading notes (interpretation, paraphrased, sources named) from reading_reference.json; the engine gives none */
+const SH_READ = (D.reading && D.reading.sahams) || null;
+function shInfo(title, ...kids) {
+  return h('div', { class: 'pk-info sh-info', role: 'note' },
+    h('div', { class: 'pk-info-h' }, h('span', { class: 'pk-i', 'aria-hidden': 'true' }, 'i'), h('b', {}, title), label('interpretation')), ...kids,
+    SH_READ && SH_READ.sources ? h('small', { class: 'pk-src' }, 'Paraphrased from: ', SH_READ.sources.join('; '), '.') : null);
+}
+/* the info panel of one saham: its formula as computed here, where it falls, its lord, and what it is read for */
+function sahamPanel(r, v) {
+  const it = SH_READ && SH_READ.items[r.id], gen = (SH_READ && SH_READ.general) || {};
+  const hs = houseOf(r.sign), lord = r.lord, ll = lonOf(lord), lsign = ll != null ? signOf(ll) : null;
+  const formula = [r.formula, r.reversed_at_night ? ' (A and B swapped: night birth)' : '', r.note ? ` (${r.note})` : ''].join('');
+  return h('div', { class: 'sh-panel', 'data-id': r.id, 'aria-live': 'polite' },
+    h('div', { class: 'sh-title' }, h('b', {}, `${r.name} saham`), h('span', { class: 'chip' }, `${SIGN_SKT[r.sign]} ${r.dms}`), label('tradition_rule')),
+    facts([['Formula (as computed)', formula], ['Terms', `A = ${r.terms.a}, B = ${r.terms.b}, C = ${r.terms.c}`],
+      ['+30° rule', r.plus_30 ? 'applied: C is not on the arc from B to A' : 'not needed'],
+      ['Longitude', `${fix(r.longitude, 4)}° (${SIGN_SKT[r.sign]} ${r.dms})`], ['Sign and lord', h('span', {}, SIGN_SKT[r.sign], ' · ', glinkAny(lord))],
+      ['House from the lagna', hs ? `${nth(hs)} bhāva (whole sign)` : null],
+      ['Lord placed', lsign != null ? `${SIGN_SKT[lsign]} ${inSign(ll)}${houseOf(lsign) ? `, ${nth(houseOf(lsign))} from the lagna` : ''}${lsign === r.sign ? ' (in the saham’s own sign)' : ''}` : null]]),
+    it ? shInfo('What it signifies', h('p', {}, it.signifies), h('p', {}, h('b', {}, 'Used for: '), it.used_for))
+      : shInfo('What it signifies', h('p', {}, r.meaning)),
+    gen.read ? shInfo('How it is read in a varṣaphala', h('ul', {}, gen.read.map(x => h('li', {}, x))), gen.caution ? h('p', { class: 'note' }, gen.caution) : null) : null);
+}
+function pickSaham(root, rows, v, id) {
+  AUX_SEL = id; const r = rows.find(x => x.id === id) || rows[0];
+  const slot = root && root.querySelector('.sh-slot'); if (slot) put(slot, sahamPanel(r, v));
+  if (root) {
+    root.querySelectorAll('tr.aux-row').forEach(tr => { tr.classList.toggle('sel', tr.dataset.id === r.id); tr.setAttribute('aria-selected', String(tr.dataset.id === r.id)); });
+    root.querySelectorAll('.aux-sn').forEach(t => t.classList.toggle('sel', t.dataset.id === r.id));
+  }
+}
+
 function tabSahams(v) {
   if (!v) return missing('Sahams', 'They need the lagna and the seven grahas.');
   const rows = v.sahams;
-  const tb = table(['#', 'Saham', 'Sign', 'Degree', 'Lord', 'Formula'], rows.map((r, i) => [i + 1, h('b', {}, r.name), SIGN_SKT[r.sign], r.dms, glink(r.lord),
+  const tb = table(['#', 'Saham', 'Sign', 'Degree', 'Lord', 'Signifies', 'Formula'], rows.map((r, i) => [i + 1, h('b', {}, r.name), SIGN_SKT[r.sign], r.dms, glink(r.lord),
+    h('span', { class: 'sh-sig' }, r.meaning),
     h('span', { class: 'aux-f' }, r.formula, r.reversed_at_night ? h('span', { class: 'chip aux-mini' }, 'night ⇄') : null, r.day_form_inferred ? h('span', { class: 'chip aux-mini warn' }, 'day form inferred') : null)]),
-  { rowAttrs: i => ({ 'data-id': rows[i].id, 'data-sign': rows[i].sign, class: 'aux-row' }) });
+  { rowAttrs: i => ({ 'data-id': rows[i].id, 'data-sign': rows[i].sign, class: 'aux-row', tabindex: 0 }) });
+  const wrap = h('div', { class: 'aux-sahams' });
   tb.querySelectorAll('tr.aux-row').forEach((tr, i) => {
     const r = rows[i];
     hov(tr, `${r.name} saham · ${auxDeg(r.longitude)}`, [['Formula', r.formula], ['Terms', `A ${r.terms.a}, B ${r.terms.b}, C ${r.terms.c}`],
       ['+30° rule', r.plus_30 ? 'applied: C is not on the arc from B to A' : 'not needed'], ['Night reversal', r.reversed_at_night ? 'A and B swapped (night birth)' : 'none'],
-      ['Signifies', r.meaning + ' (interpretation, Tajika tradition, paraphrased)']], AUX_SRC.sahams);
+      ['Signifies', r.meaning + ' (interpretation, Tajika tradition, paraphrased)']], AUX_SRC.sahams + ' · click for its info box');
     tr.addEventListener('mouseenter', () => markSaham(tr.closest('.aux-sahams'), r.id, r.sign));
     tr.addEventListener('mouseleave', () => markSaham(tr.closest('.aux-sahams'), null, null));
+    tr.addEventListener('click', () => pickSaham(wrap, rows, v, r.id));
+    tr.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pickSaham(wrap, rows, v, r.id); } });
   });
-  return h('div', { class: 'aux-sahams' },
-    h('div', { class: 'aux-two' }, card('On the chart', sahamChart(rows)),
-      card('How they are computed', facts([['Birth', v.birth_in === 'night' ? 'night (A and B swap where the tradition says so)' : 'day'], ['Day or night', v.day_night_rule], ['House cusps', v.cusps], ['Rule', v.rule], ['Pack', v.pack]]),
-        h('p', {}, label('tradition_rule'), ' positions; the “signifies” text in each hover is ', label('interpretation'), ' (paraphrased from the Tajika tradition).'))),
+  const chart = sahamChart(rows);
+  chart.querySelectorAll('.aux-sn').forEach(t => t.addEventListener('click', ev => { ev.stopPropagation(); pickSaham(wrap, rows, v, t.dataset.id); }));
+  const gen = (SH_READ && SH_READ.general) || {};
+  put(wrap,
+    gen.what ? shInfo('What sahams are', h('p', {}, gen.what)) : null,
+    h('div', { class: 'aux-two' }, card('On the chart', chart, note('Click a saham’s name (here or in the table) to open its info box.')),
+      card('Info box', h('div', { class: 'sh-slot' }))),
+    card('How they are computed', facts([['Birth', v.birth_in === 'night' ? 'night (A and B swap where the tradition says so)' : 'day'], ['Day or night', v.day_night_rule], ['House cusps', v.cusps], ['Rule', v.rule], ['Pack', v.pack]]),
+      h('p', {}, label('tradition_rule'), ' positions; the “signifies” text and the info boxes are ', label('interpretation'), ' (paraphrased from the Tajika tradition, sources named in each box).')),
     card('All 37 sahams', tb));
+  pickSaham(wrap, rows, v, rows.some(r => r.id === AUX_SEL) ? AUX_SEL : rows[0].id);
+  return wrap;
 }
 
 function tabAvakahada(a) {
