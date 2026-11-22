@@ -52,6 +52,42 @@ nakshatras:
   - [Uttara Bhadrapada, "उत्तरभाद्रपदा", "Uttarabhādrapadā"]
   - [Revati, "रेवती", "Revatī"]
 
+# The pada syllables (nāmākṣara, the "avakahaḍā" table): the sound of each of the four padas of every nakshatra, in
+# the order of the nakshatras above, as [Devanagari, transliteration]. Source: the nāmākṣara table printed in modern
+# pañcāṅgas and muhūrta manuals (it goes back to the nakshatra chapter of the muhūrta texts); in the 28-nakshatra form
+# used by the Sarvatobhadra, Abhijit takes जू जे जो ख. Short-a syllables are written as the published reference chart
+# prints them (व, क, ह, ड, ...); some tables write the same sounds long (वा, का, ...). Each of the twenty letters
+# (varṇa) of the second ring except अ is one of these syllables, which the tests check.
+pada_syllables:
+  - [["चु", "cu"], ["चे", "ce"], ["चो", "co"], ["ल", "la"]]  # Ashwini
+  - [["ली", "lī"], ["लू", "lū"], ["ले", "le"], ["लो", "lo"]]  # Bharani
+  - [["अ", "a"], ["इ", "i"], ["उ", "u"], ["ए", "e"]]  # Krittika
+  - [["ओ", "o"], ["व", "va"], ["वी", "vī"], ["वू", "vū"]]  # Rohini
+  - [["वे", "ve"], ["वो", "vo"], ["क", "ka"], ["की", "kī"]]  # Mrigashira
+  - [["कु", "ku"], ["घ", "gha"], ["ङ", "ṅa"], ["छ", "cha"]]  # Ardra
+  - [["के", "ke"], ["को", "ko"], ["ह", "ha"], ["ही", "hī"]]  # Punarvasu
+  - [["हु", "hu"], ["हे", "he"], ["हो", "ho"], ["ड", "ḍa"]]  # Pushya
+  - [["डी", "ḍī"], ["डू", "ḍū"], ["डे", "ḍe"], ["डो", "ḍo"]]  # Ashlesha
+  - [["म", "ma"], ["मी", "mī"], ["मू", "mū"], ["मे", "me"]]  # Magha
+  - [["मो", "mo"], ["ट", "ṭa"], ["टी", "ṭī"], ["टू", "ṭū"]]  # Purva Phalguni
+  - [["टे", "ṭe"], ["टो", "ṭo"], ["प", "pa"], ["पी", "pī"]]  # Uttara Phalguni
+  - [["पू", "pū"], ["ष", "ṣa"], ["ण", "ṇa"], ["ठ", "ṭha"]]  # Hasta
+  - [["पे", "pe"], ["पो", "po"], ["र", "ra"], ["री", "rī"]]  # Chitra
+  - [["रू", "rū"], ["रे", "re"], ["रो", "ro"], ["त", "ta"]]  # Swati
+  - [["ती", "tī"], ["तू", "tū"], ["ते", "te"], ["तो", "to"]]  # Vishakha
+  - [["न", "na"], ["नी", "nī"], ["नू", "nū"], ["ने", "ne"]]  # Anuradha
+  - [["नो", "no"], ["य", "ya"], ["यी", "yī"], ["यू", "yū"]]  # Jyeshtha
+  - [["ये", "ye"], ["यो", "yo"], ["भ", "bha"], ["भी", "bhī"]]  # Mula
+  - [["भू", "bhū"], ["ध", "dha"], ["फ", "pha"], ["ढ", "ḍha"]]  # Purva Ashadha
+  - [["भे", "bhe"], ["भो", "bho"], ["ज", "ja"], ["जी", "jī"]]  # Uttara Ashadha
+  - [["जू", "jū"], ["जे", "je"], ["जो", "jo"], ["ख", "kha"]]  # Abhijit
+  - [["खी", "khī"], ["खू", "khū"], ["खे", "khe"], ["खो", "kho"]]  # Shravana
+  - [["ग", "ga"], ["गी", "gī"], ["गू", "gū"], ["गे", "ge"]]  # Dhanishta
+  - [["गो", "go"], ["स", "sa"], ["सी", "sī"], ["सू", "sū"]]  # Shatabhisha
+  - [["से", "se"], ["सो", "so"], ["द", "da"], ["दी", "dī"]]  # Purva Bhadrapada
+  - [["दू", "dū"], ["थ", "tha"], ["झ", "jha"], ["ञ", "ña"]]  # Uttara Bhadrapada
+  - [["दे", "de"], ["दो", "do"], ["च", "ca"], ["ची", "cī"]]  # Revati
+
 rashis:
   - [Mesha, "मेष", "Meṣa"]
   - [Vrishabha, "वृषभ", "Vṛṣabha"]

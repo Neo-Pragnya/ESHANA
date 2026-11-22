@@ -574,3 +574,49 @@ g.pk-yama{background:none}
 @keyframes aux-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes aux-draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){.aux-pane,.aux-cell,.aux-tile,.aux-pop,.aux-sg rect,.aux-mbrow,.aux-gap,.aux-house,.aux-step,.aux-n{animation:none!important;stroke-dashoffset:0}}
+/* ── chakras round 6 ── */
+:root,[data-mode="dark"]{--ck-z1:rgb(250 232 190 / 6%);--ck-z2:rgb(250 205 140 / 11%);--ck-z3:rgb(245 165 85 / 18%);--ck-z4:rgb(240 125 55 / 30%);--ck-band:rgb(250 128 114 / 17%);--ck-arrow:#a89d5e;
+--ck-yel:rgb(240 220 110 / 15%);--ck-lav:rgb(150 140 240 / 17%);--ck-pink:rgb(240 120 170 / 15%);--ck-org:rgb(245 150 60 / 22%);--ck-fband:rgb(150 140 240 / 9%)}
+[data-mode="light"]{--ck-z1:#fbf5e4;--ck-z2:#f8e5c4;--ck-z3:#f6cc96;--ck-z4:#efa462;--ck-band:rgb(240 128 114 / 30%);--ck-arrow:#a39a5c;
+--ck-yel:#fbf3c4;--ck-lav:#dfdcf7;--ck-pink:#f9d6e2;--ck-org:#f8cb9c;--ck-fband:#f1effb}
+.ck-fig-sbc{max-width:820px;overflow-x:auto}
+@media (max-width:700px){.ck-fig-sbc .ck-sbc{min-width:640px}}
+.ck-sbc .ck-bg{stroke:var(--line)}
+.ck-sbc .ck-cell.k-nakshatra .ck-bg{fill:var(--ck-lav)}.ck-sbc .ck-cell.k-vowel .ck-bg{fill:var(--ck-yel)}.ck-sbc .ck-cell.k-letter .ck-bg{fill:var(--ck-pink)}
+.ck-sbc .ck-cell.k-rashi .ck-bg{fill:var(--ck-org)}.ck-sbc .ck-cell.k-tithi .ck-bg{fill:var(--ck-pink)}
+.ck-sbc .ck-cell.target .ck-bg,.ck-sbc .ck-cell.birth .ck-bg{stroke:var(--line);stroke-width:1}
+.ck-sbc .ck-cell:hover .ck-bg,.ck-sbc .ck-cell:focus .ck-bg{fill:var(--chip2)}
+.ck-sbc .ck-cell.hit .ck-bg{fill:rgb(224 86 79 / 30%)}
+.ck-vb{fill:none;stroke-width:2;pointer-events:none}.ck-vb.mal{stroke:var(--bad)}.ck-vb.ben{stroke:var(--good)}
+.ck-flag{fill:var(--accent2);opacity:.85;pointer-events:none}
+.ck-ct{animation:ck-fade .5s ease both;animation-delay:calc(var(--i) * 30ms);pointer-events:none}
+.ck-sbc text,.ck-kota text{text-anchor:middle;dominant-baseline:central}
+.ck-big{font-weight:600}
+.ck-ra,.ck-wd2{font-weight:750;fill:var(--ink)}.ck-tn{fill:var(--ink)}
+.ck-gl{font-weight:800}.ck-sep{fill:var(--muted)}
+.ck-g{font-weight:800}.ck-g.mal{fill:var(--bad);color:var(--bad)}.ck-g.ben{fill:var(--good);color:var(--good)}.ck-g.neu{fill:var(--ink);color:var(--ink)}
+.ck-kota .ck-gl{pointer-events:auto}.ck-kota .ck-g:not(.tr){cursor:pointer}
+.ck-g.tr{text-decoration:underline dotted}
+.ck-line.mal{stroke:var(--bad)}.ck-line.ben{stroke:var(--good)}
+.ck-fcell{animation:ck-fade .5s ease both;animation-delay:calc(var(--i) * 25ms);outline:none}
+.ck-fb{stroke:var(--line);stroke-width:.8}.ck-fname{fill:var(--ck-fband)}.ck-fsound{fill:var(--ck-yel)}.ck-fpada{fill:var(--panel)}
+.ck-fcell:hover .ck-fb,.ck-fcell:focus .ck-fb{fill:var(--chip2)}
+.ck-fn{font-weight:750;fill:var(--ink);pointer-events:none}.ck-syl{fill:var(--ink);font-weight:600;pointer-events:none}.ck-padn{fill:var(--muted);pointer-events:none}
+.ck-band{fill:var(--muted);font-style:italic;letter-spacing:.02em;pointer-events:none}
+.ck-frame-edge{fill:none;stroke:var(--ink);stroke-opacity:.35;stroke-width:1.2;pointer-events:none}
+.ck-kota .ck-zone{animation:draw 1s ease forwards,ck-fade .7s ease both}
+.ck-kota .ck-zone.z-bahya{fill:var(--ck-z1)}.ck-kota .ck-zone.z-prakara{fill:var(--ck-z2)}.ck-kota .ck-zone.z-madhya{fill:var(--ck-z3)}.ck-kota .ck-zone.z-stambha{fill:var(--ck-z4)}
+.ck-bands{fill:var(--ck-band);pointer-events:none;animation:ck-fade .8s ease .4s both}
+.ck-zlab2{fill:var(--muted);opacity:.85;font-style:italic;pointer-events:none}
+.ck-arrow{fill:var(--ck-arrow);opacity:.8;stroke:var(--ck-arrow);stroke-width:.6;animation:ck-fade .5s ease both;animation-delay:calc(.9s + var(--k) * 90ms)}
+.ck-hit{fill:transparent;stroke:transparent;stroke-width:1.6;transition:stroke .2s,fill .2s}
+.ck-place:hover .ck-hit,.ck-place:focus .ck-hit{stroke:var(--accent);fill:rgb(255 255 255 / 8%)}
+.ck-place.janma .ck-hit{stroke:var(--accent);stroke-opacity:.8;stroke-dasharray:4 3}
+.ck-kn{fill:var(--ink);pointer-events:none}.ck-knum{font-weight:800}
+.ck-ki{font-size:10.5px;fill:var(--ink);pointer-events:none}.ck-ki .k{fill:var(--muted);font-weight:700}
+.ck-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin:8px 2px 2px}
+.ck-key span{display:inline-flex;align-items:center;gap:5px}
+.ck-key .sw{display:inline-block;width:14px;height:14px;border-radius:3px;border:2px solid var(--line)}
+.ck-key .sw.mal{border-color:var(--bad)}.ck-key .sw.ben{border-color:var(--good)}.ck-key .sw.both{border-color:var(--bad);box-shadow:inset 0 0 0 2px var(--good)}
+.ck-key .sw.flag{border:0;background:linear-gradient(225deg,var(--accent2) 50%,transparent 50%)}
+.ck-key .sw.z1{background:var(--ck-z1)}.ck-key .sw.z2{background:var(--ck-z2)}.ck-key .sw.z3{background:var(--ck-z3)}.ck-key .sw.z4{background:var(--ck-z4)}.ck-key .sw.band{background:var(--ck-band)}
