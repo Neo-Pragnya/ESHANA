@@ -80,7 +80,11 @@ function periodLink(p) {
 /* ── the zoom: one row per level, each a thinner row opening out of the period chosen above it ────────────────── */
 const DASHA_PATHS = {};
 function dashaZoom(sys, v) {
-  const ref = T(REF_UTC || new Date().toISOString()), levels = sys.depth, kidsOf = p => sys.kids(p, v) || [];
+  const levels = sys.depth, kidsOf = p => sys.kids(p, v) || [];
+  // open on the periods running at the reference date; when that date is outside this system's span (a chart of
+  // someone born long ago: the 120-year Vimśottarī ended before today), open on the periods running at birth
+  const md = v.mahadashas, spanEnd = md.length ? T(md[md.length - 1].end_utc) : null, now = T(REF_UTC || new Date().toISOString());
+  const ended = spanEnd != null && now >= spanEnd, ref = ended ? T(md[0].start_utc) + 1 : now;
   if (!DASHA_PATHS[sys.id]) { // open on the running chain
     const path = []; let list = v.mahadashas;
     for (let lvl = 0; lvl < levels && list.length; lvl++) {
@@ -128,7 +132,8 @@ function dashaZoom(sys, v) {
   const chain = rows.map((rr, j) => PATH[j] != null && rr[PATH[j]] ? rr[PATH[j]] : null).filter(Boolean);
   return h("div", {}, h("div", { class: "chain dz-chain" }, chain.map((p, j) => h("button", { class: "link", onclick: () => { DASHA_PATHS[sys.id] = PATH.slice(0, j); route(); } },
       h("small", {}, DASHA_LEVELS[j]), h("b", {}, periodLink(p)), h("small", {}, `${dateOnly(p.start_utc)} → ${dateOnly(p.end_utc)}`))),
-    h("button", { class: "btn", onclick: () => { DASHA_PATHS[sys.id] = null; route(); } }, "Back to now")),
+    h("button", { class: "btn", onclick: () => { DASHA_PATHS[sys.id] = null; route(); } }, ended ? "Back to birth" : "Back to now")),
+    ended ? note(`This ${sys.tab} span ended on ${dateOnly(md[md.length - 1].end_utc)}, before the reference date, so nothing is running now; the zoom opens on the periods running at birth.`) : null,
     h("div", { class: "timeline" }, svg),
     note(`Click any bar to open its sub-periods below it; the bracket shows the period being zoomed. Source: ${sys.source}.`));
 }

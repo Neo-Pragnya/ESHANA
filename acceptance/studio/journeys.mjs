@@ -367,6 +367,30 @@ await journey("dark theme: chart writing has readable contrast", async () => {
   return `${r.n} text runs at 4.5:1 or better (aspect marks 3:1)`;
 });
 
+await journey("bhāvas: lordships in D1, D9 and D10 with the exchanges between house lords", async () => {
+  if (model.asc == null) return "no lagna in this chart";
+  await go("#/houses", 1400);
+  const LORD = ["mars", "venus", "mercury", "moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "saturn", "jupiter"];
+  const seen = {};
+  for (const [k, label] of [["d1", "D1 rāśi"], ["d9", "D9 navāṃśa"], ["d10", "D10 daśāṃśa"]]) {
+    await evaluate(`[...document.querySelectorAll('#houses .tab')].find(b => b.textContent === ${JSON.stringify(label)}).click()`); await sleep(400);
+    seen[k] = await evaluate(`(() => { const c = [...document.querySelectorAll('#houses .card')].find(x => /Lordships by division/.test(x.querySelector('h3')?.textContent || ''));
+      const t = c.querySelectorAll('table'); return { rows: [...t[0].querySelectorAll('tbody tr')].map(r => r.lastElementChild.textContent.trim()),
+        ex: t[1] ? [...t[1].querySelectorAll('tbody tr')].map(r => r.textContent) : [] }; })()`);
+    expect(seen[k].rows.length === 12, `${k}: ${seen[k].rows.length} rows`);
+  }
+  // D1 from the positions in the file: lord of house h sits in house (sign of lord − lagna)
+  const lag = signOf(model.asc);
+  for (let hse = 1; hse <= 12; hse++) {
+    const lord = LORD[(lag + hse - 1) % 12], at = (signOf(model.pos[lord]) - lag + 12) % 12 + 1;
+    expect(seen.d1.rows[hse - 1] === `lord of ${hse} in ${at}`, `D1 bhāva ${hse}: ${seen.d1.rows[hse - 1]} (expected in ${at})`);
+  }
+  const seven = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"]; let pairs = 0;
+  for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) if (LORD[signOf(model.pos[seven[i]])] === seven[j] && LORD[signOf(model.pos[seven[j]])] === seven[i]) pairs++;
+  expect(seen.d1.ex.length === pairs, `D1 shows ${seen.d1.ex.length} exchange(s), the positions give ${pairs}`);
+  return `12 rows in each of D1, D9, D10; D1 matches the positions; exchanges D1 ${seen.d1.ex.length}, D9 ${seen.d9.ex.length}, D10 ${seen.d10.ex.length}`;
+});
+
 await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
   await go("#/chakra", 1500);
   await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);
@@ -451,9 +475,12 @@ await journey("yogas: only those present, each with a full reading page", async 
   await go("#/yogas", 1400);
   const r = await evaluate(`(() => { const tiles = [...document.querySelectorAll('#yogas a.card.yoga')]; return { n: tiles.length, present: YOGA_PRESENT().length, hrefs: tiles.map(t => t.getAttribute('href')) }; })()`);
   expect(r.n === r.present && r.n > 0, `${r.n} tiles for ${r.present} present`);
-  await evaluate(`document.querySelector('#yogas a.card.yoga').click()`); await sleep(1400);
+  // open the first yoga formed by particular grahas (some, like Kemadruma, are patterns of the whole chart)
+  const pick = await evaluate(`(() => { const ids = YOGA_PRESENT().filter(y => (y.grahas || []).length).map(y => y.id);
+    const a = [...document.querySelectorAll('#yogas a.card.yoga')].find(t => ids.some(id => t.getAttribute('href').endsWith('/' + id))) || document.querySelector('#yogas a.card.yoga');
+    a.click(); return a.getAttribute('href'); })()`); await sleep(1400);
   const hash = await evaluate(`location.hash`);
-  expect(hash === r.hrefs[0], `opened ${hash}`);
+  expect(hash === pick, `opened ${hash}, clicked ${pick}`);
   const t = await evaluate(`document.querySelector('#yoga').innerText`);
   for (const need of ["How it forms here", "When it is active", "Traditionally associated with", "How it is read", "interpretation"]) expect(t.includes(need), `yoga page lacks "${need}"`);
   const lit = await evaluate(`document.querySelectorAll('#yoga .cell.yoga-src').length`);

@@ -123,6 +123,11 @@ studio-journeys: build-release
 	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
 	  --partner "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777" -o target/journeys/studio.html
 	node acceptance/studio/journeys.mjs target/journeys/studio.html $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/studio)
+	# the reference chart (born 1879, read today): daśās that have ended, a parivartana, a crowded chart
+	.venv/bin/eshana-report --date 1879-12-30 --time 01:00 --offset-minutes 321 --lat 9.9333 --lon 78.1167 \
+	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --place "Madurai, India" \
+	  --reference 2026-11-21T00:00:00Z -o target/journeys/ramana.html
+	node acceptance/studio/journeys.mjs target/journeys/ramana.html $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/ramana)
 site-journeys:
 	node acceptance/site/journeys.mjs website/dist --base $${SITE_BASE:-/} $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/site)
 

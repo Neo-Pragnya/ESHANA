@@ -543,6 +543,56 @@ pub fn bhava_bala(vc: &VChart, shad: &Value) -> Option<Value> {
     Some(json!({"bhavas": rows, "madhya": "Porphyry (Sripati) bhava madhyas"}))
 }
 
+/// Lordships in D1, D9 and D10: for each house (counted from that varga's lagna) its sign, its lord and the house the
+/// lord occupies in the same varga ("lord of 1 in 3"), and the sign exchanges (parivartana) between house lords,
+/// each classed Mahā, Khala or Dainya by the houses exchanged.
+fn lordships_by_varga(vc: &VChart, asc: f64) -> Value {
+    let mut out = Map::new();
+    for d in [1u32, 9, 10] {
+        let vs = |lon: f64| {
+            if d == 1 {
+                Some(sign_of(lon))
+            } else {
+                vedic::divisional_sign(lon, d).ok()
+            }
+        };
+        let Some(lagna) = vs(asc) else { continue };
+        let sign_of_graha = |g: &str| vc.lon.get(g).and_then(|l| vs(*l));
+        let houses: Vec<Value> = (1..=12usize)
+            .map(|h| {
+                let sign = (lagna + h - 1) % 12;
+                let lord = lord_of(sign);
+                let ls = sign_of_graha(lord);
+                json!({"house": h, "sign": sign, "lord": lord, "lord_sign": ls, "lord_in_house": ls.map(|x| house_from(lagna, x))})
+            })
+            .collect();
+        let mut exchanges = vec![];
+        for (i, a) in SEVEN.iter().enumerate() {
+            for b in &SEVEN[i + 1..] {
+                let (Some(sa), Some(sb)) = (sign_of_graha(a), sign_of_graha(b)) else {
+                    continue;
+                };
+                if lord_of(sa) == *b && lord_of(sb) == *a {
+                    let hs = [house_from(lagna, sa), house_from(lagna, sb)];
+                    let kind = if hs.iter().any(|h| matches!(h, 6 | 8 | 12)) {
+                        "dainya"
+                    } else if hs.contains(&3) {
+                        "khala"
+                    } else {
+                        "maha"
+                    };
+                    exchanges.push(json!({"grahas": [a, b], "signs": [sa, sb], "houses": hs, "kind": kind}));
+                }
+            }
+        }
+        out.insert(
+            format!("d{d}"),
+            json!({"lagna_sign": lagna, "houses": houses, "exchanges": exchanges}),
+        );
+    }
+    Value::Object(out)
+}
+
 /// Special points and conditions: yogi and avayogi, Indu lagna, dagdha rāśis, 64th navāṃśa, 22nd drekkāṇa,
 /// lordships and functional nature, kartari, graha yuddha and the element/modality balance.
 #[must_use]
@@ -641,6 +691,7 @@ pub fn special_points(vc: &VChart) -> Value {
         }
         out.insert("lordships".into(), json!({"grahas": lords,
             "rule": "lagna lord benefic; lords of 5 and 9 benefic unless they also own 6, 8 or 12; lords of only 3, 6, 8 or 11 malefic; others neutral"}));
+        out.insert("lordships_by_varga".into(), lordships_by_varga(vc, asc));
     }
     // kartari: a point hemmed between malefics (papa) or benefics (shubha) in the 12th and 2nd signs from it
     let benefic = |g: &str| c.natural_benefics.iter().any(|x| x == g) && g != "moon";
@@ -825,6 +876,38 @@ mod tests {
         let s = shadbala(&c, &Sky::default());
         let b = bhava_bala(&c, &s).unwrap();
         assert_eq!(b["bhavas"].as_array().unwrap().len(), 12);
+    }
+
+    #[test]
+    fn lordships_by_varga_with_exchanges() {
+        // Kanyā lagna; Jupiter in Kumbha, Saturn in Mīna: in D1 the 6th lord (Saturn) sits in the 7th and the 7th
+        // lord (Jupiter) in the 6th, a Dainya exchange
+        let mut vc = VChart::default();
+        for (g, l) in [
+            ("sun", 255.0),
+            ("moon", 88.0),
+            ("mars", 20.0),
+            ("mercury", 233.0),
+            ("jupiter", 316.0),
+            ("venus", 210.0),
+            ("saturn", 347.0),
+        ] {
+            vc.lon.insert(g.into(), l);
+        }
+        let v = lordships_by_varga(&vc, 160.0);
+        let d1 = &v["d1"];
+        assert_eq!(d1["lagna_sign"], 5);
+        assert_eq!(d1["houses"][5]["lord"], "saturn");
+        assert_eq!(d1["houses"][5]["lord_in_house"], 7);
+        assert_eq!(d1["houses"][6]["lord"], "jupiter");
+        assert_eq!(d1["houses"][6]["lord_in_house"], 6);
+        let ex = d1["exchanges"].as_array().unwrap();
+        assert_eq!(ex.len(), 1);
+        assert_eq!(ex[0]["kind"], "dainya");
+        assert!(
+            v["d9"]["houses"].as_array().unwrap().len() == 12
+                && v["d10"]["houses"].as_array().unwrap().len() == 12
+        );
     }
 
     #[test]

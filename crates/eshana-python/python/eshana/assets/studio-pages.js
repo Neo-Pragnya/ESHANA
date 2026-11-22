@@ -205,8 +205,32 @@ page('houses', () => 'Bhāvas', 'Grahas & bhāvas', (b) => {
     return h('a', { class: 'card hcard', href: '#/house/' + (i + 1) }, h('div', { class: 'hnum' }, i + 1), h('div', {}, h('h3', {}, `${SIGN_SKT[sign]} ${GLYPH[sign]}`),
       h('div', { class: 'note' }, ae ? ae.dimension : ''), h('div', { class: 'chips' }, occ.map(g => h('span', { class: 'chip' }, dot(g), G[g].abbr)),
         bb ? h('span', { class: 'chip' }, `bala ${fix(bb.bhavas[i].rupas, 1)}`) : null, sav ? h('span', { class: 'chip' }, `SAV ${sav.sarvashtakavarga.bindus[sign]}`) : null))); });
-  put(b, pageHead('houses', 'Bhāvas', 'Twelve houses from the lagna, where each lord sits, and how the houses connect. Each has its own page.'), h('div', { class: 'hgrid' }, cards), lordsAnalysis());
+  put(b, pageHead('houses', 'Bhāvas', 'Twelve houses from the lagna, where each lord sits, and how the houses connect. Each has its own page.'), h('div', { class: 'hgrid' }, cards), lordsAnalysis(), lordshipsByVarga());
 }, { blurb: 'a page for every bhāva' });
+
+/* ── lordships in D1, D9 and D10: "lord of 1 in 3", with the exchanges between house lords (engine: special points) ── */
+const PARIV_KIND = { maha: 'Mahā (between good houses)', khala: 'Khala (involves the 3rd)', dainya: 'Dainya (involves the 6th, 8th or 12th)' };
+function lordshipsByVarga() {
+  const all = (SPECIAL || {}).lordships_by_varga; if (!all) return null;
+  const host = h('div', {}), cur = { d: S.lordVarga || 'd1' };
+  const draw = () => {
+    const v = all[cur.d]; if (!v) return put(host, note('Not available for this division.'));
+    const exH = new Set(v.exchanges.flatMap(e => e.houses));
+    const rows = v.houses.map(x => [h('b', {}, x.house), `${SIGN_SKT[x.sign]} ${GLYPH[x.sign]}`, glink(x.lord),
+      x.lord_in_house == null ? '—' : h('span', { class: exH.has(x.house) && exH.has(x.lord_in_house) ? 'lv-ex' : '' }, `in ${x.lord_in_house}`, x.lord_sign != null ? ` (${SIGN_SKT[x.lord_sign]})` : ''),
+      `lord of ${x.house} in ${x.lord_in_house ?? '—'}`]);
+    put(host, tabs([['d1', 'D1 rāśi'], ['d9', 'D9 navāṃśa'], ['d10', 'D10 daśāṃśa']], cur.d, k => { cur.d = k; S.lordVarga = k; save(); draw(); }),
+      h('p', { class: 'note' }, `Houses counted from the ${cur.d.toUpperCase()} lagna, ${SIGN_SKT[v.lagna_sign]}.`),
+      h('div', { class: 'grid2' },
+        table(['Bhāva', 'Sign', 'Lord', 'Lord sits', 'Read as'], rows),
+        h('div', {}, h('h4', {}, 'Exchanges (parivartana)'),
+          v.exchanges.length ? table(['Grahas', 'Signs', 'Houses', 'Kind'], v.exchanges.map(e => [h('span', {}, glink(e.grahas[0]), ' ⇄ ', glink(e.grahas[1])),
+            `${SIGN_SKT[e.signs[0]]} ⇄ ${SIGN_SKT[e.signs[1]]}`, `${e.houses[0]} ⇄ ${e.houses[1]}`, PARIV_KIND[e.kind] || e.kind])) : note('No exchange between house lords in this division.'),
+          note('In an exchange each graha sits in the other\'s sign, so the two houses are read as linked; the kind follows Phaladeepika.'))));
+  };
+  draw();
+  return card('Lordships by division (D1, D9, D10)', host, h('p', { class: 'note' }, label('tradition_rule'), ' Each bhāva\'s lord and the bhāva it occupies, in the rāśi, navāṃśa and daśāṃśa charts.'));
+}
 
 /* ── bhāva depth: bhāvāt bhāvam, the lord's story, occupants, aspects, kāraka, connections, bearing ───────────── */
 const KARAKA = { 1: ['sun'], 2: ['jupiter'], 3: ['mars'], 4: ['moon', 'mercury'], 5: ['jupiter'], 6: ['mars', 'saturn'], 7: ['venus'], 8: ['saturn'], 9: ['jupiter', 'sun'], 10: ['sun', 'mercury', 'jupiter', 'saturn'], 11: ['jupiter'], 12: ['saturn'] };
@@ -664,7 +688,7 @@ page('yoga', (id) => (YOGA_ALL().find(y => y.id === id) || {}).name || 'Yoga', '
           return card(null, h('h4', {}, c[0]), facts(['Position', 'Bhāva', 'Dignity', 'Strength', 'Combustion', 'Navāṃśa', 'House', 'Aspected by (+ benefic, − malefic)'].map((k2, i) => [k2, c[i + 1]]))); })) : null,
         note('The usual checks for judging a yoga (strength, combustion, navāṃśa dignity, house, benefic or malefic influence), evaluated on this chart. They inform a reading; they are not a verdict.')),
       card('In the chart', h('div', { class: 'figure' }, chart), note('Highlighted: the signs of the grahas forming it. Hover a graha to see what it aspects.'))),
-    act && gs.length ? card('When it is active (Vimśottarī)', h('div', { class: 'grid2' },
+    act ? card('When it is active (Vimśottarī)', !gs.length ? note('This yoga is not formed by particular grahas (it is a pattern of the whole chart), so it is not tied to the periods of one graha.') : h('div', { class: 'grid2' },
       act.md.length ? table(['Mahādaśā', 'From', 'To', ''], act.md) : note('No mahādaśā of these grahas in the computed span.'),
       act.ad.length ? table([`Antardaśā in ${act.cur.lord}`, 'From', 'To', ''], act.ad) : note(act.cur ? `No antardaśā of these grahas in the running ${act.cur.lord} mahādaśā.` : '')),
       note('A yoga is usually read as giving its results in the periods of the grahas that form it.')) : null,

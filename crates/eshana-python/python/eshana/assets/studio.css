@@ -714,3 +714,6 @@ g.pk-yama{background:none}
 .aux-sn{cursor:pointer}.aux-sn.sel{fill:var(--accent);font-weight:850;text-decoration:underline}
 @media (prefers-reduced-motion:reduce){.sh-panel{animation:none!important}}
 @media (max-width:640px){.pk-tbl table{min-width:580px}.pk-tbl .pk-act{font-size:11px;padding:1px 6px}.pk-tbl th:nth-child(2){width:96px}.pk-time{font-size:11.5px}}
+
+/* ── lordships by division ── */
+.lv-ex{font-weight:800;color:var(--accent);border-bottom:2px solid var(--accent)}
