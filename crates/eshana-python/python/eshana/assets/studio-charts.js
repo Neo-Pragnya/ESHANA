@@ -474,8 +474,9 @@ function placements(d) {
   for (const k in out) out[k].sort((a, b) => (vargaDeg(a, d) || 0) - (vargaDeg(b, d) || 0));
   return out;
 }
-function arudhaMarks() {
-  const a = val('vedic.jaimini.arudha_padas'); if (!a || !S.layers.arudha) return {};
+/* ārūḍha padas by sign: D1, or in the navāṃśa (pada navāṃśa: the same rule applied to the D9 chart) */
+function arudhaMarks(d = 1) {
+  const a = val(d === 9 ? 'vedic.jaimini.arudha_padas_d9' : 'vedic.jaimini.arudha_padas'); if (!a || !S.layers.arudha) return {};
   const out = {}; for (const k in a) { const label = k.startsWith('A1_') ? 'AL' : k.startsWith('A12') ? 'UL' : k.split('_')[0]; (out[a[k].pada_sign] = out[a[k].pada_sign] || []).push(label); }
   return out;
 }
@@ -496,7 +497,7 @@ function grahaLine(parent, id, x, y, d, opts) {
   return g;
 }
 function southGrid(svg, d, x0, y0, W, opts = {}) {
-  const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = d === 1 && opts.lagSign == null ? arudhaMarks() : {};
+  const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = (d === 1 || d === 9) && opts.lagSign == null ? arudhaMarks(d) : {};
   for (const [sg, [c, r]] of Object.entries(SOUTH_CELL)) {
     const sign = +sg, x = x0 + c * W, y = y0 + r * H, g = s('g', { class: 'cell', 'data-sign': sign }, svg);
     s('rect', { x, y, width: W, height: H, class: 'cellbg' }, g);
@@ -533,7 +534,7 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
   const P = (x, y) => [x0 + x * S0, y0 + y * S0];
   const A = P(0, 0), B = P(1, 0), C = P(1, 1), Dd = P(0, 1), T = P(.5, 0), R = P(1, .5), Bm = P(.5, 1), L = P(0, .5), O = P(.5, .5), P1 = P(.25, .25), P2 = P(.75, .25), P3 = P(.75, .75), P4 = P(.25, .75);
   const HS = [[T, P2, O, P1], [A, T, P1], [A, P1, L], [L, P1, O, P4], [L, P4, Dd], [Dd, P4, Bm], [Bm, P4, O, P3], [Bm, P3, C], [C, P3, R], [R, P3, O, P2], [R, P2, B], [B, P2, T]];
-  const pl = placements(d), ar = d === 1 ? arudhaMarks() : {};
+  const pl = placements(d), ar = d === 1 || d === 9 ? arudhaMarks(d) : {};
   s('rect', { x: x0, y: y0, width: S0, height: S0, class: 'cellbg' }, svg);
   HS.forEach((poly, hIdx) => {
     const sign = (lag + hIdx) % 12, cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, big = poly.length === 4;

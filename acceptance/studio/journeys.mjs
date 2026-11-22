@@ -391,6 +391,20 @@ await journey("bhāvas: lordships in D1, D9 and D10 with the exchanges between h
   return `12 rows in each of D1, D9, D10; D1 matches the positions; exchanges D1 ${seen.d1.ex.length}, D9 ${seen.d9.ex.length}, D10 ${seen.d10.ex.length}`;
 });
 
+await journey("pada navāṃśa: the D9 chart shows the ārūḍha padas worked out in the navāṃśa", async () => {
+  const want = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes.vedic.derived_attributes.find(a => a.id === 'vedic.jaimini.arudha_padas_d9');
+    if (!d) return null; const m = {}; for (const k in d.value) { const lab = k.startsWith('A1_') ? 'AL' : k.startsWith('A12') ? 'UL' : k.split('_')[0]; (m[d.value[k].pada_sign] = m[d.value[k].pada_sign] || []).push(lab); } return m; })()`);
+  if (!want) return "no lagna in this chart";
+  await evaluate(`S.layers.arudha = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1000);
+  const got = await evaluate(`(() => { const svg = [...document.querySelectorAll('#charts svg.chart.south')].find(x => /^D9 /.test(x.getAttribute('aria-label'))); const m = {};
+    for (const c of svg.querySelectorAll('.cell')) { const t = c.querySelector('.arudha'); if (t) m[c.dataset.sign] = t.firstChild.textContent.trim().split(/\\s+/); } return m; })()`);
+  const norm = (m) => JSON.stringify(Object.keys(m).sort().map(k => [k, [...m[k]].sort()]));
+  expect(norm(got) === norm(want), `D9 padas ${norm(got)} vs engine ${norm(want)}`);
+  return `${Object.values(want).flat().length} padas in ${Object.keys(want).length} navāṃśa signs`;
+});
+
 await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
   await go("#/chakra", 1500);
   await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);

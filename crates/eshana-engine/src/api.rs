@@ -1078,6 +1078,15 @@ impl Engine {
                 ),
                 None => need("arudha padas", "they are counted from the lagna"),
             }
+            // pada navāṃśa: the same ārūḍha rule applied inside the navāṃśa chart (signs from D9)
+            if let Some(v) = jyotish::arudha_padas(&jyotish::varga_chart(&vc, 9)) {
+                push(
+                    "vedic.jaimini.arudha_padas_d9",
+                    &core_rule,
+                    v,
+                    &["positions", "houses"],
+                );
+            }
         }
         let rising = panchanga::Rising::parse(r.sunrise.as_deref())?;
         let site = r.place.as_ref().map(|pl| panchanga::Site {

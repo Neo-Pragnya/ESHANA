@@ -486,6 +486,27 @@ pub fn chara_karakas(c: &VChart) -> Value {
     })
 }
 
+/// The chart of a division as a [`VChart`]: each graha and the lagna placed at the middle of its varga sign (only
+/// signs matter for sign-based rules such as ārūḍha padas).
+#[must_use]
+pub fn varga_chart(c: &VChart, d: u32) -> VChart {
+    let at = |lon: f64| {
+        crate::vedic::divisional_sign(lon, d)
+            .map(|sg| sg as f64 * 30.0 + 15.0)
+            .ok()
+    };
+    let mut v = VChart {
+        asc: c.asc.and_then(at),
+        ..Default::default()
+    };
+    for (g, l) in &c.lon {
+        if let Some(x) = at(*l) {
+            v.lon.insert(g.clone(), x);
+        }
+    }
+    v
+}
+
 /// Ārūḍha padas A1 (Ārūḍha lagna) … A12 (Upapada): count from the house to its lord, as far again from the lord;
 /// if that is the house itself or its 7th, take the 10th from there.
 #[must_use]
@@ -1007,6 +1028,24 @@ mod tests {
         // Ketu sub of Ashwini spans 13°20′ × 7/120 = 0°46′40″; just after it the sub is Venus.
         let k = kp_lords(13.333_333 * 7.0 / 120.0 + 0.001);
         assert_eq!(k["sub_lord"], "venus");
+    }
+
+    #[test]
+    fn pada_navamsha_uses_navamsha_signs() {
+        // 1° Aries is navāṃśa Aries (sign 0); 28° Aries is navāṃśa Sagittarius (sign 8)
+        let mut c = VChart {
+            asc: Some(1.0),
+            ..Default::default()
+        };
+        for g in SEVEN {
+            c.lon.insert(g.into(), 28.0);
+        }
+        let v = varga_chart(&c, 9);
+        assert_eq!(sign_of(v.asc.unwrap()), 0);
+        assert_eq!(sign_of(v.lon["mars"]), 8);
+        // D9 lagna Aries; its lord Mars in D9 Sagittarius (9th): count 9 again from Sagittarius → Leo (5th)
+        let a = arudha_padas(&v).unwrap();
+        assert_eq!(a["A1_arudha_lagna"]["pada_sign"], 4);
     }
 
     #[test]
