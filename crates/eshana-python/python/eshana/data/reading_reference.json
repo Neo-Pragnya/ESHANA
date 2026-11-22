@@ -874,6 +874,12 @@
    }
   },
   "roles": {
+   "growth": "The growth (or key) number: the first name alone. Read as the way a person tends to grow and the quality they keep returning to.",
+   "intensity": "Intensity numbers: digits that occur in the full name more often than average. Read as traits that are pronounced, sometimes overdone.",
+   "transit_physical": "The physical transit: the letter of the first name ruling this year. Read as the tone of practical and bodily matters for the year.",
+   "transit_mental": "The mental transit: the letter of the middle name(s) ruling this year. Read as the tone of thinking and plans for the year.",
+   "transit_spiritual": "The spiritual transit: the letter of the last name ruling this year. Read as the tone of inner life and values for the year.",
+   "essence": "The essence number: the three transit letters added and reduced. Read as the theme of the year as a whole, alongside the personal year.",
    "life_path": "The main path and lessons of the life, from the full birth date: the most weighted number.",
    "expression": "Natural abilities and how they are expressed, from all the letters of the full name (also called destiny).",
    "soul_urge": "Inner motivation and what the heart wants, from the vowels (heart's desire).",

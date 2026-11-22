@@ -127,6 +127,28 @@ await journey("the chakra draws every ring and a point for every graha", async (
   return `27 / 108 / 12 rings, ${c.pts} points`;
 });
 
+await journey("the chakra centre shows the four Nadi directions with each graha in its element's quadrant", async () => {
+  await go("#/chakra", 1400);
+  // Nadi directions is the default for new and existing settings (a one-time migration); the journey before this one
+  // switched to the South Indian centre, so pick Nadi again here
+  const mig = await evaluate(`S.nadiCentreV1 === true`);
+  expect(mig, "settings were not migrated to the Nadi centre");
+  await evaluate(`[...document.querySelectorAll('#chakra .tab')].find(b => b.textContent === 'Nadi directions').click()`); await sleep(1200);
+  const r = await evaluate(`(() => { const svg = document.querySelector('#chakra svg.wheel'); const qs = [...svg.querySelectorAll('.nadi-centre .nadi-q')];
+    return qs.map(q => ({ dir: q.dataset.dir, bodies: [...q.querySelectorAll('.nadi-g')].map(g => g.dataset.body) })); })()`);
+  expect(r.length === 4, `${r.length} quadrants in the centre`);
+  const DIR = ["east", "south", "west", "north"]; // fire, earth, air, water
+  const wrong = [];
+  for (const q of r) for (const b of q.bodies) { const l = b === "lagna" ? model.asc : model.pos[b]; if (l != null && DIR[signOf(l) % 4] !== q.dir) wrong.push(`${b} in ${q.dir}`); }
+  expect(!wrong.length, "misplaced: " + wrong.join(", "));
+  const placed = r.flatMap(q => q.bodies).filter(b => b !== "lagna").length;
+  expect(placed === Object.keys(model.pos).length, `${placed} grahas in the quadrants for ${Object.keys(model.pos).length}`);
+  await shot("chakra-nadi-centre");
+  // the remaining centre journeys use the South Indian centre
+  await evaluate(`[...document.querySelectorAll('#chakra .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1200);
+  return r.map(q => `${q.dir} ${q.bodies.length}`).join(", ");
+});
+
 await journey("the South Indian centre sits inside the wheel with each graha in its sign", async () => {
   const r = await evaluate(`(() => { const svg = document.querySelector('#chakra svg.wheel'); const disc = svg.querySelector('.wheel-g > circle[fill^="url"]').getBoundingClientRect();
     const cx = disc.left + disc.width / 2, cy = disc.top + disc.height / 2, R = disc.width / 2;
@@ -274,12 +296,12 @@ await journey("chart cells never overlap: ārūḍha padas on top, aspect marks 
     return out; })()`;
   const runs = [];
   for (const extra of [false, true]) {
-    await evaluate(`S.layers.arudha = true; S.layers.aspect_marks = true; S.layers.rashi_marks = true; S.layers.extra_aspects = ${extra}; 1`);
+    await evaluate(`S.layers.arudha = true; S.layers.aspect_marks = true; S.layers.rashi_marks = true; S.layers.extra_aspects = ${extra}; S.layers.extra_rashi = ${extra}; 1`);
     await go("#/overview", 300); await go("#/charts", 1200);
     await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'Both').click()`); await sleep(1500);
     runs.push(await evaluate(probe));
   }
-  await evaluate(`S.layers.extra_aspects = false; 1`);
+  await evaluate(`S.layers.extra_aspects = false; S.layers.extra_rashi = false; 1`);
   const bad = runs.flatMap(r => r.bad);
   expect(runs[0].cells >= 24, `only ${runs[0].cells} chart cells checked`);
   expect(runs[0].padas > 0, "no ārūḍha padas drawn in the charts");
@@ -291,11 +313,11 @@ await journey("rāśi drishti has its own marks, in the charts and on the chakra
   await go("#/charts", 1500);
   const on = await evaluate(`document.querySelectorAll('#charts svg .rashimark').length`);
   expect(on >= 6, `${on} rāśi drishti marks`);
-  const lbl = await evaluate(`[...document.querySelectorAll('#charts .tog')].find(l => /rāśi drishti marks/.test(l.textContent)).querySelector('input').click()`);
+  const lbl = await evaluate(`[...document.querySelectorAll('#charts .tog')].find(l => l.textContent.includes('rāśi aspects (◇)')).querySelector('input').click()`);
   void lbl; await sleep(900);
   const off = await evaluate(`document.querySelectorAll('#charts svg .rashimark').length`);
   expect(off === 0, `${off} marks after switching them off`);
-  await evaluate(`[...document.querySelectorAll('#charts .tog')].find(l => /rāśi drishti marks/.test(l.textContent)).querySelector('input').click()`); await sleep(900);
+  await evaluate(`[...document.querySelectorAll('#charts .tog')].find(l => l.textContent.includes('rāśi aspects (◇)')).querySelector('input').click()`); await sleep(900);
   await go("#/chakra", 1500);
   const ch = await evaluate(`document.querySelectorAll('#chakra svg.wheel .rashimark').length`);
   expect(ch >= 6, `${ch} rāśi drishti marks on the chakra`);
@@ -428,6 +450,53 @@ await journey("numerology: the Kua number for both sexes, and compound numbers o
     await evaluate(`document.querySelector('#numerology .ntile.open')?.click()`); await sleep(300); // leave no tile open for later journeys
     expect(has, `compound ${opened} opened without its reading`); }
   return `Kua man ${m}, woman ${f}${opened ? `; compound ${opened} reads` : ""}`;
+});
+
+await journey("charts: higher degree written higher, graha text larger than the marks, △ mūlatrikoṇa, separate filters", async () => {
+  await evaluate(`S.layers.arudha = true; S.layers.aspect_marks = true; S.layers.rashi_marks = true; S.layers.extra_aspects = false; S.layers.extra_rashi = false; S.chart = 'south'; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  const r = await evaluate(`(() => { const svg = [...document.querySelectorAll('#charts svg.chart.south')].find(x => /^D1 /.test(x.getAttribute('aria-label')));
+    const order = [], sizes = { g: [], m: [] }, mt = [];
+    for (const c of svg.querySelectorAll('.cell')) {
+      const rows = [...c.querySelectorAll('.gl')].map(g => ({ id: g.dataset.body, y: g.getBoundingClientRect().top, t: g.querySelector('.gtxt') }));
+      order.push(rows.sort((a, b) => a.y - b.y).map(x => x.id));
+      rows.forEach(x => { sizes.g.push(+x.t.getAttribute('font-size')); if (/△/.test(x.t.textContent)) mt.push(x.id); });
+      c.querySelectorAll('.aspmark').forEach(m => sizes.m.push(+m.getAttribute('font-size')));
+    }
+    return { order, gmin: Math.min(...sizes.g), mmax: Math.max(...sizes.m), mt, pads: svg.querySelectorAll('.arudha').length }; })()`);
+  // degree order from the positions in the file (lagna by its own degree)
+  const deg = (id) => ((id === "lagna" ? model.asc : model.pos[id]) % 30 + 30) % 30;
+  for (const list of r.order) for (let i = 1; i < list.length; i++) expect(deg(list[i - 1]) >= deg(list[i]), `order in a rāśi: ${list.join(", ")}`);
+  expect(r.gmin > r.mmax, `graha text ${r.gmin} is not larger than aspect marks ${r.mmax}`);
+  const want = await evaluate(`Object.entries(STRENGTH).filter(([g, v]) => v && v.dignity === 'moolatrikona' && GR[g]).map(([g]) => g)`);
+  expect(JSON.stringify([...r.mt].sort()) === JSON.stringify([...want].sort()), `△ on ${r.mt} but mūlatrikoṇa is ${want}`);
+  expect(r.pads > 0, "no padas shown with the switch on");
+  const flip = (t) => evaluate(`[...document.querySelectorAll('#charts .tog')].find(l => l.textContent.trim() === ${JSON.stringify(t)}).querySelector('input').click()`);
+  await flip("ārūḍha padas"); await sleep(900);
+  const off = await evaluate(`document.querySelectorAll('#charts svg.chart .arudha').length`);
+  expect(off === 0, `${off} padas still shown with the switch off`);
+  await flip("ārūḍha padas"); await sleep(900);
+  // additional rāśi aspects have their own switch
+  await flip("additional rāśi aspects"); await sleep(900);
+  const xr = await evaluate(`({ rashi: document.querySelectorAll('#charts .rashimark .extramark').length, graha: [...document.querySelectorAll('#charts .aspmark:not(.rashimark) .extramark')].length, data: ADDITIONAL.filter(d => d.drishti === 'rashi').length })`);
+  await flip("additional rāśi aspects"); await sleep(600);
+  if (xr.data) { expect(xr.rashi > 0, "additional rāśi aspects did not appear"); expect(xr.graha === 0, "additional graha aspects appeared with only the rāśi switch on"); }
+  const lg = await evaluate(`document.querySelector('#charts')?.innerText.includes('△ mūlatrikoṇa')`);
+  expect(lg, "the legend does not explain △ mūlatrikoṇa");
+  return `${r.order.filter(l => l.length > 1).length} rāśis in degree order; graha ${r.gmin} > marks ${r.mmax}; △ on ${r.mt.join(", ") || "none"}; padas and additional rāśi switches work`;
+});
+
+await journey("numerology: growth, intensity, letter transits and essence; the Kua for the given gender", async () => {
+  await go("#/numerology", 1400);
+  const r = await evaluate(`(() => { const t = document.querySelector('#numerology').innerText;
+    const L = Object.values(JSON.parse(document.getElementById('eshana-data').textContent).envelopes).flatMap(e => e && e.derived_attributes || []);
+    const P = (L.find(a => a.id === 'numerology.pythagorean.extended') || {}).value || {}, K = ((L.find(a => a.id === 'numerology.lo_shu') || {}).value || {}).kua;
+    return { has: !!P.growth, t, years: (P.transits_by_age || []).length, kua: K, sel: document.querySelectorAll('#numerology .kua-sel').length, mine: (document.querySelector('#numerology .kua-mine b') || {}).textContent }; })()`);
+  if (!r.has) return "no name in this chart";
+  for (const k of ["Growth (first name)", "Letter transits", "Essence"]) expect(r.t.includes(k), `numerology page lacks ${k}`);
+  expect(r.years === 100, `${r.years} transit years`);
+  if (r.kua && r.kua.gender) { expect(r.sel === 1 && r.mine === String(r.kua.number), `Kua for ${r.kua.gender} not highlighted (${r.mine})`); }
+  return `growth, intensity, 100 transit years${r.kua && r.kua.gender ? `; Kua ${r.kua.number} for ${r.kua.gender}` : ""}`;
 });
 
 await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
@@ -743,7 +812,8 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   expect(off === 0, `${off} additional marks shown by default`);
   const outerRashi = await evaluate(`((val('vedic.drishti.rashi') || {}).aspects || []).some(r => r.from === 'uranus')`);
   expect(outerRashi, "Uranus has no rāśi drishti");
-  const flip = () => evaluate(`[...document.querySelectorAll('#chakra .tog')].find(l => l.textContent.trim() === 'additional aspects').querySelector('input').click()`);
+  // two switches: additional graha aspects and additional rāśi aspects
+  const flip = () => evaluate(`['additional graha aspects', 'additional rāśi aspects'].forEach(t => [...document.querySelectorAll('#chakra .tog')].find(l => l.textContent.trim() === t).querySelector('input').click())`);
   await flip(); await sleep(1000);
   const on = await evaluate(`({ marks: document.querySelectorAll('#chakra .extramark').length, data: ADDITIONAL.length, kinds: [...new Set(ADDITIONAL.map(d => d.basis))].join(',') })`);
   expect(on.data > 0 && on.marks > 0, "switched on but nothing shown: " + JSON.stringify(on));
@@ -938,9 +1008,10 @@ await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅg
     return { on: svg.querySelectorAll(".ck-line.on").length, picked: svg.classList.contains("picked"), hit: svg.querySelectorAll(".ck-cell.hit").length,
       want: new Set(["front", "left", "right"].flatMap(n => g.lines[n].map(rc => rc.join(",")))).size }; })()`);
   expect(pick.on === 3 && pick.picked && pick.hit === pick.want, "pick saturn " + JSON.stringify(pick));
+  await evaluate(`document.querySelector("#chakras .ck-cell[data-kind=nakshatra] rect").scrollIntoView({ block: "center" })`); await sleep(300);
   const box = await evaluate(`(() => { const r = document.querySelector("#chakras .ck-cell[data-kind=nakshatra] rect").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
-  await mouse(box[0], box[1]); await sleep(250);
-  const tipText = await evaluate(`(document.querySelector(".tip.on, .tipdock.on") || { textContent: "" }).textContent`);
+  let tipText = "";
+  for (let i = 0; i < 8 && !/Pierced by/.test(tipText); i++) { await mouse(box[0] + (i % 2), box[1]); await sleep(250); tipText = await evaluate(`(document.querySelector(".tip.on, .tipdock.on") || { textContent: "" }).textContent`); }
   expect(/Pierced by/.test(tipText), "no cell tooltip: " + tipText.slice(0, 80));
   await shot("chakras-sarvatobhadra");
   await tab("Kota"); await sleep(1500);
@@ -1017,9 +1088,10 @@ await journey("chakras: Kota fort with four zones, 28 numbered places, arrows in
   }
   await tab("Natal"); await sleep(600);
   // hover a place: the tooltip names the zone and the path
+  await evaluate(`document.querySelector('#chakras .ck-place[data-position="2"] .ck-hit').scrollIntoView({ block: "center" })`); await sleep(300);
   const pt = await evaluate(`(() => { const r = document.querySelector('#chakras .ck-place[data-position="2"] .ck-hit').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
-  await mouse(pt[0], pt[1]); await sleep(250);
-  const tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`);
+  let tipText = "";
+  for (let i = 0; i < 8 && !(/Prākāra/.test(tipText) && /entering/.test(tipText)); i++) { await mouse(pt[0] + (i % 2), pt[1]); await sleep(250); tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`); }
   expect(/Prākāra/.test(tipText) && /entering/.test(tipText), "place tooltip: " + tipText.slice(0, 100));
   // a natal graha printed in the fort opens its page
   const gp = await evaluate(`(() => { const e = document.querySelector('#chakras svg.ck-kota .ck-g[data-graha=jupiter]'); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
@@ -1214,7 +1286,9 @@ await journey("pañca pakṣī: five yāmas × five birds by day and by night, s
   await shot("pakshi-phone"); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "start" })`); await sleep(400); await shot("pakshi-phone-table");
   await viewport(1440, 1000);
   const desk = await check(1440);
-  // the timeline: activity labels inside their bands, start times apart, no two labels overlap
+  // the timeline: activity labels inside their bands, start times apart, no two labels overlap (measured once the
+  // bands have finished growing in, which takes longer on a busy machine)
+  await evaluate(`Promise.race([Promise.all(document.getAnimations().map(a => a.finished.catch(() => 0))), new Promise(r => setTimeout(r, 3000))]).then(() => 1)`);
   const tl = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl g.pk-yama", "rect.pk-band", "text.pk-lbl"));
   const ticks = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl", "rect.pk-night", "g.pk-yama > text:not(.pk-lbl)"));
   expect(tl.cells === 10 && tl.labels === 10 && !tl.bad.length, "timeline labels: " + JSON.stringify(tl).slice(0, 300));

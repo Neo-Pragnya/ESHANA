@@ -120,6 +120,74 @@ pub fn pythagorean(
             }
             let initials: u32 = words.iter().map(|w| val(w[0])).sum();
             out.insert("balance".into(), block(initials, false));
+            // growth (key) number: the first name alone
+            if let Some(ft) = first_name_total {
+                out.insert("growth".into(), block(ft, keep));
+            }
+            // intensity: the digits that occur more often than the average count per digit (letters / 9)
+            let avg = letters.len() as f64 / 9.0;
+            out.insert(
+                "intensity".into(),
+                json!({"numbers": (1..=9).filter(|&k| f64::from(counts[k]) > avg).collect::<Vec<_>>(),
+                       "average_per_digit": (avg * 100.0).round() / 100.0}),
+            );
+            // letter transits and essence (Decoz): physical from the first name, mental from the middle name(s),
+            // spiritual from the last name; each letter rules for as many years as its value, and the name repeats
+            let parts: Vec<(&str, Vec<char>)> = {
+                let first = words.first().cloned().unwrap_or_default();
+                let last = if words.len() > 1 {
+                    words.last().cloned().unwrap_or_default()
+                } else {
+                    vec![]
+                };
+                let middle: Vec<char> = if words.len() > 2 {
+                    words[1..words.len() - 1].concat()
+                } else {
+                    vec![]
+                };
+                vec![("physical", first), ("mental", middle), ("spiritual", last)]
+            };
+            let transit = |part: &[char], age: u32| -> Option<(char, u32)> {
+                let cycle: u32 = part.iter().map(|&c| val(c)).sum();
+                if cycle == 0 {
+                    return None;
+                }
+                let mut t = age % cycle;
+                for &c in part {
+                    let v = val(c);
+                    if t < v {
+                        return Some((c, v));
+                    }
+                    t -= v;
+                }
+                None
+            };
+            let year = |age: u32| -> Value {
+                let mut m = Map::new();
+                let mut sum = 0;
+                for (k, part) in &parts {
+                    if let Some((c, v)) = transit(part, age) {
+                        m.insert((*k).into(), json!({"letter": c.to_string(), "value": v}));
+                        sum += v;
+                    }
+                }
+                m.insert("age".into(), json!(age));
+                m.insert("essence".into(), json!(reduce(sum, keep)));
+                Value::Object(m)
+            };
+            out.insert(
+                "transits_by_age".into(),
+                json!((0..100).map(year).collect::<Vec<_>>()),
+            );
+            if let (Some((by, bm, bd)), Some((ry, rm, rd))) = (dob, reference) {
+                let mut age = ry - by;
+                if (rm, rd) < (bm, bd) {
+                    age -= 1;
+                }
+                if age >= 0 {
+                    out.insert("transits_at_reference".into(), year(age.unsigned_abs()));
+                }
+            }
         }
     }
     if let Some((yy, mm, dd)) = dob {
@@ -209,6 +277,9 @@ pub fn pythagorean(
         "keep_master_numbers": keep, "y": if y == YPolicy::Vowel { "vowel" } else { "consonant" },
         "life_path": "reduce month, day and year separately, then the sum",
         "karmic_debt": "13, 14, 16 or 19 met while reducing a total",
+        "growth": "the first name alone, reduced (also called the key number)",
+        "intensity": "digits that occur in the name more often than the average count per digit",
+        "transits": "physical from the first name, mental from the middle name(s), spiritual from the last name; each letter rules for its value in years, the name repeating; essence is their sum, reduced",
         "pinnacles": "first ends at age 36 minus the single-digit life path; then 9, 9 years and the rest of life",
         "life_cycles": "month, day and year numbers over the first, middle two and last pinnacle periods",
         "planes": "physical E W D M; mental A H J N P G L; emotional I O R Z B S T X; intuitive K F Q U Y C V",
@@ -410,6 +481,35 @@ pub fn kua(dob: (i32, u32, u32)) -> Value {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn growth_intensity_and_transits() {
+        // "Ada King Lovelace": first name ADA = 1 + 4 + 1 = 6
+        let v = pythagorean(
+            Some("Ada King Lovelace"),
+            Some((1815, 12, 10)),
+            Some((1830, 6, 1)),
+            YPolicy::Consonant,
+            true,
+        );
+        assert_eq!(v["growth"]["reduced"], 6);
+        // physical transit from ADA: A for age 0, D for ages 1–4, A for age 5, then repeats (cycle 6)
+        let t = &v["transits_by_age"];
+        assert_eq!(t[0]["physical"]["letter"], "A");
+        assert_eq!(t[1]["physical"]["letter"], "D");
+        assert_eq!(t[4]["physical"]["letter"], "D");
+        assert_eq!(t[5]["physical"]["letter"], "A");
+        assert_eq!(t[6]["physical"]["letter"], "A");
+        // middle name KING: K (2 years) first
+        assert_eq!(t[0]["mental"]["letter"], "K");
+        // age at 1 June 1830 is 14
+        assert_eq!(v["transits_at_reference"]["age"], 14);
+        assert!(v["intensity"]["numbers"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|x| x.as_u64().unwrap() >= 1));
+    }
+
     #[test]
     fn kua_numbers() {
         // 1990 (after 4 February): r = 9; man 10 − 9 = 1, woman 9 + 5 = 14 → 5 → 8

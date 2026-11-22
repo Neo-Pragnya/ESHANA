@@ -203,6 +203,8 @@ pub struct NumerologyRequest {
     pub extended: Option<bool>,
     /// `YYYY-MM-DD` for the personal year, month and day cycles in the extended numbers.
     pub reference_date: Option<String>,
+    /// `male` or `female`, when known: picks the Kua number (and any other sex-dependent value).
+    pub gender: Option<String>,
 }
 
 /// A request, tagged by `op`.
@@ -1780,6 +1782,11 @@ fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
             )))
         }
     };
+    let gender = match r.gender.as_deref() {
+        None => None,
+        Some(g @ ("male" | "female")) => Some(g),
+        Some(o) => return Err(EshanaError::Rules(format!("unknown gender '{o}' (male, female)"))),
+    };
     if r.name.is_none() && r.date_of_birth.is_none() {
         return Err(EshanaError::Input(
             "numerology needs a name, a date_of_birth, or both".into(),
@@ -1892,7 +1899,18 @@ fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
                 "numerology.lo_shu",
                 "numerology.lo_shu@0.1",
                 Epistemic::TraditionRule,
-                numerology_ext::lo_shu(d),
+                {
+                    let mut v = numerology_ext::lo_shu(d);
+                    if let Some(g) = gender {
+                        // the Kua for this person's sex; both stay in the value
+                        let k = v["kua"][g].clone();
+                        let grp = v["kua"][format!("{g}_group")].clone();
+                        v["kua"]["gender"] = json!(g);
+                        v["kua"]["number"] = k;
+                        v["kua"]["group"] = grp;
+                    }
+                    v
+                },
                 &["date_of_birth".into()],
             ));
         }
@@ -1900,7 +1918,7 @@ fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
     Ok(json!({
         "schema_version": SCHEMA_VERSION,
         "kind": "numerology_analysis",
-        "input": {"name": r.name, "date_of_birth": r.date_of_birth},
+        "input": {"name": r.name, "date_of_birth": r.date_of_birth, "gender": gender},
         "calculation": {"school": format!("{school:?}").to_lowercase(), "keep_master_numbers": keep, "y_policy": r.y_policy.clone().unwrap_or_else(|| "consonant".into())},
         "positions": [],
         "derived_attributes": derived,

@@ -292,8 +292,9 @@ class ChartEngine:
         reference_year: Optional[int] = None,
         extended: bool = False,
         reference_date: Optional[str] = None,
+        gender: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Name and date numerology under one named school. ``extended=True`` adds every school's full set of numbers
+        """Name and date numerology under one named school. ``gender`` (``male`` or ``female``) picks the Kua number. ``extended=True`` adds every school's full set of numbers
         (Pythagorean, Chaldean, Indian/Vedic and the Lo Shu grid); ``reference_date`` (YYYY-MM-DD) sets the personal
         year, month and day cycles."""
         req = {
@@ -307,6 +308,7 @@ class ChartEngine:
             "reference_year": reference_year,
             "extended": extended or None,
             "reference_date": reference_date,
+            "gender": gender,
         }
         return execute({k: v for k, v in req.items() if v is not None})
 

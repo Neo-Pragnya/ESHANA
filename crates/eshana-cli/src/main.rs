@@ -173,6 +173,9 @@ enum Cmd {
         /// Calendar year for the personal-year cycle
         #[arg(long)]
         year: Option<i32>,
+        /// male or female (picks the Kua number)
+        #[arg(long)]
+        gender: Option<String>,
     },
     /// Same input under two configurations, with a diff of what changed
     Compare {
@@ -352,10 +355,11 @@ fn main() -> ExitCode {
             y_vowel,
             life_path_method,
             year,
+            gender,
         } => json!({
             "op": "numerology", "name": name, "date_of_birth": dob, "school": school,
             "keep_master_numbers": !no_master, "y_policy": if *y_vowel { "vowel" } else { "consonant" },
-            "life_path_method": life_path_method, "reference_year": year,
+            "life_path_method": life_path_method, "reference_year": year, "gender": gender,
         }),
         Cmd::Compare { system, o, a, b } => json!({
             "op": "compare", "base": chart_json(o, Some(system), system == "vedic"), "a": kv(a), "b": kv(b),

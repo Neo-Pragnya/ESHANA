@@ -97,6 +97,7 @@
   ],
   "input": {
    "date_of_birth": null,
+   "gender": null,
    "name": "Ada Lovelace"
   },
   "interpretations": [],
@@ -258,6 +259,7 @@
   ],
   "input": {
    "date_of_birth": "1815-12-10",
+   "gender": null,
    "name": "Ada Lovelace"
   },
   "interpretations": [],

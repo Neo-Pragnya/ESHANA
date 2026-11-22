@@ -549,8 +549,9 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
         items = "".join(f"<li><b>{_esc(k)}</b>: {_esc(v)}</li>" for k, v in errors.items())
         err_html = (f'<div class="card" id="not-computed"><h3>Not computed</h3><p class="note">These were refused by the '
                     f'engine, so they are left out rather than guessed.</p><ul class="warn">{items}</ul></div>')
-    sub = " · ".join(str(x) for x in ((subject or {}).get("name"), (subject or {}).get("local"),
-                                      (subject or {}).get("place_label")) if x)
+    subj = subject or {}
+    who = subj.get("name") and (f'{subj["name"]} ({subj["gender"]})' if subj.get("gender") else subj["name"])
+    sub = " · ".join(str(x) for x in (who, subj.get("local"), subj.get("place_label")) if x)
     generated = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     js = "\n".join(_asset(n) for n in ASSETS)
     js = js.replace("const sigil = (name, cls = '') => `<svg class=\"sigil ${cls}\" viewBox=\"0 0 24 24\" aria-hidden=\"true\">${SIGIL[name] || SIGIL.overview}</svg>`;",
@@ -609,7 +610,7 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
                   features: Sequence[str] = ("all",), reference_utc: Optional[str] = None,
                   systems: Sequence[str] = ("vedic", "western", "human_design", "numerology"),
                   provider: str = "analytic", spk_path: Optional[str] = None, numerology_school: str = "pythagorean",
-                  sunrise: Optional[str] = None, partner: Any = None) -> Dict[str, Dict[str, Any]]:
+                  sunrise: Optional[str] = None, partner: Any = None, gender: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
     """Run the engine for each requested system. A system that cannot be computed becomes an ``_errors`` entry."""
     from . import ChartEngine, EshanaError
 
@@ -641,7 +642,8 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
         run("human_design", lambda: eng.human_design(ctx))
     if "numerology" in systems and (name or ctx.when.get("date")):
         run("numerology", lambda: eng.numerology(name=name, date_of_birth=ctx.when.get("date"), school=numerology_school,
-                                                 extended=True, reference_date=(reference_utc or "")[:10] or None))
+                                                 extended=True, reference_date=(reference_utc or "")[:10] or None,
+                                                 gender=gender))
     if partner is not None:
         run("matching", lambda: eng.matching(ctx, partner, ayanamsha=ayanamsha))
     if errors:
@@ -722,7 +724,7 @@ def _revolutions(eng: Any, birth_utc: str, ayanamsha: Optional[str], years: int,
             "bodies": bodies}
 
 
-def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[str] = None,
+def birth_report(ctx: Any, *, name: Optional[str] = None, gender: Optional[str] = None, place_label: Optional[str] = None,
                  title: Optional[str] = None, sections: Optional[Iterable[str]] = None, theme: str = "auto",
                  reference_utc: Optional[str] = None, transit_days: Optional[int] = None,
                  transit_start: Optional[str] = None, transit_end: Optional[str] = None,
@@ -740,7 +742,7 @@ def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[
     from . import ChartEngine
 
     ref = reference_utc or _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    envs = envelopes_for(ctx, name=name, reference_utc=ref, **kw)
+    envs = envelopes_for(ctx, name=name, gender=gender, reference_utc=ref, **kw)
     errs = envs.pop("_errors", None)
     eng = ChartEngine(provider=kw.get("provider", "analytic"), spk_path=kw.get("spk_path"))
     transits = progressions = revolutions = None
@@ -756,7 +758,7 @@ def birth_report(ctx: Any, *, name: Optional[str] = None, place_label: Optional[
     if ctx.when.get("timezone"):
         local += f' ({ctx.when["timezone"]})'
     return render_html(envs, title=title or (f"{name} · birth chart" if name else "Birth chart"),
-                       subject={"name": name, "place_label": place_label, "local": local}, sections=sections,
+                       subject={"name": name, "gender": gender, "place_label": place_label, "local": local}, sections=sections,
                        theme=theme, transits=transits, progressions=progressions, reference_utc=ref,
                        errors=(errs or {}).get("errors"), defaults=defaults, revolutions=revolutions)
 
@@ -775,6 +777,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--lat", type=float)
     p.add_argument("--lon", type=float)
     p.add_argument("--name", help="name (display and numerology)")
+    p.add_argument("--gender", choices=["male", "female"], help="gender (shown with the name; picks the Kua number)")
     p.add_argument("--place", dest="place_label", help="place label shown in the report")
     p.add_argument("--title")
     p.add_argument("--ayanamsha", default="lahiri", choices=["lahiri", "raman", "krishnamurti", "fagan_bradley"])
@@ -801,7 +804,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
     p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
-    p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
+    p.add_argument("--centre", choices=["nadi", "south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
     p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p
@@ -843,7 +846,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                                                    float(f[3]) if len(f) > 3 and f[3] else None,
                                                    float(f[4]) if len(f) > 4 and f[4] else None)
             feats = [] if a.features == "none" else [x for x in a.features.split(",") if x]
-            page = birth_report(ctx, name=a.name, place_label=a.place_label, title=a.title, sections=sections,
+            page = birth_report(ctx, name=a.name, gender=a.gender, place_label=a.place_label, title=a.title, sections=sections,
                                 theme=a.theme, reference_utc=a.reference, transit_days=a.transit_days,
                                 transit_start=a.transit_start, transit_end=a.transit_end,
                                 transit_step_days=a.transit_step_days,

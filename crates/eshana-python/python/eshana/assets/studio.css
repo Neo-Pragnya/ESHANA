@@ -717,3 +717,44 @@ g.pk-yama{background:none}
 
 /* ── lordships by division ── */
 .lv-ex{font-weight:800;color:var(--accent);border-bottom:2px solid var(--accent)}
+
+/* ── round 8: chart readability ── */
+.wide-charts{display:grid;gap:16px;margin-bottom:16px}
+.figure.wide .chart{max-width:900px}
+/* light theme: pale graha colours drawn in a deeper shade of the same hue, so graha names read clearly on cream */
+[data-mode="light"] svg.chart [fill="#F7D21C"]{fill:#8C6D00}
+[data-mode="light"] svg.chart [fill="#F39A1E"]{fill:#B05A00}
+[data-mode="light"] svg.chart [fill="#9BCB3B"]{fill:#4C7A10}
+[data-mode="light"] svg.chart [fill="#38D6D6"]{fill:#0B7F80}
+[data-mode="light"] svg.chart [fill="#7FD3DC"]{fill:#1F7F8A}
+[data-mode="light"] svg.chart [fill="#CDB39A"]{fill:#80603F}
+[data-mode="light"] svg.chart [fill="#A9A9A9"]{fill:#5F5F5F}
+[data-mode="light"] svg.chart [fill="#7E99C9"]{fill:#3F5F96}
+[data-mode="light"] svg.chart [fill="#E6E9F0"]{fill:#3d3d55}
+[data-mode="light"] svg.chart .gtxt{paint-order:stroke;stroke:rgba(255,253,248,.9);stroke-width:2px;stroke-linejoin:round}
+
+/* ── round 8: the chakra's Nadi centre uses the same readable graha colours as the charts ── */
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#6D4C41"]{fill:#D2AE9C}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#5D4037"]{fill:#C8A493}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#8D6E63"]{fill:#D0B2A6}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#4C7CF0"]{fill:#8FB0FF}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#8B6FD8"]{fill:#BBA6FF}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#9575CD"]{fill:#C8B0F5}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#78909C"]{fill:#B3C4CD}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#90A4AE"]{fill:#C0CED5}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#E0314F"]{fill:#FF7088}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#7E99C9"]{fill:#A9C0EA}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#A1887F"]{fill:#D3BDB5}
+:root:not([data-mode="light"]) svg.wheel .nadi-g [fill="#A9A9A9"]{fill:#D0D0D0}
+[data-mode="light"] svg.wheel .nadi-g [fill="#F7D21C"]{fill:#8C6D00}
+[data-mode="light"] svg.wheel .nadi-g [fill="#F39A1E"]{fill:#B05A00}
+[data-mode="light"] svg.wheel .nadi-g [fill="#9BCB3B"]{fill:#4C7A10}
+[data-mode="light"] svg.wheel .nadi-g [fill="#38D6D6"]{fill:#0B7F80}
+[data-mode="light"] svg.wheel .nadi-g [fill="#7FD3DC"]{fill:#1F7F8A}
+[data-mode="light"] svg.wheel .nadi-g [fill="#CDB39A"]{fill:#80603F}
+[data-mode="light"] svg.wheel .nadi-g [fill="#A9A9A9"]{fill:#5F5F5F}
+[data-mode="light"] svg.wheel .nadi-g [fill="#7E99C9"]{fill:#3F5F96}
+.nadi-g:hover .gtxt{text-decoration:underline}
+
+/* ── Kua for the given gender ── */
+.kua-mine b{font-size:34px;color:var(--accent)}.kua-mine{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}.kua-sel{font-weight:700;border-bottom:2px solid var(--accent)}

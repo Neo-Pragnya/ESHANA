@@ -5,6 +5,15 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+### Added (review round 8)
+- Charts: graha text larger and bolder than the aspect marks; bigger South Indian cells; full-width D1 charts; light-
+  theme graha colours deepened. Inside a rāśi the higher degree is written higher.
+- Jyotish Chakra: the centre shows the four Nadi directions (default; South, North and orbit lanes remain).
+- Gender (`--gender`, `gender=`): shown with the name, picks the Kua number.
+- Numerology: growth, intensity, letter transits (physical, mental, spiritual) and essence by year.
+- Filters: separate switches for rāśi aspects, ārūḍha padas, additional graha aspects and additional rāśi aspects.
+- Mūlatrikoṇa marked △ in the charts and legends.
+
 ## [0.3.2] - 2026-11-22
 
 Review rounds 5 and 6 and the remaining reference-chart items. Schema 0.3.2 adds fields only.

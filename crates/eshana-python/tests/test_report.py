@@ -188,3 +188,16 @@ def test_every_saham_and_pakshi_activity_has_a_meaning(page):
     assert set(pk["activities"]) == {"ruling", "eating", "walking", "sleeping", "dying"}
     assert pk["sources"] and all(pk[k] for k in ("what", "birth_bird", "relations", "ruling", "dying", "strength"))
     assert [n["offset"] for n in attrs["vedic.panch_pakshi"]["nearby_days"]] == [-3, -2, -1, 1, 2, 3]
+
+
+def test_gender_picks_the_kua_and_is_validated():
+    import eshana
+    import pytest
+
+    e = eshana.ChartEngine()
+    r = e.numerology(name="Ada Lovelace", date_of_birth="1990-05-15", extended=True, gender="female")
+    kua = [a for a in r["derived_attributes"] if a["id"] == "numerology.lo_shu"][0]["value"]["kua"]
+    assert r["input"]["gender"] == "female"
+    assert (kua["number"], kua["group"]) == (8, "west")
+    with pytest.raises(eshana.EshanaError):
+        e.numerology(name="X", date_of_birth="1990-05-15", extended=True, gender="other")
