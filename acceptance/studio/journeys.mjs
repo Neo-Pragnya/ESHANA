@@ -72,7 +72,10 @@ const mouse = (x, y, type = "mouseMoved") => send("Input.dispatchMouseEvent", { 
 const click = async (x, y) => { await mouse(x, y); await mouse(x, y, "mousePressed"); await mouse(x, y, "mouseReleased"); };
 
 const results = [];
+// JOURNEY_ONLY=<text> runs only the journeys whose name contains that text (handy while fixing one)
+const ONLY = process.env.JOURNEY_ONLY || "";
 async function journey(name, fn) {
+  if (ONLY && !name.includes(ONLY)) return;
   const started = Date.now(); problems = [];
   try {
     const detail = (await fn()) || "";
@@ -235,6 +238,53 @@ await journey("hovering a graha on the chakra animates where it aspects", async 
   const gone = await evaluate(`!document.querySelector('#chakra svg.wheel > .aflow') && !document.querySelector('#chakra .cell.aspected')`);
   expect(gone, "the aspect animation did not clear on leaving");
   return `Jupiter: ${r.flow} flowing aspects, ${r.cells} boxes lit`;
+});
+
+await journey("chart cells never overlap: ārūḍha padas on top, aspect marks at the bottom, everything inside its rāśi", async () => {
+  // every label in every rāśi of the South and North Indian D1 charts, with additional aspects off and on
+  const probe = `(() => { const out = { cells: 0, labels: 0, padasTop: 0, padas: 0, bad: [] };
+    const name = (e) => e.matches('g.gl') ? 'graha ' + e.dataset.body : e.classList.contains('arudha') ? 'padas' : e.classList.contains('rashimark') ? 'rāśi marks' : e.classList.contains('aspmark') ? 'aspect marks' : 'label ' + e.textContent;
+    for (const svg of document.querySelectorAll('#charts svg.chart.south, #charts svg.chart.north')) {
+      const kind = svg.classList.contains('north') ? 'North' : 'South';
+      for (const cell of svg.querySelectorAll('.cell')) {
+        out.cells++;
+        const shape = cell.querySelector('rect, polygon'), sr = shape.getBoundingClientRect(), sb = { x: sr.left, y: sr.top, width: sr.width, height: sr.height }, inv = svg.getScreenCTM().inverse(), where = kind + ' ' + (svg.getAttribute('aria-label') || '').split(' ')[0] + ' sign ' + cell.dataset.sign;
+        // what is drawn, on screen: a graha row is its text and icon (not the hover halo, which is invisible until hovered)
+        const ink = (e) => { const parts = e.matches('g.gl') ? [...e.querySelectorAll('text, image, circle:not(.halo)')] : [e];
+          const rs = parts.map(q => q.getBoundingClientRect()).filter(r => r.width > 0 && r.height > 0); if (!rs.length) return { x: 0, y: 0, width: 0, height: 0 };
+          const x = Math.min(...rs.map(r => r.left)), y = Math.min(...rs.map(r => r.top)); return { x, y, width: Math.max(...rs.map(r => r.right)) - x, height: Math.max(...rs.map(r => r.bottom)) - y }; };
+        const items = [...cell.children].filter(e => e.matches('text, g.gl')).map(e => ({ e, n: name(e), b: ink(e) })).filter(it => it.b.width > 0 && it.b.height > 0);
+        out.labels += items.length;
+        for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+          const a = items[i].b, b = items[j].b, t = 0.75;
+          const ox = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x), oy = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+          if (ox > t && oy > t) out.bad.push(where + ': ' + items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)');
+        }
+        for (const it of items) {
+          const b = it.b, cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+          const inside = kind === 'South' ? b.x >= sb.x - 1 && b.y >= sb.y - 1 && b.x + b.width <= sb.x + sb.width + 1 && b.y + b.height <= sb.y + sb.height + 1
+            : [b.x + 1.5, cx, b.x + b.width - 1.5].every(px => shape.isPointInFill(new DOMPoint(px, cy).matrixTransform(inv)));
+          if (!inside) out.bad.push(where + ': ' + it.n + ' outside its rāśi');
+        }
+        const pada = items.find(it => it.n === 'padas');
+        if (pada) { out.padas++; const marks = items.filter(it => /marks$/.test(it.n) || it.n.startsWith('graha'));
+          if (marks.every(m => pada.b.y + pada.b.height <= m.b.y + 0.75)) out.padasTop++; else out.bad.push(where + ': padas are not above the grahas and aspect marks'); }
+      }
+    }
+    return out; })()`;
+  const runs = [];
+  for (const extra of [false, true]) {
+    await evaluate(`S.layers.arudha = true; S.layers.aspect_marks = true; S.layers.rashi_marks = true; S.layers.extra_aspects = ${extra}; 1`);
+    await go("#/overview", 300); await go("#/charts", 1200);
+    await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'Both').click()`); await sleep(1500);
+    runs.push(await evaluate(probe));
+  }
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  const bad = runs.flatMap(r => r.bad);
+  expect(runs[0].cells >= 24, `only ${runs[0].cells} chart cells checked`);
+  expect(runs[0].padas > 0, "no ārūḍha padas drawn in the charts");
+  expect(!bad.length, `${bad.length} overlap(s): ` + [...new Set(bad)].slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+  return `${runs[0].cells} cells, ${runs[0].labels} + ${runs[1].labels} labels, padas on top in ${runs[0].padasTop}/${runs[0].padas} cells, no overlaps (additional aspects off and on)`;
 });
 
 await journey("rāśi drishti has its own marks, in the charts and on the chakra", async () => {
