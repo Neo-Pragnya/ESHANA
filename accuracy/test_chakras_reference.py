@@ -6,7 +6,7 @@ labels and their positions give the layout of each chakra and the cell or ring s
 reference prints transit markers at its own "now", Sat 21 Nov 2026 07:57:29 (taken here as US Eastern time,
 12:57:29 UTC); the chakra layout does not depend on that instant, the transit placements do.
 
-Matched: the Sarvatobhadra layout (nakshatras round the border from Krittika, Abhijit between Uttara Ashadha and
+Matched: the Sarvatobhadra layout (with the pada sounds of the top band, nakshatras round the border from Krittika, Abhijit between Uttara Ashadha and
 Shravana, the twelve rashis, the five tithi groups with their weekdays), natal and transit placements in it, the Kota
 layout (Janma nakshatra Punarvasu in the top-left corner, every one of the 28 places), transit placements in the Kota,
 and natal placements in the Sanghatta ring. Known differences are marked xfail with their reasons.
@@ -32,6 +32,9 @@ SBC_RASHI_CELLS = {(2, 3): "Vrishabha", (2, 4): "Mithuna", (3, 2): "Mesha", (4, 
                    (4, 6): "Kanya", (5, 6): "Tula", (6, 5): "Vrischika", (6, 4): "Dhanu"}
 SBC_TITHI_CELLS = {(3, 4): ("Nanda", ["Sunday", "Tuesday"]), (4, 3): ("Rikta", ["Friday"]), (4, 4): ("Purna", None),
                    (4, 5): ("Bhadra", ["Monday", "Wednesday"]), (5, 4): ("Jaya", ["Thursday"])}
+# pada sounds printed in the top band of the reference Sarvatobhadra, Krittika to Ashlesha (padas 1 to 4)
+SBC_TOP_PADAS = [["अ", "इ", "उ", "ए"], ["ओ", "व", "वी", "वू"], ["वे", "वो", "क", "की"], ["कु", "घ", "ङ", "छ"],
+                 ["के", "को", "ह", "ही"], ["हु", "हे", "हो", "ड"], ["डी", "डू", "डे", "डो"]]
 # markers read in the reference Sarvatobhadra (natal and transit are drawn together there)
 SBC_NATAL = {"ketu": "Punarvasu", "moon": "Punarvasu", "sun": "Purva Ashadha", "rahu": "Purva Ashadha",
              "mercury": "Jyeshtha", "lagna": "Chitra"}
@@ -88,6 +91,16 @@ def test_sarvatobhadra_layout(provider, spk):
         if days:
             assert x["weekdays"] == days
     assert cell(sbc, 4, 4)["weekdays"] == ["Saturday"]
+
+
+@pytest.mark.parametrize("provider,spk", PROVIDERS)
+def test_sarvatobhadra_pada_sounds(provider, spk):
+    sbc = chart(provider, spk)["vedic.chakra.sarvatobhadra"]
+    assert [[s[0] for s in cell(sbc, 0, c)["padas"]] for c in range(1, 8)] == SBC_TOP_PADAS
+    naks = [x for x in sbc["cells"] if x["kind"] == "nakshatra"]
+    assert len(naks) == 28 and all(len(x["padas"]) == 4 and all(s[0] and s[1] for s in x["padas"]) for x in naks)
+    # the four syllables of a nakshatra are its padas in order; no syllable is shared by two padas
+    assert len({s[0] for x in naks for s in x["padas"]}) == 112
 
 
 @pytest.mark.parametrize("provider,spk", PROVIDERS)

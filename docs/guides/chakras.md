@@ -58,9 +58,20 @@ The grid is 9 × 9 with **east at the top**, south on the right, west at the bot
   north and Pūrṇā (5, 10, 15 and the new Moon; Saturday) in the centre.
 
 Each cell in `cells` has `row`, `col`, `kind` (`nakshatra`, `vowel`, `letter`, `rashi` or `tithi`), `name`, `dev`
-(Devanagari) and `tr` (transliteration); the grahas there (`natal`, `transit`: grahas by nakshatra in nakshatra cells
+(Devanagari) and `tr` (transliteration); in the nakshatra cells `padas`, the sound of each of its four padas as
+`[Devanagari, transliteration]` (see below); the grahas there (`natal`, `transit`: grahas by nakshatra in nakshatra cells
 and by sign in rāśi cells); `pierced_by` (every vedha line crossing it: `set`, `graha`, `line`, `nature`,
 `emphasised`); and in the tithi cells `tithis`, `weekdays`, `birth_tithi` and `birth_weekday`.
+
+### Pada sounds
+
+Each nakshatra cell carries the sounds (nāmākṣara) of its four padas, the table printed in pañcāṅgas and muhūrta
+manuals for choosing the first sound of a name: Kṛttikā अ इ उ ए, Rohiṇī ओ व वी वू, Mṛgaśirā वे वो क की, Ārdrā कु घ ङ छ,
+Punarvasu के को ह ही, Puṣya हु हे हो ड, Āśleṣā डी डू डे डो, and so on round the 28; in the 28-nakshatra form Abhijit takes
+जू जे जो ख. Short-a syllables are written as the published reference chart prints them (व, क, ह, ड); some tables write
+the same sounds long (वा, का). The table is data in the rule pack (`pada_syllables`). The tests check the seven
+printed in the reference’s top band, that the 112 syllables are distinct and that every letter (varṇa) of the second
+ring except अ is one of them.
 
 ### Vedha lines
 
@@ -127,13 +138,34 @@ another school’s figure is a table change.
 The **Chakras** page (group *Analysis*) has a tab per chakra and, when the report has a reference instant, a
 Natal / Transit layer switch.
 
-- **Sarvatobhadra:** the grid draws in line by line, cells fade in and grahas pop into their cells (solid markers
-  natal, rings transit). Hover any cell for what it is, who is there and every graha piercing it. *Vedha of* picks
-  one graha: its three lines light up (the emphasised one thicker) and every cell it pierces is tinted. Tables list
-  the vedha received by the personal cells and each graha’s motion and emphasised line.
-- **Kota:** the four walls draw in and the 28 places pop in along their entering and leaving paths, numbered from the
-  Janma nakshatra in the top-left corner. Tiles show the Janma nakshatra, Kota swāmī and pāla with their places, and
-  the count of malefics and benefics inside; a table lists every graha’s place, zone and movement.
+- **Sarvatobhadra:** the 9 × 9 grid sits in a labelled frame. Round the grid, for the seven nakshatras on each side,
+  three bands read clockwise from the grid outwards: **Pada** (the pada numbers 1 to 4), **pada sound** (the sound of
+  each pada in Devanagari) and **Nakshatra** (its name); the band names sit at the start of each band. On the top band
+  the padas run left to right, down the right side top to bottom, along the bottom right to left and up the left side
+  bottom to top. Inside, the cells are coloured by kind: the four corner vowels अ आ इ ई and the other vowels pale
+  yellow, the nakshatras lavender, the letters pink, the rāśis orange (Ari … Pis) and the five tithi groups in the
+  centre pink with their weekdays (Sun Tue Nandā, Mon Wed Bhadrā, Thu Jayā, Fri Riktā, Sat Pūrṇā). Grahas are printed
+  in their nakshatra and rāśi cells (Su, Mo, … As), **red for malefics and green for benefics** (the engine’s nature,
+  the lagna neutral). A small round chip for each graha sits on the inner edge of its nakshatra cell: that is where
+  its three vedha lines start. Each cell a line crosses gets a border: **red** when a malefic pierces it, **green**
+  when a benefic does, **red outside and green inside** when both (for the layer shown, natal or transit). A corner
+  flag marks the personal cells (Janma and lagna nakshatras, Moon and lagna rāśis, birth tithi group and weekday).
+  Hover any cell or frame band for what it is, its pada sounds, who is there and every line piercing it. *Vedha of*
+  picks one graha: its three lines light up (the emphasised one thicker) and every cell it pierces is tinted. On a
+  phone the grid keeps its size and scrolls sideways inside its card; the page itself does not. Tables list the
+  vedha received by the personal cells and each graha’s motion and emphasised line.
+- **Kota:** the fort is four concentric squares, Bāhya (outside, pale cream), Prākāra (the wall, warmer), Madhya
+  (light orange) and Stambha (the core, deeper orange), each named faintly near its top-left. The two diagonals and
+  the vertical and horizontal bands through the middle are tinted salmon: these are the paths in and out. The 28
+  nakshatras are printed as “N. Name”, numbered from the Janma nakshatra (1, the top-left corner): in each direction
+  the first three places run along the diagonal from the corner (bāhya, prākāra, madhya), the fourth sits in the
+  stambha (top, right, bottom, left) and the last three run out along the band to the middle of the side. Khaki arrows
+  point inward at the four corners (entering) and outward at the middle of each side (leaving). Grahas are printed
+  under the nakshatra they occupy, red for malefics and green for benefics; click a natal graha for its page. Bottom
+  left inside the fort: the Kota swāmī and Kota pāla with their places and the moment of the layer shown (the engine
+  computes no Kota score; see below). Hover a place for its zone, direction, path and who is there. Tiles show the
+  Janma nakshatra, Kota swāmī and pāla and the count of malefics and benefics inside; a table lists every graha’s
+  place, zone and movement. On a phone the fort scales to the width.
 - **Saṅghaṭṭa:** the ring draws in with the fourteen vedha lines; picking a graha lights the line from its nakshatra
   and tints the nakshatra it pierces.
 

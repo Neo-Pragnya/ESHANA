@@ -47,6 +47,7 @@ const KT: u8 = b"t"[0];
 struct Pack {
     abhijit: [f64; 2],
     nakshatras: Vec<[String; 3]>,
+    pada_syllables: Vec<[[String; 2]; 4]>,
     rashis: Vec<[String; 3]>,
     vowels: Vec<[String; 2]>,
     letters: Vec<[String; 2]>,
@@ -275,7 +276,8 @@ fn cell_json(code: Code) -> Value {
     let i = code.idx;
     match code.kind {
         KN => {
-            json!({"kind": "nakshatra", "index": i, "name": p.nakshatras[i][0], "dev": p.nakshatras[i][1], "tr": p.nakshatras[i][2]})
+            json!({"kind": "nakshatra", "index": i, "name": p.nakshatras[i][0], "dev": p.nakshatras[i][1], "tr": p.nakshatras[i][2],
+                   "padas": p.pada_syllables[i]})
         }
         KR => {
             json!({"kind": "rashi", "index": i, "name": p.rashis[i][0], "dev": p.rashis[i][1], "tr": p.rashis[i][2]})
@@ -787,6 +789,43 @@ mod tests {
         assert_eq!(find(&g, KN, 2), (0, 1));
         assert_eq!(find(&g, KN, 21), (8, 2));
         assert_eq!(find(&g, KT, 4), (4, 4));
+    }
+
+    #[test]
+    fn pada_syllables_cover_every_nakshatra() {
+        let p = pack();
+        assert_eq!(p.pada_syllables.len(), 28);
+        let dev = |i: usize| {
+            p.pada_syllables[i]
+                .iter()
+                .map(|s| s[0].as_str())
+                .collect::<Vec<_>>()
+        };
+        // the published reference chart prints these (top band of its Sarvatobhadra)
+        assert_eq!(dev(2), ["अ", "इ", "उ", "ए"]);
+        assert_eq!(dev(3), ["ओ", "व", "वी", "वू"]);
+        assert_eq!(dev(4), ["वे", "वो", "क", "की"]);
+        assert_eq!(dev(5), ["कु", "घ", "ङ", "छ"]);
+        assert_eq!(dev(6), ["के", "को", "ह", "ही"]);
+        assert_eq!(dev(7), ["हु", "हे", "हो", "ड"]);
+        assert_eq!(dev(8), ["डी", "डू", "डे", "डो"]);
+        assert_eq!(dev(21), ["जू", "जे", "जो", "ख"]);
+        // invariants: 112 distinct syllables, every second-ring letter but अ is one of them, transliterations given
+        let all: Vec<&str> = (0..28).flat_map(dev).collect();
+        let uniq: std::collections::BTreeSet<&str> = all.iter().copied().collect();
+        assert_eq!(uniq.len(), 112);
+        for l in p.letters.iter().skip(1) {
+            assert!(
+                uniq.contains(l[0].as_str()),
+                "letter {} is not a pada syllable",
+                l[0]
+            );
+        }
+        assert!(p.pada_syllables.iter().flatten().all(|s| !s[1].is_empty()));
+        // the cells carry them
+        let g = grid();
+        let (r, c) = find(&g, KN, 2);
+        assert_eq!(cell_json(g[r][c])["padas"][0][0], "अ");
     }
 
     #[test]

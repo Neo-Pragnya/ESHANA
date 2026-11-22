@@ -800,7 +800,7 @@ await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅg
   const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
   const sbc = await evaluate(`(() => { const svg = document.querySelector("#chakras svg.ck-sbc"); const v = val("vedic.chakra.sarvatobhadra");
     return { cells: svg.querySelectorAll(".ck-cell").length, nak: svg.querySelectorAll(".ck-cell[data-kind=nakshatra]").length,
-      marks: svg.querySelectorAll(".ck-pl").length, want: v.cells.reduce((n, c) => n + c.natal.length, 0),
+      marks: svg.querySelectorAll(".ck-pl").length, want: v.cells.filter(c => c.kind === "nakshatra").reduce((n, c) => n + c.natal.length, 0),
       lines: svg.querySelectorAll(".ck-line").length, grahas: v.grahas.natal.filter(g => g.id !== "lagna").length }; })()`);
   expect(sbc.cells === 81 && sbc.nak === 28, "grid " + JSON.stringify(sbc));
   expect(sbc.marks === sbc.want, `${sbc.marks} markers for ${sbc.want} placements`);
@@ -818,11 +818,11 @@ await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅg
   await tab("Kota"); await sleep(1500);
   const k = await evaluate(`(() => { const v = val("vedic.chakra.kota"); return { places: document.querySelectorAll("#chakras .ck-place").length,
     zones: document.querySelectorAll("#chakras .ck-zone").length, janma: document.querySelector("#chakras .ck-place.janma")?.dataset.position,
-    marks: document.querySelectorAll("#chakras svg.ck-kota .ck-pl").length, want: v.natal.length, tr: (v.transit || []).length }; })()`);
+    marks: document.querySelectorAll("#chakras svg.ck-kota .ck-g").length, want: v.natal.length, tr: (v.transit || []).length }; })()`);
   expect(k.places === 28 && k.zones === 4 && k.janma === "1" && k.marks === k.want, "kota " + JSON.stringify(k));
   if (k.tr) {
     await tab("Transit"); await sleep(1200);
-    const tm = await evaluate(`document.querySelectorAll("#chakras svg.ck-kota .ck-pl.tr").length`);
+    const tm = await evaluate(`document.querySelectorAll("#chakras svg.ck-kota .ck-g.tr").length`);
     expect(tm === k.tr, `${tm} transit markers for ${k.tr}`);
     await tab("Natal"); await sleep(600);
   }
@@ -836,6 +836,155 @@ await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅg
   await shot("chakras-sanghatta");
   await tab("Sarvatobhadra");
   return `81 cells, ${sbc.lines} vedha lines, Saturn pierces ${pick.want} cells; Kota 28 places${k.tr ? `, ${k.tr} transits` : ""}; Saṅghaṭṭa 28 + 14`;
+});
+
+// shared by the two chakra layout journeys: the on-screen box of what is drawn, overlaps between labels, and
+// whether a label sits inside its cell (all in screen pixels, from getBoundingClientRect)
+const CK_PROBE_LIB = `const ckBox = (e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; };
+  const ckOver = (items, bad, t = 0.75) => { for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+    const a = items[i].b, b = items[j].b, ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    if (ox > t && oy > t) bad.push(items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)'); } };
+  const ckIn = (b, c, t = 1) => b.x >= c.x - t && b.y >= c.y - t && b.x + b.w <= c.x + c.w + t && b.y + b.h <= c.y + c.h + t;`;
+
+await journey("chakras: Kota fort with four zones, 28 numbered places, arrows in and out, grahas under their nakshatra, no overlaps", async () => {
+  await go("#/chakras", 1500);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  await tab("Kota"); await sleep(1800);
+  const probe = (set) => `(() => { ${CK_PROBE_LIB}
+    const svg = document.querySelector('#chakras svg.ck-kota'), v = val('vedic.chakra.kota'), rows = v['${set}'] || [], bad = [];
+    const places = [...svg.querySelectorAll('.ck-place')];
+    const nums = places.map(g => (g.querySelector('.ck-kn').textContent.match(/^(\\d+)\\. (.+)$/) || [])[1]).map(Number);
+    const zl = [...svg.querySelectorAll('.ck-zlab2')].map(t => t.textContent);
+    const arrows = { in: svg.querySelectorAll('.ck-arrow.in').length, out: svg.querySelectorAll('.ck-arrow.out').length };
+    // every graha is printed in its place, under the place's name, and coloured by its nature
+    let under = 0;
+    for (const r of rows) {
+      const g = svg.querySelector('.ck-place[data-position="' + r.position + '"]'), sp = g && g.querySelector('.ck-g[data-graha="' + r.id + '"]');
+      if (!sp) { bad.push(r.id + ' not printed at place ' + r.position); continue; }
+      if (ckBox(sp).y + 0.75 < ckBox(g.querySelector('.ck-kn')).y + ckBox(g.querySelector('.ck-kn')).h) bad.push(r.id + ' is not under the name at place ' + r.position); else under++;
+      if (!sp.classList.contains(r.nature === 'benefic' ? 'ben' : 'mal')) bad.push(r.id + ' coloured against its nature');
+    }
+    // labels: every place's name and graha lines stay in the place; nothing overlaps anything else that is drawn as text
+    const items = [];
+    for (const g of places) {
+      const cell = ckBox(g.querySelector('.ck-hit')), pos = g.dataset.position;
+      for (const t of g.querySelectorAll('.ck-kn, .ck-gl')) { const b = ckBox(t); items.push({ n: 'place ' + pos + ' ' + t.textContent, b }); if (!ckIn(b, cell)) bad.push('place ' + pos + ': "' + t.textContent + '" outside its place'); }
+    }
+    for (const t of svg.querySelectorAll('.ck-zlab2, .ck-ki, .ck-side')) items.push({ n: t.textContent, b: ckBox(t) });
+    for (const a of svg.querySelectorAll('.ck-arrow')) items.push({ n: 'arrow', b: ckBox(a) });
+    ckOver(items, bad);
+    const fort = ckBox(svg.querySelector('.ck-zone.z-bahya'));
+    for (const t of svg.querySelectorAll('.ck-zlab2, .ck-ki, .ck-kn, .ck-gl')) if (!ckIn(ckBox(t), fort)) bad.push('"' + t.textContent + '" outside the fort');
+    return { places: places.length, nums: nums.sort((a, b) => a - b).join(','), zl, arrows, under, rows: rows.length, labels: items.length, bad }; })()`;
+  const out = [];
+  for (const set of ["natal", "transit"]) {
+    if (set === "transit") { if (!(await evaluate(`!!val('vedic.chakra.kota').transit`))) break; await tab("Transit"); await sleep(1500); }
+    const r = await evaluate(probe(set));
+    expect(r.places === 28 && r.nums === Array.from({ length: 28 }, (_, i) => i + 1).join(","), `${set}: places ${r.places}, numbers ${r.nums}`);
+    expect(["Bāhya", "Prākāra", "Madhya", "Stambha"].every(z => r.zl.includes(z)), "zone labels " + r.zl.join(","));
+    expect(r.arrows.in === 4 && r.arrows.out === 4, "arrows " + JSON.stringify(r.arrows));
+    expect(r.under === r.rows, `${set}: ${r.under} of ${r.rows} grahas under their nakshatra`);
+    expect(!r.bad.length, `${set}: ${r.bad.length} problem(s): ` + r.bad.slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+    out.push(`${set} ${r.rows} grahas, ${r.labels} labels`);
+  }
+  await tab("Natal"); await sleep(600);
+  // hover a place: the tooltip names the zone and the path
+  const pt = await evaluate(`(() => { const r = document.querySelector('#chakras .ck-place[data-position="2"] .ck-hit').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await mouse(pt[0], pt[1]); await sleep(250);
+  const tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`);
+  expect(/Prākāra/.test(tipText) && /entering/.test(tipText), "place tooltip: " + tipText.slice(0, 100));
+  // a natal graha printed in the fort opens its page
+  const gp = await evaluate(`(() => { const e = document.querySelector('#chakras svg.ck-kota .ck-g[data-graha=jupiter]'); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await click(gp[0], gp[1]); await sleep(700);
+  const opened = await evaluate(`location.hash`);
+  expect(opened === "#/planet/jupiter", "clicking Ju in the fort opened " + opened);
+  await go("#/chakras", 1500); await tab("Kota"); await sleep(1200);
+  await mouse(5, 5); await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(1600);
+  await shot("chakras-kota-dark");
+  await evaluate(`document.documentElement.dataset.mode = 'light'`); await sleep(300); await shot("chakras-kota-light");
+  await evaluate(`document.documentElement.dataset.mode = 'dark'`);
+  await tab("Sarvatobhadra");
+  return out.join("; ") + "; 4 zones, 4 + 4 arrows, no overlaps";
+});
+
+await journey("chakras: Sarvatobhadra frame of nakshatras and pada sounds, coloured cells, vedha borders as the engine pierces, no overlaps", async () => {
+  await go("#/chakras", 1500);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  await tab("Sarvatobhadra"); await sleep(1800);
+  const probe = (set) => `(() => { ${CK_PROBE_LIB}
+    const svg = document.querySelector('#chakras svg.ck-sbc'), v = val('vedic.chakra.sarvatobhadra'), bad = [];
+    const cellOf = (r, c) => v.cells[r * 9 + c];
+    // the frame: seven nakshatras a side, four pada sounds each, as the engine gives them, in clockwise order
+    const sides = {};
+    for (const f of svg.querySelectorAll('.ck-fcell')) {
+      const c = v.cells.find(x => x.kind === 'nakshatra' && x.index === +f.dataset.index), syl = [...f.querySelectorAll('.ck-syl')];
+      sides[f.dataset.side] = (sides[f.dataset.side] || 0) + 1;
+      if (syl.map(t => t.textContent).join(' ') !== c.padas.map(p => p[0]).join(' ')) bad.push(c.name + ' pada sounds ' + syl.map(t => t.textContent).join(' '));
+      const nb = ckBox(f.querySelector('.ck-fname'));
+      if (!ckIn(ckBox(f.querySelector('.ck-fn')), nb)) bad.push(c.name + ' name outside its band');
+      syl.forEach((t, k) => { const slot = ckBox(f.querySelectorAll('.ck-fsound')[k]); if (!ckIn(ckBox(t), slot, 1.5)) bad.push(c.name + ' pada ' + (k + 1) + ' sound outside its slot'); });
+      ckOver([...f.querySelectorAll('text')].map(t => ({ n: c.name + ' ' + t.textContent, b: ckBox(t) })), bad);
+    }
+    // pada order follows the clockwise reading: on the top band pada 1 is leftmost, on the bottom band rightmost
+    const order = (side) => { const f = svg.querySelector('.ck-fcell[data-side=' + side + ']'), p = [...f.querySelectorAll('.ck-padn')].map(ckBox); return side === 'top' ? p[0].x < p[3].x : side === 'bottom' ? p[0].x > p[3].x : side === 'right' ? p[0].y < p[3].y : p[0].y > p[3].y; };
+    const clockwise = ['top', 'right', 'bottom', 'left'].every(order);
+    const bands = [...svg.querySelectorAll('.ck-band')].map(t => t.textContent);
+    // the inner grid
+    const corners = [[0, 0], [0, 8], [8, 8], [8, 0]].map(([r, c]) => svg.querySelector('.ck-ct[data-row="' + r + '"][data-col="' + c + '"] text').textContent).join('');
+    const rashi = [...svg.querySelectorAll('.ck-ct')].filter(g => cellOf(+g.dataset.row, +g.dataset.col).kind === 'rashi').map(g => g.querySelector('.ck-ra').textContent).sort().join(',');
+    const tithi = [...svg.querySelectorAll('.ck-ct')].filter(g => cellOf(+g.dataset.row, +g.dataset.col).kind === 'tithi').map(g => g.querySelector('.ck-wd2').textContent + ' ' + g.querySelector('.ck-tn').textContent);
+    // vedha borders: red where a malefic pierces, green where a benefic does, both when both, nowhere else
+    let mal = 0, ben = 0, both = 0;
+    for (const g of svg.querySelectorAll('.ck-cell')) {
+      const c = cellOf(+g.dataset.row, +g.dataset.col), by = (c.pierced_by || []).filter(p => p.set === '${set}');
+      const m = by.some(p => p.nature === 'malefic'), b = by.some(p => p.nature === 'benefic');
+      const hm = !!g.querySelector('.ck-vb.mal'), hb = !!g.querySelector('.ck-vb.ben');
+      if (m !== hm || b !== hb) bad.push('cell ' + c.row + ',' + c.col + ' border ' + [hm && 'red', hb && 'green'].filter(Boolean).join('+') + ' for ' + [m && 'malefic', b && 'benefic'].filter(Boolean).join('+'));
+      mal += m; ben += b; both += m && b;
+      // what is printed in the cell (text and graha chips) stays inside it and does not overlap
+      const box = ckBox(g.querySelector('.ck-bg')), items = [...svg.querySelectorAll('.ck-ct[data-row="' + c.row + '"][data-col="' + c.col + '"] text')].map(t => ({ n: c.name + ' "' + t.textContent + '"', b: ckBox(t) }));
+      if (c.kind === 'nakshatra') for (const id of ('${set}' === 'natal' ? c.natal : c.transit) || []) { const chip = [...svg.querySelectorAll('.ck-chips .ck-pl[data-graha="' + id + '"]')].find(e => ckIn(ckBox(e), box, 1)); if (!chip) bad.push(id + ' chip not on its nakshatra ' + c.name); else items.push({ n: c.name + ' chip ' + id, b: ckBox(chip) }); }
+      for (const it of items) if (!ckIn(it.b, box)) bad.push(it.n + ' outside its cell');
+      ckOver(items, bad);
+      // grahas printed in nakshatra and rāśi cells
+      const occ = ('${set}' === 'natal' ? c.natal : c.transit) || [], printed = [...svg.querySelectorAll('.ck-ct[data-row="' + c.row + '"][data-col="' + c.col + '"] .ck-g')].map(e => e.dataset.graha);
+      if ((c.kind === 'nakshatra' || c.kind === 'rashi') && occ.join() !== printed.join()) bad.push(c.name + ' prints ' + printed.join() + ' for ' + occ.join());
+    }
+    const vb = { mal: svg.querySelectorAll('.ck-vb.mal').length, ben: svg.querySelectorAll('.ck-vb.ben').length };
+    return { cells: svg.querySelectorAll('.ck-cell').length, sides, clockwise, bands: bands.length, corners, rashi, tithi, mal, ben, both, vb, bad }; })()`;
+  const out = [];
+  for (const set of ["natal", "transit"]) {
+    if (set === "transit") { if (!(await evaluate(`!!val('vedic.chakra.sarvatobhadra').grahas.transit`))) break; await tab("Transit"); await sleep(1800); }
+    const r = await evaluate(probe(set));
+    expect(r.cells === 81, `${r.cells} cells`);
+    expect(["top", "right", "bottom", "left"].every(s => r.sides[s] === 7), "frame sides " + JSON.stringify(r.sides));
+    expect(r.clockwise && r.bands === 12, `pada order clockwise ${r.clockwise}, ${r.bands} band names`);
+    expect(r.corners === "अआइई", "corner vowels " + r.corners);
+    expect(r.rashi === "Aqu,Ari,Can,Cap,Gem,Leo,Lib,Pis,Sag,Sco,Tau,Vir", "rāśi cells " + r.rashi);
+    expect(r.tithi.length === 5 && r.tithi.includes("Sun Tue Nandā") && r.tithi.includes("Sat Pūrṇā"), "tithi cells " + r.tithi.join(" | "));
+    expect(r.vb.mal === r.mal && r.vb.ben === r.ben && r.mal > 0 && r.ben > 0, `${set} borders ${JSON.stringify(r.vb)} for ${r.mal} malefic / ${r.ben} benefic cells`);
+    expect(!r.bad.length, `${set}: ${r.bad.length} problem(s): ` + r.bad.slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+    out.push(`${set}: ${r.mal} red, ${r.ben} green, ${r.both} both`);
+  }
+  await tab("Natal"); await sleep(900);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(2000);
+  await shot("chakras-sbc-dark");
+  await evaluate(`document.documentElement.dataset.mode = 'light'`); await sleep(300); await shot("chakras-sbc-light");
+  await evaluate(`document.documentElement.dataset.mode = 'dark'`);
+  // phone width: the grid scrolls inside its card, the page does not; the fort scales to the width
+  await viewport(390, 844, true); await go("#/overview", 300); await go("#/chakras", 1800);
+  const phone = await evaluate(`({ page: document.scrollingElement.scrollWidth - innerWidth, fig: (() => { const f = document.querySelector('#chakras .ck-fig-sbc'); return f.scrollWidth > f.clientWidth; })() })`);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(500);
+  await shot("chakras-sbc-phone");
+  await tab("Kota"); await sleep(1500);
+  const kphone = await evaluate(`({ page: document.scrollingElement.scrollWidth - innerWidth, w: document.querySelector('#chakras svg.ck-kota').getBoundingClientRect().width, vw: innerWidth })`);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(500);
+  await shot("chakras-kota-phone");
+  await tab("Sarvatobhadra");
+  await viewport(1440, 1000);
+  expect(phone.page <= 0 && kphone.page <= 0, `phone: page scrolls sideways by ${Math.max(phone.page, kphone.page)} px`);
+  expect(kphone.w <= kphone.vw, `phone: the fort is ${kphone.w} px wide on a ${kphone.vw} px screen`);
+  return out.join("; ") + `; 4 × 7 nakshatras with 4 pada sounds, 81 cells; phone: grid scrolls in its card (${phone.fig}), page does not`;
 });
 
 // ── journeys: chakras (add new journeys for this workstream above this line) ──
