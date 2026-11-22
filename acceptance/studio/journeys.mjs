@@ -424,7 +424,9 @@ await journey("numerology: the Kua number for both sexes, and compound numbers o
   // a compound name number opens its compound reading
   const opened = await evaluate(`(() => { const t = [...document.querySelectorAll('#numerology .ntile')].find(b => { const c = b.querySelector('.n-comp'); if (!c) return false; const k = +c.textContent.split('/')[0]; return k >= 10 && k <= 52; });
     if (!t) return null; t.click(); return t.querySelector('.n-comp').textContent; })()`);
-  if (opened) { await sleep(500); const has = await evaluate(`!!document.querySelector('#numerology .ntile.open .n-compound')`); expect(has, `compound ${opened} opened without its reading`); }
+  if (opened) { await sleep(500); const has = await evaluate(`!!document.querySelector('#numerology .ntile.open .n-compound')`);
+    await evaluate(`document.querySelector('#numerology .ntile.open')?.click()`); await sleep(300); // leave no tile open for later journeys
+    expect(has, `compound ${opened} opened without its reading`); }
   return `Kua man ${m}, woman ${f}${opened ? `; compound ${opened} reads` : ""}`;
 });
 

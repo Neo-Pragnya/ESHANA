@@ -30,4 +30,6 @@ Human Design replaces `positions` by `{personality, design}`, each with `instant
 Within `0.x`, fields may be added without bumping `schema_version`'s minor only when they are optional and ignorable. A
 removed or renamed field bumps it. Consumers should ignore unknown keys and pin `schema_version`.
 
+Schema 0.3.2 adds the analysis attributes (`vedic.maitri.*`, `vedic.dasha.*` for seven more systems, `vedic.aux.*`, `vedic.chakra.*`, `vedic.varshaphala`, `vedic.panch_pakshi`), `vedic.jaimini.arudha_padas_d9`, `lordships_by_varga` in the special points, `significator_table` in `vedic.kp` and `kua` in `numerology.lo_shu`.
+
 Schema 0.3.1 adds `tone` (1–6) and `base` (1–5) to every Human Design activation, next to `gate`, `line` and `color`. It also adds the `vedic.upagrahas` and `vedic.drishti.additional` attributes and `houses`, `house_and_lord` and `house_madhya` in `vedic.aspects`.

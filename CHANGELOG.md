@@ -5,6 +5,21 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-22
+
+Review rounds 5 and 6 and the remaining reference-chart items. Schema 0.3.2 adds fields only.
+
+### Added (remaining items)
+- **Yoginī daśā** continues one 36-year cycle past the reference date, so a chart of someone born long ago has a
+  current period. Daśās whose span has ended open the zoom at birth and say so.
+- **Lordships in D1, D9 and D10** with the exchanges between house lords and their kind (`lordships_by_varga` in
+  the special points), shown on the Bhāvas page.
+- **Pada navāṃśa:** ārūḍha padas worked out in the navāṃśa (`vedic.jaimini.arudha_padas_d9`), shown on the D9 chart.
+- **Numerology:** the Kua number for both sexes (`numerology.lo_shu.kua`); Chaldean compound-number readings 10–52.
+- **Website:** a Gallery of every studio view captured from real reports (`make gallery`), and the Ramana reference
+  report among the example reports.
+- `make studio-journeys` also runs every journey on the Ramana reference chart.
+
 ### Added (review round 6)
 - **Charts:** ārūḍha padas on top of each rāśi and aspect marks at the bottom, wrapped inside the rāśi, in South and
   North Indian charts; crowded North Indian houses fit their triangle or diamond. A journey checks that no label
