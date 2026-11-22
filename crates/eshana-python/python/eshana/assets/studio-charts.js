@@ -30,6 +30,13 @@ rebuildAspected();
 /* a block of marks inside a chart cell: wrapped to maxW (when given) and anchored at the baseline of its last line,
    so it grows upwards from the bottom of the cell (or at the baseline of its first line when down is set, so it grows
    downwards). Returns the height it takes (0 when there is nothing to show). */
+/* parivartana: each graha of an exchange is also read as standing in its partner's sign; shown (with the
+   additional aspects) as the graha's abbreviation with ⇄ among that sign's marks */
+function exchangesIn(sign) {
+  if (!S.layers.extra_aspects) return [];
+  const seen = new Set();
+  return ADDITIONAL.filter(d => d.basis === 'parivartana' && d.from_sign === sign && G[d.from] && !seen.has(d.from) && seen.add(d.from));
+}
 function wrapMarks(items, size, maxW) {
   const cw = size * .62, lines = [[]]; let w = 0;
   items.forEach(it => { const iw = (it.text.length + 1) * cw; if (maxW && w + iw > maxW && lines[lines.length - 1].length) { lines.push([]); w = 0; } lines[lines.length - 1].push(it); w += iw; });
@@ -49,8 +56,8 @@ function aspectItems(sign) {
   if (!S.layers.aspect_marks) return [];
   const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
   const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
-  return list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : '') }))
-    .concat(extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] })));
+  return exchangesIn(sign).map(d => ({ text: G[d.from].abbr + '⇄' })).concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : '') })),
+    extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] })));
 }
 function rashiItems(sign) {
   if (!S.layers.rashi_marks) return [];
@@ -62,11 +69,15 @@ function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, 
   if (!S.layers.aspect_marks) return 0;
   const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
   const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
-  if (!list.length && !extra.length) return 0;
-  const items = list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 800 : 600 }))
-    .concat(extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis], fill: G[d.from].dot, cls: 'extramark' })));
-  return markBlock(parent, items, x, y, anchor, size, 'aspmark', 'Aspected by ' + list.map(d => `${G[d.from].en} (${nth(d.house_from_graha)}${d.kind === 'special' ? ', special' : ''})`)
-    .concat(extra.map(d => `${G[d.from].en} (${nth(d.house_from_graha)} from ${SIGN_SKT[d.from_sign]}, ${EXTRA_NAME[d.basis]})`)).join(', '), maxW, down);
+  const ex = exchangesIn(sign);
+  if (!list.length && !extra.length && !ex.length) return 0;
+  const items = ex.map(d => ({ text: G[d.from].abbr + '⇄', fill: G[d.from].dot, weight: 800, cls: 'exchmark' }))
+    .concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 800 : 600 })),
+      extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis], fill: G[d.from].dot, cls: 'extramark' })));
+  const parts = ex.map(d => `${G[d.from].en} is here by exchange (parivartana with ${G[d.partner] ? G[d.partner].en : d.partner})`)
+    .concat(list.length ? ['Aspected by ' + list.map(d => `${G[d.from].en} (${nth(d.house_from_graha)}${d.kind === 'special' ? ', special' : ''})`).join(', ')] : [],
+      extra.map(d => `${G[d.from].en} (${nth(d.house_from_graha)} from ${SIGN_SKT[d.from_sign]}, ${EXTRA_NAME[d.basis]})`));
+  return markBlock(parent, items, x, y, anchor, size, 'aspmark', parts.join('; '), maxW, down);
 }
 
 /* which grahas see each sign by rāśi drishti (sign aspect, from the engine), shown as ◇ marks */
@@ -388,11 +399,24 @@ function drawTransit() {
   const rows = D.transits.rows; if (!WHEEL || !WHEEL.tg) return;
   transitIdx = Math.max(0, Math.min(rows.length - 1, transitIdx));
   const row = rows[transitIdx]; WHEEL.tg.replaceChildren();
+  // hovering a transit graha draws a highlighted line from it to the centre at the degree where it is now, and lights
+  // the rāśi, nakshatra and pada it is passing through
+  const rays = s('g', { class: 'transit-rays' }, WHEEL.tg);
   for (const k in row.longitudes) {
-    const id = engineId(k); if (!G[id]) continue; const a = angOf(row.longitudes[k]), [x, y] = pt(598, a);
+    const id = engineId(k); if (!G[id]) continue; const lon = row.longitudes[k], a = angOf(lon), [x, y] = pt(598, a);
     const mk = marker(WHEEL.tg, id, x, y, 15, { passive: true });
-    mk.addEventListener('mousemove', ev => tip(ev, `Transit ${G[id].en}`, [['Date', dateOnly(row.utc)], ['Sidereal', `${SIGN_SKT[signOf(row.longitudes[k])]} ${inSign(row.longitudes[k])}`], ['Over natal bhāva', houseOf(signOf(row.longitudes[k]))]]));
-    mk.addEventListener('mouseleave', untip);
+    mk.classList.add('transit-pl');
+    mk.addEventListener('mousemove', ev => tip(ev, `Transit ${G[id].en} now`, [['Date', dateOnly(row.utc)], ['Sidereal', `${SIGN_SKT[signOf(lon)]} ${inSign(lon)}`],
+      ['Nakshatra', `${NAKSHATRA[nakOf(lon)]} pada ${padaOf(lon)}`], ['Over natal bhāva', houseOf(signOf(lon))]]));
+    mk.addEventListener('mouseenter', () => {
+      rays.replaceChildren();
+      const [x1, y1] = pt(580, a), [x2, y2] = pt(WHEEL.innerR * .25, a);
+      s('line', { x1, y1, x2, y2, class: 'transit-ray', stroke: G[id].dot === '#E6E9F0' ? 'var(--ink)' : G[id].dot, 'data-body': id }, rays);
+      const dotEnd = s('circle', { cx: x2, cy: y2, r: 5, class: 'transit-ray-end', fill: G[id].dot === '#E6E9F0' ? 'var(--ink)' : G[id].dot }, rays);
+      dotEnd.setAttribute('data-body', id);
+      hot([['rashi', signOf(lon)], ['nak', nakOf(lon)], ['pada', Math.floor(norm(lon) / NAV)]]);
+    });
+    mk.addEventListener('mouseleave', () => { untip(); rays.replaceChildren(); hot([]); });
   }
   const lab = $('#transit-date'); if (lab) lab.textContent = dateOnly(row.utc);
   const sl = $('#transit-slider'); if (sl) sl.value = transitIdx;

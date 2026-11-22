@@ -1,4 +1,4 @@
-# Rule pack: vedic.yogas@0.2
+# Rule pack: vedic.yogas@0.3
 # Yogas and doshas as declarative conditions. Each entry states WHAT is checked; ESHANA reports whether the
 # condition holds and which grahas satisfied it. It never states what a yoga "means" (that is interpretation).
 #
@@ -12,10 +12,12 @@
 #                                                                     different lord of the other group
 #   lord_in_house:   {house: n, from: lagna, houses: [..]}            the lord of house n sits in one of `houses`
 #   between_nodes:   {}                                               all seven grahas on one side of the axis
+#   parivartana:     {kind: any|maha|khala|dainya, from: lagna}       two grahas each in the other's sign (exchange);
+#                                                                     kind by the houses exchanged (BPHS / Phaladeepika)
 #   all_of / any_of: [conditions]      not: condition
 #   for_each_graha:  {grahas: [..], condition: <condition with graha "$g">}   one result per graha that matches
 id: vedic.yogas
-version: "0.2"
+version: "0.3"
 yogas:
   - id: ruchaka
     name: Ruchaka (Pancha Mahapurusha)
@@ -102,6 +104,26 @@ yogas:
     category: dhana
     rule: "The 9th lord in its own or exaltation sign, in a kendra or trikona from the lagna"
     when: {all_of: [{lord_in_house: {house: 9, from: lagna, houses: [1, 4, 5, 7, 9, 10]}}, {lord_dignity: {house: 9, from: lagna, any_of: [own, exalted, moolatrikona]}}]}
+  - id: parivartana
+    name: Parivartana yoga
+    category: parivartana
+    rule: "Two grahas each occupy a sign ruled by the other (a mutual exchange of signs)"
+    when: {parivartana: {kind: any}}
+  - id: maha_parivartana
+    name: Mahā parivartana yoga
+    category: parivartana
+    rule: "An exchange between the lords of two houses, neither of them the 3rd, 6th, 8th or 12th from the lagna (Phaladeepika 6)"
+    when: {parivartana: {kind: maha, from: lagna}}
+  - id: khala_parivartana
+    name: Khala parivartana yoga
+    category: parivartana
+    rule: "An exchange in which one house is the 3rd from the lagna and neither is the 6th, 8th or 12th (Phaladeepika 6)"
+    when: {parivartana: {kind: khala, from: lagna}}
+  - id: dainya_parivartana
+    name: Dainya parivartana yoga
+    category: parivartana
+    rule: "An exchange in which one house is the 6th, 8th or 12th from the lagna (Phaladeepika 6)"
+    when: {parivartana: {kind: dainya, from: lagna}}
   - id: neecha_graha
     name: Debilitated graha
     category: dignity

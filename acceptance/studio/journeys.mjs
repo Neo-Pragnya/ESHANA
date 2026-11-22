@@ -149,7 +149,7 @@ await journey("hovering a graha point shows its tooltip; clicking a graha opens 
   await go("#/charts", 2000);
   const pos = await evaluate(`(() => { const g = document.querySelector('#charts .chart .gl[data-body=moon]'); g.scrollIntoView({block:'center'}); const b = g.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
   await mouse(pos[0], pos[1]); await sleep(300);
-  const tipText = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  const tipText = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
   expect(/Moon/.test(tipText) && /Nakshatra/.test(tipText), "no tooltip: " + tipText.slice(0, 80));
   await click(pos[0], pos[1]); await sleep(1500);
   expect(await evaluate(`location.hash`) === "#/planet/moon", "did not open the Moon page");
@@ -317,6 +317,113 @@ await journey("selecting a segment turns the wheel only when 'turn to selection'
   expect(still.hot === 1 && /Simha/.test(still.panel), "selection not shown without turning: " + JSON.stringify(still));
   await evaluate(`document.getElementById('turn-on-select').click()`); await sleep(500);
   return "turns when on, stays put when off";
+});
+
+await journey("hover details sit in the panel beside the chakra, not on top of it", async () => {
+  await go("#/chakra", 1500);
+  const at = "jupiter";
+  await evaluate(`document.querySelector('#chakra svg.wheel .pt-hit[data-body=jupiter]').scrollIntoView({ block: 'center' })`);
+  await sleep(400);
+  const p = await evaluate(`(() => { const r = document.querySelector('#chakra svg.wheel .pt-hit[data-body=jupiter]').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+  await mouse(p.x, p.y); await sleep(500);
+  const r = await evaluate(`(() => { const d = document.querySelector('#chakra .tipdock'), w = document.querySelector('#chakra svg.wheel').getBoundingClientRect(), dr = d.getBoundingClientRect();
+    return { docked: d.classList.contains('on'), text: d.innerText, floating: document.querySelector('.tip.on') != null, beside: dr.left >= w.right - 1 }; })()`);
+  expect(r.docked, "hover details did not go to the panel");
+  expect(!r.floating, "a floating popup still covers the chakra");
+  expect(r.beside, "the hover panel is not beside the chakra");
+  expect(r.text.length > 20, "the hover panel is empty");
+  await mouse(5, 5); await sleep(300);
+  const idle = await evaluate(`!document.querySelector('#chakra .tipdock').classList.contains('on')`);
+  expect(idle, "the hover panel stays lit after the pointer leaves");
+  return `${at}: details in the side panel`;
+});
+
+await journey("dark theme: chart writing has readable contrast", async () => {
+  await evaluate(`document.documentElement.dataset.mode = 'dark'; document.documentElement.setAttribute('data-theme', 'dark'); 1`);
+  await evaluate(`S.layers.arudha = true; S.layers.extra_aspects = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'Both').click()`); await sleep(1200);
+  const r = await evaluate(`(() => {
+    const rgb = (c) => { const m = c.match(/[\\d.]+/g); return m ? m.slice(0, 3).map(Number) : null; };
+    const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+    const bg = rgb(getComputedStyle(document.documentElement).getPropertyValue('--panel-solid').trim().replace('#', '').match(/../g).map(h => parseInt(h, 16)).join(','));
+    const bad = []; let n = 0;
+    // every visible run of text, measured by the element that actually paints it
+    const runs = []; for (const svg of document.querySelectorAll('#charts svg.chart')) { const w = document.createTreeWalker(svg, NodeFilter.SHOW_TEXT);
+      for (let x = w.nextNode(); x; x = w.nextNode()) if (x.textContent.trim() && !x.parentElement.closest('title')) runs.push(x.parentElement); }
+    for (const t of new Set(runs)) {
+      const cs = getComputedStyle(t), c = rgb(cs.fill); if (!c) continue;
+      let op = 1; for (let e = t; e && e.tagName !== 'svg'; e = e.parentElement) op *= +getComputedStyle(e).opacity;
+      const mix = c.map((v, i) => v * op + bg[i] * (1 - op)), L1 = lum(mix), L2 = lum(bg), ratio = (Math.max(L1, L2) + .05) / (Math.min(L1, L2) + .05);
+      const need = t.closest('.aspmark') ? 3 : 4.5; n++;
+      if (ratio < need) bad.push(t.textContent.trim().slice(0, 12) + ' ' + cs.fill + ' ' + ratio.toFixed(2));
+    }
+    return { n, bad }; })()`);
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  await shot("charts-dark");
+  expect(r.n > 100, `only ${r.n} text runs checked`);
+  expect(!r.bad.length, `${r.bad.length} low-contrast text run(s): ` + [...new Set(r.bad)].slice(0, 8).join("; "));
+  return `${r.n} text runs at 4.5:1 or better (aspect marks 3:1)`;
+});
+
+await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
+  await go("#/chakra", 1500);
+  await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);
+  await sleep(1200);
+  const at = await evaluate(`(() => { const m = document.querySelector('#chakra svg.wheel .transit-pl'); if (!m) return null; m.scrollIntoView({ block: 'center' });
+    const r = m.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, id: m.dataset.body }; })()`);
+  expect(at, "no transit grahas on the wheel");
+  await sleep(300);
+  // conjunct transit grahas overlap on the ring: expect whichever one is on top under the pointer
+  const p = await evaluate(`(() => { const r = document.querySelector('#chakra svg.wheel .transit-pl[data-body="${at.id}"]').getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const top = document.elementFromPoint(x, y)?.closest('.transit-pl'); return { x, y, id: top ? top.dataset.body : null }; })()`);
+  expect(p.id, "no transit graha under the pointer");
+  at.id = p.id;
+  await mouse(p.x, p.y); await sleep(500);
+  const r = await evaluate(`(() => { const ray = document.querySelector('#chakra .transit-ray'); const hot = [...document.querySelectorAll('#chakra svg.wheel .seg.hot')].map(e => e.dataset.kind);
+    if (!ray) return { ray: false, hot };
+    const l = +ray.getAttribute('x1'), len = Math.hypot(+ray.getAttribute('x2') - +ray.getAttribute('x1'), +ray.getAttribute('y2') - +ray.getAttribute('y1'));
+    return { ray: true, body: ray.dataset.body, len, hot, tip: (document.querySelector('.tip') || {}).innerText || '' }; })()`);
+  await shot("transit-ray");
+  expect(r.ray, "no line drawn on hover");
+  expect(r.body === at.id, `line belongs to ${r.body}, hovered ${at.id}`);
+  expect(r.len > 300, `line too short (${Math.round(r.len)})`);
+  for (const k of ["rashi", "nak", "pada"]) expect(r.hot.includes(k), `${k} not lit (lit: ${r.hot.join(",")})`);
+  await mouse(5, 5); await sleep(300);
+  const gone = await evaluate(`document.querySelectorAll('#chakra .transit-ray').length`);
+  expect(gone === 0, "the line stays after the pointer leaves");
+  return `${at.id}: line of ${Math.round(r.len)} units, lit ${r.hot.join(", ")}`;
+});
+
+await journey("parivartana: each exchanged graha is marked in its partner's sign, and the yoga is listed with both grahas", async () => {
+  // exchanges among the seven grahas, worked out from the positions in the file
+  const LORD = ["mars", "venus", "mercury", "moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "saturn", "jupiter"];
+  const seven = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"], pairs = [];
+  for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) { const a = seven[i], b = seven[j];
+    if (LORD[signOf(model.pos[a])] === b && LORD[signOf(model.pos[b])] === a) pairs.push([a, b]); }
+  await evaluate(`S.layers.extra_aspects = true; S.layers.aspect_marks = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1200);
+  const marks = await evaluate(`[...document.querySelectorAll('#charts svg.chart.south .cell')].flatMap(c => [...c.querySelectorAll('.exchmark')].map(t => ({ sign: +c.dataset.sign, text: t.textContent.trim() })))`);
+  await shot("parivartana-marks");
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  const want = pairs.flatMap(([a, b]) => [{ g: a, sign: signOf(model.pos[b]) }, { g: b, sign: signOf(model.pos[a]) }]);
+  const ab = (g) => ({ sun: "Su", moon: "Mo", mars: "Ma", mercury: "Me", jupiter: "Ju", venus: "Ve", saturn: "Sa" })[g];
+  for (const w of want) expect(marks.some(m => m.sign === w.sign && m.text.startsWith(ab(w.g))), `${w.g} not marked in ${SIGN_AB[w.sign]} (marks: ${JSON.stringify(marks)})`);
+  // the D1 chart shows each exchange in two signs, the D9 chart none
+  expect(marks.length === want.length * 1 || marks.length === want.length * 2, `${marks.length} exchange marks for ${pairs.length} exchange(s)`);
+  const yoga = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes.vedic.derived_attributes.find(a => a.id === 'vedic.yogas');
+    return d ? d.value.yogas.filter(y => /parivartana/.test(y.id)).map(y => ({ id: y.id, present: y.present, grahas: y.grahas })) : []; })()`);
+  const any = yoga.find(y => y.id === "parivartana");
+  expect(any, "no parivartana yoga in the engine output");
+  expect(any.present === pairs.length > 0, `parivartana present=${any.present} but ${pairs.length} exchange(s)`);
+  for (const [a, b] of pairs) expect(any.grahas.includes(a) && any.grahas.includes(b), `yoga does not name ${a} and ${b}`);
+  if (pairs.length) {
+    await go("#/yoga/parivartana", 1200);
+    const page = await evaluate(`document.querySelector('#yoga')?.innerText || ''`);
+    for (const [a] of pairs) expect(new RegExp(({ sun: "Sun", moon: "Moon", mars: "Mars", mercury: "Mercury", jupiter: "Jupiter", venus: "Venus", saturn: "Saturn" })[a]).test(page), `yoga page does not name ${a}`);
+  }
+  return pairs.length ? `${pairs.map(p => p.join("⇄")).join(", ")}: marked in the partner signs; ${yoga.filter(y => y.present).map(y => y.id).join(", ")}` : "no exchange in this chart; none marked";
 });
 
 await journey("transits: pick a date and animate over a chosen range", async () => {
@@ -550,11 +657,11 @@ await journey("maitri page: relationship, tārā and dignity grids fill in; hove
   expect(r.rel === r.data && r.rel === 72 && r.tara === 90 && r.dig === 144 && r.sums === 9 && r.legends === 3, JSON.stringify(r));
   const pos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-rel td[data-from=sun][data-to=jupiter]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
   await mouse(pos[0], pos[1]); await sleep(300);
-  const tipText = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  const tipText = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
   expect(/Natural/.test(tipText) && /Temporal/.test(tipText) && /Compound/.test(tipText), "no relationship tooltip: " + tipText.slice(0, 120));
   const dpos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-dig td[data-g=moon][data-d="9"]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
   await mouse(dpos[0], dpos[1]); await sleep(300);
-  const dTip = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  const dTip = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
   expect(/Sign lord/.test(dTip) && /Why/.test(dTip), "no dignity tooltip: " + dTip.slice(0, 120));
   await evaluate(`document.querySelector('#maitri .mt-rel thead a.mt-h[href="#/planet/mars"]').click()`); await sleep(1200);
   expect(await evaluate(`location.hash`) === "#/planet/mars", "graha head did not open the Mars page");
@@ -705,7 +812,7 @@ await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅg
   expect(pick.on === 3 && pick.picked && pick.hit === pick.want, "pick saturn " + JSON.stringify(pick));
   const box = await evaluate(`(() => { const r = document.querySelector("#chakras .ck-cell[data-kind=nakshatra] rect").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
   await mouse(box[0], box[1]); await sleep(250);
-  const tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`);
+  const tipText = await evaluate(`(document.querySelector(".tip.on, .tipdock.on") || { textContent: "" }).textContent`);
   expect(/Pierced by/.test(tipText), "no cell tooltip: " + tipText.slice(0, 80));
   await shot("chakras-sarvatobhadra");
   await tab("Kota"); await sleep(1500);

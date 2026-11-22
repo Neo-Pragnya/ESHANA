@@ -175,13 +175,25 @@ function save() { try { localStorage.setItem('eshana-studio-v3', JSON.stringify(
 
 /* ── tooltip ──────────────────────────────────────────────────────────────────────────────────────────────────── */
 const TIP = h('div', { class: 'tip', role: 'tooltip' }); document.body.append(TIP);
+/* a page can offer a docked place for hover details (.tipdock, e.g. beside the chakra) so the popup never covers
+   what is being hovered; used on wide screens when the dock is in view, otherwise the floating popup is used */
+function tipDock(ev) {
+  if (!ev || !ev.target || !ev.target.closest) return null;
+  const sec = ev.target.closest('section.page'), dock = sec && sec.querySelector('.tipdock');
+  if (!dock) return null; const r = dock.getBoundingClientRect();
+  // only when it sits beside what is hovered (to its right) and is in view
+  return r.width && r.left > ev.clientX && r.bottom > 40 && r.top < innerHeight - 40 ? dock : null;
+}
 function tip(ev, title, rows, sub) {
-  TIP.innerHTML = `<h4>${esc(title)}</h4>${sub ? `<div class="note">${esc(sub)}</div>` : ''}<dl>${(rows || []).filter(r => r && r[1] != null && r[1] !== '')
+  const html = `<h4>${esc(title)}</h4>${sub ? `<div class="note">${esc(sub)}</div>` : ''}<dl>${(rows || []).filter(r => r && r[1] != null && r[1] !== '')
     .map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
+  const dock = tipDock(ev);
+  if (dock) { dock.querySelector('.tipdock-body').innerHTML = html; dock.classList.add('on'); TIP.classList.remove('on'); return; }
+  TIP.innerHTML = html;
   const x = Math.min(ev.clientX + 14, innerWidth - TIP.offsetWidth - 8), y = Math.min(ev.clientY + 14, innerHeight - TIP.offsetHeight - 8);
   TIP.style.left = x + 'px'; TIP.style.top = y + 'px'; TIP.classList.add('on');
 }
-function untip() { TIP.classList.remove('on'); }
+function untip() { TIP.classList.remove('on'); document.querySelectorAll('.tipdock.on').forEach(d => { d.classList.remove('on'); d.querySelector('.tipdock-body').innerHTML = d.dataset.idle || ''; }); }
 
 /* ── planet icons: textured spheres, glyphs or badges ────────────────────────────────────────────────────────── */
 const ICON = {};

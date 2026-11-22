@@ -122,6 +122,31 @@ YOGAS = {
         read=["The lord should be in a dusthāna without strongly influencing kendras or trikoṇas.",
               "Readers check the lagna and its lord are strong enough to benefit."],
         sources=[BPHS, "Uttara Kalamrita"]),
+    "parivartana": dict(
+        summary="Two grahas each sit in a sign ruled by the other, so each is read as also occupying its own sign.",
+        effects=["the two houses and the two grahas work as a linked pair, each supporting the other's matters",
+                 "results of one house are carried into the other"],
+        read=["Readers judge it by which houses are exchanged: the Mahā, Khala and Dainya kinds below.",
+              "Both grahas then behave as if in their own signs for strength, so their dignity is read with that in mind.",
+              "The daśās of either graha bring the exchange into play."],
+        sources=[PD, BPHS]),
+    "maha_parivartana": dict(
+        summary="An exchange between the lords of two good houses (not the 3rd, 6th, 8th or 12th).",
+        effects=["wealth, standing and comforts tied to the two houses involved", "support from the people those houses show"],
+        read=["Counted among the strongest exchanges when the lagna lord or a kendra or trikoṇa lord is one of the pair."],
+        sources=[PD]),
+    "khala_parivartana": dict(
+        summary="An exchange that involves the 3rd house (and none of the 6th, 8th or 12th).",
+        effects=["mixed results: gains through effort and initiative, with swings of fortune"],
+        read=["The 3rd house is one of effort and courage, so results come through the person's own exertion."],
+        sources=[PD]),
+    "dainya_parivartana": dict(
+        summary="An exchange that involves a dusthāna (the 6th, 8th or 12th house).",
+        effects=["struggle, obstacles or loss in the matters of the other house involved",
+                 "results that come after difficulty"],
+        read=["Classical texts call it inauspicious; later readers note it can also give depth and endurance when the "
+              "grahas are otherwise strong, much as a Vipareeta Rāja yoga does."],
+        sources=[PD]),
     "lakshmi": dict(
         summary="The 9th lord (fortune) strong in its own or exaltation sign, in a kendra or trikoṇa.",
         effects=["prosperity, good fortune and refinement", "virtue and generosity"],

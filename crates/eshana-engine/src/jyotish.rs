@@ -738,6 +738,44 @@ fn evaluate(c: &VChart, cond: &Cond, bind: Option<&str>, used: &mut BTreeSet<Str
             let sides = sides?;
             sides.iter().all(|s| *s) || sides.iter().all(|s| !*s)
         }
+        Cond::Parivartana { kind, from } => {
+            let kind = kind.as_deref().unwrap_or("any");
+            let base = if kind == "any" {
+                None
+            } else {
+                Some(c.ref_sign(from.as_deref().unwrap_or("lagna"))?)
+            };
+            let mut ok = false;
+            for (i, a) in SEVEN.iter().enumerate() {
+                for b in &SEVEN[i + 1..] {
+                    let (Some(sa), Some(sb)) = (c.sign(a), c.sign(b)) else {
+                        continue;
+                    };
+                    if lord_of(sa) != *b || lord_of(sb) != *a {
+                        continue;
+                    }
+                    let hit = match base {
+                        None => true,
+                        Some(base) => {
+                            let hs = [house_from(base, sa), house_from(base, sb)];
+                            let dusthana = hs.iter().any(|h| matches!(h, 6 | 8 | 12));
+                            match kind {
+                                "dainya" => dusthana,
+                                "khala" => !dusthana && hs.contains(&3),
+                                "maha" => !dusthana && !hs.contains(&3),
+                                _ => false,
+                            }
+                        }
+                    };
+                    if hit {
+                        used.insert((*a).to_string());
+                        used.insert((*b).to_string());
+                        ok = true;
+                    }
+                }
+            }
+            ok
+        }
         Cond::AllOf(list) => {
             let mut ok = true;
             for x in list {
@@ -875,6 +913,42 @@ mod tests {
         let d = y["doshas"].as_array().unwrap();
         let ks = d.iter().find(|x| x["id"] == "kala_sarpa").unwrap();
         assert_eq!(ks["present"], false);
+    }
+
+    #[test]
+    fn parivartana_yoga_and_its_kind() {
+        // Kanyā lagna; Jupiter in Kumbha (6th) and Saturn in Mīna (7th): Jupiter and Saturn exchange signs, and the
+        // 6th is a dusthāna, so it is a Dainya parivartana (the Ramana Maharishi chart has this exchange)
+        let mut c = VChart {
+            asc: Some(160.0),
+            ..Default::default()
+        };
+        for (g, l) in [
+            ("sun", 255.0),
+            ("moon", 88.0),
+            ("mars", 20.0),
+            ("mercury", 233.0),
+            ("jupiter", 316.0),
+            ("venus", 210.0),
+            ("saturn", 347.0),
+        ] {
+            c.lon.insert(g.into(), l);
+        }
+        let y = yogas(&c);
+        let get = |id: &str| {
+            y["yogas"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|x| x["id"] == id)
+                .unwrap()
+                .clone()
+        };
+        assert_eq!(get("parivartana")["present"], true);
+        assert_eq!(get("parivartana")["grahas"], json!(["jupiter", "saturn"]));
+        assert_eq!(get("dainya_parivartana")["present"], true);
+        assert_eq!(get("maha_parivartana")["present"], false);
+        assert_eq!(get("khala_parivartana")["present"], false);
     }
 
     #[test]

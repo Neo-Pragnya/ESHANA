@@ -54,6 +54,11 @@ page('overview', () => 'Overview', 'Chart', (b) => {
 page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
   if (!VED) return put(b, missing('The chakra', 'It needs a Vedic chart.'));
   const host = h('div', { class: 'figure wheel-host' }), panel = h('div', { class: 'card panel' });
+  // hover details go here, beside the wheel, instead of a popup on top of the chakra
+  const idle = '<p class="note">Hover a graha, rāśi, nakshatra or pada: its details appear here, so the aspects on the wheel stay in view.</p>';
+  const dock = h('div', { class: 'card tipdock', 'aria-live': 'polite', 'data-idle': idle }, h('div', { class: 'tipdock-t' }, 'Hover details'), h('div', { class: 'tipdock-body' }));
+  dock.querySelector('.tipdock-body').innerHTML = idle;
+  const side = h('div', { class: 'chakra-side' }, dock, panel);
   const redraw = () => route();
   const transit = D.transits && D.transits.rows && D.transits.rows.length;
   const centre = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.centre === v), onclick: () => { S.centre = v; save(); redraw(); } }, t);
@@ -66,7 +71,7 @@ page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
         h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'lagna'), disabled: ASC == null, onclick: () => { S.orientation = 'lagna'; save(); redraw(); } }, 'Lagna at top'),
         h('label', { class: 'tog' }, h('input', { type: 'checkbox', id: 'turn-on-select', checked: S.turnOnSelect !== false, onchange: e => { S.turnOnSelect = e.target.checked; save(); if (FOCUS) focusSeg(FOCUS[0], FOCUS[1], panel); } }), 'turn to selection'))),
     transit && S.layers.transits ? transitControls() : null,
-    h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, panel),
+    h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, side),
     h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:#6FAF1F' }), 'pushkara navāṃśa'), h('span', {}, h('i', { style: 'background:#3ED9E4' }), 'vargottama'), h('span', {}, h('i', { style: 'background:#D7141F' }), 'gaṇḍānta'),
       h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · ◎ own · V vargottama')));
   b.append(grahaLegend());

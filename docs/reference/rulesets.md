@@ -16,7 +16,7 @@ names its pack as `id@version`. Tables and conditions are **YAML** ([ADR-012](..
 | `vedic.bala@0.3` | ṣaḍbala (six components with named conventions), bhāva bala, viṃśopaka (four schemes, each summing to 20), sputa drishti in virūpas ([guide](../guides/strength.md)) | `bala.yaml` |
 | `vedic.ashtakavarga@0.2` | bhinna- and sarvāṣṭakavarga | `ashtakavarga.yaml` |
 | `vedic.panchanga@0.2` | tithi, vāra, nakṣatra, yoga, karaṇa; horā, choghaḍiyā, Rāhu kālam, Yamagaṇḍam, Gulika kālam; Tārā and Candra bala | `panchanga.yaml` |
-| `vedic.yogas@0.2` | 18 yogas and 6 doshas as declarative conditions | `yogas.yaml` |
+| `vedic.yogas@0.3` | 22 yogas (incl. four parivartana yogas) and 6 doshas as declarative conditions | `yogas.yaml` |
 | `vedic.matching.ashtakoota@0.2` | aṣṭakūṭa (8 kūṭas, 36 points) | `matching.yaml` |
 | `western.basic@0.1` | signs, house placement, Ptolemaic aspects | code |
 | `human_design.basic@0.1` | design instant, wheel, channels, centres, type, authority, profile, definition | code |

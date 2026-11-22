@@ -375,6 +375,7 @@ a:hover .bm-node{transform:scale(1.12)}
 
 /* additional aspects (retrograde shadow ʳ, parivartana ⇄): dotted underline so they read as optional */
 .extramark{text-decoration:underline dotted;text-underline-offset:2px}
+.exchmark{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:2px} /* a graha read in its partner's sign by parivartana */
 .aflow .af.extra{stroke-dasharray:2 6;stroke-width:2.2;opacity:.85}
 .aflow .af-target.extra{opacity:.15}
 
@@ -574,3 +575,38 @@ g.pk-yama{background:none}
 @keyframes aux-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes aux-draw{to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){.aux-pane,.aux-cell,.aux-tile,.aux-pop,.aux-sg rect,.aux-mbrow,.aux-gap,.aux-house,.aux-step,.aux-n{animation:none!important;stroke-dashoffset:0}}
+
+/* ── transits: hover line to where the graha is now ── */
+.transit-ray{stroke-width:3.5;stroke-linecap:round;stroke-dasharray:10 7;opacity:.95;filter:drop-shadow(0 0 6px currentColor);animation:transit-ray-flow .9s linear infinite, transit-ray-in .35s ease-out}
+.transit-ray-end{animation:transit-ray-in .35s ease-out}
+@keyframes transit-ray-flow{to{stroke-dashoffset:-34}}
+@keyframes transit-ray-in{from{opacity:0}to{opacity:.95}}
+@media (prefers-reduced-motion: reduce){.transit-ray,.transit-ray-end{animation:none}}
+
+/* ── hover details docked beside the chakra ── */
+.chakra-side{display:flex;flex-direction:column;gap:12px;position:sticky;top:76px}.chakra-side .panel{position:static}
+@media (max-width:1280px){.chakra-side{position:static}}
+.tipdock{font-size:13px;border-style:dashed;transition:border-color .15s,box-shadow .15s}
+.tipdock.on{border-style:solid;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.tipdock-t{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tipdock h4{margin:0 0 4px;font-size:15px}.tipdock dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0}.tipdock dt{color:var(--muted)}.tipdock dd{margin:0}
+@media (max-width: 1280px){.tipdock{display:none}}
+
+/* ── dark theme: chart writing readable on the dark panels (light theme unchanged) ── */
+/* graha colours that are too dark on navy get a lighter version of the same hue */
+:root:not([data-mode="light"]) svg.chart [fill="#6D4C41"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#6D4C41"]{fill:#D2AE9C}
+:root:not([data-mode="light"]) svg.chart [fill="#5D4037"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#5D4037"]{fill:#C8A493}
+:root:not([data-mode="light"]) svg.chart [fill="#8D6E63"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#8D6E63"]{fill:#D0B2A6}
+:root:not([data-mode="light"]) svg.chart [fill="#4C7CF0"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#4C7CF0"]{fill:#8FB0FF}
+:root:not([data-mode="light"]) svg.chart [fill="#8B6FD8"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#8B6FD8"]{fill:#BBA6FF}
+:root:not([data-mode="light"]) svg.chart [fill="#9575CD"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#9575CD"]{fill:#C8B0F5}
+:root:not([data-mode="light"]) svg.chart [fill="#78909C"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#78909C"]{fill:#B3C4CD}
+:root:not([data-mode="light"]) svg.chart [fill="#90A4AE"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#90A4AE"]{fill:#C0CED5}
+:root:not([data-mode="light"]) svg.chart [fill="#E0314F"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#E0314F"]{fill:#FF7088}
+:root:not([data-mode="light"]) svg.chart [fill="#7E99C9"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#7E99C9"]{fill:#A9C0EA}
+:root:not([data-mode="light"]) svg.chart [fill="#A1887F"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#A1887F"]{fill:#D3BDB5}
+:root:not([data-mode="light"]) svg.chart [fill="#A9A9A9"],:root:not([data-mode="light"]) svg.wheel .aspmark [fill="#A9A9A9"]{fill:#D0D0D0}
+:root:not([data-mode="light"]) svg.chart [fill="var(--muted)"]{fill:#c6cbea}
+:root:not([data-mode="light"]) svg.chart text{paint-order:stroke;stroke:rgba(7,10,28,.85);stroke-width:2.4px;stroke-linejoin:round}
+:root:not([data-mode="light"]) svg.chart .aspmark,:root:not([data-mode="light"]) svg.wheel .aspmark{opacity:.8}
+:root:not([data-mode="light"]) svg.chart .arudha{fill:#c4b5fd}

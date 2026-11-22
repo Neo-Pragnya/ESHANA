@@ -5,7 +5,7 @@ Feature: Vedic features from data-driven rule packs
     When I run "eshana chart vedic --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 --features all --dasha --dasha-levels 3 --dasha-systems vimshottari,yogini --reference-utc 2026-11-21T00:00:00Z"
     Then it succeeds
     And the output contains "vedic.ashtakavarga@0.2"
-    And the output contains "vedic.yogas@0.2"
+    And the output contains "vedic.yogas@0.3"
     And the output contains "vedic.panchanga@0.2"
     And the output contains "vedic.core@0.3"
     And the output contains "pratyantardashas"
