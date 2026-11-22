@@ -26,7 +26,7 @@ CHARTS = [
      "The chart in the reference-software screenshots, with the same conventions (true node, centre unrefracted "
      "sunrise), so the two can be compared page by page.",
      ["--date", "1879-12-30", "--time", "01:00", "--offset-minutes", "321", "--lat", "9.9333", "--lon", "78.1167",
-      "--name", "Sri Ramana Maharishi", "--place", "Madurai, India", "--node", "true", "--sunrise", "centre_unrefracted",
+      "--name", "Sri Ramana Maharishi", "--gender", "male", "--place", "Madurai, India", "--node", "true", "--sunrise", "centre_unrefracted",
       "--reference", REF]),
     ("studio-example.html", "Example Person · 15 May 1990 14:30, New Delhi (with a partner)",
      "The example used throughout the docs, with a partner for compatibility.",
