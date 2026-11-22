@@ -918,6 +918,7 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
       open ? h('div', { class: 'n-detail' },
         h('p', {}, (NR.roles || {})[opts.role || id] || ''),
         m ? h('p', {}, h('b', {}, `${n}: `), m.key) : null,
+        comp != null && (NR.compound || {})[String(comp)] ? h('p', { class: 'n-compound' }, h('b', {}, `Compound ${comp}: `), NR.compound[String(comp)], h('span', { class: 'note' }, ' (Chaldean compound reading, after Cheiro)')) : null,
         m ? h('p', { class: 'note' }, `Strengths: ${m.strengths.join(', ')} · Challenges: ${m.challenges.join(', ')} · Planet: ${m.planet}`) : null,
         debt ? h('p', { class: 'note' }, (NR.karmic_debt || {})[String(debt)] || '') : null) : null);
   };
@@ -981,6 +982,10 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
       card(`Birth date ${L.digits}`, h('div', { class: 'toolbar' }, h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: LOSHU_DC, onchange: e => { LOSHU_DC = e.target.checked; route(); } }), `add driver ${L.driver} and conductor ${L.conductor}`)), grid,
         facts([['Missing', L.missing.join(', ') || 'none'], ['Repeated', L.repeated.join(', ') || 'none']]), note(L.conventions)),
       card('Arrows (lines of the grid)', table(['Line', 'Numbers', 'State', 'Said to show'], arrows.map(a => [a.name, a.numbers.join('-'), h('span', { class: 'badge ' + (a.state === 'complete' ? 'b-up' : a.state === 'missing' ? 'b-down' : 'b-soft') }, a.state), (NR.arrows || {})[a.name] || ''])), note((NR.roles || {}).lo_shu || ''))));
+    if (L.kua) { const K = L.kua, KR = NR.kua || {};
+      out.push(card('Kua number (Eight Mansions)', facts([['Man', h('span', {}, h('b', {}, String(K.male)), ` · ${K.male_group} group`)], ['Woman', h('span', {}, h('b', {}, String(K.female)), ` · ${K.female_group} group`)], ['Solar year', String(K.solar_year)]]),
+        KR.about ? h('p', {}, label('interpretation'), ' ', KR.about) : null,
+        KR.groups ? note(`East group: ${KR.groups.east} West group: ${KR.groups.west}`) : null, note(K.conventions))); }
   }
   const nameAttr = A['numerology.name'];
   if (nameAttr && (show('pythagorean') || show('chaldean'))) out.push(h('details', { class: 'card' }, h('summary', {}, `Letter by letter (${nameAttr.value.school})`), table(['Letter', 'Value', 'Vowel'], nameAttr.value.letters.map(x => [x.letter, x.value, x.vowel ? '✓' : '']))));

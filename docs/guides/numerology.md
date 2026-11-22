@@ -66,3 +66,19 @@ notes, labelled as such.
 
 Name-change cycles, other alphabets (Hebrew gematria, abjad), Kua numbers and compound-number readings. Each will
 be its own named rule pack, with a cited source.
+
+## Kua number (Eight Mansions)
+
+`numerology.lo_shu` carries `kua`: the Kua (Gua) number of Eight Mansions feng shui for a man and for a woman, since
+ESHANA does not take sex as an input. The Chinese solar year starts at Lichun, taken as 4 February, so a birth on
+2 February 1991 counts as 1990. Reduce the year's last two digits to one digit *r*; before 2000 the man's Kua is
+10 − *r* and the woman's *r* + 5, from 2000 on 9 − *r* and *r* + 6 (reduced to 1–9). A Kua of 5 is read as 2 for a
+man and 8 for a woman. Kua 1, 3, 4 and 9 form the east group, 2, 6, 7 and 8 the west group. Example: 15 May 1990
+gives man 1 (east), woman 8 (west). The studio shows both in a card under the Lo Shu grid.
+
+## Compound numbers (Chaldean)
+
+When a Chaldean total between 10 and 52 is reduced, the studio's number tile shows `compound/root`; opening the tile
+adds what the compound is said to signify, paraphrased in our own words from Cheiro's *Book of Numbers* (1926) and
+labelled interpretation. Cheiro gives his own readings for 10–32, 37, 43 and 51; the other compounds share the
+reading of a lower number, as he says.

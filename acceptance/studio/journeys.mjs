@@ -405,6 +405,29 @@ await journey("pada navāṃśa: the D9 chart shows the ārūḍha padas worked 
   return `${Object.values(want).flat().length} padas in ${Object.keys(want).length} navāṃśa signs`;
 });
 
+await journey("numerology: the Kua number for both sexes, and compound numbers open their reading", async () => {
+  await go("#/numerology", 1400);
+  const r = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes;
+    const num = Object.values(d).find(e => e && e.derived_attributes && e.derived_attributes.some(a => a.id === 'numerology.lo_shu'));
+    const L = num ? num.derived_attributes.find(a => a.id === 'numerology.lo_shu').value : null;
+    const c = [...document.querySelectorAll('#numerology .card')].find(x => /Kua number/.test(x.querySelector('h3')?.textContent || ''));
+    return { L: L && L.kua, dob: L && L.digits, text: c ? c.innerText : null }; })()`);
+  if (!r.L) return "no birth date numerology in this chart";
+  expect(r.text, "no Kua card");
+  // recompute from the date: DDMMYYYY digits
+  const dd = +r.dob.slice(0, 2), mm = +r.dob.slice(2, 4); let y = +r.dob.slice(4); if (mm < 2 || (mm === 2 && dd < 4)) y--;
+  const red = (n) => { while (n > 9) n = String(n).split("").reduce((a, b) => a + +b, 0); return n; };
+  const rr = y % 100 === 0 ? 0 : red(y % 100), one = (x) => { x = ((x % 9) + 9) % 9; return x === 0 ? 9 : x; };
+  let [m, f] = y < 2000 ? [one(10 - rr), one(rr + 5)] : [one(9 - rr), one(rr + 6)]; if (m === 5) m = 2; if (f === 5) f = 8;
+  expect(r.L.male === m && r.L.female === f, `Kua ${r.L.male}/${r.L.female}, expected ${m}/${f}`);
+  expect(r.text.includes(`Man\n${m}`) || r.text.includes(String(m)), "Kua card does not show the man's number");
+  // a compound name number opens its compound reading
+  const opened = await evaluate(`(() => { const t = [...document.querySelectorAll('#numerology .ntile')].find(b => { const c = b.querySelector('.n-comp'); if (!c) return false; const k = +c.textContent.split('/')[0]; return k >= 10 && k <= 52; });
+    if (!t) return null; t.click(); return t.querySelector('.n-comp').textContent; })()`);
+  if (opened) { await sleep(500); const has = await evaluate(`!!document.querySelector('#numerology .ntile.open .n-compound')`); expect(has, `compound ${opened} opened without its reading`); }
+  return `Kua man ${m}, woman ${f}${opened ? `; compound ${opened} reads` : ""}`;
+});
+
 await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
   await go("#/chakra", 1500);
   await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);

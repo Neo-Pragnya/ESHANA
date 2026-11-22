@@ -336,6 +336,58 @@ POINTS = {
 }
 
 # ── numerology: what each number and each role is commonly said to describe (paraphrased, attributed) ──────────
+# Chaldean compound numbers 10–52 (paraphrased in our own words from Cheiro, Book of Numbers, 1926)
+COMPOUND = {
+    "10": "Rise and fall by one's own effort; a name that is remembered, for good or ill.",
+    "11": 'Hidden trials and possible betrayal by others; faith is tested.',
+    "12": 'Sacrifice for others; a sense of being used by those one serves.',
+    "13": 'Upheaval and change; the end of one state and the start of another.',
+    "14": 'Movement, trade and dealings with people; gains with risks from chance and rashness.',
+    "15": 'Personal magnetism and persuasion; gifts and favours from others.',
+    "16": 'A sudden fall from a height; plans that collapse unless carefully made.',
+    "17": 'Rising above trials; a name that lasts.',
+    "18": 'Conflict, deception and quarrels, sometimes within the family.',
+    "19": 'Success, esteem and happiness; one of the most favoured numbers.',
+    "20": 'An awakening or a call to a new purpose; plans that come late.',
+    "21": 'Advancement after long effort; honour and elevation.',
+    "22": 'Illusion and misplaced trust; a warning to judge people carefully.',
+    "23": 'Help from superiors and protection; success in plans.',
+    "24": 'Help from those in power and through partnerships, including marriage.',
+    "25": 'Strength through experience; success after earlier trials.',
+    "26": 'Losses through partnerships, advice or speculation.',
+    "27": 'Authority and command; rewards from the mind and creative work.',
+    "28": 'Gains that may be lost again through others; contradictions.',
+    "29": 'Uncertainty, deception by others and trials in relationships.',
+    "30": 'Thought and mental deduction; detachment from material ambition.',
+    "31": 'Self-containment and isolation; a lonely number.',
+    "32": "Like 5 and 23: influence over people, good fortune in plans if one keeps one's own counsel.",
+    "33": 'No separate meaning of its own; it shares the influence of 24.',
+    "34": 'No separate meaning of its own; it shares the influence of 25.',
+    "35": 'No separate meaning of its own; it shares the influence of 26.',
+    "36": 'No separate meaning of its own; it shares the influence of 27.',
+    "37": 'Good friendships and happy partnerships, in love and in business.',
+    "38": 'No separate meaning of its own; it shares the influence of 29.',
+    "39": 'No separate meaning of its own; it shares the influence of 30.',
+    "40": 'No separate meaning of its own; it shares the influence of 31.',
+    "41": 'No separate meaning of its own; it shares the influence of 32.',
+    "42": 'No separate meaning of its own; it shares the influence of 24.',
+    "43": 'Revolution and upheaval; failure of plans.',
+    "44": 'No separate meaning of its own; it shares the influence of 26.',
+    "45": 'No separate meaning of its own; it shares the influence of 27.',
+    "46": 'No separate meaning of its own; it shares the influence of 37.',
+    "47": 'No separate meaning of its own; it shares the influence of 29.',
+    "48": 'No separate meaning of its own; it shares the influence of 30.',
+    "49": 'No separate meaning of its own; it shares the influence of 31.',
+    "50": 'No separate meaning of its own; it shares the influence of 32.',
+    "51": "Sudden advancement and strength; the warrior's number, with enemies made on the way.",
+    "52": 'No separate meaning of its own; it shares the influence of 43.',
+}
+
+KUA = {
+    "about": "The Kua (Gua) number of Eight Mansions feng shui, from the birth year (Chinese solar year from 4 February) and sex. It sorts people into an east group (1, 3, 4, 9) and a west group (2, 6, 7, 8), each with four favourable directions; the number is used to choose sitting, sleeping and facing directions.",
+    "groups": {"east": "Favourable directions are east, south-east, north and south.", "west": "Favourable directions are west, north-west, south-west and north-east."},
+}
+
 NUM_SOURCES = ["Common Pythagorean practice (Balliett, Decoz)", "Chaldean practice (Cheiro)", "Indian numerology practice"]
 NUMBERS = {
     "1": dict(key="beginnings, will, independence", strengths=["initiative", "leadership", "self-reliance"], challenges=["impatience", "stubbornness", "isolation"], planet="Sun"),
@@ -540,7 +592,7 @@ META = {
 
 
 def main() -> None:
-    OUT.write_text(json.dumps({"meta": META, "yogas": YOGAS, "points": POINTS, "numerology": {"numbers": NUMBERS, "roles": ROLES, "karmic_debt": KARMIC_DEBT, "lessons": LESSONS, "arrows": ARROWS, "sources": NUM_SOURCES},
+    OUT.write_text(json.dumps({"meta": META, "yogas": YOGAS, "points": POINTS, "numerology": {"numbers": NUMBERS, "roles": ROLES, "karmic_debt": KARMIC_DEBT, "lessons": LESSONS, "arrows": ARROWS, "compound": COMPOUND, "kua": KUA, "sources": NUM_SOURCES + ["Cheiro, Book of Numbers (1926), for compound numbers", "Eight Mansions feng shui practice, for the Kua number"]},
                                 "sahams": {"general": SAHAM_GENERAL, "sources": SAHAM_SOURCES,
                                            "items": {k: {"signifies": s, "used_for": u} for k, (s, u) in SAHAMS.items()}},
                                 "pakshi": dict(PAKSHI, sources=PAKSHI_SOURCES)}, ensure_ascii=False, indent=1) + "\n",

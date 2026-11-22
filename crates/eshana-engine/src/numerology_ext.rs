@@ -373,12 +373,58 @@ pub fn lo_shu(dob: (i32, u32, u32)) -> Value {
         "driver": driver, "conductor": conductor,
         "counts_with_driver_conductor": (1..=9).map(|k| with[k]).collect::<Vec<_>>(),
         "arrows_with_driver_conductor": read(&with),
+        "kua": kua(dob),
         "conventions": "digits of DDMMYYYY with zeros ignored; the second grid adds the driver (mulank) and conductor (bhagyank) as Indian practice does",
     })
 }
 
+/// The Kua (Gua) number of Eight Mansions feng shui, for both sexes (ESHANA does not take gender as an input). The
+/// Chinese solar year starts at Lichun, taken as 4 February. Reduce the year's last two digits to one digit r; before
+/// 2000 the male Kua is 10 − r and the female r + 5, from 2000 on 9 − r and r + 6 (reduced to 1–9); a Kua of 5 is
+/// read as 2 for a man and 8 for a woman.
+#[must_use]
+pub fn kua(dob: (i32, u32, u32)) -> Value {
+    let (y0, m, d) = dob;
+    let y = if m < 2 || (m == 2 && d < 4) { y0 - 1 } else { y0 };
+    let r = reduce(y.rem_euclid(100).unsigned_abs(), false);
+    let r = if y.rem_euclid(100) == 0 { 0 } else { r };
+    let one = |x: i64| -> u32 {
+        let x = x.rem_euclid(9) as u32;
+        if x == 0 {
+            9
+        } else {
+            x
+        }
+    };
+    let (male, female) = if y < 2000 {
+        (one(10 - i64::from(r)), one(i64::from(r) + 5))
+    } else {
+        (one(9 - i64::from(r)), one(i64::from(r) + 6))
+    };
+    let group = |k: u32| if [1, 3, 4, 9].contains(&k) { "east" } else { "west" };
+    let m5 = if male == 5 { 2 } else { male };
+    let f5 = if female == 5 { 8 } else { female };
+    json!({"solar_year": y, "male": m5, "female": f5, "male_group": group(m5), "female_group": group(f5),
+        "conventions": "Eight Mansions; year from Lichun (4 February); last two digits of the year reduced; Kua 5 is 2 for a man, 8 for a woman; east group 1, 3, 4, 9, west group 2, 6, 7, 8"})
+}
+
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn kua_numbers() {
+        // 1990 (after 4 February): r = 9; man 10 − 9 = 1, woman 9 + 5 = 14 → 5 → 8
+        let k = kua((1990, 5, 15));
+        assert_eq!((k["male"].as_u64(), k["female"].as_u64()), (Some(1), Some(8)));
+        // 2000: r = 0; man 9, woman 6
+        let k = kua((2000, 6, 1));
+        assert_eq!((k["male"].as_u64(), k["female"].as_u64()), (Some(9), Some(6)));
+        // 2 February 1991 belongs to the 1990 solar year
+        assert_eq!(kua((1991, 2, 2))["solar_year"], 1990);
+        // 1985: r = 4; man 6, woman 9
+        let k = kua((1985, 7, 7));
+        assert_eq!((k["male"].as_u64(), k["female"].as_u64()), (Some(6), Some(9)));
+    }
+
     use super::*;
 
     #[test]
