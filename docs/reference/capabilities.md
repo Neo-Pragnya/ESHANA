@@ -86,8 +86,16 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Aṣṭakūṭa matching with Manglik flags | verified |
 | Rajju and vedha doshas, matching calendar | planned (`MAT-02`) |
 | Muhūrta search | planned (`MUH-01`) |
-| Varṣaphala (annual chart) | planned (`VAR-01`) |
-| Upagrahas (Gulika, Māndi) | planned (`VED-13`) |
+| Upagrahas: Dhūma, Vyatīpāta, Pariveṣa, Indracāpa, Upaketu, Gulika, Māndi | verified (published reference chart) |
+| Maitri: natural, temporal and compound relationships of the nine grahas, nakshatra tārā matrix, dignities in 16 divisions ([guide](../guides/maitri.md)) | verified (published reference chart, 305/306 cells) |
+| More daśās: Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla ([guide](../guides/dashas.md)) | verified (published reference chart, to the day or ±1 day) |
+| Kālachakra daśā (BPHS pada tables) | implemented; the reference's timing convention differs (xfail) |
+| Sahams (37), avakahaḍā, male/female rāśis, mṛtyu bhāga, ghāta chakra, vedhasthāna, jīva/deha, śodhana piṇḍas ([guide](../guides/auxiliary.md)) | verified (published reference chart) |
+| Sarvatobhadra with vedha, Kota and Saṅghaṭṭa chakras, natal and transit ([guide](../guides/chakras.md)) | verified (placements and layout vs published reference chart) |
+| Varṣaphala: muntha, pañcādhikārīs, pañcavargīya bala, year lord ([guide](../guides/annual.md)) | verified (strengths, muntha, office-bearers); year-lord score differs (xfail) |
+| Pañca pakṣī: birth bird, ruling and dying birds, day and night yāma tables with sub-periods, ±3 days | implemented (birds verified; first-yāma activity convention differs) |
+| Parivartana yoga and its Mahā, Khala and Dainya kinds | verified (unit test; Ramana chart: Jupiter–Saturn, Dainya) |
+| KP significator tables by bhāva and graha, equal-cusp lords | verified (published reference chart) |
 | Lal Kitab | planned (`LK-01`) |
 
 ## Western, Human Design, numerology, time series

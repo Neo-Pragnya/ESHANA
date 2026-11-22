@@ -1,0 +1,42 @@
+---
+import Layout from "../../components/Layout.astro";
+import gallery from "../../data/gallery.json";
+
+type Item = { name: string; title: string; caption: string; image: string; link: string; chart: string };
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const items = gallery.items as Item[];
+---
+
+<Layout title="Gallery" description="Every page of the ESHANA chart studio, captured from real reports: the reference chart of Sri Ramana Maharishi and an example chart.">
+  <section class="hero" style="text-align:left">
+    <div class="hero-content">
+      <p class="eyebrow">Gallery</p>
+      <h1><span data-rise>Every view, from a real run</span></h1>
+      <p class="lede">Each picture is a screenshot of a report produced by <code>eshana-report</code>: most from the reference chart of
+        <strong>Sri Ramana Maharishi (30 Dec 1879, 01:00 LMT, Madurai)</strong>, which the accuracy suite compares with a published
+        reference chart. Click a picture to open that page in the live report. <code>make gallery</code> regenerates them.</p>
+    </div>
+  </section>
+
+  <section class="gallery">
+    {items.map((it) => (
+      <figure class="gal" data-reveal>
+        <a href={`${base}${it.link}`} aria-label={`Open ${it.title} in the report`}>
+          <img src={`${base}${it.image}`} alt={`${it.title}: ${it.caption}`} loading="lazy" width="1440" height="1000" />
+        </a>
+        <figcaption><b>{it.title}</b><span>{it.caption}</span><small>{it.chart}</small></figcaption>
+      </figure>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 22px; padding: 8px 0 48px; }
+  .gal { margin: 0; border: 1px solid var(--line, rgba(160, 170, 230, .2)); border-radius: 14px; overflow: hidden; background: var(--panel, rgba(20, 24, 56, .6)); transition: transform .2s ease, box-shadow .2s ease; }
+  .gal:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0, 0, 0, .28); }
+  .gal img { display: block; width: 100%; height: auto; aspect-ratio: 1440 / 1000; object-fit: cover; object-position: top left; }
+  .gal figcaption { display: grid; gap: 4px; padding: 12px 14px 14px; font-size: 14px; }
+  .gal figcaption span { opacity: .85; }
+  .gal figcaption small { opacity: .6; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { .gal, .gal:hover { transition: none; transform: none; } }
+</style>

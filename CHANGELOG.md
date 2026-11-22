@@ -5,6 +5,54 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-22
+
+Review rounds 5 and 6 and the remaining reference-chart items. Schema 0.3.2 adds fields only.
+
+### Added (remaining items)
+- **Yoginī daśā** continues one 36-year cycle past the reference date, so a chart of someone born long ago has a
+  current period. Daśās whose span has ended open the zoom at birth and say so.
+- **Lordships in D1, D9 and D10** with the exchanges between house lords and their kind (`lordships_by_varga` in
+  the special points), shown on the Bhāvas page.
+- **Pada navāṃśa:** ārūḍha padas worked out in the navāṃśa (`vedic.jaimini.arudha_padas_d9`), shown on the D9 chart.
+- **Numerology:** the Kua number for both sexes (`numerology.lo_shu.kua`); Chaldean compound-number readings 10–52.
+- **Website:** a Gallery of every studio view captured from real reports (`make gallery`), and the Ramana reference
+  report among the example reports.
+- `make studio-journeys` also runs every journey on the Ramana reference chart.
+
+### Added (review round 6)
+- **Charts:** ārūḍha padas on top of each rāśi and aspect marks at the bottom, wrapped inside the rāśi, in South and
+  North Indian charts; crowded North Indian houses fit their triangle or diamond. A journey checks that no label
+  overlaps another or leaves its rāśi.
+- **Parivartana:** exchanged grahas are also marked in their partner's sign (with additional aspects on); new yogas
+  Parivartana, Mahā, Khala and Dainya parivartana (pack `vedic.yogas@0.3`, condition `parivartana`).
+- **Jyotish Chakra:** hovering a transit graha draws a line to where it is now; hover details sit in a card beside
+  the wheel instead of a popup over it.
+- **Dark theme:** chart writing reaches 4.5:1 contrast (aspect marks 3:1), checked by a journey.
+- **Kota chakra** redrawn as a fort (Bāhya, Prākāra, Madhya, Stambha) with entry and exit arrows; **Sarvatobhadra**
+  framed by nakshatra, pada-sound and pada bands on all four sides, with red/green vedha borders
+  (`chakras.yaml` gains `pada_syllables`).
+- **Pañca pakṣī:** full day and night tables (five yāmas × five birds), sub-periods, a day picker over the three days
+  either side (`vedic.panch_pakshi.nearby_days`) and info boxes.
+- **Sahams:** what each of the 37 signifies and how it is read, in info boxes (interpretation, sources named).
+
+### Added (review round 5)
+- **Five analysis categories** (features `maitri`, `dashas_extended`, `auxiliary`, `chakras`, `annual`; all included in
+  `features: ["all"]`), each with its own rule pack, guide and studio page, and an accuracy test against the
+  Ramana Maharishi reference chart:
+  - **Maitri** ([guide](docs/guides/maitri.md)): compound relationships for all nine grahas (node friendships named as
+    a convention), the nakshatra tārā matrix and dignities in all 16 divisions.
+  - **More daśās** ([guide](docs/guides/dashas.md)): Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla and
+    Kālachakra, with applicability flags. The Daśā page has a tab per system and the zoom works for sign daśās too.
+  - **Auxiliary** ([guide](docs/guides/auxiliary.md)): 37 sahams, avakahaḍā chakra, male/female rāśis, mṛtyu bhāga,
+    ghāta chakra, vedhasthāna (natal and transit), jīva/deha and śodhana piṇḍas.
+  - **Chakras** ([guide](docs/guides/chakras.md)): Sarvatobhadra with vedha lines, Kota and Saṅghaṭṭa, natal and
+    transit layers.
+  - **Annual** ([guide](docs/guides/annual.md)): varṣaphala (muntha, office-bearers, pañcavargīya bala, year lord),
+    pañca pakṣī and KP significator tables by bhāva and graha.
+- Known differences from the reference are recorded as expected failures with reasons (Kālachakra timing, the
+  reference's office-bearer score, Kota score, Saṅghaṭṭa ring figure, one D40 boundary).
+
 ## [0.3.1] - 2026-11-21
 
 Review rounds 1–4: everything below ships in 0.3.1. Schema 0.3.1 adds fields only.

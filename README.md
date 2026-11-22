@@ -51,7 +51,7 @@ $ eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --
 - **Uncertain birth time**: intervals and stability flags; the Ascendant and houses are never invented.
 - **Method comparison** (`eshana compare`) and a **symbolic graph** (JSON, Mermaid, GraphML) with no causal edges.
 - **Vedic features from YAML rule packs**: vargas D1–D60, Vimśottarī to five levels and Yoginī daśā, strength and
-  dignity, graha and rāśi drishti, aṣṭakavarga, Jaimini kārakas and ārūḍhas, KP sub-lords and significators, 18 yogas
+  dignity, graha and rāśi drishti, aṣṭakavarga, Jaimini kārakas and ārūḍhas, KP sub-lords and significators, 22 yogas (with parivartana)
   and 6 doshas, Sāḍe Sātī ([guide](docs/guides/vedic-features.md)); **pañcāṅga** with rise/set, horā, choghaḍiyā and
   special lagnas ([guide](docs/guides/panchanga.md)); **aṣṭakūṭa matching** ([guide](docs/guides/matching.md)).
 - **ESHANA Studio** (`eshana-report`, `Chart.to_html()`): one offline HTML file that works as a multi-page app. It

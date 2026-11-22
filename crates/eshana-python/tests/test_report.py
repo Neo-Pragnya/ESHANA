@@ -153,3 +153,38 @@ def test_unknown_feature_is_refused():
     with pytest.raises(EshanaError) as e:
         ChartEngine().vedic_chart(CTX, ayanamsha="lahiri", features=["horoscope"])
     assert e.value.code == "ESH-INPUT"
+
+
+def test_studio_assets_share_no_top_level_names():
+    """The studio assets are joined into one script, so a top-level name declared in two of them breaks every page."""
+    import re
+    from eshana import report
+
+    seen: dict[str, str] = {}
+    clashes = []
+    for name in report.ASSETS:
+        for m in re.finditer(r"^(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)", report._asset(name), re.M):
+            if m.group(1) in seen:
+                clashes.append((m.group(1), seen[m.group(1)], name))
+            seen.setdefault(m.group(1), name)
+    assert not clashes, clashes
+
+
+def test_every_saham_and_pakshi_activity_has_a_meaning(page):
+    """The studio's saham and pañca pakṣī info boxes read their interpretation text from reading_reference.json:
+    every saham the engine emits has a meaning and a varṣaphala use, every bird activity is explained, and the text
+    names its sources (it is interpretation, kept out of the engine)."""
+    d = data_of(page)
+    ref = d["reading"]
+    attrs = {a["id"]: a["value"] for a in d["envelopes"]["vedic"]["derived_attributes"]}
+    ids = [r["id"] for r in attrs["vedic.aux.sahams"]["sahams"]]
+    assert len(ids) == 37
+    items = ref["sahams"]["items"]
+    assert set(items) == set(ids)
+    for k in ids:
+        assert len(items[k]["signifies"]) > 10 and len(items[k]["used_for"]) > 10, k
+    assert ref["sahams"]["sources"] and ref["sahams"]["general"]["what"] and len(ref["sahams"]["general"]["read"]) >= 3
+    pk = ref["pakshi"]
+    assert set(pk["activities"]) == {"ruling", "eating", "walking", "sleeping", "dying"}
+    assert pk["sources"] and all(pk[k] for k in ("what", "birth_bird", "relations", "ruling", "dying", "strength"))
+    assert [n["offset"] for n in attrs["vedic.panch_pakshi"]["nearby_days"]] == [-3, -2, -1, 1, 2, 3]

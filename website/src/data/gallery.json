@@ -1,0 +1,157 @@
+{
+  "generated_from": "real reports in examples/reports",
+  "items": [
+    {
+      "name": "jyotish-chakra",
+      "title": "Jyotish Chakra",
+      "caption": "The Graha-Nakshatra Mandala: rāśis, nakshatras, padas and every graha, with the D1 chart in the centre. Hover details sit beside the wheel.",
+      "image": "gallery/jyotish-chakra.webp",
+      "link": "reports/reference-ramana.html#/chakra",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "charts",
+      "title": "South and North Indian charts",
+      "caption": "Ārūḍha padas at the top of each rāśi, aspect marks at the bottom; crowded North Indian houses fit their shape.",
+      "image": "gallery/charts.webp",
+      "link": "reports/reference-ramana.html#/charts",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "vargas",
+      "title": "Divisional charts",
+      "caption": "D1 to D60 side by side.",
+      "image": "gallery/vargas.webp",
+      "link": "reports/reference-ramana.html#/vargas",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "aspects",
+      "title": "Aspects",
+      "caption": "Graha drishti, rāśi drishti and sputa drishti in virūpas, on grahas, houses and cusps.",
+      "image": "gallery/aspects.webp",
+      "link": "reports/reference-ramana.html#/aspects",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "bhavas",
+      "title": "Bhāvas",
+      "caption": "Every house, where its lord sits, and lordships in D1, D9 and D10 with the exchanges between lords.",
+      "image": "gallery/bhavas.webp",
+      "link": "reports/reference-ramana.html#/houses",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "maitri",
+      "title": "Maitri and dignities",
+      "caption": "Compound relationships of the nine grahas, the nakshatra tārā matrix and dignities in 16 divisions.",
+      "image": "gallery/maitri.webp",
+      "link": "reports/reference-ramana.html#/maitri",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "strength",
+      "title": "Strength",
+      "caption": "Ṣaḍbala with the cut-off at the required minimum, bhāva bala and viṃśopaka.",
+      "image": "gallery/strength.webp",
+      "link": "reports/reference-ramana.html#/strength",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "ashtakavarga",
+      "title": "Aṣṭakavarga",
+      "caption": "Bhinna and sarva aṣṭakavarga.",
+      "image": "gallery/ashtakavarga.webp",
+      "link": "reports/reference-ramana.html#/ashtakavarga",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "dasha",
+      "title": "Daśā",
+      "caption": "Nine daśā systems; the zoom opens five levels deep. Shown: Chara daśā.",
+      "image": "gallery/dasha.webp",
+      "link": "reports/reference-ramana.html#/dasha/chara",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "yoga-parivartana",
+      "title": "Yogas",
+      "caption": "Each yoga present, with how it forms, strength checks, timing and its reading. Shown: the Jupiter–Saturn parivartana.",
+      "image": "gallery/yoga-parivartana.webp",
+      "link": "reports/reference-ramana.html#/yoga/parivartana",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "sahams",
+      "title": "Sahams",
+      "caption": "37 sahams on the chart, each with an info box: formula as computed, placement and meaning.",
+      "image": "gallery/sahams.webp",
+      "link": "reports/reference-ramana.html#/aux/sahams",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "sarvatobhadra",
+      "title": "Sarvatobhadra",
+      "caption": "The 9×9 chakra framed by nakshatra, pada-sound and pada bands, with vedha lines and borders.",
+      "image": "gallery/sarvatobhadra.webp",
+      "link": "reports/reference-ramana.html#/chakras/sbc",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "kota",
+      "title": "Kota chakra",
+      "caption": "The fort: Bāhya, Prākāra, Madhya and Stambha, with the paths in and out.",
+      "image": "gallery/kota.webp",
+      "link": "reports/reference-ramana.html#/chakras/kota",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "varshaphala",
+      "title": "Varṣaphala",
+      "caption": "The annual chart, muntha, office-bearers and the five-fold strengths.",
+      "image": "gallery/varshaphala.webp",
+      "link": "reports/reference-ramana.html#/annual",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "pancha-pakshi",
+      "title": "Pañca pakṣī",
+      "caption": "The five birds through the day and the night, the current yāma, and the sub-periods.",
+      "image": "gallery/pancha-pakshi.webp",
+      "link": "reports/reference-ramana.html#/pakshi",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "kp",
+      "title": "KP",
+      "caption": "Sub-lords, cusps and significator tables by bhāva and by graha.",
+      "image": "gallery/kp.webp",
+      "link": "reports/reference-ramana.html#/kp",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "panchanga",
+      "title": "Pañcāṅga",
+      "caption": "Tithi, vāra, nakshatra, yoga and karaṇa at birth.",
+      "image": "gallery/panchanga.webp",
+      "link": "reports/reference-ramana.html#/panchanga",
+      "chart": "Sri Ramana Maharishi, 30 Dec 1879"
+    },
+    {
+      "name": "human-design",
+      "title": "Human Design",
+      "caption": "The standard BodyGraph with gates, channels and properties.",
+      "image": "gallery/human-design.webp",
+      "link": "reports/example-birth-chart.html#/human-design",
+      "chart": "Example Person, 15 May 1990"
+    },
+    {
+      "name": "numerology",
+      "title": "Numerology",
+      "caption": "Every school's numbers, the Lo Shu grid and the Kua number.",
+      "image": "gallery/numerology.webp",
+      "link": "reports/example-birth-chart.html#/numerology",
+      "chart": "Example Person, 15 May 1990"
+    }
+  ]
+}

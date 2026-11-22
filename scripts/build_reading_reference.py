@@ -122,6 +122,31 @@ YOGAS = {
         read=["The lord should be in a dusthāna without strongly influencing kendras or trikoṇas.",
               "Readers check the lagna and its lord are strong enough to benefit."],
         sources=[BPHS, "Uttara Kalamrita"]),
+    "parivartana": dict(
+        summary="Two grahas each sit in a sign ruled by the other, so each is read as also occupying its own sign.",
+        effects=["the two houses and the two grahas work as a linked pair, each supporting the other's matters",
+                 "results of one house are carried into the other"],
+        read=["Readers judge it by which houses are exchanged: the Mahā, Khala and Dainya kinds below.",
+              "Both grahas then behave as if in their own signs for strength, so their dignity is read with that in mind.",
+              "The daśās of either graha bring the exchange into play."],
+        sources=[PD, BPHS]),
+    "maha_parivartana": dict(
+        summary="An exchange between the lords of two good houses (not the 3rd, 6th, 8th or 12th).",
+        effects=["wealth, standing and comforts tied to the two houses involved", "support from the people those houses show"],
+        read=["Counted among the strongest exchanges when the lagna lord or a kendra or trikoṇa lord is one of the pair."],
+        sources=[PD]),
+    "khala_parivartana": dict(
+        summary="An exchange that involves the 3rd house (and none of the 6th, 8th or 12th).",
+        effects=["mixed results: gains through effort and initiative, with swings of fortune"],
+        read=["The 3rd house is one of effort and courage, so results come through the person's own exertion."],
+        sources=[PD]),
+    "dainya_parivartana": dict(
+        summary="An exchange that involves a dusthāna (the 6th, 8th or 12th house).",
+        effects=["struggle, obstacles or loss in the matters of the other house involved",
+                 "results that come after difficulty"],
+        read=["Classical texts call it inauspicious; later readers note it can also give depth and endurance when the "
+              "grahas are otherwise strong, much as a Vipareeta Rāja yoga does."],
+        sources=[PD]),
     "lakshmi": dict(
         summary="The 9th lord (fortune) strong in its own or exaltation sign, in a kendra or trikoṇa.",
         effects=["prosperity, good fortune and refinement", "virtue and generosity"],
@@ -311,6 +336,58 @@ POINTS = {
 }
 
 # ── numerology: what each number and each role is commonly said to describe (paraphrased, attributed) ──────────
+# Chaldean compound numbers 10–52 (paraphrased in our own words from Cheiro, Book of Numbers, 1926)
+COMPOUND = {
+    "10": "Rise and fall by one's own effort; a name that is remembered, for good or ill.",
+    "11": 'Hidden trials and possible betrayal by others; faith is tested.',
+    "12": 'Sacrifice for others; a sense of being used by those one serves.',
+    "13": 'Upheaval and change; the end of one state and the start of another.',
+    "14": 'Movement, trade and dealings with people; gains with risks from chance and rashness.',
+    "15": 'Personal magnetism and persuasion; gifts and favours from others.',
+    "16": 'A sudden fall from a height; plans that collapse unless carefully made.',
+    "17": 'Rising above trials; a name that lasts.',
+    "18": 'Conflict, deception and quarrels, sometimes within the family.',
+    "19": 'Success, esteem and happiness; one of the most favoured numbers.',
+    "20": 'An awakening or a call to a new purpose; plans that come late.',
+    "21": 'Advancement after long effort; honour and elevation.',
+    "22": 'Illusion and misplaced trust; a warning to judge people carefully.',
+    "23": 'Help from superiors and protection; success in plans.',
+    "24": 'Help from those in power and through partnerships, including marriage.',
+    "25": 'Strength through experience; success after earlier trials.',
+    "26": 'Losses through partnerships, advice or speculation.',
+    "27": 'Authority and command; rewards from the mind and creative work.',
+    "28": 'Gains that may be lost again through others; contradictions.',
+    "29": 'Uncertainty, deception by others and trials in relationships.',
+    "30": 'Thought and mental deduction; detachment from material ambition.',
+    "31": 'Self-containment and isolation; a lonely number.',
+    "32": "Like 5 and 23: influence over people, good fortune in plans if one keeps one's own counsel.",
+    "33": 'No separate meaning of its own; it shares the influence of 24.',
+    "34": 'No separate meaning of its own; it shares the influence of 25.',
+    "35": 'No separate meaning of its own; it shares the influence of 26.',
+    "36": 'No separate meaning of its own; it shares the influence of 27.',
+    "37": 'Good friendships and happy partnerships, in love and in business.',
+    "38": 'No separate meaning of its own; it shares the influence of 29.',
+    "39": 'No separate meaning of its own; it shares the influence of 30.',
+    "40": 'No separate meaning of its own; it shares the influence of 31.',
+    "41": 'No separate meaning of its own; it shares the influence of 32.',
+    "42": 'No separate meaning of its own; it shares the influence of 24.',
+    "43": 'Revolution and upheaval; failure of plans.',
+    "44": 'No separate meaning of its own; it shares the influence of 26.',
+    "45": 'No separate meaning of its own; it shares the influence of 27.',
+    "46": 'No separate meaning of its own; it shares the influence of 37.',
+    "47": 'No separate meaning of its own; it shares the influence of 29.',
+    "48": 'No separate meaning of its own; it shares the influence of 30.',
+    "49": 'No separate meaning of its own; it shares the influence of 31.',
+    "50": 'No separate meaning of its own; it shares the influence of 32.',
+    "51": "Sudden advancement and strength; the warrior's number, with enemies made on the way.",
+    "52": 'No separate meaning of its own; it shares the influence of 43.',
+}
+
+KUA = {
+    "about": "The Kua (Gua) number of Eight Mansions feng shui, from the birth year (Chinese solar year from 4 February) and sex. It sorts people into an east group (1, 3, 4, 9) and a west group (2, 6, 7, 8), each with four favourable directions; the number is used to choose sitting, sleeping and facing directions.",
+    "groups": {"east": "Favourable directions are east, south-east, north and south.", "west": "Favourable directions are west, north-west, south-west and north-east."},
+}
+
 NUM_SOURCES = ["Common Pythagorean practice (Balliett, Decoz)", "Chaldean practice (Cheiro)", "Indian numerology practice"]
 NUMBERS = {
     "1": dict(key="beginnings, will, independence", strengths=["initiative", "leadership", "self-reliance"], challenges=["impatience", "stubbornness", "isolation"], planet="Sun"),
@@ -378,6 +455,135 @@ ARROWS = {
     "golden plane (success)": "success through steady effort", "silver plane (property)": "property and stability",
 }
 
+# ── sahams (Tājika sensitive points): what each stands for and how it is used in a varṣaphala ─────────────────
+# Written here in our own words from the saham chapters of the Tājika manuals; keyed by the engine's saham id
+# (rulesets/auxiliary.yaml). `signifies` is the matter, `used_for` what a varṣaphala reader looks at it for.
+TN, HR, RAMAN = ("Tājika Nīlakaṇṭhī (Nīlakaṇṭha, Saṃjñā Tantra, saham chapter)", "Hāyana Ratna (Balabhadra)",
+                 "B. V. Raman, Varshaphal or the Hindu Progressed Horoscope")
+SAHAM_SOURCES = [TN, HR, RAMAN]
+SAHAM_GENERAL = dict(
+    what="A saham (from the Arabic sahm, 'lot' or 'share') is a sensitive degree found by measuring the distance "
+         "between two points and laying it off from a third, usually the lagna. Each saham stands for one matter of "
+         "life. The Tājika school, which shaped the Indian annual chart, lists about fifty; ESHANA computes 37.",
+    read=["Judge a saham mainly through its lord: a lord that is strong in pañcavargīya bala, well placed from the "
+          "varṣa lagna (kendra or trikoṇa) and joined to or aspecting the saham is read as the matter prospering "
+          "that year.",
+          "A lord in the 6th, 8th or 12th, combust, debilitated or hit by malefics, or a saham occupied by malefics, "
+          "is read as the matter meeting obstacles.",
+          "The natal saham shows the promise; the same saham recomputed in the annual chart shows whether this year "
+          "delivers it. A saham falling on, or aspected by, the year lord or the muntha is given weight.",
+          "Night births reverse many formulas (A and B swap); the table marks those."],
+    caution="Sahams refine a reading of the year; manuals warn against reading one in isolation from the varṣa "
+            "lagna, the muntha and the year lord.",
+)
+SAHAMS = {
+    "punya": ("Merit and good fortune: the store of past good deeds and the luck that follows from it.",
+              "The general fortune of the year; the first saham checked, and an input to several others."),
+    "vidya": ("Learning and knowledge, education and intellectual attainment.",
+              "Studies, examinations, scholarship and teaching in the year."),
+    "yasa": ("Fame and reputation: being known and spoken well of.",
+             "Recognition, public standing and honours in the year."),
+    "mitra": ("Friends, allies and well-wishers.",
+              "Help from friends, new friendships, or quarrels with them."),
+    "mahatmya": ("Greatness and magnanimity; dignity of character and stature.",
+                 "Rise in standing, acts of generosity, being looked up to."),
+    "asha": ("Hopes, wishes and expectations.",
+             "Whether the wishes held at the start of the year are fulfilled."),
+    "samartha": ("Ability and capacity: the strength to carry out what one sets out to do.",
+                 "Competence and enterprise, the success of efforts and initiatives."),
+    "bhratru": ("Brothers and sisters.",
+                "The welfare of siblings and relations with them during the year."),
+    "gaurava": ("Respect and esteem; the weight a person carries with others.",
+                "Honour from elders and authorities, being treated with regard."),
+    "pitru": ("The father and paternal matters.",
+              "The father's health and fortunes, and support from him."),
+    "raja": ("Kingship: authority, office and status; dealings with government.",
+             "Promotion, position, favour or disfavour from those in power."),
+    "matru": ("The mother and maternal matters.",
+              "The mother's health and fortunes, and comfort from her."),
+    "putra": ("Children and progeny.",
+              "Birth of children, their welfare and the joy or worry they bring."),
+    "jeeva": ("Life and vitality: the continuance of life itself.",
+              "General health and longevity in the year, read with the 8th house and the Mṛtyu saham."),
+    "karma": ("Work, action and profession; the duties one performs.",
+              "Career events, new undertakings and success in occupation."),
+    "roga": ("Illness and bodily disorder.",
+             "Periods and kinds of sickness; afflicted, it warns of health trouble that year."),
+    "kali": ("Strife and conflict; quarrels and the troubles of a difficult age.",
+             "Disputes, litigation and discord in the year."),
+    "sastra": ("Sacred learning and the śāstras; in some manuals also weapons.",
+               "Study of scripture and traditional knowledge; in the weapon sense, danger from sharp instruments."),
+    "bandhu": ("Relatives and kin beyond the immediate family.",
+               "Help or trouble from relatives, family gatherings and ties."),
+    "mrityu": ("Death and deadly danger.",
+               "Read with great caution, together with the 8th house and the Jīva saham, for risk to life."),
+    "paradesa": ("Foreign lands and living away from home.",
+                 "Long journeys, travel abroad and residence in another country."),
+    "artha": ("Wealth and money.",
+              "Income, savings and financial gain or loss in the year."),
+    "paradara": ("Another's spouse: illicit or extra-marital relations.",
+                 "Temptation, scandal or secret liaisons; read for moral risk rather than as a forecast."),
+    "vanik": ("Trade and commerce, merchants and dealing.",
+              "Buying and selling, profit from trade."),
+    "karyasiddhi": ("Accomplishment of undertakings: work brought to completion.",
+                    "Whether the projects begun in the year succeed."),
+    "vivaha": ("Marriage and the married partnership.",
+               "Marriage or engagement in the year, and the state of the marriage."),
+    "santapa": ("Sorrow, grief and mental distress.",
+                "Periods of anxiety, grief or heartache."),
+    "sraddha": ("Faith and devotion; sincere commitment.",
+                "Religious practice, devotion and trust placed in others."),
+    "preeti": ("Love and affection.",
+               "Affection given and received, romance and fondness."),
+    "jadya": ("Dullness and chronic illness: sluggishness of body or mind.",
+              "Lingering ailments, lethargy and loss of mental sharpness."),
+    "vyapara": ("Business and occupation, commercial activity.",
+                "Business ventures and the dealings of the trade."),
+    "satru": ("Enemies and opponents.",
+              "Open opposition, rivals and their success or defeat."),
+    "jalapathana": ("Crossing water: sea voyages, and danger by water.",
+                    "Journeys over water and the risk of accidents involving water."),
+    "bandhana": ("Bondage and confinement.",
+                 "Restraint, imprisonment or being held back by circumstances."),
+    "apamrityu": ("Untimely or accidental death; sudden danger.",
+                  "Accidents and sudden threats; read with caution alongside the Mṛtyu saham."),
+    "prasava": ("Childbirth and pregnancy.",
+                "Pregnancy and delivery in the year, for oneself or one's spouse."),
+    "labha": ("Gains and income of every kind.",
+              "Profits, gains and the fulfilment of desires through receipt."),
+}
+
+# ── pañca pakṣī: the five birds and the five activities (Tamil tradition, paraphrased) ─────────────────────────
+PAKSHI_SOURCES = ["Tamil pañca pakṣī śāstra, traditionally attributed to the Siddhas",
+                  "Tamil almanac (pañcāṅgam) practice"]
+PAKSHI = dict(
+    what="A Tamil timing system. Day and night are each cut into five yāmas; in each yāma every one of five birds "
+         "(Vulture, Owl, Crow, Cock, Peacock) is doing one of five things. A person is ruled by one bird, fixed at "
+         "birth, and the activity of that bird at a moment says how favourable the moment is for that person.",
+    birth_bird="The birth bird is read from the Moon's nakṣatra at birth, which falls in one of five groups, and "
+               "from the pakṣa: the order of the birds is reversed for a birth in the dark half. It stays the "
+               "person's bird for life.",
+    relations="Each bird has two friends and two enemies. Practitioners prefer times when a friendly bird is strong "
+              "and avoid those when an enemy bird rules or eats; in contests the two parties' birds are compared.",
+    ruling="The day's ruling bird holds the first yāma of the day as ruler; the day is reckoned favourable for "
+           "people of that bird.",
+    dying="On each weekday (and pakṣa) one bird is said to be dying all day long. Someone whose own bird is the "
+          "dying bird is advised to keep that day for routine matters and not to begin anything important.",
+    activities={
+        "ruling": ("Arasu", "Ruling: the bird is at full power. The best time to begin, to ask, to compete; "
+                   "results come readily."),
+        "eating": ("Ūṇ", "Eating: the bird is nourished and strong. Good for gains, earning and for most work."),
+        "walking": ("Naḍai", "Walking: the bird is on the move. Moderate results, gained with effort; suited to "
+                    "travel and routine."),
+        "sleeping": ("Tuyil", "Sleeping: the bird is inactive. Results are slow or do not come; better to wait."),
+        "dying": ("Sāvu", "Dying: the bird is at its weakest. Losses and failure are feared; avoid beginnings."),
+    },
+    strength="The activities rank from strongest to weakest as Ruling, Eating, Walking, Sleeping, Dying. Each yāma "
+             "is split into five sub-periods that take the activities in turn, so a strong sub-period inside a weak "
+             "yāma (or the reverse) softens the judgement: the strongest moment is a ruling sub-period inside a "
+             "ruling yāma, the weakest a dying one inside a dying yāma.",
+)
+
 META = {
     "epistemic": "interpretation",
     "attribution": "Paraphrased summaries of classical texts and common practice, for orientation. ESHANA computes "
@@ -386,9 +592,13 @@ META = {
 
 
 def main() -> None:
-    OUT.write_text(json.dumps({"meta": META, "yogas": YOGAS, "points": POINTS, "numerology": {"numbers": NUMBERS, "roles": ROLES, "karmic_debt": KARMIC_DEBT, "lessons": LESSONS, "arrows": ARROWS, "sources": NUM_SOURCES}}, ensure_ascii=False, indent=1) + "\n",
+    OUT.write_text(json.dumps({"meta": META, "yogas": YOGAS, "points": POINTS, "numerology": {"numbers": NUMBERS, "roles": ROLES, "karmic_debt": KARMIC_DEBT, "lessons": LESSONS, "arrows": ARROWS, "compound": COMPOUND, "kua": KUA, "sources": NUM_SOURCES + ["Cheiro, Book of Numbers (1926), for compound numbers", "Eight Mansions feng shui practice, for the Kua number"]},
+                                "sahams": {"general": SAHAM_GENERAL, "sources": SAHAM_SOURCES,
+                                           "items": {k: {"signifies": s, "used_for": u} for k, (s, u) in SAHAMS.items()}},
+                                "pakshi": dict(PAKSHI, sources=PAKSHI_SOURCES)}, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")
-    print(f"wrote {OUT.relative_to(OUT.parents[5])}: {len(YOGAS)} yogas and doshas, {len(POINTS)} points")
+    print(f"wrote {OUT.relative_to(OUT.parents[5])}: {len(YOGAS)} yogas and doshas, {len(POINTS)} points, "
+          f"{len(SAHAMS)} sahams, pañca pakṣī")
 
 
 if __name__ == "__main__":

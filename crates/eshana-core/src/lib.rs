@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Version of the output contract (the JSON envelope). Bumped independently of the engine version.
-pub const SCHEMA_VERSION: &str = "0.3.1";
+pub const SCHEMA_VERSION: &str = "0.3.2";
 
 /// Canonical expansion of the acronym. One expansion everywhere; never vary it between manifests and docs.
 pub const EXPANSION: &str =

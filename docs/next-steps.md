@@ -5,10 +5,15 @@ description: "What is done, what was decided, and the ordered list of what to bu
 
 # Next steps
 
-State on 2026-11-21. The ledger of every task is [`planning/TRACKING.md`](../planning/TRACKING.md), generated from
+State on 2026-11-22. The ledger of every task is [`planning/TRACKING.md`](../planning/TRACKING.md), generated from
 `planning/backlog.json`. This page is the readable order of work.
 
 ## Done
+
+**0.3.2 (2026-11-22): review rounds 5 and 6**
+- Five analysis categories: maitri and dignities in 16 divisions; seven more daśā systems; sahams, avakahaḍā, mṛtyu bhāga, ghāta, vedhasthāna, jīva/deha, śodhana; Sarvatobhadra, Kota and Saṅghaṭṭa; varṣaphala, pañca pakṣī and KP tables — each compared with a published reference chart.
+- Charts with padas on top and aspects at the bottom (no overlaps, tested); parivartana marks and yogas; transit hover line; docked hover details; dark-theme contrast.
+- Lordships in D1/D9/D10, pada navāṃśa, Kua and compound numbers, Yoginī past 120 years, a website Gallery.
 
 **0.3.1 (2026-11-21): review rounds 1–4**
 - Upagrahas; switches to hide the outer planets and upagrahas; outer-planet graha and rāśi drishti; optional additional aspects (retrograde shadow, parivartana) — see the [Aspects guide](guides/aspects.md).

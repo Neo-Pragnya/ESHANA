@@ -27,30 +27,70 @@ function flags(id, d = 1) {
 const ASPECTED = {};
 function rebuildAspected() { for (const k of Object.keys(ASPECTED)) delete ASPECTED[k]; for (const d of DRISHTI) (ASPECTED[d.sign] = ASPECTED[d.sign] || []).push(d); }
 rebuildAspected();
-function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10) {
-  if (!S.layers.aspect_marks) return;
+/* a block of marks inside a chart cell: wrapped to maxW (when given) and anchored at the baseline of its last line,
+   so it grows upwards from the bottom of the cell (or at the baseline of its first line when down is set, so it grows
+   downwards). Returns the height it takes (0 when there is nothing to show). */
+/* parivartana: each graha of an exchange is also read as standing in its partner's sign; shown (with the
+   additional aspects) as the graha's abbreviation with ⇄ among that sign's marks */
+function exchangesIn(sign) {
+  if (!S.layers.extra_aspects) return [];
+  const seen = new Set();
+  return ADDITIONAL.filter(d => d.basis === 'parivartana' && d.from_sign === sign && G[d.from] && !seen.has(d.from) && seen.add(d.from));
+}
+function wrapMarks(items, size, maxW) {
+  const cw = size * .62, lines = [[]]; let w = 0;
+  items.forEach(it => { const iw = (it.text.length + 1) * cw; if (maxW && w + iw > maxW && lines[lines.length - 1].length) { lines.push([]); w = 0; } lines[lines.length - 1].push(it); w += iw; });
+  return lines;
+}
+function markBlock(parent, items, x, y, anchor, size, cls, title, maxW, down) {
+  const lines = wrapMarks(items, size, maxW);
+  const lh = size * 1.2, t = s('text', { x, y: down ? y : y - (lines.length - 1) * lh, 'text-anchor': anchor, 'font-size': size, class: cls }, parent);
+  lines.forEach((ln, li) => ln.forEach((it, k) => {
+    const a = { fill: it.fill, 'font-weight': it.weight || 600 }; if (it.italic) a['font-style'] = 'italic'; if (it.cls) a.class = it.cls; if (k === 0 && li > 0) { a.x = x; a.dy = lh; }
+    const ts = s('tspan', a, t); ts.textContent = (k && !ln[k - 1].lead ? ' ' : '') + it.text;
+  }));
+  const tt = s('title', {}, t); tt.textContent = title;
+  return lines.length * lh;
+}
+function aspectItems(sign) {
+  if (!S.layers.aspect_marks) return [];
   const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
   const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
-  if (!list.length && !extra.length) return;
-  const t = s('text', { x, y, 'text-anchor': anchor, 'font-size': size, class: 'aspmark' }, parent);
-  list.forEach((d, i) => { const ts = s('tspan', { fill: G[d.from].dot, 'font-weight': d.kind === 'special' ? 800 : 600 }, t); ts.textContent = (i ? ' ' : '') + G[d.from].abbr + (d.kind === 'special' ? '*' : ''); });
-  extra.forEach((d, i) => { const ts = s('tspan', { fill: G[d.from].dot, 'font-weight': 600, class: 'extramark' }, t); ts.textContent = (i || list.length ? ' ' : '') + G[d.from].abbr + EXTRA_MARK[d.basis]; });
-  const title = s('title', {}, t); title.textContent = 'Aspected by ' + list.map(d => `${G[d.from].en} (${nth(d.house_from_graha)}${d.kind === 'special' ? ', special' : ''})`)
-    .concat(extra.map(d => `${G[d.from].en} (${nth(d.house_from_graha)} from ${SIGN_SKT[d.from_sign]}, ${EXTRA_NAME[d.basis]})`)).join(', ');
+  return exchangesIn(sign).map(d => ({ text: G[d.from].abbr + '⇄' })).concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : '') })),
+    extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] })));
+}
+function rashiItems(sign) {
+  if (!S.layers.rashi_marks) return [];
+  const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
+  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
+  return list.length || extra.length ? [{ text: '◇', lead: true }].concat(list.map(r => ({ text: G[r.from].abbr })), extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] }))) : [];
+}
+function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
+  if (!S.layers.aspect_marks) return 0;
+  const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
+  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
+  const ex = exchangesIn(sign);
+  if (!list.length && !extra.length && !ex.length) return 0;
+  const items = ex.map(d => ({ text: G[d.from].abbr + '⇄', fill: G[d.from].dot, weight: 800, cls: 'exchmark' }))
+    .concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 800 : 600 })),
+      extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis], fill: G[d.from].dot, cls: 'extramark' })));
+  const parts = ex.map(d => `${G[d.from].en} is here by exchange (parivartana with ${G[d.partner] ? G[d.partner].en : d.partner})`)
+    .concat(list.length ? ['Aspected by ' + list.map(d => `${G[d.from].en} (${nth(d.house_from_graha)}${d.kind === 'special' ? ', special' : ''})`).join(', ')] : [],
+      extra.map(d => `${G[d.from].en} (${nth(d.house_from_graha)} from ${SIGN_SKT[d.from_sign]}, ${EXTRA_NAME[d.basis]})`));
+  return markBlock(parent, items, x, y, anchor, size, 'aspmark', parts.join('; '), maxW, down);
 }
 
 /* which grahas see each sign by rāśi drishti (sign aspect, from the engine), shown as ◇ marks */
 const RASHI_ASPECTED = (() => { const m = {}; for (const r of ((val('vedic.drishti.rashi') || {}).aspects || [])) for (const t of r.aspects_signs) (m[t] = m[t] || []).push(r); return m; })();
-function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10) {
-  if (!S.layers.rashi_marks) return;
+function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
+  if (!S.layers.rashi_marks) return 0;
   const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
   const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
-  if (!list.length && !extra.length) return;
-  const t = s('text', { x, y, 'text-anchor': anchor, 'font-size': size, class: 'aspmark rashimark' }, parent);
-  const lead = s('tspan', { fill: 'var(--muted)' }, t); lead.textContent = '◇';
-  list.forEach((r, i) => { const ts = s('tspan', { fill: G[r.from].dot, 'font-style': 'italic', 'font-weight': 600 }, t); ts.textContent = (i ? ' ' : '') + G[r.from].abbr; });
-  extra.forEach((d, i) => { const ts = s('tspan', { fill: G[d.from].dot, 'font-style': 'italic', 'font-weight': 600, class: 'extramark' }, t); ts.textContent = (i || list.length ? ' ' : '') + G[d.from].abbr + EXTRA_MARK[d.basis]; });
-  const title = s('title', {}, t); title.textContent = 'Rāśi drishti from ' + list.map(r => `${G[r.from].en} in ${SIGN_SKT[r.sign]}`).join(', ');
+  if (!list.length && !extra.length) return 0;
+  const items = [{ text: '◇', fill: 'var(--muted)', lead: true }]
+    .concat(list.map(r => ({ text: G[r.from].abbr, fill: G[r.from].dot, italic: true })))
+    .concat(extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis], fill: G[d.from].dot, italic: true, cls: 'extramark' })));
+  return markBlock(parent, items, x, y, anchor, size, 'aspmark rashimark', 'Rāśi drishti from ' + list.map(r => `${G[r.from].en} in ${SIGN_SKT[r.sign]}`).join(', '), maxW, down);
 }
 /* what a graha sees: graha drishti (with the house counted from it) and rāśi drishti */
 function aspectTargets(id) {
@@ -359,11 +399,24 @@ function drawTransit() {
   const rows = D.transits.rows; if (!WHEEL || !WHEEL.tg) return;
   transitIdx = Math.max(0, Math.min(rows.length - 1, transitIdx));
   const row = rows[transitIdx]; WHEEL.tg.replaceChildren();
+  // hovering a transit graha draws a highlighted line from it to the centre at the degree where it is now, and lights
+  // the rāśi, nakshatra and pada it is passing through
+  const rays = s('g', { class: 'transit-rays' }, WHEEL.tg);
   for (const k in row.longitudes) {
-    const id = engineId(k); if (!G[id]) continue; const a = angOf(row.longitudes[k]), [x, y] = pt(598, a);
+    const id = engineId(k); if (!G[id]) continue; const lon = row.longitudes[k], a = angOf(lon), [x, y] = pt(598, a);
     const mk = marker(WHEEL.tg, id, x, y, 15, { passive: true });
-    mk.addEventListener('mousemove', ev => tip(ev, `Transit ${G[id].en}`, [['Date', dateOnly(row.utc)], ['Sidereal', `${SIGN_SKT[signOf(row.longitudes[k])]} ${inSign(row.longitudes[k])}`], ['Over natal bhāva', houseOf(signOf(row.longitudes[k]))]]));
-    mk.addEventListener('mouseleave', untip);
+    mk.classList.add('transit-pl');
+    mk.addEventListener('mousemove', ev => tip(ev, `Transit ${G[id].en} now`, [['Date', dateOnly(row.utc)], ['Sidereal', `${SIGN_SKT[signOf(lon)]} ${inSign(lon)}`],
+      ['Nakshatra', `${NAKSHATRA[nakOf(lon)]} pada ${padaOf(lon)}`], ['Over natal bhāva', houseOf(signOf(lon))]]));
+    mk.addEventListener('mouseenter', () => {
+      rays.replaceChildren();
+      const [x1, y1] = pt(580, a), [x2, y2] = pt(WHEEL.innerR * .25, a);
+      s('line', { x1, y1, x2, y2, class: 'transit-ray', stroke: G[id].dot === '#E6E9F0' ? 'var(--ink)' : G[id].dot, 'data-body': id }, rays);
+      const dotEnd = s('circle', { cx: x2, cy: y2, r: 5, class: 'transit-ray-end', fill: G[id].dot === '#E6E9F0' ? 'var(--ink)' : G[id].dot }, rays);
+      dotEnd.setAttribute('data-body', id);
+      hot([['rashi', signOf(lon)], ['nak', nakOf(lon)], ['pada', Math.floor(norm(lon) / NAV)]]);
+    });
+    mk.addEventListener('mouseleave', () => { untip(); rays.replaceChildren(); hot([]); });
   }
   const lab = $('#transit-date'); if (lab) lab.textContent = dateOnly(row.utc);
   const sl = $('#transit-slider'); if (sl) sl.value = transitIdx;
@@ -421,15 +474,16 @@ function placements(d) {
   for (const k in out) out[k].sort((a, b) => (vargaDeg(a, d) || 0) - (vargaDeg(b, d) || 0));
   return out;
 }
-function arudhaMarks() {
-  const a = val('vedic.jaimini.arudha_padas'); if (!a || !S.layers.arudha) return {};
+/* ārūḍha padas by sign: D1, or in the navāṃśa (pada navāṃśa: the same rule applied to the D9 chart) */
+function arudhaMarks(d = 1) {
+  const a = val(d === 9 ? 'vedic.jaimini.arudha_padas_d9' : 'vedic.jaimini.arudha_padas'); if (!a || !S.layers.arudha) return {};
   const out = {}; for (const k in a) { const label = k.startsWith('A1_') ? 'AL' : k.startsWith('A12') ? 'UL' : k.split('_')[0]; (out[a[k].pada_sign] = out[a[k].pada_sign] || []).push(label); }
   return out;
 }
 /* one graha line inside a chart cell: icon, abbreviation, degree, nakshatra abbreviation, flags */
 function grahaLine(parent, id, x, y, d, opts) {
   const g = s('g', { class: 'gl', 'data-body': id }, parent);
-  if (!opts.compact) marker(g, id, x + 8, y - 4, 7.5, { noLabel: true, passive: true });
+  if (!opts.compact) marker(g, id, x + 8, y - 4, 6.3, { noLabel: true, passive: true });
   const deg = vargaDeg(id, d), lon = d === 1 ? lonOf(id) : null;
   const t = s('text', { x: x + (opts.compact ? 0 : 19), y, 'font-size': opts.fs || 12.5, 'font-weight': 700, fill: (G[id] || G.lagna).dot === '#E6E9F0' ? 'var(--ink)' : (G[id] || G.lagna).dot, class: 'gtxt' }, g);
   t.textContent = (G[id] || G.lagna).abbr;
@@ -443,7 +497,7 @@ function grahaLine(parent, id, x, y, d, opts) {
   return g;
 }
 function southGrid(svg, d, x0, y0, W, opts = {}) {
-  const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = d === 1 && opts.lagSign == null ? arudhaMarks() : {};
+  const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = (d === 1 || d === 9) && opts.lagSign == null ? arudhaMarks(d) : {};
   for (const [sg, [c, r]] of Object.entries(SOUTH_CELL)) {
     const sign = +sg, x = x0 + c * W, y = y0 + r * H, g = s('g', { class: 'cell', 'data-sign': sign }, svg);
     s('rect', { x, y, width: W, height: H, class: 'cellbg' }, g);
@@ -452,11 +506,20 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
     if (lag != null) { const hs = s('text', { x: x + 5, y: y + small + 2, 'font-size': small, 'font-weight': 700, fill: 'var(--accent2)' }, g); hs.textContent = (sign - lag + 12) % 12 + 1; }
     if (lag === sign) s('path', { d: `M${x} ${y + 20}L${x + 20} ${y}`, stroke: 'var(--accent)', 'stroke-width': 2 }, g);
     const list = (vargaSign('lagna', d) === sign ? ['lagna'] : []).concat(pl[sign] || []);
-    const fs = opts.compact ? Math.max(10.5, Math.min(18, W * .15 * (list.length > 4 ? .8 : 1))) : 12.5, lineH = opts.compact ? fs * 1.22 : 17, top = y + (opts.compact ? small * 2.4 : 32);
-    list.forEach((gid, k) => grahaLine(g, gid, x + 6, top + k * lineH, d, { compact: opts.compact, fs }));
-    const am = opts.compact ? Math.max(9, W * .1) : 10.5;
-    if (d === 1) { aspectMarks(g, sign, x + 6, y + H - 6, 'start', am); rashiMarks(g, sign, x + 6, y + H - 6 - (S.layers.aspect_marks && (ASPECTED[sign] || []).length ? am * 1.3 : 0), 'start', am * .95); }
-    if (ar[sign]) { const at = s('text', { x: x + W - 5, y: y + H - 6, 'text-anchor': 'end', 'font-size': 9.5, fill: '#a78bfa', 'font-weight': 700 }, g); at.textContent = ar[sign].join(' '); }
+    // ārūḍha padas sit at the top, under the house number and sign name
+    const ps = opts.compact ? Math.max(9, small * .9) : 9.5, padaY = y + small + 2 + ps * 1.25;
+    if (ar[sign]) { const at = s('text', { x: x + 6, y: padaY, 'font-size': ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); at.textContent = ar[sign].join(' ');
+      const tt = s('title', {}, at); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
+    // aspect marks at the bottom, wrapped to the cell: graha drishti lowest, rāśi drishti (◇) above it
+    const am = opts.compact ? Math.max(9, W * .1) : 10.5, maxW = W - 12;
+    let bottom = y + H - 6;
+    if (d === 1) { const ah = aspectMarks(g, sign, x + 6, bottom, 'start', am, maxW); bottom -= ah; const rh = rashiMarks(g, sign, x + 6, bottom, 'start', am * .95, maxW); bottom -= rh; }
+    // grahas fill the space between: shrink the line height (and drop the icon) when a sign is crowded
+    let fs = opts.compact ? Math.max(10.5, Math.min(18, W * .15 * (list.length > 4 ? .8 : 1))) : 12.5, lineH = opts.compact ? fs * 1.22 : 18;
+    const top = ar[sign] ? padaY + (opts.compact ? fs * 1.3 : 21) : y + (opts.compact ? small * 2.4 : 32), room = bottom - fs * .9 - top;
+    let compact = opts.compact;
+    if (list.length > 1 && (list.length - 1) * lineH > room) { lineH = Math.max(9, room / (list.length - 1)); if (lineH < 18) { compact = true; fs = Math.min(fs, lineH * .85); } }
+    list.forEach((gid, k) => grahaLine(g, gid, x + 6, top + k * lineH, d, { compact, fs }));
     g.addEventListener('click', () => { const hh = houseOf(sign); if (hh && d === 1) go('#/house/' + hh); });
   }
   s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
@@ -471,18 +534,62 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
   const P = (x, y) => [x0 + x * S0, y0 + y * S0];
   const A = P(0, 0), B = P(1, 0), C = P(1, 1), Dd = P(0, 1), T = P(.5, 0), R = P(1, .5), Bm = P(.5, 1), L = P(0, .5), O = P(.5, .5), P1 = P(.25, .25), P2 = P(.75, .25), P3 = P(.75, .75), P4 = P(.25, .75);
   const HS = [[T, P2, O, P1], [A, T, P1], [A, P1, L], [L, P1, O, P4], [L, P4, Dd], [Dd, P4, Bm], [Bm, P4, O, P3], [Bm, P3, C], [C, P3, R], [R, P3, O, P2], [R, P2, B], [B, P2, T]];
-  const pl = placements(d), ar = d === 1 ? arudhaMarks() : {};
+  const pl = placements(d), ar = d === 1 || d === 9 ? arudhaMarks(d) : {};
   s('rect', { x: x0, y: y0, width: S0, height: S0, class: 'cellbg' }, svg);
   HS.forEach((poly, hIdx) => {
     const sign = (lag + hIdx) % 12, cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, big = poly.length === 4;
     const g = s('g', { class: 'cell', 'data-sign': sign, 'data-house': hIdx + 1 }, svg);
     s('polygon', { points: poly.map(p => p.join(',')).join(' '), class: hIdx === 0 ? 'cellbg lagna' : 'cellbg', 'stroke-width': 1.3 }, g);
-    const n = s('text', { x: cx, y: cy - (big ? S0 * .085 : S0 * .045), 'text-anchor': 'middle', 'font-size': opts.compact ? 10 : 12, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
-    const list = (hIdx === 0 ? ['lagna'] : []).concat(pl[sign] || []);
-    const fs = opts.compact ? 9.5 : 11.5, lineH = opts.compact ? 11 : 14;
-    list.forEach((gid, k) => { const tw = big ? S0 * .1 : S0 * .06; grahaLine(g, gid, cx - tw, cy - (big ? S0 * .04 : S0 * .005) + k * lineH, d, { compact: true, fs }); });
-    if (d === 1) { aspectMarks(g, sign, cx, cy + (big ? S0 * .13 : S0 * .085), 'middle', opts.compact ? 8.5 : 10); rashiMarks(g, sign, cx, cy + (big ? S0 * .19 : S0 * .135), 'middle', opts.compact ? 8 : 9.5); }
-    if (ar[sign]) { const at = s('text', { x: cx, y: cy + (big ? S0 * .16 : S0 * .11), 'text-anchor': 'middle', 'font-size': 9, fill: '#a78bfa', 'font-weight': 700 }, g); at.textContent = ar[sign].join(' '); }
+    // one stack, top to bottom: ārūḍha padas, sign number, grahas, rāśi drishti (◇), graha drishti. It is measured first,
+    // centred on the house, kept inside its polygon, and shrunk in steps when a crowded house cannot hold it.
+    const list = (hIdx === 0 ? ['lagna'] : []).concat(pl[sign] || []), maxW = big ? S0 * .34 : S0 * .26;
+    const ys = poly.map(p2 => p2[1]), minY = Math.min(...ys), maxY = Math.max(...ys);
+    // horizontal span of the polygon at height y (the houses are triangles and diamonds)
+    const spanAt = (y) => { const xs = []; poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length]; if ((a[1] - y) * (b[1] - y) <= 0 && a[1] !== b[1]) xs.push(a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1])); });
+      return xs.length ? [Math.min(...xs), Math.max(...xs)] : [cx, cx]; };
+    // each block (padas, number, each graha row, ◇ marks, aspect marks) is centred on the middle of the house at its own
+    // height, so the side triangles use their full width instead of being centred on the centroid near the edge
+    const layout = (k, mw = maxW) => {
+      // a graha row's raised flags (ᴿ, ◎) sit a fixed 4 px up, so rows keep that allowance when the stack shrinks
+      const nfs = (opts.compact ? 10 : 12) * k, fs = (opts.compact ? 9.5 : 11.5) * k, lineH = fs * 1.05 + 4, ps = 9 * k;
+      const as = (opts.compact ? 8.5 : 10) * k, rs = (opts.compact ? 8 : 9.5) * k;
+      const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, mw) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, mw) : [[]];
+      const rLines = rl[0].length ? rl.length : 0, aLines = al[0].length ? al.length : 0;
+      const wOf = (items, size) => items.reduce((a, it) => a + (it.text.length + 1) * size * .62, 0);
+      // rows: [baseline, size, width, block]; blocks: [first baseline, last baseline, size]
+      let y = 0; const at = {}, rows = [], blocks = [];
+      const block = (b0, b1, sz) => blocks.push([b0, b1, sz]) - 1;
+      if (ar[sign]) { at.pada = y + ps; rows.push([at.pada, ps, ar[sign].join(' ').length * ps * .62, at.padaB = block(at.pada, at.pada, ps)]); y = at.pada + 2 * k; }
+      at.num = y + nfs; rows.push([at.num, nfs, nfs * 1.4, at.numB = block(at.num, at.num, nfs)]); y = at.num + 3 * k + 4;
+      if (list.length) { at.g0 = y + fs; at.gB = []; at.gW = fs * .6 * 10;
+        list.forEach((gid, i) => { const b = at.g0 + i * lineH; const bi = block(b, b, fs); at.gB.push(bi); rows.push([b, fs, at.gW, bi]); }); y = at.g0 + (list.length - 1) * lineH + 3 * k; }
+      if (rLines) { at.r = y + rs; at.rB = block(at.r, at.r + (rLines - 1) * rs * 1.2, rs); rl.forEach((ln, i) => rows.push([at.r + i * rs * 1.2, rs, wOf(ln, rs), at.rB])); y = at.r + (rLines - 1) * rs * 1.2 + 3 * k; }
+      if (aLines) { at.a = y + as; at.aB = block(at.a, at.a + (aLines - 1) * as * 1.2, as); al.forEach((ln, i) => rows.push([at.a + i * as * 1.2, as, wOf(ln, as), at.aB])); y = at.a + (aLines - 1) * as * 1.2 + 3 * k; }
+      return { k, mw, nfs, fs, lineH, ps, as, rs, at, rows, blocks, h: y };
+    };
+    const midOf = (L, top, bi) => { const [b0, b1, sz] = L.blocks[bi], [x1, x2] = spanAt(top + (b0 + b1) / 2 - sz * .3); return (x1 + x2) / 2; };
+    // does every row fit the polygon when the stack starts at top? (checked at the top and bottom of each row's text)
+    const fits = (L, top) => top >= minY + 4 && top + L.h <= maxY - 4 && L.rows.every(([b, sz, w, bi]) => { const m = midOf(L, top, bi);
+      return [b - sz * .75, b + sz * .2].every(yy => { const [x1, x2] = spanAt(top + yy); return m - w / 2 >= x1 + 2 && m + w / 2 <= x2 - 2; }); });
+    let L = null, top = 0;
+    // largest size first; at each size try wider wrapping too (a triangle is much wider near its base)
+    search: for (const k of [1, .92, .84, .76, .68, .6]) for (const mw of [maxW, maxW * 1.4, maxW * 1.8]) {
+      const c = layout(k, mw), pref = cy - c.h / 2;
+      const cand = []; for (let t = minY + 4; t + c.h <= maxY - 4; t += 2) cand.push(t);
+      cand.sort((a, b) => Math.abs(a - pref) - Math.abs(b - pref));
+      const t = cand.find(t2 => fits(c, t2));
+      if (t != null) { L = c; top = t; break search; }
+    }
+    if (!L) { L = layout(.6); top = Math.max(minY + 4, Math.min(cy - L.h / 2, maxY - 4 - L.h)); }
+    g.dataset.fit = L.k + (L.mw !== maxW ? ' wide' : '') + (fits(L, top) ? '' : ' unfitted');
+    const n = s('text', { x: midOf(L, top, L.at.numB), y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
+    if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
+      const tt = s('title', {}, t); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
+    list.forEach((gid, k) => grahaLine(g, gid, midOf(L, top, L.at.gB[k]) - L.at.gW / 2, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
+    if (d === 1) {
+      if (L.at.r != null) rashiMarks(g, sign, midOf(L, top, L.at.rB), top + L.at.r, 'middle', L.rs, L.mw, true);
+      if (L.at.a != null) aspectMarks(g, sign, midOf(L, top, L.at.aB), top + L.at.a, 'middle', L.as, L.mw, true);
+    }
     g.addEventListener('click', () => { if (d === 1) go('#/house/' + (hIdx + 1)); });
   });
 }

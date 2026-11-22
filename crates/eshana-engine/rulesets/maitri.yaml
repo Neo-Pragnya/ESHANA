@@ -1,0 +1,78 @@
+# Maitri (relationship), tārā and varga-dignity tables for rule vedic.maitri@0.1 (crate::maitri).
+#
+# Sources and conventions:
+# - Natural (naisargika) friendship of the seven grahas comes from vedic-core.yaml (BPHS ch. 3); temporary
+#   (tatkālika) friendship from the same pack (2, 3, 4, 10, 11, 12 from a graha are friends); compound (pañcadhā)
+#   is natural + temporary (BPHS ch. 3: friend+friend = great friend, friend+enemy or enemy+friend = neutral,
+#   neutral+friend = friend, neutral+enemy = enemy, enemy+enemy = great enemy).
+# - Rāhu and Ketu: BPHS gives no naisargika table for the nodes, and later authors differ. The table below was
+#   inferred from the compound relationships of a published reference chart (Sri Ramana Maharshi, 30 Dec 1879) by
+#   removing the temporary part from every compound value. It agrees with the commonly printed view that the
+#   nodes are hostile to the Sun and the Moon and friendly to Venus (Rāhu close to Saturn's table, Ketu close to
+#   Mars's). Every value is used as written; change it here to follow a different school.
+# - Node dignities: exaltation Taurus / Scorpio and debilitation Scorpio / Taurus as in vedic-core.yaml; own sign
+#   Rāhu Virgo and Aquarius, Ketu Pisces; mūlatrikoṇa Rāhu Gemini, Ketu Sagittarius (a widely used convention,
+#   and the one the reference chart shows). In any other sign a node is listed as neutral: no compound relationship
+#   is applied to a node's varga sign (as in the reference chart).
+# - Varga dignities of the seven: the exaltation sign first (the whole sign, so the Moon anywhere in Taurus is
+#   exalted), except Mercury in Virgo, which BPHS divides 0–15° exalted, 15–20° mūlatrikoṇa, 20–30° own; then the
+#   debilitation sign; then mūlatrikoṇa by the degree inside the varga sign ((longitude × D) mod 30, with the BPHS
+#   ranges of vedic-core.yaml), except in the divisions listed in moolatrikona_by_sign_only, where the sign alone
+#   decides (the unequal triṃśāṃśa has no varga degree); then own sign; otherwise the compound relationship to the
+#   sign lord, with the temporary part taken from the two grahas' signs in that same varga.
+# - Tārās: count = ((row nakshatra − column nakshatra) mod 27) + 1, i.e. counted from the column's nakshatra to
+#   the row's; tārā = ((count − 1) mod 9) + 1. This is the direction of the reference chart's nakshatra matrix.
+#   Natures: 3, 5, 7 (Vipat, Pratyari, Vadha) inauspicious, 1 (Janma) mixed, the rest auspicious (muhūrta texts).
+
+node_natural:
+  rahu: {friends: [jupiter, venus, saturn], neutral: [mercury],          enemies: [sun, moon, mars, ketu]}
+  ketu: {friends: [mars, venus],            neutral: [mercury, jupiter], enemies: [sun, moon, saturn, rahu]}
+
+# How each of the seven regards the nodes.
+towards_nodes:
+  sun:     {rahu: enemy,   ketu: enemy}
+  moon:    {rahu: enemy,   ketu: enemy}
+  mars:    {rahu: enemy,   ketu: friend}
+  mercury: {rahu: neutral, ketu: neutral}
+  jupiter: {rahu: neutral, ketu: neutral}
+  venus:   {rahu: friend,  ketu: friend}
+  saturn:  {rahu: friend,  ketu: enemy}
+
+# Sign indices 0 = Aries … 11 = Pisces.
+node_dignity:
+  rahu: {exaltation: 1, debilitation: 7, moolatrikona: 2, own: [5, 10]}
+  ketu: {exaltation: 7, debilitation: 1, moolatrikona: 8, own: [11]}
+
+# Mercury in Virgo: exalted below 15°, mūlatrikoṇa below 20°, own above.
+mercury_virgo: {exalted_below: 15.0, moolatrikona_below: 20.0}
+
+moolatrikona_by_sign_only: [30]
+
+divisions:
+  - {d: 1,  name: Rāśi}
+  - {d: 2,  name: Horā}
+  - {d: 3,  name: Drekkāṇa}
+  - {d: 4,  name: Chaturthāṃśa}
+  - {d: 7,  name: Saptāṃśa}
+  - {d: 9,  name: Navāṃśa}
+  - {d: 10, name: Daśāṃśa}
+  - {d: 12, name: Dvādaśāṃśa}
+  - {d: 16, name: Ṣoḍaśāṃśa}
+  - {d: 20, name: Viṃśāṃśa}
+  - {d: 24, name: Chaturviṃśāṃśa}
+  - {d: 27, name: Saptaviṃśāṃśa}
+  - {d: 30, name: Triṃśāṃśa}
+  - {d: 40, name: Khavedāṃśa}
+  - {d: 45, name: Akṣavedāṃśa}
+  - {d: 60, name: Ṣaṣṭyāṃśa}
+
+taras:
+  - {name: Janma,        nature: mixed}
+  - {name: Sampat,       nature: auspicious}
+  - {name: Vipat,        nature: inauspicious}
+  - {name: Kshema,       nature: auspicious}
+  - {name: Pratyari,     nature: inauspicious}
+  - {name: Sadhaka,      nature: auspicious}
+  - {name: Vadha,        nature: inauspicious}
+  - {name: Mitra,        nature: auspicious}
+  - {name: Parama mitra, nature: auspicious}

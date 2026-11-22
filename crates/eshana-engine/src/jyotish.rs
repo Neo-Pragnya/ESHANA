@@ -486,6 +486,27 @@ pub fn chara_karakas(c: &VChart) -> Value {
     })
 }
 
+/// The chart of a division as a [`VChart`]: each graha and the lagna placed at the middle of its varga sign (only
+/// signs matter for sign-based rules such as ārūḍha padas).
+#[must_use]
+pub fn varga_chart(c: &VChart, d: u32) -> VChart {
+    let at = |lon: f64| {
+        crate::vedic::divisional_sign(lon, d)
+            .map(|sg| sg as f64 * 30.0 + 15.0)
+            .ok()
+    };
+    let mut v = VChart {
+        asc: c.asc.and_then(at),
+        ..Default::default()
+    };
+    for (g, l) in &c.lon {
+        if let Some(x) = at(*l) {
+            v.lon.insert(g.clone(), x);
+        }
+    }
+    v
+}
+
 /// Ārūḍha padas A1 (Ārūḍha lagna) … A12 (Upapada): count from the house to its lord, as far again from the lord;
 /// if that is the house itself or its 7th, take the 10th from there.
 #[must_use]
@@ -738,6 +759,44 @@ fn evaluate(c: &VChart, cond: &Cond, bind: Option<&str>, used: &mut BTreeSet<Str
             let sides = sides?;
             sides.iter().all(|s| *s) || sides.iter().all(|s| !*s)
         }
+        Cond::Parivartana { kind, from } => {
+            let kind = kind.as_deref().unwrap_or("any");
+            let base = if kind == "any" {
+                None
+            } else {
+                Some(c.ref_sign(from.as_deref().unwrap_or("lagna"))?)
+            };
+            let mut ok = false;
+            for (i, a) in SEVEN.iter().enumerate() {
+                for b in &SEVEN[i + 1..] {
+                    let (Some(sa), Some(sb)) = (c.sign(a), c.sign(b)) else {
+                        continue;
+                    };
+                    if lord_of(sa) != *b || lord_of(sb) != *a {
+                        continue;
+                    }
+                    let hit = match base {
+                        None => true,
+                        Some(base) => {
+                            let hs = [house_from(base, sa), house_from(base, sb)];
+                            let dusthana = hs.iter().any(|h| matches!(h, 6 | 8 | 12));
+                            match kind {
+                                "dainya" => dusthana,
+                                "khala" => !dusthana && hs.contains(&3),
+                                "maha" => !dusthana && !hs.contains(&3),
+                                _ => false,
+                            }
+                        }
+                    };
+                    if hit {
+                        used.insert((*a).to_string());
+                        used.insert((*b).to_string());
+                        ok = true;
+                    }
+                }
+            }
+            ok
+        }
         Cond::AllOf(list) => {
             let mut ok = true;
             for x in list {
@@ -878,6 +937,42 @@ mod tests {
     }
 
     #[test]
+    fn parivartana_yoga_and_its_kind() {
+        // Kanyā lagna; Jupiter in Kumbha (6th) and Saturn in Mīna (7th): Jupiter and Saturn exchange signs, and the
+        // 6th is a dusthāna, so it is a Dainya parivartana (the Ramana Maharishi chart has this exchange)
+        let mut c = VChart {
+            asc: Some(160.0),
+            ..Default::default()
+        };
+        for (g, l) in [
+            ("sun", 255.0),
+            ("moon", 88.0),
+            ("mars", 20.0),
+            ("mercury", 233.0),
+            ("jupiter", 316.0),
+            ("venus", 210.0),
+            ("saturn", 347.0),
+        ] {
+            c.lon.insert(g.into(), l);
+        }
+        let y = yogas(&c);
+        let get = |id: &str| {
+            y["yogas"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|x| x["id"] == id)
+                .unwrap()
+                .clone()
+        };
+        assert_eq!(get("parivartana")["present"], true);
+        assert_eq!(get("parivartana")["grahas"], json!(["jupiter", "saturn"]));
+        assert_eq!(get("dainya_parivartana")["present"], true);
+        assert_eq!(get("maha_parivartana")["present"], false);
+        assert_eq!(get("khala_parivartana")["present"], false);
+    }
+
+    #[test]
     fn rashi_drishti_rules() {
         assert_eq!(rashi_drishti_targets(0), vec![4, 7, 10]); // Aries: Leo, Scorpio, Aquarius (not Taurus)
         assert_eq!(rashi_drishti_targets(1), vec![3, 6, 9]); // Taurus: Cancer, Libra, Capricorn (not Aries)
@@ -933,6 +1028,24 @@ mod tests {
         // Ketu sub of Ashwini spans 13°20′ × 7/120 = 0°46′40″; just after it the sub is Venus.
         let k = kp_lords(13.333_333 * 7.0 / 120.0 + 0.001);
         assert_eq!(k["sub_lord"], "venus");
+    }
+
+    #[test]
+    fn pada_navamsha_uses_navamsha_signs() {
+        // 1° Aries is navāṃśa Aries (sign 0); 28° Aries is navāṃśa Sagittarius (sign 8)
+        let mut c = VChart {
+            asc: Some(1.0),
+            ..Default::default()
+        };
+        for g in SEVEN {
+            c.lon.insert(g.into(), 28.0);
+        }
+        let v = varga_chart(&c, 9);
+        assert_eq!(sign_of(v.asc.unwrap()), 0);
+        assert_eq!(sign_of(v.lon["mars"]), 8);
+        // D9 lagna Aries; its lord Mars in D9 Sagittarius (9th): count 9 again from Sagittarius → Leo (5th)
+        let a = arudha_padas(&v).unwrap();
+        assert_eq!(a["A1_arudha_lagna"]["pada_sign"], 4);
     }
 
     #[test]

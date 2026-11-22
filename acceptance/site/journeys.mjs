@@ -145,6 +145,21 @@ await journey("every page carries the ambient sky", async () => {
   return "4 pages";
 });
 
+await journey("the gallery shows every studio view from a real run, each linking to the live report", async () => {
+  await open("/gallery/", 1500);
+  await evaluate(`(async () => { for (const i of document.querySelectorAll('.gal img')) { i.loading = 'eager'; i.scrollIntoView(); await new Promise(r => setTimeout(r, 40)); } return 1; })()`);
+  await sleep(1500);
+  const r = await evaluate(`(async () => { const imgs = [...document.querySelectorAll('.gal img')];
+    await Promise.all(imgs.map(i => i.decode().catch(() => null)));
+    const links = [...new Set([...document.querySelectorAll('.gal a')].map(a => a.href.split('#')[0]))];
+    const ok = await Promise.all(links.map(u => fetch(u, { method: 'GET' }).then(x => x.ok).catch(() => false)));
+    return { n: imgs.length, broken: imgs.filter(i => !i.naturalWidth).map(i => i.src.split('/').pop()), badLinks: links.filter((u, k) => !ok[k]) }; })()`);
+  expect(r.n >= 15, `only ${r.n} gallery images`);
+  expect(!r.broken.length, "images that did not load: " + r.broken.join(", "));
+  expect(!r.badLinks.length, "links to missing reports: " + r.badLinks.join(", "));
+  return `${r.n} images, all loaded; every link opens a report`;
+});
+
 await journey("icons are ESHANA sigils and wake on hover", async () => {
   await open("/", 1500);
   const r = await evaluate(`(() => ({ morph: document.querySelectorAll('[data-morph]').length, sigils: document.querySelectorAll('svg.sigil').length,
@@ -192,14 +207,14 @@ await journey("reduced motion draws one still frame", async () => {
 await viewport(390, 844, true);
 await journey("phone width has no horizontal scroll", async () => {
   const bad = [];
-  for (const p of ["/", "/docs/", "/demos/", "/docs/guides/getting-started/"]) {
+  for (const p of ["/", "/docs/", "/demos/", "/gallery/", "/docs/guides/getting-started/"]) {
     await open(p, 1200);
     const w = await evaluate(`[document.documentElement.scrollWidth, window.innerWidth]`);
     if (w[0] > w[1] + 1) bad.push(`${p} ${w[0]}>${w[1]}`);
   }
   await open("/", 1200); await shot("phone-home");
   expect(!bad.length, bad.join(", "));
-  return "4 pages fit 390 px";
+  return "5 pages fit 390 px";
 });
 
 ws.close(); chrome.kill(); server.close();

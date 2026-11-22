@@ -1165,8 +1165,9 @@
       "id": "VAR-01",
       "area": "vedic",
       "title": "Varshaphala",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "vedic.varshaphala (see CHK-11)."
     },
     {
       "id": "LK-01",
@@ -1481,10 +1482,11 @@
       "id": "CHK-05",
       "area": "vedic",
       "title": "Lordships per varga ('lord of 1 in 3') with sign exchanges (parivartana), D1, D9, D10",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "special points lordships_by_varga (D1, D9, D10); unit test; journey 'bhāvas: lordships'."
     },
     {
       "id": "CHK-06",
@@ -1500,145 +1502,161 @@
       "id": "CHK-07",
       "area": "vedic",
       "title": "Pada navāṃśa chart",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.jaimini.arudha_padas_d9; unit test; journey 'pada navāṃśa'."
     },
     {
       "id": "CHK-08",
       "area": "vedic",
       "title": "KP: bhāva significators table and graha strong / normal / weak significators",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.kp.significator_table; accuracy/test_annual_reference.py (star/sub lords of 9 grahas, 12 equal-cusp lords)."
     },
     {
       "id": "CHK-09",
       "area": "vedic",
       "title": "Pañca pakṣī: ruling and dying birds, activities by day and night",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.panch_pakshi; birth/ruling/dying birds and yāma times match; first-yāma activity convention differs (xfail)."
     },
     {
       "id": "CHK-10",
       "area": "vedic",
       "title": "Male and female rāśis",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.male_female; accuracy/test_auxiliary_reference.py."
     },
     {
       "id": "CHK-11",
       "area": "vedic",
       "title": "Varṣaphala: year lord, muntha, pañcādhikārīs, harṣa/hudda strengths (with VAR-01)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.varshaphala; 35/35 pañcavargīya cells, muntha and 5 office-bearers match; the reference's office-bearer score differs (xfail)."
     },
     {
       "id": "CHK-12",
       "area": "vedic",
       "title": "Avakahaḍā chakra",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.avakahada; accuracy/test_auxiliary_reference.py."
     },
     {
       "id": "CHK-13",
       "area": "vedic",
       "title": "Sahams (37)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.sahams; all 37 within 1′ on the reference's longitudes, within ~5′ on ESHANA's (unit + accuracy tests)."
     },
     {
       "id": "CHK-14",
       "area": "vedic",
       "title": "Sarvatobhadra chakra with vedha",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.chakra.sarvatobhadra; layout, natal and transit placements match (accuracy/test_chakras_reference.py)."
     },
     {
       "id": "CHK-15",
       "area": "vedic",
       "title": "Kota chakra",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.chakra.kota; 13 transcribed places, stambhas and transits match; reference score formula unpublished (xfail)."
     },
     {
       "id": "CHK-16",
       "area": "vedic",
       "title": "Saṅghaṭṭa chakra",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.chakra.sanghatta; natal placements match; the reference's 27-sector ring figure not reproduced (xfail)."
     },
     {
       "id": "CHK-17",
       "area": "vedic",
       "title": "Ghāta chakra",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.ghata_chakra; Mithuna row matches the reference; other rows from almanac tables."
     },
     {
       "id": "CHK-18",
       "area": "vedic",
       "title": "Śodhana (aṣṭakavarga reductions and piṇḍa)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.shodhana; all 16 piṇḍas match exactly."
     },
     {
       "id": "CHK-19",
       "area": "vedic",
       "title": "Jīva and deha",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.jiva_deha; matches (Mithuna/Vṛṣabha, 83 years)."
     },
     {
       "id": "CHK-20",
       "area": "vedic",
       "title": "Mṛtyu bhāga",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.mrityu_bhaga; 10 distances within 4′."
     },
     {
       "id": "CHK-21",
       "area": "vedic",
       "title": "Vedhasthāna (transits from the Moon)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "vedic.aux.vedhasthana; natal set reproduces all seven reference lines; transit set added."
     },
     {
       "id": "CHK-22",
       "area": "docs",
       "title": "Website: a chart gallery that shows each of these from a real run",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "reference-software screenshots, 2026-11-21"
+      "source": "reference-software screenshots, 2026-11-21",
+      "evidence": "website Gallery from scripts/gallery.mjs; site journey checks images and links."
     },
     {
       "id": "CHK-23",
@@ -1648,7 +1666,8 @@
       "track": "primary",
       "milestone": "0.5 · reference chart library",
       "source": "aspect screenshots 2026-11-21",
-      "note": "Cusp table matches within a virūpa for Su, Mo, Ma, Sa; Jupiter differs (e.g. 39 vs 51 on house 1)."
+      "note": "Cusp table matches within a virūpa for Su, Mo, Ma, Sa; Jupiter differs (e.g. 39 vs 51 on house 1).",
+      "evidence": "Blocked on reference data: one recorded value (Jupiter on house 1: 39 vs 51) is not enough to identify the reference's Jupiter rule; needs the cusp-aspect screenshot again."
     },
     {
       "id": "CHK-24",
@@ -1657,16 +1676,18 @@
       "status": "proposed",
       "track": "primary",
       "milestone": "0.5 · reference chart library",
-      "source": "owner HD templates 2026-11-21"
+      "source": "owner HD templates 2026-11-21",
+      "evidence": "Blocked by ADR-009: the incarnation-cross name table and the line exaltation/detriment table are left out until the owner decides."
     },
     {
       "id": "CHK-25",
       "area": "num",
       "title": "Numerology: Kua number, compound-number readings, name-change cycles, other alphabets",
-      "status": "proposed",
+      "status": "implemented",
       "track": "secondary",
       "milestone": "0.5 · reference chart library",
-      "source": "owner review round 2"
+      "source": "owner review round 2",
+      "evidence": "Kua number and Chaldean compound readings done (unit test, journey); name-change cycles and other alphabets (NUM-04) open."
     },
     {
       "id": "FB-14",
@@ -1787,6 +1808,196 @@
       "milestone": "0.4 · review round 4",
       "source": "owner review round 4",
       "evidence": "docs/guides/aspects.md; 0.3.1 published."
+    },
+    {
+      "id": "FB-26",
+      "area": "vedic",
+      "title": "Maitri tables: natural, temporal, compound relationships of nine grahas; tārā matrix; dignities in 16 divisions",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "vedic.maitri.*; accuracy/test_maitri_reference.py 305/306 cells (one D40 boundary xfail)."
+    },
+    {
+      "id": "FB-27",
+      "area": "vedic",
+      "title": "All other daśā calculations: Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla, Kālachakra",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "vedic.dasha.*; accuracy/test_dashas_reference.py 15 passed, Kālachakra xfail."
+    },
+    {
+      "id": "FB-28",
+      "area": "vedic",
+      "title": "New analysis categories in the report: auxiliary (sahams…), chakras, annual and pañca pakṣī pages",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "studio pages aux, chakras, annual, pakshi; studio journeys."
+    },
+    {
+      "id": "FB-29",
+      "area": "vedic",
+      "title": "Kālachakra daśā: identify the reference's timing and 12-part antardaśā convention",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "Blocked: needs the reference's Kālachakra source or more rows."
+    },
+    {
+      "id": "FB-30",
+      "area": "vedic",
+      "title": "Extend Yoginī daśā beyond 120 years so current periods can be compared",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "vedic::yogini continues to one cycle past the reference instant; unit test yogini_reaches_past_a_late_reference_instant."
+    },
+    {
+      "id": "FB-31",
+      "area": "vedic",
+      "title": "Varṣaphala: identify the reference's office-bearer score used to pick the year lord",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "Blocked: needs to know what score the reference prints."
+    },
+    {
+      "id": "FB-32",
+      "area": "vedic",
+      "title": "Pañca pakṣī: confirm the first-yāma activity table against a printed almanac",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "Blocked: needs a printed almanac table."
+    },
+    {
+      "id": "FB-33",
+      "area": "vedic",
+      "title": "Saṅghaṭṭa: reproduce the reference's 27-sector ring figure (read by eye)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "Blocked: needs the Saṅghaṭṭa screenshot again (the copy was in temporary storage and was cleared)."
+    },
+    {
+      "id": "FB-34",
+      "area": "vedic",
+      "title": "Sahams: confirm the inferred day forms of Āśā, Vyāpāra and Prasava with a day-birth reference",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "0.4 · review round 5",
+      "source": "owner review round 5",
+      "evidence": "Blocked: needs a day-birth reference chart."
+    },
+    {
+      "id": "FB-35",
+      "area": "vedic",
+      "title": "Charts: ārūḍha padas on top, aspect marks at the bottom, no overlaps (journey)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "acceptance/studio/journeys.mjs 'chart cells never overlap'"
+    },
+    {
+      "id": "FB-36",
+      "area": "vedic",
+      "title": "Transit graha hover: line to where it is now",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'hovering a transit graha draws a line'"
+    },
+    {
+      "id": "FB-37",
+      "area": "vedic",
+      "title": "Parivartana: exchanged graha marked in its partner's sign",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'parivartana: each exchanged graha is marked'"
+    },
+    {
+      "id": "FB-38",
+      "area": "vedic",
+      "title": "Parivartana yoga (and Mahā, Khala, Dainya kinds) in the yoga list",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "vedic.yogas@0.3; unit test parivartana_yoga_and_its_kind"
+    },
+    {
+      "id": "FB-39",
+      "area": "vedic",
+      "title": "Kota chakra in the reference fort format",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'chakras: Kota fort'"
+    },
+    {
+      "id": "FB-40",
+      "area": "vedic",
+      "title": "Sarvatobhadra in the reference format (bands on four sides, vedha borders)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'chakras: Sarvatobhadra frame'; accuracy test_sarvatobhadra_pada_sounds"
+    },
+    {
+      "id": "FB-41",
+      "area": "vedic",
+      "title": "Pañca pakṣī: full day and night tables, day picker, info boxes",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "vedic.panch_pakshi.nearby_days; pakṣī journey"
+    },
+    {
+      "id": "FB-42",
+      "area": "vedic",
+      "title": "Sahams: what each signifies, in info boxes",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "reading_reference.json sahams; test_every_saham_and_pakshi_activity_has_a_meaning"
+    },
+    {
+      "id": "FB-43",
+      "area": "vedic",
+      "title": "Chakra hover details beside the wheel, not over it",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'hover details sit in the panel'"
+    },
+    {
+      "id": "FB-44",
+      "area": "vedic",
+      "title": "Dark theme: readable chart writing",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'dark theme: chart writing has readable contrast'"
     }
   ]
 }

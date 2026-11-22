@@ -1,0 +1,193 @@
+# Chakras rule pack: vedic.chakras@0.1 (Sarvatobhadra with vedha, Kota, Sanghatta).
+#
+# Sources: the Sarvatobhadra and Kota chakras of the Narapati-jayacharya-svarodaya tradition as printed in modern
+# manuals of transit (gochara) and prashna work; the Sanghatta vedha pairs are the sapta-shalaka (seven-line) vedha
+# pairs of the muhurta texts (Muhurta-chintamani, vivaha section). The layout of every chakra was checked against a
+# published reference chart (the Sri Ramana Maharshi chart printed by a well-known program).
+#
+# Conventions chosen here (each one is reported in the attribute value too):
+# - 28 nakshatras: the 27 equal nakshatras plus Abhijit, which takes the last pada of Uttara Ashadha and the first
+#   fifteenth of Shravana (276 deg 40 min to 280 deg 53 min 20 sec sidereal). A body in that span sits in Abhijit.
+# - Sarvatobhadra orientation: east at the top, south on the right, west at the bottom, north on the left (as the
+#   reference prints it). Vowels in the corners of the four rings run clockwise from the north-east (top-left).
+# - Vedha lines: from its nakshatra cell every graha pierces three lines: front (sammukha, straight across the grid),
+#   left (vama) and right (dakshina) diagonals; left and right are the left and right hand of an observer standing in
+#   the nakshatra cell and facing the centre. The emphasised line follows motion: vakri (retrograde) grahas look right,
+#   shighra (faster than their mean motion) grahas look left, the rest look to the front; Rahu and Ketu are always
+#   counted vakri and the Sun and Moon always look to the front.
+# - Kota: four concentric zones (stambha, madhya, prakara, bahya); seven nakshatras per direction counted from the
+#   Janma nakshatra (the Moon nakshatra) in the east; each direction enters from its corner (bahya, prakara, madhya),
+#   reaches the stambha and leaves along the axis (madhya, prakara, bahya). Kota swami: lord of the Moon sign. Kota
+#   pala: lord of the navamsha (pada) occupied by the Moon.
+
+abhijit: [276.6666666666667, 280.8888888888889]
+
+nakshatras:
+  - [Ashwini, "अश्विनी", "Aśvinī"]
+  - [Bharani, "भरणी", "Bharaṇī"]
+  - [Krittika, "कृत्तिका", "Kṛttikā"]
+  - [Rohini, "रोहिणी", "Rohiṇī"]
+  - [Mrigashira, "मृगशिरा", "Mṛgaśirā"]
+  - [Ardra, "आर्द्रा", "Ārdrā"]
+  - [Punarvasu, "पुनर्वसु", "Punarvasu"]
+  - [Pushya, "पुष्य", "Puṣya"]
+  - [Ashlesha, "आश्लेषा", "Āśleṣā"]
+  - [Magha, "मघा", "Maghā"]
+  - [Purva Phalguni, "पूर्वफाल्गुनी", "Pūrvaphalgunī"]
+  - [Uttara Phalguni, "उत्तरफाल्गुनी", "Uttaraphalgunī"]
+  - [Hasta, "हस्त", "Hasta"]
+  - [Chitra, "चित्रा", "Citrā"]
+  - [Swati, "स्वाती", "Svātī"]
+  - [Vishakha, "विशाखा", "Viśākhā"]
+  - [Anuradha, "अनुराधा", "Anurādhā"]
+  - [Jyeshtha, "ज्येष्ठा", "Jyeṣṭhā"]
+  - [Mula, "मूल", "Mūla"]
+  - [Purva Ashadha, "पूर्वाषाढा", "Pūrvāṣāḍhā"]
+  - [Uttara Ashadha, "उत्तराषाढा", "Uttarāṣāḍhā"]
+  - [Abhijit, "अभिजित्", "Abhijit"]
+  - [Shravana, "श्रवण", "Śravaṇa"]
+  - [Dhanishta, "धनिष्ठा", "Dhaniṣṭhā"]
+  - [Shatabhisha, "शतभिषा", "Śatabhiṣā"]
+  - [Purva Bhadrapada, "पूर्वभाद्रपदा", "Pūrvabhādrapadā"]
+  - [Uttara Bhadrapada, "उत्तरभाद्रपदा", "Uttarabhādrapadā"]
+  - [Revati, "रेवती", "Revatī"]
+
+# The pada syllables (nāmākṣara, the "avakahaḍā" table): the sound of each of the four padas of every nakshatra, in
+# the order of the nakshatras above, as [Devanagari, transliteration]. Source: the nāmākṣara table printed in modern
+# pañcāṅgas and muhūrta manuals (it goes back to the nakshatra chapter of the muhūrta texts); in the 28-nakshatra form
+# used by the Sarvatobhadra, Abhijit takes जू जे जो ख. Short-a syllables are written as the published reference chart
+# prints them (व, क, ह, ड, ...); some tables write the same sounds long (वा, का, ...). Each of the twenty letters
+# (varṇa) of the second ring except अ is one of these syllables, which the tests check.
+pada_syllables:
+  - [["चु", "cu"], ["चे", "ce"], ["चो", "co"], ["ल", "la"]]  # Ashwini
+  - [["ली", "lī"], ["लू", "lū"], ["ले", "le"], ["लो", "lo"]]  # Bharani
+  - [["अ", "a"], ["इ", "i"], ["उ", "u"], ["ए", "e"]]  # Krittika
+  - [["ओ", "o"], ["व", "va"], ["वी", "vī"], ["वू", "vū"]]  # Rohini
+  - [["वे", "ve"], ["वो", "vo"], ["क", "ka"], ["की", "kī"]]  # Mrigashira
+  - [["कु", "ku"], ["घ", "gha"], ["ङ", "ṅa"], ["छ", "cha"]]  # Ardra
+  - [["के", "ke"], ["को", "ko"], ["ह", "ha"], ["ही", "hī"]]  # Punarvasu
+  - [["हु", "hu"], ["हे", "he"], ["हो", "ho"], ["ड", "ḍa"]]  # Pushya
+  - [["डी", "ḍī"], ["डू", "ḍū"], ["डे", "ḍe"], ["डो", "ḍo"]]  # Ashlesha
+  - [["म", "ma"], ["मी", "mī"], ["मू", "mū"], ["मे", "me"]]  # Magha
+  - [["मो", "mo"], ["ट", "ṭa"], ["टी", "ṭī"], ["टू", "ṭū"]]  # Purva Phalguni
+  - [["टे", "ṭe"], ["टो", "ṭo"], ["प", "pa"], ["पी", "pī"]]  # Uttara Phalguni
+  - [["पू", "pū"], ["ष", "ṣa"], ["ण", "ṇa"], ["ठ", "ṭha"]]  # Hasta
+  - [["पे", "pe"], ["पो", "po"], ["र", "ra"], ["री", "rī"]]  # Chitra
+  - [["रू", "rū"], ["रे", "re"], ["रो", "ro"], ["त", "ta"]]  # Swati
+  - [["ती", "tī"], ["तू", "tū"], ["ते", "te"], ["तो", "to"]]  # Vishakha
+  - [["न", "na"], ["नी", "nī"], ["नू", "nū"], ["ने", "ne"]]  # Anuradha
+  - [["नो", "no"], ["य", "ya"], ["यी", "yī"], ["यू", "yū"]]  # Jyeshtha
+  - [["ये", "ye"], ["यो", "yo"], ["भ", "bha"], ["भी", "bhī"]]  # Mula
+  - [["भू", "bhū"], ["ध", "dha"], ["फ", "pha"], ["ढ", "ḍha"]]  # Purva Ashadha
+  - [["भे", "bhe"], ["भो", "bho"], ["ज", "ja"], ["जी", "jī"]]  # Uttara Ashadha
+  - [["जू", "jū"], ["जे", "je"], ["जो", "jo"], ["ख", "kha"]]  # Abhijit
+  - [["खी", "khī"], ["खू", "khū"], ["खे", "khe"], ["खो", "kho"]]  # Shravana
+  - [["ग", "ga"], ["गी", "gī"], ["गू", "gū"], ["गे", "ge"]]  # Dhanishta
+  - [["गो", "go"], ["स", "sa"], ["सी", "sī"], ["सू", "sū"]]  # Shatabhisha
+  - [["से", "se"], ["सो", "so"], ["द", "da"], ["दी", "dī"]]  # Purva Bhadrapada
+  - [["दू", "dū"], ["थ", "tha"], ["झ", "jha"], ["ञ", "ña"]]  # Uttara Bhadrapada
+  - [["दे", "de"], ["दो", "do"], ["च", "ca"], ["ची", "cī"]]  # Revati
+
+rashis:
+  - [Mesha, "मेष", "Meṣa"]
+  - [Vrishabha, "वृषभ", "Vṛṣabha"]
+  - [Mithuna, "मिथुन", "Mithuna"]
+  - [Karka, "कर्क", "Karka"]
+  - [Simha, "सिंह", "Siṃha"]
+  - [Kanya, "कन्या", "Kanyā"]
+  - [Tula, "तुला", "Tulā"]
+  - [Vrischika, "वृश्चिक", "Vṛścika"]
+  - [Dhanu, "धनु", "Dhanu"]
+  - [Makara, "मकर", "Makara"]
+  - [Kumbha, "कुम्भ", "Kumbha"]
+  - [Meena, "मीन", "Mīna"]
+
+# the sixteen vowels (svara), placed in the corners of the four rings
+vowels:
+  - ["अ", "a"]
+  - ["आ", "ā"]
+  - ["इ", "i"]
+  - ["ई", "ī"]
+  - ["उ", "u"]
+  - ["ऊ", "ū"]
+  - ["ऋ", "ṛ"]
+  - ["ॠ", "ṝ"]
+  - ["ऌ", "ḷ"]
+  - ["ॡ", "ḹ"]
+  - ["ए", "e"]
+  - ["ऐ", "ai"]
+  - ["ओ", "o"]
+  - ["औ", "au"]
+  - ["अं", "aṃ"]
+  - ["अः", "aḥ"]
+
+# the twenty letters (varna) of the second ring: the first letter of each direction group of nakshatras
+letters:
+  - ["अ", "a"]
+  - ["व", "va"]
+  - ["क", "ka"]
+  - ["ह", "ha"]
+  - ["ड", "ḍa"]
+  - ["म", "ma"]
+  - ["ट", "ṭa"]
+  - ["प", "pa"]
+  - ["र", "ra"]
+  - ["त", "ta"]
+  - ["न", "na"]
+  - ["य", "ya"]
+  - ["भ", "bha"]
+  - ["ज", "ja"]
+  - ["ख", "kha"]
+  - ["ग", "ga"]
+  - ["स", "sa"]
+  - ["द", "da"]
+  - ["च", "ca"]
+  - ["ल", "la"]
+
+# the five tithi groups and the weekdays (0 = Sunday) that share their cell
+tithi_groups:
+  - {name: Nanda, dev: "नन्दा", tr: "Nandā", tithis: [1, 6, 11], weekdays: [0, 2]}
+  - {name: Bhadra, dev: "भद्रा", tr: "Bhadrā", tithis: [2, 7, 12], weekdays: [1, 3]}
+  - {name: Jaya, dev: "जया", tr: "Jayā", tithis: [3, 8, 13], weekdays: [4]}
+  - {name: Rikta, dev: "रिक्ता", tr: "Riktā", tithis: [4, 9, 14], weekdays: [5]}
+  - {name: Purna, dev: "पूर्णा", tr: "Pūrṇā", tithis: [5, 10, 15], weekdays: [6]}
+
+# The 9 x 9 Sarvatobhadra grid, top row first (east at the top). Codes: n = nakshatra (index in the 28 above),
+# v = vowel, l = letter, r = rashi, t = tithi group.
+sarvatobhadra:
+  - [v0, n2, n3, n4, n5, n6, n7, n8, v1]
+  - [n1, v4, l0, l1, l2, l3, l4, v5, n9]
+  - [n0, l19, v8, r1, r2, r3, v9, l5, n10]
+  - [n27, l18, r0, v12, t0, v13, r4, l6, n11]
+  - [n26, l17, r11, t3, t4, t1, r5, l7, n12]
+  - [n25, l16, r10, v15, t2, v14, r6, l8, n13]
+  - [n24, l15, v11, r9, r8, r7, v10, l9, n14]
+  - [n23, v7, l14, l13, l12, l11, l10, v6, n15]
+  - [v3, n22, n21, n20, n19, n18, n17, n16, v2]
+
+# mean daily motion (deg per day), for the shighra test
+mean_motion: {sun: 0.9856, moon: 13.1764, mars: 0.5240, mercury: 0.9856, jupiter: 0.0831, venus: 0.9856, saturn: 0.0335}
+
+kota:
+  zones: [bahya, prakara, madhya, stambha, madhya, prakara, bahya]
+  directions: [east, south, west, north]
+  # zone half-sizes for drawing (bahya = 1)
+  size: {bahya: 1.0, prakara: 0.75, madhya: 0.5, stambha: 0.25}
+
+# Sanghatta: the sapta-shalaka vedha pairs (seven vertical and seven horizontal lines; the two nakshatras at the ends
+# of one line pierce each other). Names as in the 28 above.
+sanghatta_pairs:
+  - [Krittika, Shravana]
+  - [Rohini, Abhijit]
+  - [Mrigashira, Uttara Ashadha]
+  - [Ardra, Purva Ashadha]
+  - [Punarvasu, Mula]
+  - [Pushya, Jyeshtha]
+  - [Ashlesha, Anuradha]
+  - [Magha, Bharani]
+  - [Purva Phalguni, Ashwini]
+  - [Uttara Phalguni, Revati]
+  - [Hasta, Uttara Bhadrapada]
+  - [Chitra, Purva Bhadrapada]
+  - [Swati, Shatabhisha]
+  - [Vishakha, Dhanishta]

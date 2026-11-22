@@ -381,9 +381,15 @@ pub fn yogini(
     let start = birth.jd_ut - elapsed_years * ydays;
     let mut periods = vec![];
     let mut t = start;
-    // 120 years of yoginī periods (three cycles and a part) to cover a life span.
+    // 120 years of yoginī periods (three cycles and a part) cover a life span; when a reference instant is later
+    // (a chart of someone born long ago, read today), continue to one full 36-year cycle past it, so the current
+    // period can be shown. Capped at 250 years from birth.
+    let until = reference_jd
+        .map_or(0.0, |at| at + 36.0 * ydays)
+        .max(birth.jd_ut + 120.0 * ydays)
+        .min(birth.jd_ut + 250.0 * ydays);
     let mut k = 0usize;
-    while t < birth.jd_ut + 120.0 * ydays {
+    while t < until {
         let i = (first + k) % 8;
         let yrs = YOGINI_ORDER[i].2;
         let mut v = json!({"yogini": YOGINI_ORDER[i].0, "lord": YOGINI_ORDER[i].1, "years": yrs,
@@ -545,5 +551,30 @@ mod dasha_level_tests {
         // Ashwini (1st): (1 + 3) mod 8 = 4 -> Bhramari.
         let v = yogini(1.0, &birth, "365.25", 1, None).unwrap();
         assert_eq!(v["starting_yogini"], "Bhramari");
+    }
+
+    #[test]
+    fn yogini_reaches_past_a_late_reference_instant() {
+        // born 1879, read in 2026: the list must run past 2026 (one cycle beyond) and hold the current period
+        let birth = Instant::from_jd_utc(2_408_079.5);
+        let now = 2_461_000.5; // late 2026
+        let v = yogini(88.3, &birth, "365.25", 2, Some(now)).unwrap();
+        let last = v["mahadashas"].as_array().unwrap().last().unwrap()["end_utc"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        assert!(last.as_str() > "2062", "{last}");
+        assert!(
+            v["current"].is_array() || v["current"].is_object(),
+            "{}",
+            v["current"]
+        );
+        // without a reference instant the span is unchanged (120 years)
+        let w = yogini(88.3, &birth, "365.25", 1, None).unwrap();
+        let end = w["mahadashas"].as_array().unwrap().last().unwrap()["end_utc"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        assert!(end.as_str() < "2005", "{end}");
     }
 }

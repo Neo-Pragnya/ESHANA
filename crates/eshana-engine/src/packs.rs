@@ -408,6 +408,17 @@ pub enum Cond {
     },
     /// All seven grahas on one side of the nodal axis.
     BetweenNodes {},
+    /// Two of the seven grahas each in a sign ruled by the other (sign exchange). `kind` narrows it by the houses
+    /// exchanged from `from`: `maha` (neither house is 3, 6, 8 or 12), `khala` (one is the 3rd, none is 6, 8 or 12),
+    /// `dainya` (one is the 6th, 8th or 12th); `any` (the default) needs no lagna.
+    Parivartana {
+        /// any | maha | khala | dainya.
+        #[serde(default)]
+        kind: Option<String>,
+        /// Reference for the houses (needed unless kind is any).
+        #[serde(default)]
+        from: Option<String>,
+    },
     /// Every condition holds.
     AllOf(Vec<Cond>),
     /// Any condition holds.

@@ -72,7 +72,10 @@ const mouse = (x, y, type = "mouseMoved") => send("Input.dispatchMouseEvent", { 
 const click = async (x, y) => { await mouse(x, y); await mouse(x, y, "mousePressed"); await mouse(x, y, "mouseReleased"); };
 
 const results = [];
+// JOURNEY_ONLY=<text> runs only the journeys whose name contains that text (handy while fixing one)
+const ONLY = process.env.JOURNEY_ONLY || "";
 async function journey(name, fn) {
+  if (ONLY && !name.includes(ONLY)) return;
   const started = Date.now(); problems = [];
   try {
     const detail = (await fn()) || "";
@@ -146,7 +149,7 @@ await journey("hovering a graha point shows its tooltip; clicking a graha opens 
   await go("#/charts", 2000);
   const pos = await evaluate(`(() => { const g = document.querySelector('#charts .chart .gl[data-body=moon]'); g.scrollIntoView({block:'center'}); const b = g.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
   await mouse(pos[0], pos[1]); await sleep(300);
-  const tipText = await evaluate(`document.querySelector('.tip.on')?.innerText || ''`);
+  const tipText = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
   expect(/Moon/.test(tipText) && /Nakshatra/.test(tipText), "no tooltip: " + tipText.slice(0, 80));
   await click(pos[0], pos[1]); await sleep(1500);
   expect(await evaluate(`location.hash`) === "#/planet/moon", "did not open the Moon page");
@@ -237,6 +240,53 @@ await journey("hovering a graha on the chakra animates where it aspects", async 
   return `Jupiter: ${r.flow} flowing aspects, ${r.cells} boxes lit`;
 });
 
+await journey("chart cells never overlap: ārūḍha padas on top, aspect marks at the bottom, everything inside its rāśi", async () => {
+  // every label in every rāśi of the South and North Indian D1 charts, with additional aspects off and on
+  const probe = `(() => { const out = { cells: 0, labels: 0, padasTop: 0, padas: 0, bad: [] };
+    const name = (e) => e.matches('g.gl') ? 'graha ' + e.dataset.body : e.classList.contains('arudha') ? 'padas' : e.classList.contains('rashimark') ? 'rāśi marks' : e.classList.contains('aspmark') ? 'aspect marks' : 'label ' + e.textContent;
+    for (const svg of document.querySelectorAll('#charts svg.chart.south, #charts svg.chart.north')) {
+      const kind = svg.classList.contains('north') ? 'North' : 'South';
+      for (const cell of svg.querySelectorAll('.cell')) {
+        out.cells++;
+        const shape = cell.querySelector('rect, polygon'), sr = shape.getBoundingClientRect(), sb = { x: sr.left, y: sr.top, width: sr.width, height: sr.height }, inv = svg.getScreenCTM().inverse(), where = kind + ' ' + (svg.getAttribute('aria-label') || '').split(' ')[0] + ' sign ' + cell.dataset.sign;
+        // what is drawn, on screen: a graha row is its text and icon (not the hover halo, which is invisible until hovered)
+        const ink = (e) => { const parts = e.matches('g.gl') ? [...e.querySelectorAll('text, image, circle:not(.halo)')] : [e];
+          const rs = parts.map(q => q.getBoundingClientRect()).filter(r => r.width > 0 && r.height > 0); if (!rs.length) return { x: 0, y: 0, width: 0, height: 0 };
+          const x = Math.min(...rs.map(r => r.left)), y = Math.min(...rs.map(r => r.top)); return { x, y, width: Math.max(...rs.map(r => r.right)) - x, height: Math.max(...rs.map(r => r.bottom)) - y }; };
+        const items = [...cell.children].filter(e => e.matches('text, g.gl')).map(e => ({ e, n: name(e), b: ink(e) })).filter(it => it.b.width > 0 && it.b.height > 0);
+        out.labels += items.length;
+        for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+          const a = items[i].b, b = items[j].b, t = 0.75;
+          const ox = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x), oy = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+          if (ox > t && oy > t) out.bad.push(where + ': ' + items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)');
+        }
+        for (const it of items) {
+          const b = it.b, cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+          const inside = kind === 'South' ? b.x >= sb.x - 1 && b.y >= sb.y - 1 && b.x + b.width <= sb.x + sb.width + 1 && b.y + b.height <= sb.y + sb.height + 1
+            : [b.x + 1.5, cx, b.x + b.width - 1.5].every(px => shape.isPointInFill(new DOMPoint(px, cy).matrixTransform(inv)));
+          if (!inside) out.bad.push(where + ': ' + it.n + ' outside its rāśi');
+        }
+        const pada = items.find(it => it.n === 'padas');
+        if (pada) { out.padas++; const marks = items.filter(it => /marks$/.test(it.n) || it.n.startsWith('graha'));
+          if (marks.every(m => pada.b.y + pada.b.height <= m.b.y + 0.75)) out.padasTop++; else out.bad.push(where + ': padas are not above the grahas and aspect marks'); }
+      }
+    }
+    return out; })()`;
+  const runs = [];
+  for (const extra of [false, true]) {
+    await evaluate(`S.layers.arudha = true; S.layers.aspect_marks = true; S.layers.rashi_marks = true; S.layers.extra_aspects = ${extra}; 1`);
+    await go("#/overview", 300); await go("#/charts", 1200);
+    await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'Both').click()`); await sleep(1500);
+    runs.push(await evaluate(probe));
+  }
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  const bad = runs.flatMap(r => r.bad);
+  expect(runs[0].cells >= 24, `only ${runs[0].cells} chart cells checked`);
+  expect(runs[0].padas > 0, "no ārūḍha padas drawn in the charts");
+  expect(!bad.length, `${bad.length} overlap(s): ` + [...new Set(bad)].slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+  return `${runs[0].cells} cells, ${runs[0].labels} + ${runs[1].labels} labels, padas on top in ${runs[0].padasTop}/${runs[0].padas} cells, no overlaps (additional aspects off and on)`;
+});
+
 await journey("rāśi drishti has its own marks, in the charts and on the chakra", async () => {
   await go("#/charts", 1500);
   const on = await evaluate(`document.querySelectorAll('#charts svg .rashimark').length`);
@@ -269,6 +319,177 @@ await journey("selecting a segment turns the wheel only when 'turn to selection'
   return "turns when on, stays put when off";
 });
 
+await journey("hover details sit in the panel beside the chakra, not on top of it", async () => {
+  await go("#/chakra", 1500);
+  const at = "jupiter";
+  await evaluate(`document.querySelector('#chakra svg.wheel .pt-hit[data-body=jupiter]').scrollIntoView({ block: 'center' })`);
+  await sleep(400);
+  const p = await evaluate(`(() => { const r = document.querySelector('#chakra svg.wheel .pt-hit[data-body=jupiter]').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+  await mouse(p.x, p.y); await sleep(500);
+  const r = await evaluate(`(() => { const d = document.querySelector('#chakra .tipdock'), w = document.querySelector('#chakra svg.wheel').getBoundingClientRect(), dr = d.getBoundingClientRect();
+    return { docked: d.classList.contains('on'), text: d.innerText, floating: document.querySelector('.tip.on') != null, beside: dr.left >= w.right - 1 }; })()`);
+  await shot("chakra-hover-dock");
+  expect(r.docked, "hover details did not go to the panel");
+  expect(!r.floating, "a floating popup still covers the chakra");
+  expect(r.beside, "the hover panel is not beside the chakra");
+  expect(r.text.length > 20, "the hover panel is empty");
+  await mouse(5, 5); await sleep(300);
+  const idle = await evaluate(`!document.querySelector('#chakra .tipdock').classList.contains('on')`);
+  expect(idle, "the hover panel stays lit after the pointer leaves");
+  return `${at}: details in the side panel`;
+});
+
+await journey("dark theme: chart writing has readable contrast", async () => {
+  await evaluate(`document.documentElement.dataset.mode = 'dark'; document.documentElement.setAttribute('data-theme', 'dark'); 1`);
+  await evaluate(`S.layers.arudha = true; S.layers.extra_aspects = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'Both').click()`); await sleep(1200);
+  const r = await evaluate(`(() => {
+    const rgb = (c) => { const m = c.match(/[\\d.]+/g); return m ? m.slice(0, 3).map(Number) : null; };
+    const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+    const bg = rgb(getComputedStyle(document.documentElement).getPropertyValue('--panel-solid').trim().replace('#', '').match(/../g).map(h => parseInt(h, 16)).join(','));
+    const bad = []; let n = 0;
+    // every visible run of text, measured by the element that actually paints it
+    const runs = []; for (const svg of document.querySelectorAll('#charts svg.chart')) { const w = document.createTreeWalker(svg, NodeFilter.SHOW_TEXT);
+      for (let x = w.nextNode(); x; x = w.nextNode()) if (x.textContent.trim() && !x.parentElement.closest('title')) runs.push(x.parentElement); }
+    for (const t of new Set(runs)) {
+      const cs = getComputedStyle(t), c = rgb(cs.fill); if (!c) continue;
+      let op = 1; for (let e = t; e && e.tagName !== 'svg'; e = e.parentElement) op *= +getComputedStyle(e).opacity;
+      const mix = c.map((v, i) => v * op + bg[i] * (1 - op)), L1 = lum(mix), L2 = lum(bg), ratio = (Math.max(L1, L2) + .05) / (Math.min(L1, L2) + .05);
+      const need = t.closest('.aspmark') ? 3 : 4.5; n++;
+      if (ratio < need) bad.push(t.textContent.trim().slice(0, 12) + ' ' + cs.fill + ' ' + ratio.toFixed(2));
+    }
+    return { n, bad }; })()`);
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  await shot("charts-dark");
+  expect(r.n > 100, `only ${r.n} text runs checked`);
+  expect(!r.bad.length, `${r.bad.length} low-contrast text run(s): ` + [...new Set(r.bad)].slice(0, 8).join("; "));
+  return `${r.n} text runs at 4.5:1 or better (aspect marks 3:1)`;
+});
+
+await journey("bhāvas: lordships in D1, D9 and D10 with the exchanges between house lords", async () => {
+  if (model.asc == null) return "no lagna in this chart";
+  await go("#/houses", 1400);
+  const LORD = ["mars", "venus", "mercury", "moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "saturn", "jupiter"];
+  const seen = {};
+  for (const [k, label] of [["d1", "D1 rāśi"], ["d9", "D9 navāṃśa"], ["d10", "D10 daśāṃśa"]]) {
+    await evaluate(`[...document.querySelectorAll('#houses .tab')].find(b => b.textContent === ${JSON.stringify(label)}).click()`); await sleep(400);
+    seen[k] = await evaluate(`(() => { const c = [...document.querySelectorAll('#houses .card')].find(x => /Lordships by division/.test(x.querySelector('h3')?.textContent || ''));
+      const t = c.querySelectorAll('table'); return { rows: [...t[0].querySelectorAll('tbody tr')].map(r => r.lastElementChild.textContent.trim()),
+        ex: t[1] ? [...t[1].querySelectorAll('tbody tr')].map(r => r.textContent) : [] }; })()`);
+    expect(seen[k].rows.length === 12, `${k}: ${seen[k].rows.length} rows`);
+  }
+  // D1 from the positions in the file: lord of house h sits in house (sign of lord − lagna)
+  const lag = signOf(model.asc);
+  for (let hse = 1; hse <= 12; hse++) {
+    const lord = LORD[(lag + hse - 1) % 12], at = (signOf(model.pos[lord]) - lag + 12) % 12 + 1;
+    expect(seen.d1.rows[hse - 1] === `lord of ${hse} in ${at}`, `D1 bhāva ${hse}: ${seen.d1.rows[hse - 1]} (expected in ${at})`);
+  }
+  const seven = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"]; let pairs = 0;
+  for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) if (LORD[signOf(model.pos[seven[i]])] === seven[j] && LORD[signOf(model.pos[seven[j]])] === seven[i]) pairs++;
+  expect(seen.d1.ex.length === pairs, `D1 shows ${seen.d1.ex.length} exchange(s), the positions give ${pairs}`);
+  return `12 rows in each of D1, D9, D10; D1 matches the positions; exchanges D1 ${seen.d1.ex.length}, D9 ${seen.d9.ex.length}, D10 ${seen.d10.ex.length}`;
+});
+
+await journey("pada navāṃśa: the D9 chart shows the ārūḍha padas worked out in the navāṃśa", async () => {
+  const want = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes.vedic.derived_attributes.find(a => a.id === 'vedic.jaimini.arudha_padas_d9');
+    if (!d) return null; const m = {}; for (const k in d.value) { const lab = k.startsWith('A1_') ? 'AL' : k.startsWith('A12') ? 'UL' : k.split('_')[0]; (m[d.value[k].pada_sign] = m[d.value[k].pada_sign] || []).push(lab); } return m; })()`);
+  if (!want) return "no lagna in this chart";
+  await evaluate(`S.layers.arudha = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1000);
+  const got = await evaluate(`(() => { const svg = [...document.querySelectorAll('#charts svg.chart.south')].find(x => /^D9 /.test(x.getAttribute('aria-label'))); const m = {};
+    for (const c of svg.querySelectorAll('.cell')) { const t = c.querySelector('.arudha'); if (t) m[c.dataset.sign] = t.firstChild.textContent.trim().split(/\\s+/); } return m; })()`);
+  const norm = (m) => JSON.stringify(Object.keys(m).sort().map(k => [k, [...m[k]].sort()]));
+  expect(norm(got) === norm(want), `D9 padas ${norm(got)} vs engine ${norm(want)}`);
+  return `${Object.values(want).flat().length} padas in ${Object.keys(want).length} navāṃśa signs`;
+});
+
+await journey("numerology: the Kua number for both sexes, and compound numbers open their reading", async () => {
+  await go("#/numerology", 1400);
+  const r = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes;
+    const num = Object.values(d).find(e => e && e.derived_attributes && e.derived_attributes.some(a => a.id === 'numerology.lo_shu'));
+    const L = num ? num.derived_attributes.find(a => a.id === 'numerology.lo_shu').value : null;
+    const c = [...document.querySelectorAll('#numerology .card')].find(x => /Kua number/.test(x.querySelector('h3')?.textContent || ''));
+    return { L: L && L.kua, dob: L && L.digits, text: c ? c.innerText : null }; })()`);
+  if (!r.L) return "no birth date numerology in this chart";
+  expect(r.text, "no Kua card");
+  // recompute from the date: DDMMYYYY digits
+  const dd = +r.dob.slice(0, 2), mm = +r.dob.slice(2, 4); let y = +r.dob.slice(4); if (mm < 2 || (mm === 2 && dd < 4)) y--;
+  const red = (n) => { while (n > 9) n = String(n).split("").reduce((a, b) => a + +b, 0); return n; };
+  const rr = y % 100 === 0 ? 0 : red(y % 100), one = (x) => { x = ((x % 9) + 9) % 9; return x === 0 ? 9 : x; };
+  let [m, f] = y < 2000 ? [one(10 - rr), one(rr + 5)] : [one(9 - rr), one(rr + 6)]; if (m === 5) m = 2; if (f === 5) f = 8;
+  expect(r.L.male === m && r.L.female === f, `Kua ${r.L.male}/${r.L.female}, expected ${m}/${f}`);
+  expect(r.text.includes(`Man\n${m}`) || r.text.includes(String(m)), "Kua card does not show the man's number");
+  // a compound name number opens its compound reading
+  const opened = await evaluate(`(() => { const t = [...document.querySelectorAll('#numerology .ntile')].find(b => { const c = b.querySelector('.n-comp'); if (!c) return false; const k = +c.textContent.split('/')[0]; return k >= 10 && k <= 52; });
+    if (!t) return null; t.click(); return t.querySelector('.n-comp').textContent; })()`);
+  if (opened) { await sleep(500); const has = await evaluate(`!!document.querySelector('#numerology .ntile.open .n-compound')`);
+    await evaluate(`document.querySelector('#numerology .ntile.open')?.click()`); await sleep(300); // leave no tile open for later journeys
+    expect(has, `compound ${opened} opened without its reading`); }
+  return `Kua man ${m}, woman ${f}${opened ? `; compound ${opened} reads` : ""}`;
+});
+
+await journey("hovering a transit graha draws a line to where it is now and lights its rāśi, nakshatra and pada", async () => {
+  await go("#/chakra", 1500);
+  await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);
+  await sleep(1200);
+  const at = await evaluate(`(() => { const m = document.querySelector('#chakra svg.wheel .transit-pl'); if (!m) return null; m.scrollIntoView({ block: 'center' });
+    const r = m.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, id: m.dataset.body }; })()`);
+  expect(at, "no transit grahas on the wheel");
+  await sleep(300);
+  // conjunct transit grahas overlap on the ring: expect whichever one is on top under the pointer
+  const p = await evaluate(`(() => { const r = document.querySelector('#chakra svg.wheel .transit-pl[data-body="${at.id}"]').getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const top = document.elementFromPoint(x, y)?.closest('.transit-pl'); return { x, y, id: top ? top.dataset.body : null }; })()`);
+  expect(p.id, "no transit graha under the pointer");
+  at.id = p.id;
+  await mouse(p.x, p.y); await sleep(500);
+  const r = await evaluate(`(() => { const ray = document.querySelector('#chakra .transit-ray'); const hot = [...document.querySelectorAll('#chakra svg.wheel .seg.hot')].map(e => e.dataset.kind);
+    if (!ray) return { ray: false, hot };
+    const l = +ray.getAttribute('x1'), len = Math.hypot(+ray.getAttribute('x2') - +ray.getAttribute('x1'), +ray.getAttribute('y2') - +ray.getAttribute('y1'));
+    return { ray: true, body: ray.dataset.body, len, hot, tip: (document.querySelector('.tip') || {}).innerText || '' }; })()`);
+  await shot("transit-ray");
+  expect(r.ray, "no line drawn on hover");
+  expect(r.body === at.id, `line belongs to ${r.body}, hovered ${at.id}`);
+  expect(r.len > 300, `line too short (${Math.round(r.len)})`);
+  for (const k of ["rashi", "nak", "pada"]) expect(r.hot.includes(k), `${k} not lit (lit: ${r.hot.join(",")})`);
+  await mouse(5, 5); await sleep(300);
+  const gone = await evaluate(`document.querySelectorAll('#chakra .transit-ray').length`);
+  expect(gone === 0, "the line stays after the pointer leaves");
+  return `${at.id}: line of ${Math.round(r.len)} units, lit ${r.hot.join(", ")}`;
+});
+
+await journey("parivartana: each exchanged graha is marked in its partner's sign, and the yoga is listed with both grahas", async () => {
+  // exchanges among the seven grahas, worked out from the positions in the file
+  const LORD = ["mars", "venus", "mercury", "moon", "sun", "mercury", "venus", "mars", "jupiter", "saturn", "saturn", "jupiter"];
+  const seven = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"], pairs = [];
+  for (let i = 0; i < 7; i++) for (let j = i + 1; j < 7; j++) { const a = seven[i], b = seven[j];
+    if (LORD[signOf(model.pos[a])] === b && LORD[signOf(model.pos[b])] === a) pairs.push([a, b]); }
+  await evaluate(`S.layers.extra_aspects = true; S.layers.aspect_marks = true; 1`);
+  await go("#/overview", 300); await go("#/charts", 1200);
+  await evaluate(`[...document.querySelectorAll('#charts .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1200);
+  const marks = await evaluate(`[...document.querySelectorAll('#charts svg.chart.south .cell')].flatMap(c => [...c.querySelectorAll('.exchmark')].map(t => ({ sign: +c.dataset.sign, text: t.textContent.trim() })))`);
+  await shot("parivartana-marks");
+  await evaluate(`S.layers.extra_aspects = false; 1`);
+  const want = pairs.flatMap(([a, b]) => [{ g: a, sign: signOf(model.pos[b]) }, { g: b, sign: signOf(model.pos[a]) }]);
+  const ab = (g) => ({ sun: "Su", moon: "Mo", mars: "Ma", mercury: "Me", jupiter: "Ju", venus: "Ve", saturn: "Sa" })[g];
+  for (const w of want) expect(marks.some(m => m.sign === w.sign && m.text.startsWith(ab(w.g))), `${w.g} not marked in ${SIGN_AB[w.sign]} (marks: ${JSON.stringify(marks)})`);
+  // the D1 chart shows each exchange in two signs, the D9 chart none
+  expect(marks.length === want.length * 1 || marks.length === want.length * 2, `${marks.length} exchange marks for ${pairs.length} exchange(s)`);
+  const yoga = await evaluate(`(() => { const d = JSON.parse(document.getElementById('eshana-data').textContent).envelopes.vedic.derived_attributes.find(a => a.id === 'vedic.yogas');
+    return d ? d.value.yogas.filter(y => /parivartana/.test(y.id)).map(y => ({ id: y.id, present: y.present, grahas: y.grahas })) : []; })()`);
+  const any = yoga.find(y => y.id === "parivartana");
+  expect(any, "no parivartana yoga in the engine output");
+  expect(any.present === pairs.length > 0, `parivartana present=${any.present} but ${pairs.length} exchange(s)`);
+  for (const [a, b] of pairs) expect(any.grahas.includes(a) && any.grahas.includes(b), `yoga does not name ${a} and ${b}`);
+  if (pairs.length) {
+    await go("#/yoga/parivartana", 1200);
+    const page = await evaluate(`document.querySelector('#yoga')?.innerText || ''`);
+    for (const [a] of pairs) expect(new RegExp(({ sun: "Sun", moon: "Moon", mars: "Mars", mercury: "Mercury", jupiter: "Jupiter", venus: "Venus", saturn: "Saturn" })[a]).test(page), `yoga page does not name ${a}`);
+  }
+  return pairs.length ? `${pairs.map(p => p.join("⇄")).join(", ")}: marked in the partner signs; ${yoga.filter(y => y.present).map(y => y.id).join(", ")}` : "no exchange in this chart; none marked";
+});
+
 await journey("transits: pick a date and animate over a chosen range", async () => {
   await go("#/chakra", 1500);
   await evaluate(`(() => { const t = [...document.querySelectorAll('#chakra .tog')].find(l => /^transits$/.test(l.textContent.trim())).querySelector('input'); if (!t.checked) t.click(); })()`);
@@ -293,9 +514,12 @@ await journey("yogas: only those present, each with a full reading page", async 
   await go("#/yogas", 1400);
   const r = await evaluate(`(() => { const tiles = [...document.querySelectorAll('#yogas a.card.yoga')]; return { n: tiles.length, present: YOGA_PRESENT().length, hrefs: tiles.map(t => t.getAttribute('href')) }; })()`);
   expect(r.n === r.present && r.n > 0, `${r.n} tiles for ${r.present} present`);
-  await evaluate(`document.querySelector('#yogas a.card.yoga').click()`); await sleep(1400);
+  // open the first yoga formed by particular grahas (some, like Kemadruma, are patterns of the whole chart)
+  const pick = await evaluate(`(() => { const ids = YOGA_PRESENT().filter(y => (y.grahas || []).length).map(y => y.id);
+    const a = [...document.querySelectorAll('#yogas a.card.yoga')].find(t => ids.some(id => t.getAttribute('href').endsWith('/' + id))) || document.querySelector('#yogas a.card.yoga');
+    a.click(); return a.getAttribute('href'); })()`); await sleep(1400);
   const hash = await evaluate(`location.hash`);
-  expect(hash === r.hrefs[0], `opened ${hash}`);
+  expect(hash === pick, `opened ${hash}, clicked ${pick}`);
   const t = await evaluate(`document.querySelector('#yoga').innerText`);
   for (const need of ["How it forms here", "When it is active", "Traditionally associated with", "How it is read", "interpretation"]) expect(t.includes(need), `yoga page lacks "${need}"`);
   const lit = await evaluate(`document.querySelectorAll('#yoga .cell.yoga-src').length`);
@@ -492,6 +716,27 @@ await journey("concentric squares are even: inner birth chart, outer band of twe
   return "12 equal inner boxes; even outer sectors";
 });
 
+await journey("maitri page: relationship, tārā and dignity grids fill in; hover explains a cell; a graha head links to its page", async () => {
+  await go("#/maitri", 1500);
+  const r = await evaluate(`({ rel: document.querySelectorAll('#maitri .mt-rel td.mt-c').length, tara: document.querySelectorAll('#maitri .mt-tara td.mt-c').length,
+    dig: document.querySelectorAll('#maitri .mt-dig td.mt-c').length, sums: document.querySelectorAll('#maitri .mt-sum').length, legends: document.querySelectorAll('#maitri .mt-legend').length,
+    data: (val('vedic.maitri.relationships') || {}).rows?.length || 0 })`);
+  expect(r.rel === r.data && r.rel === 72 && r.tara === 90 && r.dig === 144 && r.sums === 9 && r.legends === 3, JSON.stringify(r));
+  const pos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-rel td[data-from=sun][data-to=jupiter]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
+  await mouse(pos[0], pos[1]); await sleep(300);
+  const tipText = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
+  expect(/Natural/.test(tipText) && /Temporal/.test(tipText) && /Compound/.test(tipText), "no relationship tooltip: " + tipText.slice(0, 120));
+  const dpos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-dig td[data-g=moon][data-d="9"]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
+  await mouse(dpos[0], dpos[1]); await sleep(300);
+  const dTip = await evaluate(`document.querySelector('.tip.on, .tipdock.on')?.innerText || ''`);
+  expect(/Sign lord/.test(dTip) && /Why/.test(dTip), "no dignity tooltip: " + dTip.slice(0, 120));
+  await evaluate(`document.querySelector('#maitri .mt-rel thead a.mt-h[href="#/planet/mars"]').click()`); await sleep(1200);
+  expect(await evaluate(`location.hash`) === "#/planet/mars", "graha head did not open the Mars page");
+  return `${r.rel} relationships, ${r.tara} tārās, ${r.dig} dignity cells; tooltips and link work`;
+});
+
+// ── journeys: maitri (add new journeys for this workstream above this line) ──
+
 await journey("additional aspects (retrograde shadow, parivartana) are off by default and appear everywhere when switched on", async () => {
   await go("#/chakra", 1500);
   const off = await evaluate(`document.querySelectorAll('#chakra .extramark').length`);
@@ -515,6 +760,41 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   return `${on.data} additional aspects (${on.kinds}); ${on.marks} marks; table and planet page`;
 });
 
+await journey("daśā systems: tabs for nine systems, sign-based ones zoom with rāśi labels and a running chain", async () => {
+  await go("#/dasha", 1500);
+  const tabsTxt = await evaluate(`[...document.querySelectorAll("#dasha .dz-tabs .tab")].map(t => t.textContent)`);
+  expect(tabsTxt.length === 9 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra"), "tabs: " + tabsTxt.join("|"));
+  await evaluate(`document.querySelector("#dasha .dz-chain .btn").click()`); await sleep(600); // back to the running chain
+  expect(await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`) === 5, "Vimśottarī lost its five levels");
+  await go("#/dasha/chara", 1500);
+  const r = await evaluate(`({ sel: document.querySelector("#dasha .dz-tabs .tab[aria-selected=true]").textContent, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length,
+    signBars: document.querySelectorAll("#dasha .dzoom .dz-bar.dz-sign").length, glyph: [...document.querySelectorAll("#dasha .dzoom .dz-name")].some(t => /[♈-♓]/.test(t.textContent)),
+    running: document.querySelectorAll("#dasha .dz-running .link").length, conv: /K. N. Rao/.test(document.querySelector("#dasha .dz-conv").textContent),
+    houseLink: !!document.querySelector("#dasha .dz-chain a[href^='#/house/']") })`);
+  expect(r.sel === "Chara" && r.rows === 2 && r.signBars > 12 && r.glyph && r.running === 2 && r.conv && r.houseLink, JSON.stringify(r));
+  const before = await evaluate(`document.querySelector("#dasha .dz-chain").innerText`);
+  await evaluate(`document.querySelectorAll("#dasha .dz-row")[0].querySelectorAll(".dz-bar")[1].dispatchEvent(new MouseEvent("click", { bubbles: true }))`); await sleep(800);
+  const after = await evaluate(`({ chain: document.querySelector("#dasha .dz-chain").innerText, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, bracket: document.querySelectorAll("#dasha .dz-bracket").length })`);
+  expect(after.chain !== before && after.rows === 2 && after.bracket === 1, "clicking a Chara mahādaśā did not open it: " + JSON.stringify(after));
+  // every system renders and its antardaśās tile the mahādaśā above
+  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra"], seen = [];
+  for (const id of sys) {
+    await go("#/dasha/" + id, 900);
+    const x = await evaluate(`(() => { const v = val("vedic.dasha.${id}"); const m = v.mahadashas.find(m => (m.antardashas || []).length);
+      return { rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, conv: !!document.querySelector("#dasha .dz-conv") || "${id}" === "yogini",
+        tiles: m ? m.antardashas[m.antardashas.length - 1].end_utc === m.end_utc : false }; })()`);
+    expect(x.rows >= 2 && x.conv && x.tiles, id + ": " + JSON.stringify(x));
+    seen.push(id + ":" + x.rows);
+  }
+  // Aṣṭottarī opens a third level subdivided in the page, by the 108-year proportions
+  await go("#/dasha/ashtottari", 900);
+  const third = await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`);
+  expect(third === 3, "Aṣṭottarī third level missing: " + third);
+  return `9 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+});
+
+// ── journeys: dashas (add new journeys for this workstream above this line) ──
+
 await journey("the command palette jumps to a bhāva", async () => {
   await go("#/overview", 800);
   await send("Input.dispatchKeyEvent", { type: "keyDown", key: "k", code: "KeyK", modifiers: 4, windowsVirtualKeyCode: 75 });
@@ -528,6 +808,110 @@ await journey("the command palette jumps to a bhāva", async () => {
   return "⌘K → Bhāva 7";
 });
 
+await journey("auxiliary analysis: eight tabs, 37 sahams on the chart, hover links a row to its sign, every tab draws", async () => {
+  await go("#/aux", 1200);
+  const first = await evaluate(`(() => { const sec = document.querySelector('section.page#aux');
+    return { tabs: sec.querySelectorAll('.aux-tabs .tab').length, rows: sec.querySelectorAll('tr.aux-row').length,
+             cells: sec.querySelectorAll('.aux-cell').length, marks: sec.querySelectorAll('.aux-sn').length }; })()`);
+  expect(first.tabs === 8, `${first.tabs} tabs`);
+  expect(first.rows === 37 && first.marks === 37 && first.cells === 12, JSON.stringify(first));
+  const linked = await evaluate(`(() => { const tr = document.querySelector('#aux tr.aux-row'); tr.dispatchEvent(new MouseEvent('mouseenter'));
+    const hot = document.querySelector('#aux .aux-cell.hot'); const ok = hot && +hot.dataset.sign === +tr.dataset.sign;
+    tr.dispatchEvent(new MouseEvent('mouseleave')); return !!ok && !document.querySelector('#aux .aux-cell.hot'); })()`);
+  expect(linked, "hovering a saham row did not light its sign");
+  const counts = {};
+  for (const t of ["avakahada", "gender", "mrityu", "ghata", "vedha", "jiva", "shodhana"]) {
+    await go("#/aux/" + t, 700);
+    const r = await evaluate(`(() => { const sec = document.querySelector('section.page#aux'); const pane = sec.querySelector('.aux-pane');
+      return { tab: pane && pane.dataset.tab, err: /could not be drawn|not available/.test(sec.innerText), tiles: sec.querySelectorAll('.aux-tile').length,
+               mb: sec.querySelectorAll('.aux-mbrow').length, houses: sec.querySelectorAll('.aux-house').length, steps: sec.querySelectorAll('.aux-step').length,
+               srows: sec.querySelectorAll('tr.aux-srow').length, chips: sec.querySelectorAll('.aux-chips .chip').length }; })()`);
+    expect(r.tab === t && !r.err, `${t}: ${JSON.stringify(r)}`);
+    counts[t] = r;
+  }
+  expect(counts.avakahada.tiles === 11, "avakahaḍā tiles " + counts.avakahada.tiles);
+  expect(counts.gender.chips === 10, "male/female chips " + counts.gender.chips);
+  expect(counts.mrityu.mb === 10, "mṛtyu bhāga rows " + counts.mrityu.mb);
+  expect(counts.ghata.tiles === 8, "ghāta tiles " + counts.ghata.tiles);
+  expect(counts.vedha.houses === 12, "vedha houses " + counts.vedha.houses);
+  expect(counts.jiva.steps === 9, "jīva/deha steps " + counts.jiva.steps);
+  expect(counts.shodhana.srows === 8, "śodhana rows " + counts.shodhana.srows);
+  // click a śodhana row: the reduction table switches to that aṣṭakavarga
+  const sw = await evaluate(`(() => { const tr = [...document.querySelectorAll('#aux tr.aux-srow')].find(r => r.dataset.g === 'lagna'); tr.click();
+    return [...document.querySelectorAll('#aux h3')].map(x => x.textContent).join(' / '); })()`);
+  expect(/Reduction of the Lagna/.test(sw), "śodhana row click did not switch: " + sw);
+  // vedhasthāna: hovering a graha lights its favourable houses
+  await go("#/aux/vedha", 700);
+  const lit = await evaluate(`(() => { const tr = document.querySelector('#aux tr.aux-vrow'); tr.dispatchEvent(new MouseEvent('mouseenter'));
+    return { fav: document.querySelectorAll('#aux .aux-house.fav').length, at: document.querySelectorAll('#aux .aux-house.at').length }; })()`);
+  expect(lit.fav > 0 && lit.at === 1, "vedha hover " + JSON.stringify(lit));
+  await shot("aux");
+  return `37 sahams; ${Object.keys(counts).length + 1} tabs draw; row↔sign hover; śodhana switch; vedha ${lit.fav} favourable houses lit`;
+});
+
+// drawn labels of a diagram must not overlap and must stay inside their cell: `cells` selects the cell groups, `box` the
+// shape that bounds a cell, `labels` the text drawn in it (measured on screen; invisible hover halos are not text)
+const inkProbe = (root, cells, box, labels) => `(() => { const out = { cells: 0, labels: 0, bad: [] };
+  for (const cell of document.querySelectorAll(${JSON.stringify(root)} + ' ' + ${JSON.stringify(cells)})) {
+    const shape = cell.querySelector(${JSON.stringify(box)}); if (!shape) continue; out.cells++;
+    const sb = shape.getBoundingClientRect();
+    const items = [...cell.querySelectorAll(${JSON.stringify(labels)})].map(e => ({ n: e.textContent, b: e.getBoundingClientRect() }))
+      .filter(it => it.b.width > 0 && it.b.height > 0);
+    out.labels += items.length;
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i].b;
+      if (a.left < sb.left - 1 || a.top < sb.top - 1 || a.right > sb.right + 1 || a.bottom > sb.bottom + 1) out.bad.push(items[i].n + ' outside its cell');
+      for (let j = i + 1; j < items.length; j++) { const b = items[j].b;
+        const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        if (ox > 0.75 && oy > 0.75) out.bad.push(items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)'); }
+    }
+  }
+  return out; })()`;
+
+await journey("sahams: an info box for every saham (row or chart click), 'What sahams are' on top, chart names never overlap", async () => {
+  await viewport(1440, 1000);
+  await go("#/overview", 300); await go("#/aux/sahams", 1500);
+  const top = await evaluate(`(() => { const sec = document.querySelector('section.page#aux'), first = sec.querySelector('.sh-info');
+    return { first: first && first.querySelector('b').textContent, label: !!(first && first.querySelector('.ep-interpretation')), src: first && first.querySelector('.pk-src').textContent,
+      panel: (sec.querySelector('.sh-panel') || {}).dataset?.id, firstRow: sec.querySelector('tr.aux-row').dataset.id }; })()`);
+  expect(top.first === "What sahams are" && top.label && /Tājika Nīlakaṇṭhī/.test(top.src), "general info box: " + JSON.stringify(top));
+  expect(top.panel === top.firstRow, "no info box open by default");
+  // click every row: the panel follows, with the formula as computed, the house, the lord's placement and the meaning
+  const all = await evaluate(`(() => { const v = val('vedic.aux.sahams'), R = D.reading.sahams.items, bad = [];
+    for (const tr of document.querySelectorAll('#aux tr.aux-row')) {
+      tr.click(); const p = document.querySelector('#aux .sh-panel'), r = v.sahams.find(x => x.id === tr.dataset.id), t = p ? p.textContent : '';
+      const want = [r.formula, 'House from the lagna', 'Lord placed', R[r.id].signifies, R[r.id].used_for, 'How it is read in a varṣaphala'];
+      if (!p || p.dataset.id !== r.id || !tr.classList.contains('sel')) bad.push(r.id + ': panel ' + (p && p.dataset.id));
+      else { const miss = want.filter(w => !t.includes(w)); if (miss.length) bad.push(r.id + ' lacks ' + miss.join(' | ').slice(0, 80)); }
+      if (p && p.querySelectorAll('.ep-interpretation').length < 2) bad.push(r.id + ': meaning not labelled interpretation');
+    }
+    return { n: document.querySelectorAll('#aux tr.aux-row').length, bad }; })()`);
+  expect(all.n === 37 && !all.bad.length, `${all.n} rows; ` + all.bad.slice(0, 4).join("; "));
+  // a saham name on the square chart opens its box too
+  const viaChart = await evaluate(`(() => { const t = [...document.querySelectorAll('#aux .aux-sn')].find(e => e.dataset.id === 'vivaha');
+    t.dispatchEvent(new MouseEvent('click', { bubbles: true })); const p = document.querySelector('#aux .sh-panel');
+    return { id: p.dataset.id, sel: t.classList.contains('sel'), row: document.querySelector('#aux tr.aux-row.sel').dataset.id }; })()`);
+  expect(viaChart.id === "vivaha" && viaChart.sel && viaChart.row === "vivaha", "chart click: " + JSON.stringify(viaChart));
+  // every saham name inside its sign on the square chart, no two overlapping
+  const ink = await evaluate(inkProbe("section.page#aux", "svg.aux-sq g.aux-cell", "rect.cellbg", "text"));
+  expect(ink.cells === 12 && ink.labels >= 37 + 12 && !ink.bad.length, `saham chart: ${ink.labels} labels in ${ink.cells} cells; ` + ink.bad.slice(0, 5).join("; "));
+  await evaluate(`document.querySelector('#aux .sh-panel').scrollIntoView({ block: 'center' })`); await sleep(500);
+  await shot("sahams-info");
+  // light theme and phone width: the panel still opens, the page does not scroll sideways
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  await evaluate(`document.documentElement.dataset.mode = 'light'; document.documentElement.setAttribute('data-theme', 'light'); 1`);
+  await viewport(390, 844, true); await go("#/overview", 300); await go("#/aux/sahams", 1500);
+  const phone = await evaluate(`(() => { document.querySelectorAll('#aux tr.aux-row')[3].click(); document.querySelector('#aux .sh-panel').scrollIntoView({ block: 'start' });
+    return { id: document.querySelector('#aux .sh-panel').dataset.id, wide: document.documentElement.scrollWidth > innerWidth + 1 }; })()`);
+  await sleep(500); await shot("sahams-phone-light");
+  await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode0)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode0)}); 1`);
+  await viewport(1440, 1000);
+  expect(phone.id && !phone.wide, "phone width: " + JSON.stringify(phone));
+  return `37 info boxes open from the table, chart click works, ${ink.labels} chart labels apart and inside their signs`;
+});
+
+// ── journeys: auxiliary (add new journeys for this workstream above this line) ──
+
 await journey("theme toggles and is remembered", async () => {
   const before = await evaluate(`document.documentElement.dataset.mode`);
   await evaluate(`document.getElementById('theme').click()`);
@@ -538,6 +922,200 @@ await journey("theme toggles and is remembered", async () => {
   await evaluate(`document.getElementById('theme').click()`);
   return `${before} → ${after}`;
 });
+
+await journey("chakras: Sarvatobhadra grid with vedha on pick, Kota fort, Saṅghaṭṭa ring", async () => {
+  await go("#/chakras", 1800);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  const sbc = await evaluate(`(() => { const svg = document.querySelector("#chakras svg.ck-sbc"); const v = val("vedic.chakra.sarvatobhadra");
+    return { cells: svg.querySelectorAll(".ck-cell").length, nak: svg.querySelectorAll(".ck-cell[data-kind=nakshatra]").length,
+      marks: svg.querySelectorAll(".ck-pl").length, want: v.cells.filter(c => c.kind === "nakshatra").reduce((n, c) => n + c.natal.length, 0),
+      lines: svg.querySelectorAll(".ck-line").length, grahas: v.grahas.natal.filter(g => g.id !== "lagna").length }; })()`);
+  expect(sbc.cells === 81 && sbc.nak === 28, "grid " + JSON.stringify(sbc));
+  expect(sbc.marks === sbc.want, `${sbc.marks} markers for ${sbc.want} placements`);
+  expect(sbc.lines === sbc.grahas * 3, `${sbc.lines} vedha lines for ${sbc.grahas} grahas`);
+  await evaluate(`document.querySelector("#chakras .ck-chip[data-graha=saturn]").click()`); await sleep(400);
+  const pick = await evaluate(`(() => { const svg = document.querySelector("#chakras svg.ck-sbc"); const g = val("vedic.chakra.sarvatobhadra").grahas.natal.find(x => x.id === "saturn");
+    return { on: svg.querySelectorAll(".ck-line.on").length, picked: svg.classList.contains("picked"), hit: svg.querySelectorAll(".ck-cell.hit").length,
+      want: new Set(["front", "left", "right"].flatMap(n => g.lines[n].map(rc => rc.join(",")))).size }; })()`);
+  expect(pick.on === 3 && pick.picked && pick.hit === pick.want, "pick saturn " + JSON.stringify(pick));
+  const box = await evaluate(`(() => { const r = document.querySelector("#chakras .ck-cell[data-kind=nakshatra] rect").getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await mouse(box[0], box[1]); await sleep(250);
+  const tipText = await evaluate(`(document.querySelector(".tip.on, .tipdock.on") || { textContent: "" }).textContent`);
+  expect(/Pierced by/.test(tipText), "no cell tooltip: " + tipText.slice(0, 80));
+  await shot("chakras-sarvatobhadra");
+  await tab("Kota"); await sleep(1500);
+  const k = await evaluate(`(() => { const v = val("vedic.chakra.kota"); return { places: document.querySelectorAll("#chakras .ck-place").length,
+    zones: document.querySelectorAll("#chakras .ck-zone").length, janma: document.querySelector("#chakras .ck-place.janma")?.dataset.position,
+    marks: document.querySelectorAll("#chakras svg.ck-kota .ck-g").length, want: v.natal.length, tr: (v.transit || []).length }; })()`);
+  expect(k.places === 28 && k.zones === 4 && k.janma === "1" && k.marks === k.want, "kota " + JSON.stringify(k));
+  if (k.tr) {
+    await tab("Transit"); await sleep(1200);
+    const tm = await evaluate(`document.querySelectorAll("#chakras svg.ck-kota .ck-g.tr").length`);
+    expect(tm === k.tr, `${tm} transit markers for ${k.tr}`);
+    await tab("Natal"); await sleep(600);
+  }
+  await shot("chakras-kota");
+  await tab("Saṅghaṭṭa"); await sleep(1500);
+  const sg = await evaluate(`({ sectors: document.querySelectorAll("#chakras .ck-sector").length, chords: document.querySelectorAll("#chakras .ck-chord").length })`);
+  expect(sg.sectors === 28 && sg.chords === 14, "sanghatta " + JSON.stringify(sg));
+  await evaluate(`document.querySelector("#chakras .ck-chip[data-graha=mars]").click()`); await sleep(400);
+  const lit = await evaluate(`document.querySelectorAll("#chakras .ck-chord.on").length`);
+  expect(lit === 1, `${lit} chords lit for Mars`);
+  await shot("chakras-sanghatta");
+  await tab("Sarvatobhadra");
+  return `81 cells, ${sbc.lines} vedha lines, Saturn pierces ${pick.want} cells; Kota 28 places${k.tr ? `, ${k.tr} transits` : ""}; Saṅghaṭṭa 28 + 14`;
+});
+
+// shared by the two chakra layout journeys: the on-screen box of what is drawn, overlaps between labels, and
+// whether a label sits inside its cell (all in screen pixels, from getBoundingClientRect)
+const CK_PROBE_LIB = `const ckBox = (e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; };
+  const ckOver = (items, bad, t = 0.75) => { for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+    const a = items[i].b, b = items[j].b, ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    if (ox > t && oy > t) bad.push(items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)'); } };
+  const ckIn = (b, c, t = 1) => b.x >= c.x - t && b.y >= c.y - t && b.x + b.w <= c.x + c.w + t && b.y + b.h <= c.y + c.h + t;`;
+
+await journey("chakras: Kota fort with four zones, 28 numbered places, arrows in and out, grahas under their nakshatra, no overlaps", async () => {
+  await go("#/chakras", 1500);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  await tab("Kota"); await sleep(1800);
+  const probe = (set) => `(() => { ${CK_PROBE_LIB}
+    const svg = document.querySelector('#chakras svg.ck-kota'), v = val('vedic.chakra.kota'), rows = v['${set}'] || [], bad = [];
+    const places = [...svg.querySelectorAll('.ck-place')];
+    const nums = places.map(g => (g.querySelector('.ck-kn').textContent.match(/^(\\d+)\\. (.+)$/) || [])[1]).map(Number);
+    const zl = [...svg.querySelectorAll('.ck-zlab2')].map(t => t.textContent);
+    const arrows = { in: svg.querySelectorAll('.ck-arrow.in').length, out: svg.querySelectorAll('.ck-arrow.out').length };
+    // every graha is printed in its place, under the place's name, and coloured by its nature
+    let under = 0;
+    for (const r of rows) {
+      const g = svg.querySelector('.ck-place[data-position="' + r.position + '"]'), sp = g && g.querySelector('.ck-g[data-graha="' + r.id + '"]');
+      if (!sp) { bad.push(r.id + ' not printed at place ' + r.position); continue; }
+      if (ckBox(sp).y + 0.75 < ckBox(g.querySelector('.ck-kn')).y + ckBox(g.querySelector('.ck-kn')).h) bad.push(r.id + ' is not under the name at place ' + r.position); else under++;
+      if (!sp.classList.contains(r.nature === 'benefic' ? 'ben' : 'mal')) bad.push(r.id + ' coloured against its nature');
+    }
+    // labels: every place's name and graha lines stay in the place; nothing overlaps anything else that is drawn as text
+    const items = [];
+    for (const g of places) {
+      const cell = ckBox(g.querySelector('.ck-hit')), pos = g.dataset.position;
+      for (const t of g.querySelectorAll('.ck-kn, .ck-gl')) { const b = ckBox(t); items.push({ n: 'place ' + pos + ' ' + t.textContent, b }); if (!ckIn(b, cell)) bad.push('place ' + pos + ': "' + t.textContent + '" outside its place'); }
+    }
+    for (const t of svg.querySelectorAll('.ck-zlab2, .ck-ki, .ck-side')) items.push({ n: t.textContent, b: ckBox(t) });
+    for (const a of svg.querySelectorAll('.ck-arrow')) items.push({ n: 'arrow', b: ckBox(a) });
+    ckOver(items, bad);
+    const fort = ckBox(svg.querySelector('.ck-zone.z-bahya'));
+    for (const t of svg.querySelectorAll('.ck-zlab2, .ck-ki, .ck-kn, .ck-gl')) if (!ckIn(ckBox(t), fort)) bad.push('"' + t.textContent + '" outside the fort');
+    return { places: places.length, nums: nums.sort((a, b) => a - b).join(','), zl, arrows, under, rows: rows.length, labels: items.length, bad }; })()`;
+  const out = [];
+  for (const set of ["natal", "transit"]) {
+    if (set === "transit") { if (!(await evaluate(`!!val('vedic.chakra.kota').transit`))) break; await tab("Transit"); await sleep(1500); }
+    const r = await evaluate(probe(set));
+    expect(r.places === 28 && r.nums === Array.from({ length: 28 }, (_, i) => i + 1).join(","), `${set}: places ${r.places}, numbers ${r.nums}`);
+    expect(["Bāhya", "Prākāra", "Madhya", "Stambha"].every(z => r.zl.includes(z)), "zone labels " + r.zl.join(","));
+    expect(r.arrows.in === 4 && r.arrows.out === 4, "arrows " + JSON.stringify(r.arrows));
+    expect(r.under === r.rows, `${set}: ${r.under} of ${r.rows} grahas under their nakshatra`);
+    expect(!r.bad.length, `${set}: ${r.bad.length} problem(s): ` + r.bad.slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+    out.push(`${set} ${r.rows} grahas, ${r.labels} labels`);
+  }
+  await tab("Natal"); await sleep(600);
+  // hover a place: the tooltip names the zone and the path
+  const pt = await evaluate(`(() => { const r = document.querySelector('#chakras .ck-place[data-position="2"] .ck-hit').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await mouse(pt[0], pt[1]); await sleep(250);
+  const tipText = await evaluate(`document.querySelector(".tip.on") ? document.querySelector(".tip.on").textContent : ""`);
+  expect(/Prākāra/.test(tipText) && /entering/.test(tipText), "place tooltip: " + tipText.slice(0, 100));
+  // a natal graha printed in the fort opens its page
+  const gp = await evaluate(`(() => { const e = document.querySelector('#chakras svg.ck-kota .ck-g[data-graha=jupiter]'); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  await click(gp[0], gp[1]); await sleep(700);
+  const opened = await evaluate(`location.hash`);
+  expect(opened === "#/planet/jupiter", "clicking Ju in the fort opened " + opened);
+  await go("#/chakras", 1500); await tab("Kota"); await sleep(1200);
+  await mouse(5, 5); await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(1600);
+  await shot("chakras-kota-dark");
+  await evaluate(`document.documentElement.dataset.mode = 'light'`); await sleep(300); await shot("chakras-kota-light");
+  await evaluate(`document.documentElement.dataset.mode = 'dark'`);
+  await tab("Sarvatobhadra");
+  return out.join("; ") + "; 4 zones, 4 + 4 arrows, no overlaps";
+});
+
+await journey("chakras: Sarvatobhadra frame of nakshatras and pada sounds, coloured cells, vedha borders as the engine pierces, no overlaps", async () => {
+  await go("#/chakras", 1500);
+  const tab = (t) => evaluate(`[...document.querySelectorAll("#chakras .tab")].find(b => b.textContent === ${JSON.stringify(t)}).click()`);
+  await tab("Sarvatobhadra"); await sleep(1800);
+  const probe = (set) => `(() => { ${CK_PROBE_LIB}
+    const svg = document.querySelector('#chakras svg.ck-sbc'), v = val('vedic.chakra.sarvatobhadra'), bad = [];
+    const cellOf = (r, c) => v.cells[r * 9 + c];
+    // the frame: seven nakshatras a side, four pada sounds each, as the engine gives them, in clockwise order
+    const sides = {};
+    for (const f of svg.querySelectorAll('.ck-fcell')) {
+      const c = v.cells.find(x => x.kind === 'nakshatra' && x.index === +f.dataset.index), syl = [...f.querySelectorAll('.ck-syl')];
+      sides[f.dataset.side] = (sides[f.dataset.side] || 0) + 1;
+      if (syl.map(t => t.textContent).join(' ') !== c.padas.map(p => p[0]).join(' ')) bad.push(c.name + ' pada sounds ' + syl.map(t => t.textContent).join(' '));
+      const nb = ckBox(f.querySelector('.ck-fname'));
+      if (!ckIn(ckBox(f.querySelector('.ck-fn')), nb)) bad.push(c.name + ' name outside its band');
+      syl.forEach((t, k) => { const slot = ckBox(f.querySelectorAll('.ck-fsound')[k]); if (!ckIn(ckBox(t), slot, 1.5)) bad.push(c.name + ' pada ' + (k + 1) + ' sound outside its slot'); });
+      ckOver([...f.querySelectorAll('text')].map(t => ({ n: c.name + ' ' + t.textContent, b: ckBox(t) })), bad);
+    }
+    // pada order follows the clockwise reading: on the top band pada 1 is leftmost, on the bottom band rightmost
+    const order = (side) => { const f = svg.querySelector('.ck-fcell[data-side=' + side + ']'), p = [...f.querySelectorAll('.ck-padn')].map(ckBox); return side === 'top' ? p[0].x < p[3].x : side === 'bottom' ? p[0].x > p[3].x : side === 'right' ? p[0].y < p[3].y : p[0].y > p[3].y; };
+    const clockwise = ['top', 'right', 'bottom', 'left'].every(order);
+    const bands = [...svg.querySelectorAll('.ck-band')].map(t => t.textContent);
+    // the inner grid
+    const corners = [[0, 0], [0, 8], [8, 8], [8, 0]].map(([r, c]) => svg.querySelector('.ck-ct[data-row="' + r + '"][data-col="' + c + '"] text').textContent).join('');
+    const rashi = [...svg.querySelectorAll('.ck-ct')].filter(g => cellOf(+g.dataset.row, +g.dataset.col).kind === 'rashi').map(g => g.querySelector('.ck-ra').textContent).sort().join(',');
+    const tithi = [...svg.querySelectorAll('.ck-ct')].filter(g => cellOf(+g.dataset.row, +g.dataset.col).kind === 'tithi').map(g => g.querySelector('.ck-wd2').textContent + ' ' + g.querySelector('.ck-tn').textContent);
+    // vedha borders: red where a malefic pierces, green where a benefic does, both when both, nowhere else
+    let mal = 0, ben = 0, both = 0;
+    for (const g of svg.querySelectorAll('.ck-cell')) {
+      const c = cellOf(+g.dataset.row, +g.dataset.col), by = (c.pierced_by || []).filter(p => p.set === '${set}');
+      const m = by.some(p => p.nature === 'malefic'), b = by.some(p => p.nature === 'benefic');
+      const hm = !!g.querySelector('.ck-vb.mal'), hb = !!g.querySelector('.ck-vb.ben');
+      if (m !== hm || b !== hb) bad.push('cell ' + c.row + ',' + c.col + ' border ' + [hm && 'red', hb && 'green'].filter(Boolean).join('+') + ' for ' + [m && 'malefic', b && 'benefic'].filter(Boolean).join('+'));
+      mal += m; ben += b; both += m && b;
+      // what is printed in the cell (text and graha chips) stays inside it and does not overlap
+      const box = ckBox(g.querySelector('.ck-bg')), items = [...svg.querySelectorAll('.ck-ct[data-row="' + c.row + '"][data-col="' + c.col + '"] text')].map(t => ({ n: c.name + ' "' + t.textContent + '"', b: ckBox(t) }));
+      if (c.kind === 'nakshatra') for (const id of ('${set}' === 'natal' ? c.natal : c.transit) || []) { const chip = [...svg.querySelectorAll('.ck-chips .ck-pl[data-graha="' + id + '"]')].find(e => ckIn(ckBox(e), box, 1)); if (!chip) bad.push(id + ' chip not on its nakshatra ' + c.name); else items.push({ n: c.name + ' chip ' + id, b: ckBox(chip) }); }
+      for (const it of items) if (!ckIn(it.b, box)) bad.push(it.n + ' outside its cell');
+      ckOver(items, bad);
+      // grahas printed in nakshatra and rāśi cells
+      const occ = ('${set}' === 'natal' ? c.natal : c.transit) || [], printed = [...svg.querySelectorAll('.ck-ct[data-row="' + c.row + '"][data-col="' + c.col + '"] .ck-g')].map(e => e.dataset.graha);
+      if ((c.kind === 'nakshatra' || c.kind === 'rashi') && occ.join() !== printed.join()) bad.push(c.name + ' prints ' + printed.join() + ' for ' + occ.join());
+    }
+    const vb = { mal: svg.querySelectorAll('.ck-vb.mal').length, ben: svg.querySelectorAll('.ck-vb.ben').length };
+    return { cells: svg.querySelectorAll('.ck-cell').length, sides, clockwise, bands: bands.length, corners, rashi, tithi, mal, ben, both, vb, bad }; })()`;
+  const out = [];
+  for (const set of ["natal", "transit"]) {
+    if (set === "transit") { if (!(await evaluate(`!!val('vedic.chakra.sarvatobhadra').grahas.transit`))) break; await tab("Transit"); await sleep(1800); }
+    const r = await evaluate(probe(set));
+    expect(r.cells === 81, `${r.cells} cells`);
+    expect(["top", "right", "bottom", "left"].every(s => r.sides[s] === 7), "frame sides " + JSON.stringify(r.sides));
+    expect(r.clockwise && r.bands === 12, `pada order clockwise ${r.clockwise}, ${r.bands} band names`);
+    expect(r.corners === "अआइई", "corner vowels " + r.corners);
+    expect(r.rashi === "Aqu,Ari,Can,Cap,Gem,Leo,Lib,Pis,Sag,Sco,Tau,Vir", "rāśi cells " + r.rashi);
+    expect(r.tithi.length === 5 && r.tithi.includes("Sun Tue Nandā") && r.tithi.includes("Sat Pūrṇā"), "tithi cells " + r.tithi.join(" | "));
+    expect(r.vb.mal === r.mal && r.vb.ben === r.ben && r.mal > 0 && r.ben > 0, `${set} borders ${JSON.stringify(r.vb)} for ${r.mal} malefic / ${r.ben} benefic cells`);
+    expect(!r.bad.length, `${set}: ${r.bad.length} problem(s): ` + r.bad.slice(0, Number(process.env.JOURNEY_DETAIL || 6)).join("; "));
+    out.push(`${set}: ${r.mal} red, ${r.ben} green, ${r.both} both`);
+  }
+  await tab("Natal"); await sleep(900);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(2000);
+  await shot("chakras-sbc-dark");
+  await evaluate(`document.documentElement.dataset.mode = 'light'`); await sleep(300); await shot("chakras-sbc-light");
+  await evaluate(`document.documentElement.dataset.mode = 'dark'`);
+  // phone width: the grid scrolls inside its card, the page does not; the fort scales to the width
+  await viewport(390, 844, true); await go("#/overview", 300); await go("#/chakras", 1800);
+  const phone = await evaluate(`({ page: document.scrollingElement.scrollWidth - innerWidth, fig: (() => { const f = document.querySelector('#chakras .ck-fig-sbc'); return f.scrollWidth > f.clientWidth; })() })`);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(500);
+  await shot("chakras-sbc-phone");
+  await tab("Kota"); await sleep(1500);
+  const kphone = await evaluate(`({ page: document.scrollingElement.scrollWidth - innerWidth, w: document.querySelector('#chakras svg.ck-kota').getBoundingClientRect().width, vw: innerWidth })`);
+  await evaluate(`document.querySelector('#chakras .ck-fig').scrollIntoView({ block: 'start' })`); await sleep(500);
+  await shot("chakras-kota-phone");
+  await tab("Sarvatobhadra");
+  await viewport(1440, 1000);
+  expect(phone.page <= 0 && kphone.page <= 0, `phone: page scrolls sideways by ${Math.max(phone.page, kphone.page)} px`);
+  expect(kphone.w <= kphone.vw, `phone: the fort is ${kphone.w} px wide on a ${kphone.vw} px screen`);
+  return out.join("; ") + `; 4 × 7 nakshatras with 4 pada sounds, 81 cells; phone: grid scrolls in its card (${phone.fig}), page does not`;
+});
+
+// ── journeys: chakras (add new journeys for this workstream above this line) ──
 
 await viewport(390, 844, true);
 await journey("phone width has no horizontal scroll", async () => {
@@ -551,6 +1129,127 @@ await journey("phone width has no horizontal scroll", async () => {
   expect(!bad.length, bad.join(", "));
   return "6 pages fit 390 px";
 });
+
+await journey("varṣaphala shows the return, the varṣa chart, five office-bearers with the year lord, and growing strength bars", async () => {
+  await go("#/annual", 1500);
+  const r = await evaluate(`(() => { const v = val('vedic.varshaphala'); if (!v) return null; const y = v.current || v.birth_year;
+    return { offices: document.querySelectorAll('#page-annual .ann-office').length || document.querySelectorAll('.ann-office').length,
+      cells: document.querySelectorAll('.annual-chart .cellbg').length, grahas: document.querySelectorAll('.annual-chart .ann-g').length,
+      lordGlow: document.querySelectorAll('.annual-chart .ann-g.year-lord').length, bars: document.querySelectorAll('.ann-row').length,
+      segs: document.querySelectorAll('.ann-seg').length, lord: y.year_lord.graha, lordRow: !!document.querySelector('.ann-row.is-lord'),
+      years: document.querySelectorAll('.ann-pick button').length }; })()`);
+  expect(r, "no vedic.varshaphala in the report");
+  expect(r.offices === 5, `${r.offices} office-bearers`);
+  expect(r.cells === 12, `${r.cells} chart cells`);
+  expect(r.grahas >= 10, `${r.grahas} grahas (+ muntha) in the varṣa chart`);
+  expect(r.lordGlow === 1 && r.lordRow, "year lord not highlighted");
+  expect(r.bars === 7 && r.segs === 35, `${r.bars} bars, ${r.segs} segments`);
+  expect(r.years === 2, "current year and birth year are not both offered");
+  // switching to the birth year redraws with year 0
+  await evaluate(`document.querySelector('.ann-pick button[data-year="birth_year"]').click()`);
+  await sleep(600);
+  const st = await evaluate(`document.querySelector('.ann-lord-stat').closest('.stats').textContent.includes('year 1 of life')`);
+  expect(st, "birth-year view did not show");
+  await shot("annual");
+  return `year lord ${r.lord}`;
+});
+
+await journey("pañca pakṣī draws the birds and ten yāma bands with sub-periods; clicking a yāma opens its detail", async () => {
+  await go("#/pakshi", 1500);
+  const r = await evaluate(`({ birds: document.querySelectorAll('.pk-head svg.bird').length, yamas: document.querySelectorAll('.pk-yama').length,
+    subs: document.querySelectorAll('.pk-sub').length, current: document.querySelectorAll('.pk-yama.current').length,
+    now: document.querySelectorAll('.pk-now').length, tables: document.querySelectorAll('.pk-pick button').length })`);
+  expect(r.birds >= 1, "no bird glyph");
+  expect(r.yamas === 10 && r.subs === 50, `${r.yamas} yāmas, ${r.subs} sub-periods`);
+  expect(r.current === 1 && r.now === 1, "the current period is not marked");
+  await evaluate(`document.querySelectorAll('.pk-yama')[2].dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+  await sleep(400);
+  const d = await evaluate(`({ title: document.querySelector('.pk-detail h3').textContent, rows: document.querySelectorAll('.pk-detail tbody tr').length, picked: document.querySelectorAll('.pk-yama.picked').length })`);
+  expect(/Day yāma 3/.test(d.title) && d.rows === 10 && d.picked === 1, `detail did not open: ${JSON.stringify(d)}`);
+  await shot("pakshi");
+  return `${r.tables} table(s)`;
+});
+
+await journey("the KP page adds the significator tables by bhāva and by graha", async () => {
+  await go("#/kp", 1500);
+  const r = await evaluate(`({ cards: [...document.querySelectorAll('.card h3')].map(x => x.textContent), lvls: document.querySelectorAll('.kp-lvl').length, chips: document.querySelectorAll('.kp-chip').length })`);
+  expect(r.cards.includes("KP significators by bhāva") && r.cards.includes("KP grahas: what each signifies"), "KP significator cards missing");
+  expect(r.lvls === 36, `${r.lvls} strength cells (9 grahas × 4)`);
+  expect(r.chips >= 12, `${r.chips} significator chips`);
+});
+
+await journey("pañca pakṣī: five yāmas × five birds by day and by night, sub-periods open, info boxes, a day picker, labels never overlap", async () => {
+  const check = async (w) => {
+    await go("#/overview", 300); await go("#/pakshi", 1600);
+    const r = await evaluate(`(() => { const v = val('vedic.panch_pakshi'), R = D.reading && D.reading.pakshi;
+      const tb = v.reference_day_table, grids = [...document.querySelectorAll('.pk-grid')];
+      const engine = tb.yamas.map((y, i) => y.birds.map(b => i + ':' + b.bird + ':' + b.activity)).flat().sort().join();
+      const shown = [...document.querySelectorAll('.pk-yrow')].map(tr => [...tr.querySelectorAll('.pk-cell')].map(td => tr.dataset.yama + ':' + td.dataset.bird + ':' + td.dataset.act)).flat().sort().join();
+      const boxes = [...document.querySelectorAll('section.page#pakshi .pk-info')];
+      return { grids: grids.map(g => g.dataset.half).join(), rows: grids.map(g => g.querySelectorAll('.pk-yrow').length), cells: document.querySelectorAll('.pk-cell').length,
+        same: engine === shown, selfCols: document.querySelectorAll('.pk-tbl .pk-self').length, selfBird: v.birth_bird,
+        selfOk: [...document.querySelectorAll('.pk-tbl .pk-self')].every(e => e.dataset.bird === v.birth_bird),
+        cur: document.querySelectorAll('.pk-yrow.pk-cur').length, nowbar: document.querySelectorAll('.pk-nowbar').length, curYama: tb.yamas.findIndex(y => y.current),
+        curRow: (document.querySelector('.pk-yrow.pk-cur') || {}).dataset?.yama,
+        boxes: boxes.length, labelled: boxes.every(b => b.querySelector('.ep-interpretation') && /Paraphrased from: .+/.test((b.querySelector('.pk-src') || {}).textContent || '')),
+        titles: boxes.map(b => b.querySelector('b').textContent),
+        acts: document.querySelectorAll('.pk-actrow').length, rungs: [...document.querySelectorAll('.pk-rung .pk-act')].map(e => e.className.match(/act-(\\w+)/)[1]).join(),
+        texts: R ? Object.values(R.activities).every(([, t]) => document.querySelector('section.page#pakshi').textContent.includes(t)) : false,
+        days: [...document.querySelectorAll('.pk-pick button')].map(b => b.dataset.day).join(),
+        hscroll: document.documentElement.scrollWidth > innerWidth + 1 }; })()`);
+    expect(r.grids === "day,night" && r.rows.join() === "5,5" && r.cells === 50, `table shape ${JSON.stringify([r.grids, r.rows, r.cells])}`);
+    expect(r.same, "a table cell differs from the engine's activity");
+    expect(r.selfCols === 12 && r.selfOk, `birth bird column not highlighted (${r.selfCols})`);
+    expect(r.cur === 1 && r.nowbar === 1 && +r.curRow === r.curYama, `current yāma/now marker ${JSON.stringify([r.cur, r.nowbar, r.curRow, r.curYama])}`);
+    expect(r.boxes >= 7 && r.labelled, `info boxes ${r.boxes}, labelled ${r.labelled}: ${r.titles.join(' / ')}`);
+    for (const t of ["What pañca pakṣī is", "How the birth bird is found", "What friends and enemies mean", "The ruling bird", "The dying bird", "Strongest to weakest"])
+      expect(r.titles.includes(t), "missing info box: " + t);
+    expect(r.acts === 5 && r.rungs === "ruling,eating,walking,sleeping,dying" && r.texts, `activities ${r.acts} ${r.rungs} ${r.texts}`);
+    expect(r.days === "birth,-3,-2,-1,0,1,2,3", "day picker " + r.days);
+    expect(!r.hscroll, `page scrolls sideways at ${w} px`);
+    return r;
+  };
+  await viewport(390, 844, true);
+  const phone = await check(390);
+  await shot("pakshi-phone"); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "start" })`); await sleep(400); await shot("pakshi-phone-table");
+  await viewport(1440, 1000);
+  const desk = await check(1440);
+  // the timeline: activity labels inside their bands, start times apart, no two labels overlap
+  const tl = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl g.pk-yama", "rect.pk-band", "text.pk-lbl"));
+  const ticks = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl", "rect.pk-night", "g.pk-yama > text:not(.pk-lbl)"));
+  expect(tl.cells === 10 && tl.labels === 10 && !tl.bad.length, "timeline labels: " + JSON.stringify(tl).slice(0, 300));
+  expect(ticks.labels === 10 && !ticks.bad.filter(b => !/outside/.test(b)).length, "timeline times overlap: " + ticks.bad.slice(0, 4).join("; "));
+  // open a yāma: its five sub-periods appear in a row below it
+  const open = await evaluate(`(() => { const tr = document.querySelector('.pk-grid[data-half="night"] .pk-yrow'); tr.click();
+    const sub = tr.nextElementSibling; return { exp: tr.getAttribute('aria-expanded'), open: sub.classList.contains('open'), sps: sub.querySelectorAll('.pk-sp').length,
+      shown: getComputedStyle(sub).display, detail: document.querySelector('.pk-detail h3').textContent }; })()`);
+  expect(open.exp === "true" && open.open && open.sps === 5 && open.shown === "table-row" && /Night yāma 1/.test(open.detail), "sub-periods did not open: " + JSON.stringify(open));
+  await sleep(500); await shot("pakshi-desktop"); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "center" })`); await sleep(400); await shot("pakshi-table");
+  // the day picker: the next day has its own sunrise and no current yāma; the stepper comes back to today
+  const before = await evaluate(`[...document.querySelectorAll('#pakshi .card h3')].map(x => x.textContent).find(t => /sunrise/.test(t))`);
+  await evaluate(`document.querySelector('.pk-pick button[data-day="1"]').click()`); await sleep(900);
+  const next = await evaluate(`(() => { const v = val('vedic.panch_pakshi'), t = v.nearby_days.find(n => n.offset === 1).table;
+    const shown = [...document.querySelectorAll('.pk-yrow')].map(tr => [...tr.querySelectorAll('.pk-cell')].map(td => tr.dataset.yama + ':' + td.dataset.bird + ':' + td.dataset.act)).flat().sort().join();
+    const engine = t.yamas.map((y, i) => y.birds.map(b => i + ':' + b.bird + ':' + b.activity)).flat().sort().join();
+    return { h4: [...document.querySelectorAll('#pakshi .card h3')].map(x => x.textContent).find(t => /sunrise/.test(t)), pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day,
+      cur: document.querySelectorAll('.pk-yrow.pk-cur').length, now: document.querySelectorAll('.pk-nowbar').length, same: shown === engine, dying: document.querySelector('.pk-daybirds .pk-bird.dying .pk-name').textContent }; })()`);
+  expect(next.pressed === "1" && next.cur === 0 && next.now === 0 && next.same && next.h4 !== before, "next day: " + JSON.stringify(next));
+  await evaluate(`document.querySelector('.pk-step button[data-step="-1"]').click()`); await sleep(900);
+  const back = await evaluate(`({ pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day, cur: document.querySelectorAll('.pk-yrow.pk-cur').length })`);
+  expect(back.pressed === "0" && back.cur === 1, "stepper back to today: " + JSON.stringify(back));
+  await evaluate(`document.querySelector('.pk-pick button[data-day="birth"]').click()`); await sleep(900);
+  const birth = await evaluate(`({ pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day, rows: document.querySelectorAll('.pk-yrow').length, nextOff: document.querySelector('.pk-step button[data-step="1"]').disabled })`);
+  expect(birth.pressed === "birth" && birth.rows === 10 && birth.nextOff, "birth day: " + JSON.stringify(birth));
+  await evaluate(`document.querySelector('.pk-pick button[data-day="0"]').click()`); await sleep(400);
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  const setMode = (m) => evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(m)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(m)}); 1`);
+  for (const mode of ["light", "dark"]) { await setMode(mode); await go("#/overview", 300); await go("#/pakshi", 1800); await shot("pakshi-" + mode); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "center" })`); await sleep(400); await shot("pakshi-table-" + mode); }
+  await setMode(mode0);
+  await viewport(390, 844, true);
+  return `${desk.cells} cells × 2 widths match the engine; ${desk.boxes} info boxes; current yāma ${desk.curYama + 1} marked; 8 days; ${tl.labels + ticks.labels} timeline labels apart (phone ${phone.cells} cells, no side scroll)`;
+});
+
+// ── journeys: annual (add new journeys for this workstream above this line) ──
 
 ws.close(); chrome.kill(); server.close();
 const failed = results.filter((r) => !r.ok);

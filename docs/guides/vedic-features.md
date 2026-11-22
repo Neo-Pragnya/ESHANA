@@ -31,7 +31,7 @@ chart.attribute("vedic.ashtakavarga")["sarvashtakavarga"]["total"]   # 337
 | `jaimini` | `vedic.jaimini.chara_karakas`, `…arudha_padas`, `…rashi_drishti` | chara kārakas (7 and 8 schemes), kārakāṃśa, ārūḍha padas A1 (AL) to A12 (UL) | lagna for ārūḍhas |
 | `kp` | `vedic.kp` | Placidus cusps with sign, star, sub and sub-sub lords; planets' lords; significators in house view (A, B, C, D) and planet view; ruling planets | time and place |
 | `panchanga` | `vedic.panchanga` | see [pañcāṅga](panchanga.md) | place |
-| `yogas` | `vedic.yogas` | 18 yogas and 6 doshas (Manglik from lagna, Moon and Venus; Kāla Sarpa; Grahaṇa; Shrapit) with the rule in words and the grahas that satisfied it | lagna for lagna rules |
+| `yogas` | `vedic.yogas` | 22 yogas, including Parivartana yoga and its Mahā, Khala and Dainya kinds, and 6 doshas (Manglik from lagna, Moon and Venus; Kāla Sarpa; Grahaṇa; Shrapit) with the rule in words and the grahas that satisfied it | lagna for lagna rules |
 | `sade_sati` | `vedic.sade_sati` | Saturn over the 12th, 1st and 2nd from the natal Moon: every window with its rising, peak and setting phases, retrograde re-entries included, and whether it is active at `reference_utc` | — |
 
 ## Daśā

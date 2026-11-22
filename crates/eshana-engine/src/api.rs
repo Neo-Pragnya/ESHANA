@@ -121,7 +121,7 @@ pub struct ChartRequest {
 }
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 16] = [
+pub const FEATURES: [&str; 21] = [
     "panchanga",
     "strength",
     "relationships",
@@ -138,6 +138,11 @@ pub const FEATURES: [&str; 16] = [
     "aspects",
     "bhava_chalit",
     "upagrahas",
+    "maitri",
+    "dashas_extended",
+    "auxiliary",
+    "chakras",
+    "annual",
 ];
 
 /// An ephemeris table request.
@@ -1073,6 +1078,15 @@ impl Engine {
                 ),
                 None => need("arudha padas", "they are counted from the lagna"),
             }
+            // pada navāṃśa: the same ārūḍha rule applied inside the navāṃśa chart (signs from D9)
+            if let Some(v) = jyotish::arudha_padas(&jyotish::varga_chart(&vc, 9)) {
+                push(
+                    "vedic.jaimini.arudha_padas_d9",
+                    &core_rule,
+                    v,
+                    &["positions", "houses"],
+                );
+            }
         }
         let rising = panchanga::Rising::parse(r.sunrise.as_deref())?;
         let site = r.place.as_ref().map(|pl| panchanga::Site {
@@ -1092,6 +1106,9 @@ impl Engine {
             || feats.contains("shadbala")
             || feats.contains("bhava_bala")
             || feats.contains("upagrahas")
+            || feats.contains("auxiliary")
+            || feats.contains("chakras")
+            || feats.contains("annual")
         {
             match site {
                 Some(site) => {
@@ -1123,6 +1140,7 @@ impl Engine {
                             if cfg.ayanamsha != Some(Ayanamsha::Krishnamurti) {
                                 v["note"] = json!("KP is normally used with the krishnamurti ayanamsha; this chart uses another one");
                             }
+                            v["significator_table"] = crate::annual::kp_significator_table(&vc, &v);
                             push("vedic.kp", &core_rule, v, &["positions", "houses"]);
                         }
                         Err(e) => need("kp", &e.to_string()),
@@ -1374,6 +1392,37 @@ impl Engine {
                     v["note"] = json!("range clipped to the provider's limits");
                 }
                 push("vedic.sade_sati", &core_rule, v, &["moon", "saturn"]);
+            }
+        }
+        // analysis modules (crate::analysis): each returns its own attributes with their rule ids
+        {
+            use crate::analysis::{AnalysisCtx, Compute};
+            let actx = AnalysisCtx {
+                vc: &vc,
+                provider,
+                inst,
+                place: r.place.as_ref().map(|p| (p.latitude, p.longitude)),
+                offset_s: inst.civil_offset_s.map(f64::from),
+                ayanamsha: ayan,
+                panchanga: pc_value.as_ref(),
+                reference_jd,
+                equ,
+            };
+            let modules: [(&str, Compute); 5] = [
+                ("maitri", crate::maitri::compute),
+                ("dashas_extended", crate::dashas_ext::compute),
+                ("auxiliary", crate::auxiliary::compute),
+                ("chakras", crate::chakras::compute),
+                ("annual", crate::annual::compute),
+            ];
+            for (feat, f) in modules {
+                if feats.contains(feat) {
+                    for d in f(&actx)? {
+                        rulesets.push(d.rule.clone());
+                        let from: Vec<&str> = d.from.iter().map(String::as_str).collect();
+                        push(&d.id, &d.rule, d.value, &from);
+                    }
+                }
             }
         }
         for m in omitted {

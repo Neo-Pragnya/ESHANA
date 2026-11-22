@@ -54,6 +54,11 @@ page('overview', () => 'Overview', 'Chart', (b) => {
 page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
   if (!VED) return put(b, missing('The chakra', 'It needs a Vedic chart.'));
   const host = h('div', { class: 'figure wheel-host' }), panel = h('div', { class: 'card panel' });
+  // hover details go here, beside the wheel, instead of a popup on top of the chakra
+  const idle = '<p class="note">Hover a graha, rāśi, nakshatra or pada: its details appear here, so the aspects on the wheel stay in view.</p>';
+  const dock = h('div', { class: 'card tipdock', 'aria-live': 'polite', 'data-idle': idle }, h('div', { class: 'tipdock-t' }, 'Hover details'), h('div', { class: 'tipdock-body' }));
+  dock.querySelector('.tipdock-body').innerHTML = idle;
+  const side = h('div', { class: 'chakra-side' }, dock, panel);
   const redraw = () => route();
   const transit = D.transits && D.transits.rows && D.transits.rows.length;
   const centre = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.centre === v), onclick: () => { S.centre = v; save(); redraw(); } }, t);
@@ -66,7 +71,7 @@ page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
         h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'lagna'), disabled: ASC == null, onclick: () => { S.orientation = 'lagna'; save(); redraw(); } }, 'Lagna at top'),
         h('label', { class: 'tog' }, h('input', { type: 'checkbox', id: 'turn-on-select', checked: S.turnOnSelect !== false, onchange: e => { S.turnOnSelect = e.target.checked; save(); if (FOCUS) focusSeg(FOCUS[0], FOCUS[1], panel); } }), 'turn to selection'))),
     transit && S.layers.transits ? transitControls() : null,
-    h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, panel),
+    h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, side),
     h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:#6FAF1F' }), 'pushkara navāṃśa'), h('span', {}, h('i', { style: 'background:#3ED9E4' }), 'vargottama'), h('span', {}, h('i', { style: 'background:#D7141F' }), 'gaṇḍānta'),
       h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · ◎ own · V vargottama')));
   b.append(grahaLegend());
@@ -200,8 +205,32 @@ page('houses', () => 'Bhāvas', 'Grahas & bhāvas', (b) => {
     return h('a', { class: 'card hcard', href: '#/house/' + (i + 1) }, h('div', { class: 'hnum' }, i + 1), h('div', {}, h('h3', {}, `${SIGN_SKT[sign]} ${GLYPH[sign]}`),
       h('div', { class: 'note' }, ae ? ae.dimension : ''), h('div', { class: 'chips' }, occ.map(g => h('span', { class: 'chip' }, dot(g), G[g].abbr)),
         bb ? h('span', { class: 'chip' }, `bala ${fix(bb.bhavas[i].rupas, 1)}`) : null, sav ? h('span', { class: 'chip' }, `SAV ${sav.sarvashtakavarga.bindus[sign]}`) : null))); });
-  put(b, pageHead('houses', 'Bhāvas', 'Twelve houses from the lagna, where each lord sits, and how the houses connect. Each has its own page.'), h('div', { class: 'hgrid' }, cards), lordsAnalysis());
+  put(b, pageHead('houses', 'Bhāvas', 'Twelve houses from the lagna, where each lord sits, and how the houses connect. Each has its own page.'), h('div', { class: 'hgrid' }, cards), lordsAnalysis(), lordshipsByVarga());
 }, { blurb: 'a page for every bhāva' });
+
+/* ── lordships in D1, D9 and D10: "lord of 1 in 3", with the exchanges between house lords (engine: special points) ── */
+const PARIV_KIND = { maha: 'Mahā (between good houses)', khala: 'Khala (involves the 3rd)', dainya: 'Dainya (involves the 6th, 8th or 12th)' };
+function lordshipsByVarga() {
+  const all = (SPECIAL || {}).lordships_by_varga; if (!all) return null;
+  const host = h('div', {}), cur = { d: S.lordVarga || 'd1' };
+  const draw = () => {
+    const v = all[cur.d]; if (!v) return put(host, note('Not available for this division.'));
+    const exH = new Set(v.exchanges.flatMap(e => e.houses));
+    const rows = v.houses.map(x => [h('b', {}, x.house), `${SIGN_SKT[x.sign]} ${GLYPH[x.sign]}`, glink(x.lord),
+      x.lord_in_house == null ? '—' : h('span', { class: exH.has(x.house) && exH.has(x.lord_in_house) ? 'lv-ex' : '' }, `in ${x.lord_in_house}`, x.lord_sign != null ? ` (${SIGN_SKT[x.lord_sign]})` : ''),
+      `lord of ${x.house} in ${x.lord_in_house ?? '—'}`]);
+    put(host, tabs([['d1', 'D1 rāśi'], ['d9', 'D9 navāṃśa'], ['d10', 'D10 daśāṃśa']], cur.d, k => { cur.d = k; S.lordVarga = k; save(); draw(); }),
+      h('p', { class: 'note' }, `Houses counted from the ${cur.d.toUpperCase()} lagna, ${SIGN_SKT[v.lagna_sign]}.`),
+      h('div', { class: 'grid2' },
+        table(['Bhāva', 'Sign', 'Lord', 'Lord sits', 'Read as'], rows),
+        h('div', {}, h('h4', {}, 'Exchanges (parivartana)'),
+          v.exchanges.length ? table(['Grahas', 'Signs', 'Houses', 'Kind'], v.exchanges.map(e => [h('span', {}, glink(e.grahas[0]), ' ⇄ ', glink(e.grahas[1])),
+            `${SIGN_SKT[e.signs[0]]} ⇄ ${SIGN_SKT[e.signs[1]]}`, `${e.houses[0]} ⇄ ${e.houses[1]}`, PARIV_KIND[e.kind] || e.kind])) : note('No exchange between house lords in this division.'),
+          note('In an exchange each graha sits in the other\'s sign, so the two houses are read as linked; the kind follows Phaladeepika.'))));
+  };
+  draw();
+  return card('Lordships by division (D1, D9, D10)', host, h('p', { class: 'note' }, label('tradition_rule'), ' Each bhāva\'s lord and the bhāva it occupies, in the rāśi, navāṃśa and daśāṃśa charts.'));
+}
 
 /* ── bhāva depth: bhāvāt bhāvam, the lord's story, occupants, aspects, kāraka, connections, bearing ───────────── */
 const KARAKA = { 1: ['sun'], 2: ['jupiter'], 3: ['mars'], 4: ['moon', 'mercury'], 5: ['jupiter'], 6: ['mars', 'saturn'], 7: ['venus'], 8: ['saturn'], 9: ['jupiter', 'sun'], 10: ['sun', 'mercury', 'jupiter', 'saturn'], 11: ['jupiter'], 12: ['saturn'] };
@@ -492,105 +521,6 @@ page('ashtakavarga', () => 'Aṣṭakavarga', 'Strength', (b) => {
     card('Prastāra aṣṭakavarga', tabs(SEVEN.map(g => [g, G[g].en]), PRASTARA, g => { PRASTARA = g; route(); }), pr));
 }, { blurb: 'bindus by sign and contributor' });
 
-/* ── daśā ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
-function timeline(periods, labelKey, sub, onPick) {
-  const W = 1000, H = 54, t0 = T(periods[0].start_utc), t1 = T(periods[periods.length - 1].end_utc), x = t => (t - t0) / (t1 - t0) * W;
-  const svg = s('svg', { viewBox: `0 0 ${W} ${H + 22}`, role: 'img', 'aria-label': 'Period timeline' });
-  periods.forEach((p, i) => {
-    const lord = (p.lord || '').toLowerCase(), col = (G[lord] || G.lagna).dot, a = x(T(p.start_utc)), bb = x(T(p.end_utc));
-    const r = s('rect', { x: a, y: 4, width: Math.max(1, bb - a - 1), height: H - 8, rx: 6, fill: col, stroke: 'rgba(0,0,0,.25)', class: 'tl' }, svg);
-    r.style.setProperty('--i', i);
-    r.addEventListener('mousemove', ev => tip(ev, `${p[labelKey] || p.lord}`, [['From', dateOnly(p.start_utc)], ['To', dateOnly(p.end_utc)], ['Years', p.years && p.years.toFixed(2)]], sub));
-    r.addEventListener('mouseleave', untip); r.addEventListener('click', () => onPick && onPick(p, i));
-    if (bb - a > 40) { const t = s('text', { class: 'lbl', x: (a + bb) / 2, y: H / 2, 'font-size': 13, 'font-weight': 700, fill: ink(col) }, svg); t.textContent = (p[labelKey] || p.lord).slice(0, bb - a > 90 ? 12 : 3); }
-    if (bb - a > 30) { const yr = s('text', { x: a + 2, y: H + 16, 'font-size': 11, fill: 'var(--muted)' }, svg); yr.textContent = p.start_utc.slice(0, 4); }
-  });
-  if (REF_UTC && T(REF_UTC) > t0 && T(REF_UTC) < t1) { const nx = x(T(REF_UTC)); s('line', { x1: nx, x2: nx, y1: 0, y2: H, stroke: 'var(--accent)', 'stroke-width': 3, class: 'now' }, svg); const t = s('text', { x: nx + 4, y: 12, 'font-size': 12, 'font-weight': 800, fill: 'var(--accent)' }, svg); t.textContent = 'NOW'; }
-  return h('div', { class: 'timeline' }, svg);
-}
-/* ── daśā zoom: five levels, each a thinner row that opens out of the period chosen above it ──────────────────── */
-const VIM_ORDER = ['ketu', 'venus', 'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury'];
-const VIM_YEARS = { ketu: 7, venus: 20, sun: 6, moon: 10, mars: 7, rahu: 18, jupiter: 16, saturn: 19, mercury: 17 };
-const DASHA_LEVELS = ['Mahādaśā', 'Antardaśā', 'Pratyantardaśā', 'Sūkṣma daśā', 'Prāṇa daśā'];
-const cap = s0 => s0.charAt(0).toUpperCase() + s0.slice(1);
-/* sub-periods of a Vimśottarī period: from the engine where it gave them (levels 1–3), otherwise by the same rule
-   (each lord's share is its years out of 120, in order from the period's own lord), clipped at birth */
-function vimChildren(p, vim) {
-  const kids = p.antardashas || p.pratyantardashas || p.sookshmas || p.sub;
-  if (kids && kids.length) return kids;
-  const lord = (p.lord || '').toLowerCase(); if (!VIM_YEARS[lord]) return [];
-  const ms = (vim.year_days || 365.25) * 864e5, end = T(p.end_utc), full = (p.years || (end - T(p.start_utc)) / ms) * ms, start = end - full;
-  const birth = T(VIM_BIRTH(vim)), out = [];
-  let t = start; const k0 = VIM_ORDER.indexOf(lord);
-  for (let i = 0; i < 9; i++) {
-    const l = VIM_ORDER[(k0 + i) % 9], len = full * VIM_YEARS[l] / 120, a = t, z = t + len; t = z;
-    if (z <= birth) continue;
-    out.push({ lord: cap(l), start_utc: new Date(Math.max(a, birth)).toISOString(), end_utc: new Date(z).toISOString(), years: len / ms, computed: true, clipped_at_birth: a < birth });
-  }
-  return out;
-}
-const VIM_BIRTH = vim => vim.mahadashas[0].start_utc;
-let DASHA_PATH = null;
-function dashaZoom(vim) {
-  const ref = T(REF_UTC || new Date().toISOString());
-  if (!DASHA_PATH) { // open on the running chain
-    DASHA_PATH = []; let list = vim.mahadashas;
-    for (let lvl = 0; lvl < 5 && list.length; lvl++) {
-      const i = list.findIndex(p => T(p.start_utc) <= ref && ref < T(p.end_utc)); if (i < 0) break;
-      DASHA_PATH.push(i); list = vimChildren(list[i], vim);
-    }
-  }
-  const W = 1000, left = 150, rowH = [30, 24, 19, 15, 12], gap = 34, rows = [];
-  let list = vim.mahadashas;
-  for (let lvl = 0; lvl < 5 && list && list.length; lvl++) { rows.push(list); const i = DASHA_PATH[lvl]; if (i == null || !list[i]) break; list = vimChildren(list[i], vim); }
-  if (rows.length < 5 && DASHA_PATH.length === rows.length && list && list.length) rows.push(list);
-  let y = 8; const ys = rows.map((_, k) => { const v = y; y += rowH[k] + gap; return v; });
-  const H = y - gap + 26;
-  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'dzoom', role: 'img', 'aria-label': 'Vimśottarī daśā, five levels' });
-  rows.forEach((periods, k) => {
-    const t0 = T(periods[0].start_utc), t1 = T(periods[periods.length - 1].end_utc), X = t => left + (t - t0) / (t1 - t0) * (W - left - 4), sel = DASHA_PATH[k];
-    const lab = s('text', { x: left - 10, y: ys[k] + rowH[k] / 2 + 4, class: 'dz-lab' }, svg); lab.textContent = DASHA_LEVELS[k];
-    const g = s('g', { class: 'dz-row', style: `--k:${k}` }, svg);
-    periods.forEach((p, i) => {
-      const lord = (p.lord || '').toLowerCase(), col = (G[lord] || G.lagna).dot, a = X(T(p.start_utc)), z = X(T(p.end_utc));
-      const r = s('rect', { x: a, y: ys[k], width: Math.max(.8, z - a - .8), height: rowH[k], rx: Math.min(5, rowH[k] / 3), fill: col, class: 'dz-bar' + (i === sel ? ' sel' : sel != null ? ' dim' : '') }, g);
-      r.addEventListener('mousemove', ev => tip(ev, `${DASHA_LEVELS[k]}: ${p.lord}`, [['Chain', rows.slice(0, k).map((rr, j) => rr[DASHA_PATH[j]].lord).concat([p.lord]).join(' › ')], ['From', fmtTime(p.start_utc).slice(0, 16)], ['To', fmtTime(p.end_utc).slice(0, 16)],
-        ['Length', p.years != null ? (p.years >= 1 ? `${fix(p.years, 2)} years` : `${fix(p.years * 365.25, 1)} days`) : null], ['Source', p.computed ? 'subdivided in the page (Vimśottarī proportions)' : 'engine']], 'click to open its sub-periods'));
-      r.addEventListener('mouseleave', untip);
-      r.addEventListener('click', () => { DASHA_PATH = DASHA_PATH.slice(0, k).concat([i]); route(); });
-      if (z - a > 26) { const t = s('text', { x: (a + z) / 2, y: ys[k] + rowH[k] / 2 + 1, class: 'dz-name', 'font-size': Math.max(8.5, rowH[k] * .5), fill: ink(col) }, g); t.textContent = z - a > 70 ? p.lord : p.lord.slice(0, 2); }
-    });
-    if (ref > t0 && ref < t1) { const nx = X(ref); s('line', { x1: nx, x2: nx, y1: ys[k] - 4, y2: ys[k] + rowH[k] + 4, class: 'dz-now' }, svg); }
-    if (sel != null && rows[k + 1]) { // the zoom bracket: from the chosen period out to the full width of the next row
-      const p = periods[sel], a = X(T(p.start_utc)), z = X(T(p.end_utc)), y0 = ys[k] + rowH[k] + 2, y1 = ys[k + 1] - 3;
-      s('path', { d: `M${a} ${y0}L${z} ${y0}L${W - 4} ${y1}L${left} ${y1}Z`, class: 'dz-bracket', fill: (G[(p.lord || '').toLowerCase()] || G.lagna).dot }, svg);
-    }
-    const yr = s('text', { x: left, y: ys[k] + rowH[k] + 12, class: 'dz-date' }, svg); yr.textContent = dateOnly(periods[0].start_utc);
-    const yr2 = s('text', { x: W - 4, y: ys[k] + rowH[k] + 12, class: 'dz-date', 'text-anchor': 'end' }, svg); yr2.textContent = dateOnly(periods[periods.length - 1].end_utc);
-  });
-  const chain = rows.map((rr, j) => DASHA_PATH[j] != null && rr[DASHA_PATH[j]] ? rr[DASHA_PATH[j]] : null).filter(Boolean);
-  return h('div', {}, h('div', { class: 'chain dz-chain' }, chain.map((p, j) => h('button', { class: 'link', onclick: () => { DASHA_PATH = DASHA_PATH.slice(0, j); route(); } },
-      h('small', {}, DASHA_LEVELS[j]), h('b', {}, glink(p.lord.toLowerCase())), h('small', {}, `${dateOnly(p.start_utc)} → ${dateOnly(p.end_utc)}`))),
-    h('button', { class: 'btn', onclick: () => { DASHA_PATH = null; route(); } }, 'Back to now')),
-    h('div', { class: 'timeline' }, svg),
-    note('Click any bar to open its sub-periods below it; the bracket shows the period being zoomed. Levels 1–3 come from the engine; deeper levels are subdivided in the page by the same Vimśottarī proportions (the journeys check the rule against the engine\'s level 3).'));
-}
-
-page('dasha', () => 'Daśā', 'Time', (b) => {
-  const vim = val('vedic.dasha.vimshottari'), yog = val('vedic.dasha.yogini'), ss = val('vedic.sade_sati');
-  if (!vim && !yog) return put(b, missing('Daśā', 'It needs an exact birth time.'));
-  const out = [pageHead('dasha', 'Daśā periods', 'Zoom through five levels: click a period to open its sub-periods beneath it. The dashed line marks the reference instant recorded in this file.')];
-  if (vim) {
-    out.push(card(`Vimśottarī · balance at birth ${fix(vim.balance_at_birth_years, 3)} years of ${vim.starting_lord}`, dashaZoom(vim)));
-    if (vim.current) out.push(card(`Current chain at ${fmtTime(vim.current.at_utc)}`, h('div', { class: 'chain' }, vim.current.periods.map(p => h('div', { class: 'link' }, h('small', {}, p.level), h('b', {}, glink(p.lord.toLowerCase())), h('small', {}, `${dateOnly(p.start_utc)} → ${dateOnly(p.end_utc)}`))))));
-  }
-  if (yog) out.push(card(`Yoginī · starts with ${yog.starting_yogini}, balance ${fix(yog.balance_at_birth_years, 3)} years`, timeline(yog.mahadashas, 'yogini', 'yoginī daśā', null),
-    yog.current ? h('div', { class: 'chain' }, yog.current.periods.map(p => h('div', { class: 'link' }, h('small', {}, p.level), h('b', {}, p.lord), h('small', {}, `${dateOnly(p.start_utc)} → ${dateOnly(p.end_utc)}`)))) : null));
-  if (ss) out.push(card(`Sāḍe Sātī${ss.active_at_reference ? ' · active now' : ''}`, table(['From', 'To', 'Phases'], ss.windows.map(w => [dateOnly(w.start), dateOnly(w.end), w.phases.map(p => `${p.phase} ${dateOnly(p.start)}→${dateOnly(p.end)}`).join(' · ')])), ss.note ? note(ss.note) : null));
-  if (vim) out.push(h('details', { class: 'card' }, h('summary', {}, 'Every mahādaśā and antardaśā'), table(['Mahādaśā', 'Antardaśā', 'From', 'To'], vim.mahadashas.flatMap(m => (m.antardashas || []).map(a => [m.lord, a.lord, dateOnly(a.start_utc), dateOnly(a.end_utc)])))));
-  put(b, out);
-}, { blurb: 'Vimśottarī, Yoginī, Sāḍe Sātī' });
-
 /* ── pañcāṅga ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 page('panchanga', () => 'Pañcāṅga', 'Time', (b) => {
   const p = val('vedic.panchanga'); if (!p) return put(b, missing('The pañcāṅga', 'It needs a place.'));
@@ -758,7 +688,7 @@ page('yoga', (id) => (YOGA_ALL().find(y => y.id === id) || {}).name || 'Yoga', '
           return card(null, h('h4', {}, c[0]), facts(['Position', 'Bhāva', 'Dignity', 'Strength', 'Combustion', 'Navāṃśa', 'House', 'Aspected by (+ benefic, − malefic)'].map((k2, i) => [k2, c[i + 1]]))); })) : null,
         note('The usual checks for judging a yoga (strength, combustion, navāṃśa dignity, house, benefic or malefic influence), evaluated on this chart. They inform a reading; they are not a verdict.')),
       card('In the chart', h('div', { class: 'figure' }, chart), note('Highlighted: the signs of the grahas forming it. Hover a graha to see what it aspects.'))),
-    act && gs.length ? card('When it is active (Vimśottarī)', h('div', { class: 'grid2' },
+    act ? card('When it is active (Vimśottarī)', !gs.length ? note('This yoga is not formed by particular grahas (it is a pattern of the whole chart), so it is not tied to the periods of one graha.') : h('div', { class: 'grid2' },
       act.md.length ? table(['Mahādaśā', 'From', 'To', ''], act.md) : note('No mahādaśā of these grahas in the computed span.'),
       act.ad.length ? table([`Antardaśā in ${act.cur.lord}`, 'From', 'To', ''], act.ad) : note(act.cur ? `No antardaśā of these grahas in the running ${act.cur.lord} mahādaśā.` : '')),
       note('A yoga is usually read as giving its results in the periods of the grahas that form it.')) : null,
@@ -777,7 +707,27 @@ page('kp', () => 'KP', 'Systems', (b) => {
   put(b, pageHead('kp', 'KP (Krishnamurti Paddhati)', k.note || 'Placidus cusps, Vimśottarī sub-division of every nakshatra.'),
     card('Cusps and house significators', table(['Cusp', 'Position', 'Sign', 'Star', 'Sub', 'Sub-sub', 'A', 'B', 'C', 'D'], cusps)),
     card('Planets and planet-view significators', table(['Graha', 'Sign', 'Star', 'Sub', 'Sub-sub', 'A', 'B', 'C', 'D'], pl)),
-    k.ruling_planets ? card('Ruling planets at the chart instant', facts(Object.entries(k.ruling_planets).map(([kk, v]) => [kk.replaceAll('_', ' '), v]))) : null);
+    k.ruling_planets ? card('Ruling planets at the chart instant', facts(Object.entries(k.ruling_planets).map(([kk, v]) => [kk.replaceAll('_', ' '), v]))) : null,
+    kpSignificators(k.significator_table));
+  /* the significator table (vedic.kp significator_table, built by the annual module from the same KP value) */
+  function kpSignificators(t) {
+    if (!t) return null;
+    const ab = g => g ? (G[g] || G.lagna).abbr : '—';
+    const chips = list => h('span', { class: 'chips' }, (list || []).map(g => h('a', { class: 'chip kp-chip', href: '#/planet/' + g, title: (G[g] || {}).en || g }, dot(g), ab(g))));
+    const hov = (el, title, rows) => { el.addEventListener('mousemove', ev => tip(ev, title, rows, 'tradition_rule · KP significators')); el.addEventListener('mouseleave', untip); return el; };
+    const houses = t.houses.map(r => [hov(h('a', { href: '#/house/' + r.house }, nth(r.house)), `Bhāva ${r.house}`, [['Cusp', `${SIGN_SKT[r.sign]} ${inSign(r.cusp)}`], ['Sign · star · sub · sub-sub', [r.sign_lord, r.star_lord, r.sub_lord, r.sub_sub_lord].map(ab).join(' · ')], ['Significators', (t.significators_by_house[r.house] || []).map(ab).join(' ')]]),
+      `${SIGN_AB[r.sign]} ${inSignDM(r.cusp)}`, ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord), chips(r.in_star_of_occupants), chips(r.occupants), chips(r.in_star_of_owner), chips([r.owner])]);
+    const grahas = t.grahas.map(r => [glink(r.graha), ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord),
+      ...['very_strong', 'strong', 'normal', 'weak'].map(k => hov(h('span', { class: 'kp-lvl kp-' + k }, (r[k] || []).join(', ') || '—'), `${(G[r.graha] || {}).en || r.graha}: ${k.replace('_', ' ')}`, [['Houses', (r[k] || []).join(', ') || 'none'], ['Rule', t.levels[k]]]))]);
+    const eq = (t.equal_cusps_from_ascendant || []).map(r => [nth(r.house), `${SIGN_AB[signOf(r.cusp)]} ${inSignDM(r.cusp)}`, ab(r.star_lord), ab(r.sub_lord), ab(r.sub_sub_lord)]);
+    return [
+      card('KP significators by bhāva', table(['Bhāva', 'Cusp', 'Star', 'Sub', 'Sub-sub', 'In stars of occupants', 'Occupants', 'In star of owner', 'Owner'], houses),
+        note(label('tradition_rule'), ' Strongest first: grahas in the stars of the occupants, the occupants, grahas in the star of the owner, the owner. Hover a bhāva for its full list.')),
+      card('KP grahas: what each signifies', table(['Graha', 'Star', 'Sub', 'Sub-sub', 'Very strong', 'Strong', 'Normal', 'Weak'], grahas),
+        note(label('tradition_rule'), ` Very strong: ${t.levels.very_strong}; strong: ${t.levels.strong}; normal: ${t.levels.normal}; weak: ${t.levels.weak}. ${t.note}.`)),
+      eq.length ? h('details', { class: 'card kp-equal' }, h('summary', {}, 'Equal cusps from the Ascendant (an alternative some programs print)'), table(['Bhāva', 'Cusp', 'Star', 'Sub', 'Sub-sub'], eq)) : null,
+    ];
+  }
 }, { blurb: 'sub-lords and significators' });
 
 /* ── Nadi ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -968,6 +918,7 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
       open ? h('div', { class: 'n-detail' },
         h('p', {}, (NR.roles || {})[opts.role || id] || ''),
         m ? h('p', {}, h('b', {}, `${n}: `), m.key) : null,
+        comp != null && (NR.compound || {})[String(comp)] ? h('p', { class: 'n-compound' }, h('b', {}, `Compound ${comp}: `), NR.compound[String(comp)], h('span', { class: 'note' }, ' (Chaldean compound reading, after Cheiro)')) : null,
         m ? h('p', { class: 'note' }, `Strengths: ${m.strengths.join(', ')} · Challenges: ${m.challenges.join(', ')} · Planet: ${m.planet}`) : null,
         debt ? h('p', { class: 'note' }, (NR.karmic_debt || {})[String(debt)] || '') : null) : null);
   };
@@ -1031,6 +982,10 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
       card(`Birth date ${L.digits}`, h('div', { class: 'toolbar' }, h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: LOSHU_DC, onchange: e => { LOSHU_DC = e.target.checked; route(); } }), `add driver ${L.driver} and conductor ${L.conductor}`)), grid,
         facts([['Missing', L.missing.join(', ') || 'none'], ['Repeated', L.repeated.join(', ') || 'none']]), note(L.conventions)),
       card('Arrows (lines of the grid)', table(['Line', 'Numbers', 'State', 'Said to show'], arrows.map(a => [a.name, a.numbers.join('-'), h('span', { class: 'badge ' + (a.state === 'complete' ? 'b-up' : a.state === 'missing' ? 'b-down' : 'b-soft') }, a.state), (NR.arrows || {})[a.name] || ''])), note((NR.roles || {}).lo_shu || ''))));
+    if (L.kua) { const K = L.kua, KR = NR.kua || {};
+      out.push(card('Kua number (Eight Mansions)', facts([['Man', h('span', {}, h('b', {}, String(K.male)), ` · ${K.male_group} group`)], ['Woman', h('span', {}, h('b', {}, String(K.female)), ` · ${K.female_group} group`)], ['Solar year', String(K.solar_year)]]),
+        KR.about ? h('p', {}, label('interpretation'), ' ', KR.about) : null,
+        KR.groups ? note(`East group: ${KR.groups.east} West group: ${KR.groups.west}`) : null, note(K.conventions))); }
   }
   const nameAttr = A['numerology.name'];
   if (nameAttr && (show('pythagorean') || show('chaldean'))) out.push(h('details', { class: 'card' }, h('summary', {}, `Letter by letter (${nameAttr.value.school})`), table(['Letter', 'Value', 'Vowel'], nameAttr.value.letters.map(x => [x.letter, x.value, x.vowel ? '✓' : '']))));
@@ -1097,27 +1052,3 @@ function drawer() {
     h('button', { class: 'btn', onclick: () => { S = JSON.parse(JSON.stringify(DEFAULTS)); save(); route(); drawer(); } }, 'Reset to defaults'), ' ',
     h('button', { class: 'btn primary', onclick: () => dr.classList.remove('open') }, 'Done'));
 }
-(function boot() {
-  const root = document.documentElement;
-  const setMode = m => { root.dataset.mode = m; root.setAttribute('data-theme', m); };
-  try { const t = localStorage.getItem('eshana-theme'); setMode(t || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')); } catch (e) { setMode('dark'); }
-  if (D.theme === 'light' || D.theme === 'dark') setMode(D.theme);
-  $('#theme').addEventListener('click', () => { const nx = root.dataset.mode === 'dark' ? 'light' : 'dark'; setMode(nx); try { localStorage.setItem('eshana-theme', nx); } catch (e) { /* ignore */ } });
-  $('#print').addEventListener('click', () => { $$('section.page').forEach(x => { x.hidden = false; }); $$('details').forEach(d => { d.open = true; }); window.print(); route(); });
-  $('#settings').addEventListener('click', () => { drawer(); $('#drawer').classList.add('open'); });
-  $('#json').addEventListener('click', () => { const a = h('a', { href: URL.createObjectURL(new Blob([JSON.stringify(D, null, 1)], { type: 'application/json' })), download: 'eshana-chart.json' }); document.body.append(a); a.click(); a.remove(); });
-  $('#copy').addEventListener('click', async () => {
-    const lines = [`Chart data computed by ESHANA. Values are calculated or tradition rules, not interpretations.`];
-    if (VED) { lines.push(`Lagna: ${ASC != null ? SIGN_SKT[signOf(ASC)] + ' ' + inSign(ASC) : 'unknown'}`); for (const g of GRAHA_ORDER) if (GR[g]) lines.push(`${G[g].en}: ${SIGN_SKT[signOf(GR[g].lon)]} ${inSign(GR[g].lon)}, ${NAKSHATRA[nakOf(GR[g].lon)]} pada ${padaOf(GR[g].lon)}${GR[g].retro ? ', retrograde' : ''}`); }
-    const vim = val('vedic.dasha.vimshottari'); if (vim && vim.current) lines.push('Current Vimśottarī: ' + vim.current.periods.map(p => `${p.level} ${p.lord}`).join(' / '));
-    try { await navigator.clipboard.writeText(lines.join('\n')); $('#copy').textContent = '✓ Copied'; } catch (e) { $('#copy').textContent = 'Copy blocked'; }
-  });
-  $('#menu').addEventListener('click', () => document.body.classList.toggle('nav-open'));
-  $$('nav.side').forEach(n => n.addEventListener('click', e => { if (e.target.closest('a')) document.body.classList.remove('nav-open'); }));
-  document.addEventListener('keydown', e => {
-    if (e.target.matches('input, textarea') || e.metaKey || e.ctrlKey) return;
-    const list = Object.values(PAGES).filter(p => !p.hidden).map(p => p.id), i = list.indexOf(CURRENT);
-    if (e.key === ']' && i >= 0) go('#/' + list[(i + 1) % list.length]); if (e.key === '[' && i >= 0) go('#/' + list[(i + list.length - 1) % list.length]);
-  });
-  applyVisibility(); buildNav(); palette(); startSky(); route();
-})();

@@ -432,14 +432,19 @@ SECTION_TITLES = {
     "aspects": "Aspects",
     "strength": "Strength (ṣaḍbala, bhāva bala, viṃśopaka)",
     "ashtakavarga": "Aṣṭakavarga",
-    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Sāḍe Sātī)",
+    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla, Kālachakra; Sāḍe Sātī)",
     "panchanga": "Pañcāṅga",
     "special": "Lagnas and special points",
     "point": "Lagna or special point",
+    "maitri": "Maitri and dignities",
     "yogas": "Yogas and doshas",
     "yoga": "Yoga",
     "kp": "KP (Krishnamurti Paddhati)",
     "nadi": "Nadi direction matrix",
+    "aux": "Auxiliary analysis (sahams, avakahaḍā, mṛtyu bhāga, ghāta, vedhasthāna, jīva/deha, śodhana)",
+    "chakras": "Chakras (Sarvatobhadra, Kota, Saṅghaṭṭa)",
+    "annual": "Varṣaphala (annual chart)",
+    "pakshi": "Pañca pakṣī",
     "energetics": "AstroEnergetics",
     "transits": "Transits",
     "progressions": "Progressions",
@@ -450,7 +455,8 @@ SECTION_TITLES = {
     "data": "Provenance and data",
 }
 SECTIONS = tuple(SECTION_TITLES)
-ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js")
+ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js", "studio-dashas.js", "studio-maitri.js", "studio-analysis.js",
+          "studio-chakras.js", "studio-annual.js", "studio-boot.js")
 
 
 def _asset(name: str) -> str:
