@@ -32,7 +32,8 @@ function sahamChart(rows) {
     if (LAGNA_SIGN === sign) s('path', { d: `M${x} ${y + 16}L${x + 16} ${y}`, stroke: 'var(--accent)', 'stroke-width': 2 }, g);
     const list = by[sign] || [];
     list.forEach((sr, k) => {
-      const col = k % 2, row = Math.floor(k / 2), t = s('text', { x: x + 5 + col * (W / 2 - 2), y: y + 26 + row * 11.5, 'font-size': list.length > 6 ? 8.4 : 9.2, class: 'aux-sn', 'data-id': sr.id }, g);
+      // each name may use its column (minus a gap); names wider than that in the viewer's font are scaled to fit
+      const col = k % 2, row = Math.floor(k / 2), t = s('text', { x: x + 5 + col * (W / 2 - 2), y: y + 26 + row * 11.5, 'font-size': list.length > 6 ? 8.4 : 9.2, class: 'aux-sn', 'data-id': sr.id, 'data-maxw': (W / 2 - 2 - 5 - 3).toFixed(1) }, g);
       t.textContent = sr.name.length > 7 ? sr.name.slice(0, 6) + '.' : sr.name;
     });
     hov(g, `${SIGN_SKT[sign]} · ${list.length} saham${list.length === 1 ? '' : 's'}`, list.map(sr => [sr.name, sr.dms]), houseOf(sign) ? `bhāva ${houseOf(sign)} from the lagna` : '');
@@ -42,6 +43,11 @@ function sahamChart(rows) {
   s('rect', { x: W, y: H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
   const t = s('text', { x: 2 * W, y: 2 * H - 2, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 800, fill: 'var(--ink)' }, svg); t.textContent = '37 sahams';
   const t2 = s('text', { x: 2 * W, y: 2 * H + 14, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--muted)' }, svg); t2.textContent = 'hover a sign or a row';
+  // fonts differ by system (a Linux sans is wider than macOS's), so measure once the chart is on the page
+  const fit = () => { if (!svg.isConnected) return requestAnimationFrame(fit);
+    svg.querySelectorAll('.aux-sn[data-maxw]').forEach(el => { const w = el.getComputedTextLength(), m = +el.dataset.maxw;
+      if (w > m) el.setAttribute('font-size', (parseFloat(el.getAttribute('font-size')) * m / w).toFixed(2)); }); };
+  requestAnimationFrame(fit);
   return svg;
 }
 function markSaham(root, id, sign) {
