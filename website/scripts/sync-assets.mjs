@@ -24,4 +24,6 @@ function copyTree(src, dst, keep) {
 copyTree(path.join(repo, "docs"), path.join(pub, "docs-assets"), (n) => !n.toLowerCase().endsWith(".md"));
 const reports = path.join(repo, "examples", "reports");
 if (existsSync(reports)) copyTree(reports, path.join(pub, "reports"), (n) => n.endsWith(".html"));
+const gallery = path.join(repo, "examples", "gallery");
+if (existsSync(gallery)) copyTree(gallery, path.join(pub, "gallery"), (n) => n.endsWith(".webp"));
 console.log("synced docs assets and example reports");

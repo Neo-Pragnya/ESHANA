@@ -22,6 +22,7 @@ export const site = {
 export const NAV: { label: string; href: string }[] = [
   { label: "Docs", href: "docs/" },
   { label: "Demos", href: "demos/" },
+  { label: "Gallery", href: "gallery/" },
   { label: "Reports", href: "reports/example-birth-chart.html" },
   { label: "Accuracy", href: "docs/guides/accuracy-suite/" },
   { label: "Roadmap", href: "docs/roadmap/" },

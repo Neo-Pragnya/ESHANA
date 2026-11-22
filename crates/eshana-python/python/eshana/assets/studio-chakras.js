@@ -398,13 +398,14 @@ function ckSangh(v) {
 }
 
 /* ── the page ──────────────────────────────────────────────────────────────────────────────────────────────────── */
-page("chakras", () => "Chakras", "Analysis", (b) => {
+page("chakras", () => "Chakras", "Analysis", (b, arg) => {
+  if (["sbc", "kota", "sanghatta"].includes(arg)) CK_TAB = arg; // deep link: #/chakras/<tab>
   const sbc = val("vedic.chakra.sarvatobhadra"), kota = val("vedic.chakra.kota"), sg = val("vedic.chakra.sanghatta");
   const head = pageHead("chakras", "Chakras", "Sarvatobhadra, Kota and Saṅghaṭṭa: three classical nakshatra chakras, natal and in transit.");
   if (!sbc && !kota && !sg) return put(b, head, missing("The chakras", "Ask for the chakras feature (features: chakras, or all)."));
   const tutc = (sbc && sbc.transit_utc) || (kota && kota.transit_utc);
   if (!tutc && CK_SET === "transit") CK_SET = "natal";
-  const pick = k => { CK_TAB = k; CK_PICK = null; route(); };
+  const pick = k => { CK_TAB = k; CK_PICK = null; if (location.hash.startsWith("#/chakras/")) location.hash = "#/chakras/" + k; else route(); };
   const bar = h("div", { class: "toolbar" },
     h("div", { class: "grp" }, h("b", {}, "Chakra"), tabs([["sbc", "Sarvatobhadra"], ["kota", "Kota"], ["sanghatta", "Saṅghaṭṭa"]], CK_TAB, pick)),
     tutc ? h("div", { class: "grp" }, h("b", {}, "Layer"), tabs([["natal", "Natal"], ["transit", "Transit"]], CK_SET, k => { CK_SET = k; route(); })) : null);
