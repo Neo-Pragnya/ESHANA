@@ -541,46 +541,53 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     s('polygon', { points: poly.map(p => p.join(',')).join(' '), class: hIdx === 0 ? 'cellbg lagna' : 'cellbg', 'stroke-width': 1.3 }, g);
     // one stack, top to bottom: ārūḍha padas, sign number, grahas, rāśi drishti (◇), graha drishti. It is measured first,
     // centred on the house, kept inside its polygon, and shrunk in steps when a crowded house cannot hold it.
-    const list = (hIdx === 0 ? ['lagna'] : []).concat(pl[sign] || []), maxW = big ? S0 * .34 : S0 * .2;
+    const list = (hIdx === 0 ? ['lagna'] : []).concat(pl[sign] || []), maxW = big ? S0 * .34 : S0 * .26;
     const ys = poly.map(p2 => p2[1]), minY = Math.min(...ys), maxY = Math.max(...ys);
     // horizontal span of the polygon at height y (the houses are triangles and diamonds)
     const spanAt = (y) => { const xs = []; poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length]; if ((a[1] - y) * (b[1] - y) <= 0 && a[1] !== b[1]) xs.push(a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1])); });
       return xs.length ? [Math.min(...xs), Math.max(...xs)] : [cx, cx]; };
-    const tw0 = big ? S0 * .1 : S0 * .06;
-    const layout = (k) => {
+    // each block (padas, number, each graha row, ◇ marks, aspect marks) is centred on the middle of the house at its own
+    // height, so the side triangles use their full width instead of being centred on the centroid near the edge
+    const layout = (k, mw = maxW) => {
       // a graha row's raised flags (ᴿ, ◎) sit a fixed 4 px up, so rows keep that allowance when the stack shrinks
       const nfs = (opts.compact ? 10 : 12) * k, fs = (opts.compact ? 9.5 : 11.5) * k, lineH = fs * 1.05 + 4, ps = 9 * k;
       const as = (opts.compact ? 8.5 : 10) * k, rs = (opts.compact ? 8 : 9.5) * k;
-      const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, maxW) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, maxW) : [[]];
+      const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, mw) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, mw) : [[]];
       const rLines = rl[0].length ? rl.length : 0, aLines = al[0].length ? al.length : 0;
       const wOf = (items, size) => items.reduce((a, it) => a + (it.text.length + 1) * size * .62, 0);
-      let y = 0; const at = {}, rows = []; // rows: [baseline, size, left, right] relative to cx, for the fit check
-      if (ar[sign]) { at.pada = y + ps; const w = ar[sign].join(' ').length * ps * .62; rows.push([at.pada, ps, -w / 2, w / 2]); y = at.pada + 2 * k; }
-      at.num = y + nfs; rows.push([at.num, nfs, -nfs * .7, nfs * .7]); y = at.num + 3 * k + 4;
-      if (list.length) { at.g0 = y + fs; list.forEach((gid, i) => rows.push([at.g0 + i * lineH, fs, -tw0 * k, -tw0 * k + 9.5 * fs * .62])); y = at.g0 + (list.length - 1) * lineH + 3 * k; }
-      if (rLines) { at.r = y + rs; rl.forEach((ln, i) => { const w = wOf(ln, rs); rows.push([at.r + i * rs * 1.2, rs, -w / 2, w / 2]); }); y = at.r + (rLines - 1) * rs * 1.2 + 3 * k; }
-      if (aLines) { at.a = y + as; al.forEach((ln, i) => { const w = wOf(ln, as); rows.push([at.a + i * as * 1.2, as, -w / 2, w / 2]); }); y = at.a + (aLines - 1) * as * 1.2 + 3 * k; }
-      return { k, nfs, fs, lineH, ps, as, rs, at, rows, h: y };
+      // rows: [baseline, size, width, block]; blocks: [first baseline, last baseline, size]
+      let y = 0; const at = {}, rows = [], blocks = [];
+      const block = (b0, b1, sz) => blocks.push([b0, b1, sz]) - 1;
+      if (ar[sign]) { at.pada = y + ps; rows.push([at.pada, ps, ar[sign].join(' ').length * ps * .62, at.padaB = block(at.pada, at.pada, ps)]); y = at.pada + 2 * k; }
+      at.num = y + nfs; rows.push([at.num, nfs, nfs * 1.4, at.numB = block(at.num, at.num, nfs)]); y = at.num + 3 * k + 4;
+      if (list.length) { at.g0 = y + fs; at.gB = []; at.gW = fs * .6 * 10;
+        list.forEach((gid, i) => { const b = at.g0 + i * lineH; const bi = block(b, b, fs); at.gB.push(bi); rows.push([b, fs, at.gW, bi]); }); y = at.g0 + (list.length - 1) * lineH + 3 * k; }
+      if (rLines) { at.r = y + rs; at.rB = block(at.r, at.r + (rLines - 1) * rs * 1.2, rs); rl.forEach((ln, i) => rows.push([at.r + i * rs * 1.2, rs, wOf(ln, rs), at.rB])); y = at.r + (rLines - 1) * rs * 1.2 + 3 * k; }
+      if (aLines) { at.a = y + as; at.aB = block(at.a, at.a + (aLines - 1) * as * 1.2, as); al.forEach((ln, i) => rows.push([at.a + i * as * 1.2, as, wOf(ln, as), at.aB])); y = at.a + (aLines - 1) * as * 1.2 + 3 * k; }
+      return { k, mw, nfs, fs, lineH, ps, as, rs, at, rows, blocks, h: y };
     };
+    const midOf = (L, top, bi) => { const [b0, b1, sz] = L.blocks[bi], [x1, x2] = spanAt(top + (b0 + b1) / 2 - sz * .3); return (x1 + x2) / 2; };
     // does every row fit the polygon when the stack starts at top? (checked at the top and bottom of each row's text)
-    const fits = (L, top) => top >= minY + 4 && top + L.h <= maxY - 4 && L.rows.every(([b, sz, l, r]) => [b - sz * .75, b + sz * .2].every(yy => { const [x1, x2] = spanAt(top + yy); return cx + l >= x1 + 2 && cx + r <= x2 - 2; }));
+    const fits = (L, top) => top >= minY + 4 && top + L.h <= maxY - 4 && L.rows.every(([b, sz, w, bi]) => { const m = midOf(L, top, bi);
+      return [b - sz * .75, b + sz * .2].every(yy => { const [x1, x2] = spanAt(top + yy); return m - w / 2 >= x1 + 2 && m + w / 2 <= x2 - 2; }); });
     let L = null, top = 0;
-    for (const k of [1, .9, .8, .7, .62, .55]) {
-      const c = layout(k), pref = cy - c.h / 2;
+    // largest size first; at each size try wider wrapping too (a triangle is much wider near its base)
+    search: for (const k of [1, .92, .84, .76, .68, .6]) for (const mw of [maxW, maxW * 1.4, maxW * 1.8]) {
+      const c = layout(k, mw), pref = cy - c.h / 2;
       const cand = []; for (let t = minY + 4; t + c.h <= maxY - 4; t += 2) cand.push(t);
       cand.sort((a, b) => Math.abs(a - pref) - Math.abs(b - pref));
       const t = cand.find(t2 => fits(c, t2));
-      if (t != null) { L = c; top = t; break; }
+      if (t != null) { L = c; top = t; break search; }
     }
-    if (!L) { L = layout(.55); top = Math.max(minY + 4, Math.min(cy - L.h / 2, maxY - 4 - L.h)); }
-    const n = s('text', { x: cx, y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
-    if (ar[sign]) { const t = s('text', { x: cx, y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
+    if (!L) { L = layout(.6); top = Math.max(minY + 4, Math.min(cy - L.h / 2, maxY - 4 - L.h)); }
+    g.dataset.fit = L.k + (L.mw !== maxW ? ' wide' : '') + (fits(L, top) ? '' : ' unfitted');
+    const n = s('text', { x: midOf(L, top, L.at.numB), y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
+    if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
       const tt = s('title', {}, t); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
-    const tw = tw0 * L.k;
-    list.forEach((gid, k) => grahaLine(g, gid, cx - tw, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
+    list.forEach((gid, k) => grahaLine(g, gid, midOf(L, top, L.at.gB[k]) - L.at.gW / 2, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
     if (d === 1) {
-      if (L.at.r != null) rashiMarks(g, sign, cx, top + L.at.r, 'middle', L.rs, maxW, true);
-      if (L.at.a != null) aspectMarks(g, sign, cx, top + L.at.a, 'middle', L.as, maxW, true);
+      if (L.at.r != null) rashiMarks(g, sign, midOf(L, top, L.at.rB), top + L.at.r, 'middle', L.rs, L.mw, true);
+      if (L.at.a != null) aspectMarks(g, sign, midOf(L, top, L.at.aB), top + L.at.a, 'middle', L.as, L.mw, true);
     }
     g.addEventListener('click', () => { if (d === 1) go('#/house/' + (hIdx + 1)); });
   });

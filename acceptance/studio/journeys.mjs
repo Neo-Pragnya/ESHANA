@@ -328,6 +328,7 @@ await journey("hover details sit in the panel beside the chakra, not on top of i
   await mouse(p.x, p.y); await sleep(500);
   const r = await evaluate(`(() => { const d = document.querySelector('#chakra .tipdock'), w = document.querySelector('#chakra svg.wheel').getBoundingClientRect(), dr = d.getBoundingClientRect();
     return { docked: d.classList.contains('on'), text: d.innerText, floating: document.querySelector('.tip.on') != null, beside: dr.left >= w.right - 1 }; })()`);
+  await shot("chakra-hover-dock");
   expect(r.docked, "hover details did not go to the panel");
   expect(!r.floating, "a floating popup still covers the chakra");
   expect(r.beside, "the hover panel is not beside the chakra");
