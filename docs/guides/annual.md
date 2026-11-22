@@ -70,6 +70,7 @@ commonly reprinted in Tamil almanacs. Printed tables differ between almanacs; ev
 | `birth_day` | the ruling (day and night) and dying birds of the birth’s Vedic weekday | the reprinted weekday table by pakṣa |
 | `birth_day_table` | the Vedic day of the birth (sunrise to the next sunrise) | ten yāmas |
 | `reference_day_table` | the Vedic day containing the reference instant, with the current yāma marked | ten yāmas |
+| `nearby_days` | the three Vedic days before and the three after the reference day, as `{offset, table}` (offset −3 … +3; 0 is `reference_day_table`) | each found one hour after the reference sunrise plus whole days, so each has its own sunrise, sunset, pakṣa and weekday |
 
 Each table has ten **yāmas**, five equal parts of the day (sunrise to sunset) and five of the night (sunset to the next
 sunrise). For every yāma it gives every bird’s activity (ruling, eating, walking, sleeping or dying) and the birth
@@ -103,10 +104,26 @@ Rahu and Ketu also act as agents of their sign lord and of grahas joined with th
   chart in South Indian style with the muntha (Mu) and the year lord highlighted; the office-bearers with hover
   explanations; the pañcavargīya bala as stacked bars that grow in, each part hoverable with its division lord and
   relationship; a switch between the running year and the birth year.
-- **Pañca pakṣī** (group Time): the birth bird, the birth day’s ruling and dying birds as drawn bird figures, friends
-  and enemies; the day and night as coloured bands (one per yāma, coloured by the birth bird’s activity, with the
-  sub-periods underneath and the current period marked); hovering a yāma lists every bird’s activity, clicking it
-  opens the sub-periods.
+- **Pañca pakṣī** (group Time):
+  - your bird (with how it was found: the Moon’s nakṣatra and the pakṣa at birth), its friends and enemies, and the
+    chosen day’s ruling birds (by day and by night) and dying bird, with a warning when your own bird is the dying
+    bird;
+  - a **day picker**: the birth day, and the reference day (“Today”) with the three days either side, plus previous
+    and next buttons. Every day comes from the engine (`nearby_days`); the page computes no yāma itself;
+  - the day and night as coloured bands (one per yāma, coloured by your bird’s activity, the sub-periods underneath,
+    a “now” line at the reference instant);
+  - the full tables, day and night: five yāmas (rows) × the five birds (columns), each cell the bird’s activity,
+    with the yāma start and end times. Your bird’s column is outlined; the current yāma is outlined with a “now” bar
+    showing how far into it the reference instant is. Click a yāma (or press Enter on it) to open its five
+    sub-periods below it; hovering a cell gives the activity, its Tamil name, its strength rank and the relation to
+    your bird;
+  - **info boxes** (labelled interpretation, with sources): what the system is, how the birth bird is found, what
+    friends and enemies mean, the ruling bird, the dying bird, the five activities, and the strength order (Ruling,
+    Eating, Walking, Sleeping, Dying, strongest first, with a ladder).
+
+  The info-box text is paraphrased in our own words from the Tamil pañca pakṣī śāstra (traditionally attributed to
+  the Siddhas) and Tamil almanac practice. It lives in `scripts/build_reading_reference.py` (written to
+  `eshana/data/reading_reference.json`, key `pakshi`), not in the engine, which stays free of interpretation.
 - **KP**: two new tables, significators by bhāva and what each graha signifies, plus the equal-cusp lords.
 
 ## Comparison with a published reference chart

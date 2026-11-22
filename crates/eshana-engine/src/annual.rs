@@ -19,6 +19,8 @@ use std::sync::OnceLock;
 pub const RULE_VARSHA: &str = "vedic.varshaphala@0.1";
 /// Rule id of the pañca pakṣī attribute.
 pub const RULE_PAKSHI: &str = "vedic.panch_pakshi@0.1";
+/// Vedic days around the reference day given as `nearby_days` (offset 0 is the reference day table itself).
+const NEARBY_DAYS: std::ops::RangeInclusive<i32> = -3..=3;
 /// Mean sidereal year in days, used only as the first guess of a solar return.
 const SIDEREAL_YEAR: f64 = 365.256_363;
 
@@ -659,6 +661,15 @@ fn panch_pakshi(x: &AnalysisCtx) -> Result<Value> {
         Some(r) => pakshi_day(x, r, bird, r)?,
         None => Value::Null,
     };
+    // the Vedic days around the reference day, so a reader can step through them: each anchored one hour after
+    // the reference sunrise plus whole days, which lies inside that Vedic day at any latitude with a sunrise
+    let mut nearby = vec![];
+    if let (Some(r), Some(sr)) = (x.reference_jd, today["sunrise"]["jd_ut"].as_f64()) {
+        for k in NEARBY_DAYS.filter(|k| *k != 0) {
+            let t = pakshi_day(x, sr + f64::from(k) + 1.0 / 24.0, bird, r)?;
+            nearby.push(json!({"offset": k, "table": t}));
+        }
+    }
     Ok(json!({
         "birth_bird": bird,
         "nakshatra": {"index": nk.index, "name": nk.name},
@@ -672,6 +683,7 @@ fn panch_pakshi(x: &AnalysisCtx) -> Result<Value> {
         })),
         "birth_day_table": birth_table,
         "reference_day_table": today,
+        "nearby_days": nearby,
         "rule_pack": pack_rule(),
         "source": "Tamil pañca pakṣī śāstra (traditional tables as commonly reprinted in Tamil almanacs); conventions in rulesets/annual.yaml",
         "conventions": {
@@ -679,6 +691,7 @@ fn panch_pakshi(x: &AnalysisCtx) -> Result<Value> {
             "birth_day": "ruling and dying birds of the Vedic weekday (sunrise to sunrise) of the birth",
             "birth_day_table": "the Vedic day (sunrise to the next sunrise) containing the birth: five yāmas by day and five by night",
             "reference_day_table": "the Vedic day containing the reference instant",
+            "nearby_days": "the three Vedic days before and the three after the reference day (offset −3 … +3, the reference day itself is reference_day_table), each with its own sunrise, sunset, pakṣa and weekday",
             "first_yama": "the day's (or night's) ruling bird rules the first yāma; the other birds follow the half's bird order with the next activities of its cycle; every bird moves one step per yāma",
             "sub_periods": "Eating 30, Walking 36, Ruling 48, Sleeping 18, Dying 12 parts of 144, in cycle order from the yāma's activity, birds in the half's order from the birth bird",
         },

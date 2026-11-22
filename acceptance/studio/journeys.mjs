@@ -783,6 +783,67 @@ await journey("auxiliary analysis: eight tabs, 37 sahams on the chart, hover lin
   return `37 sahams; ${Object.keys(counts).length + 1} tabs draw; row↔sign hover; śodhana switch; vedha ${lit.fav} favourable houses lit`;
 });
 
+// drawn labels of a diagram must not overlap and must stay inside their cell: `cells` selects the cell groups, `box` the
+// shape that bounds a cell, `labels` the text drawn in it (measured on screen; invisible hover halos are not text)
+const inkProbe = (root, cells, box, labels) => `(() => { const out = { cells: 0, labels: 0, bad: [] };
+  for (const cell of document.querySelectorAll(${JSON.stringify(root)} + ' ' + ${JSON.stringify(cells)})) {
+    const shape = cell.querySelector(${JSON.stringify(box)}); if (!shape) continue; out.cells++;
+    const sb = shape.getBoundingClientRect();
+    const items = [...cell.querySelectorAll(${JSON.stringify(labels)})].map(e => ({ n: e.textContent, b: e.getBoundingClientRect() }))
+      .filter(it => it.b.width > 0 && it.b.height > 0);
+    out.labels += items.length;
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i].b;
+      if (a.left < sb.left - 1 || a.top < sb.top - 1 || a.right > sb.right + 1 || a.bottom > sb.bottom + 1) out.bad.push(items[i].n + ' outside its cell');
+      for (let j = i + 1; j < items.length; j++) { const b = items[j].b;
+        const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        if (ox > 0.75 && oy > 0.75) out.bad.push(items[i].n + ' × ' + items[j].n + ' (' + Math.round(ox) + '×' + Math.round(oy) + ' px)'); }
+    }
+  }
+  return out; })()`;
+
+await journey("sahams: an info box for every saham (row or chart click), 'What sahams are' on top, chart names never overlap", async () => {
+  await viewport(1440, 1000);
+  await go("#/overview", 300); await go("#/aux/sahams", 1500);
+  const top = await evaluate(`(() => { const sec = document.querySelector('section.page#aux'), first = sec.querySelector('.sh-info');
+    return { first: first && first.querySelector('b').textContent, label: !!(first && first.querySelector('.ep-interpretation')), src: first && first.querySelector('.pk-src').textContent,
+      panel: (sec.querySelector('.sh-panel') || {}).dataset?.id, firstRow: sec.querySelector('tr.aux-row').dataset.id }; })()`);
+  expect(top.first === "What sahams are" && top.label && /Tājika Nīlakaṇṭhī/.test(top.src), "general info box: " + JSON.stringify(top));
+  expect(top.panel === top.firstRow, "no info box open by default");
+  // click every row: the panel follows, with the formula as computed, the house, the lord's placement and the meaning
+  const all = await evaluate(`(() => { const v = val('vedic.aux.sahams'), R = D.reading.sahams.items, bad = [];
+    for (const tr of document.querySelectorAll('#aux tr.aux-row')) {
+      tr.click(); const p = document.querySelector('#aux .sh-panel'), r = v.sahams.find(x => x.id === tr.dataset.id), t = p ? p.textContent : '';
+      const want = [r.formula, 'House from the lagna', 'Lord placed', R[r.id].signifies, R[r.id].used_for, 'How it is read in a varṣaphala'];
+      if (!p || p.dataset.id !== r.id || !tr.classList.contains('sel')) bad.push(r.id + ': panel ' + (p && p.dataset.id));
+      else { const miss = want.filter(w => !t.includes(w)); if (miss.length) bad.push(r.id + ' lacks ' + miss.join(' | ').slice(0, 80)); }
+      if (p && p.querySelectorAll('.ep-interpretation').length < 2) bad.push(r.id + ': meaning not labelled interpretation');
+    }
+    return { n: document.querySelectorAll('#aux tr.aux-row').length, bad }; })()`);
+  expect(all.n === 37 && !all.bad.length, `${all.n} rows; ` + all.bad.slice(0, 4).join("; "));
+  // a saham name on the square chart opens its box too
+  const viaChart = await evaluate(`(() => { const t = [...document.querySelectorAll('#aux .aux-sn')].find(e => e.dataset.id === 'vivaha');
+    t.dispatchEvent(new MouseEvent('click', { bubbles: true })); const p = document.querySelector('#aux .sh-panel');
+    return { id: p.dataset.id, sel: t.classList.contains('sel'), row: document.querySelector('#aux tr.aux-row.sel').dataset.id }; })()`);
+  expect(viaChart.id === "vivaha" && viaChart.sel && viaChart.row === "vivaha", "chart click: " + JSON.stringify(viaChart));
+  // every saham name inside its sign on the square chart, no two overlapping
+  const ink = await evaluate(inkProbe("section.page#aux", "svg.aux-sq g.aux-cell", "rect.cellbg", "text"));
+  expect(ink.cells === 12 && ink.labels >= 37 + 12 && !ink.bad.length, `saham chart: ${ink.labels} labels in ${ink.cells} cells; ` + ink.bad.slice(0, 5).join("; "));
+  await evaluate(`document.querySelector('#aux .sh-panel').scrollIntoView({ block: 'center' })`); await sleep(500);
+  await shot("sahams-info");
+  // light theme and phone width: the panel still opens, the page does not scroll sideways
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  await evaluate(`document.documentElement.dataset.mode = 'light'; document.documentElement.setAttribute('data-theme', 'light'); 1`);
+  await viewport(390, 844, true); await go("#/overview", 300); await go("#/aux/sahams", 1500);
+  const phone = await evaluate(`(() => { document.querySelectorAll('#aux tr.aux-row')[3].click(); document.querySelector('#aux .sh-panel').scrollIntoView({ block: 'start' });
+    return { id: document.querySelector('#aux .sh-panel').dataset.id, wide: document.documentElement.scrollWidth > innerWidth + 1 }; })()`);
+  await sleep(500); await shot("sahams-phone-light");
+  await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode0)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode0)}); 1`);
+  await viewport(1440, 1000);
+  expect(phone.id && !phone.wide, "phone width: " + JSON.stringify(phone));
+  return `37 info boxes open from the table, chart click works, ${ink.labels} chart labels apart and inside their signs`;
+});
+
 // ── journeys: auxiliary (add new journeys for this workstream above this line) ──
 
 await journey("theme toggles and is remembered", async () => {
@@ -1049,6 +1110,77 @@ await journey("the KP page adds the significator tables by bhāva and by graha",
   expect(r.cards.includes("KP significators by bhāva") && r.cards.includes("KP grahas: what each signifies"), "KP significator cards missing");
   expect(r.lvls === 36, `${r.lvls} strength cells (9 grahas × 4)`);
   expect(r.chips >= 12, `${r.chips} significator chips`);
+});
+
+await journey("pañca pakṣī: five yāmas × five birds by day and by night, sub-periods open, info boxes, a day picker, labels never overlap", async () => {
+  const check = async (w) => {
+    await go("#/overview", 300); await go("#/pakshi", 1600);
+    const r = await evaluate(`(() => { const v = val('vedic.panch_pakshi'), R = D.reading && D.reading.pakshi;
+      const tb = v.reference_day_table, grids = [...document.querySelectorAll('.pk-grid')];
+      const engine = tb.yamas.map((y, i) => y.birds.map(b => i + ':' + b.bird + ':' + b.activity)).flat().sort().join();
+      const shown = [...document.querySelectorAll('.pk-yrow')].map(tr => [...tr.querySelectorAll('.pk-cell')].map(td => tr.dataset.yama + ':' + td.dataset.bird + ':' + td.dataset.act)).flat().sort().join();
+      const boxes = [...document.querySelectorAll('section.page#pakshi .pk-info')];
+      return { grids: grids.map(g => g.dataset.half).join(), rows: grids.map(g => g.querySelectorAll('.pk-yrow').length), cells: document.querySelectorAll('.pk-cell').length,
+        same: engine === shown, selfCols: document.querySelectorAll('.pk-tbl .pk-self').length, selfBird: v.birth_bird,
+        selfOk: [...document.querySelectorAll('.pk-tbl .pk-self')].every(e => e.dataset.bird === v.birth_bird),
+        cur: document.querySelectorAll('.pk-yrow.pk-cur').length, nowbar: document.querySelectorAll('.pk-nowbar').length, curYama: tb.yamas.findIndex(y => y.current),
+        curRow: (document.querySelector('.pk-yrow.pk-cur') || {}).dataset?.yama,
+        boxes: boxes.length, labelled: boxes.every(b => b.querySelector('.ep-interpretation') && /Paraphrased from: .+/.test((b.querySelector('.pk-src') || {}).textContent || '')),
+        titles: boxes.map(b => b.querySelector('b').textContent),
+        acts: document.querySelectorAll('.pk-actrow').length, rungs: [...document.querySelectorAll('.pk-rung .pk-act')].map(e => e.className.match(/act-(\\w+)/)[1]).join(),
+        texts: R ? Object.values(R.activities).every(([, t]) => document.querySelector('section.page#pakshi').textContent.includes(t)) : false,
+        days: [...document.querySelectorAll('.pk-pick button')].map(b => b.dataset.day).join(),
+        hscroll: document.documentElement.scrollWidth > innerWidth + 1 }; })()`);
+    expect(r.grids === "day,night" && r.rows.join() === "5,5" && r.cells === 50, `table shape ${JSON.stringify([r.grids, r.rows, r.cells])}`);
+    expect(r.same, "a table cell differs from the engine's activity");
+    expect(r.selfCols === 12 && r.selfOk, `birth bird column not highlighted (${r.selfCols})`);
+    expect(r.cur === 1 && r.nowbar === 1 && +r.curRow === r.curYama, `current yāma/now marker ${JSON.stringify([r.cur, r.nowbar, r.curRow, r.curYama])}`);
+    expect(r.boxes >= 7 && r.labelled, `info boxes ${r.boxes}, labelled ${r.labelled}: ${r.titles.join(' / ')}`);
+    for (const t of ["What pañca pakṣī is", "How the birth bird is found", "What friends and enemies mean", "The ruling bird", "The dying bird", "Strongest to weakest"])
+      expect(r.titles.includes(t), "missing info box: " + t);
+    expect(r.acts === 5 && r.rungs === "ruling,eating,walking,sleeping,dying" && r.texts, `activities ${r.acts} ${r.rungs} ${r.texts}`);
+    expect(r.days === "birth,-3,-2,-1,0,1,2,3", "day picker " + r.days);
+    expect(!r.hscroll, `page scrolls sideways at ${w} px`);
+    return r;
+  };
+  await viewport(390, 844, true);
+  const phone = await check(390);
+  await shot("pakshi-phone"); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "start" })`); await sleep(400); await shot("pakshi-phone-table");
+  await viewport(1440, 1000);
+  const desk = await check(1440);
+  // the timeline: activity labels inside their bands, start times apart, no two labels overlap
+  const tl = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl g.pk-yama", "rect.pk-band", "text.pk-lbl"));
+  const ticks = await evaluate(inkProbe("section.page#pakshi", "svg.pakshi-tl", "rect.pk-night", "g.pk-yama > text:not(.pk-lbl)"));
+  expect(tl.cells === 10 && tl.labels === 10 && !tl.bad.length, "timeline labels: " + JSON.stringify(tl).slice(0, 300));
+  expect(ticks.labels === 10 && !ticks.bad.filter(b => !/outside/.test(b)).length, "timeline times overlap: " + ticks.bad.slice(0, 4).join("; "));
+  // open a yāma: its five sub-periods appear in a row below it
+  const open = await evaluate(`(() => { const tr = document.querySelector('.pk-grid[data-half="night"] .pk-yrow'); tr.click();
+    const sub = tr.nextElementSibling; return { exp: tr.getAttribute('aria-expanded'), open: sub.classList.contains('open'), sps: sub.querySelectorAll('.pk-sp').length,
+      shown: getComputedStyle(sub).display, detail: document.querySelector('.pk-detail h3').textContent }; })()`);
+  expect(open.exp === "true" && open.open && open.sps === 5 && open.shown === "table-row" && /Night yāma 1/.test(open.detail), "sub-periods did not open: " + JSON.stringify(open));
+  await sleep(500); await shot("pakshi-desktop"); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "center" })`); await sleep(400); await shot("pakshi-table");
+  // the day picker: the next day has its own sunrise and no current yāma; the stepper comes back to today
+  const before = await evaluate(`[...document.querySelectorAll('#pakshi .card h3')].map(x => x.textContent).find(t => /sunrise/.test(t))`);
+  await evaluate(`document.querySelector('.pk-pick button[data-day="1"]').click()`); await sleep(900);
+  const next = await evaluate(`(() => { const v = val('vedic.panch_pakshi'), t = v.nearby_days.find(n => n.offset === 1).table;
+    const shown = [...document.querySelectorAll('.pk-yrow')].map(tr => [...tr.querySelectorAll('.pk-cell')].map(td => tr.dataset.yama + ':' + td.dataset.bird + ':' + td.dataset.act)).flat().sort().join();
+    const engine = t.yamas.map((y, i) => y.birds.map(b => i + ':' + b.bird + ':' + b.activity)).flat().sort().join();
+    return { h4: [...document.querySelectorAll('#pakshi .card h3')].map(x => x.textContent).find(t => /sunrise/.test(t)), pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day,
+      cur: document.querySelectorAll('.pk-yrow.pk-cur').length, now: document.querySelectorAll('.pk-nowbar').length, same: shown === engine, dying: document.querySelector('.pk-daybirds .pk-bird.dying .pk-name').textContent }; })()`);
+  expect(next.pressed === "1" && next.cur === 0 && next.now === 0 && next.same && next.h4 !== before, "next day: " + JSON.stringify(next));
+  await evaluate(`document.querySelector('.pk-step button[data-step="-1"]').click()`); await sleep(900);
+  const back = await evaluate(`({ pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day, cur: document.querySelectorAll('.pk-yrow.pk-cur').length })`);
+  expect(back.pressed === "0" && back.cur === 1, "stepper back to today: " + JSON.stringify(back));
+  await evaluate(`document.querySelector('.pk-pick button[data-day="birth"]').click()`); await sleep(900);
+  const birth = await evaluate(`({ pressed: document.querySelector('.pk-pick button[aria-pressed="true"]').dataset.day, rows: document.querySelectorAll('.pk-yrow').length, nextOff: document.querySelector('.pk-step button[data-step="1"]').disabled })`);
+  expect(birth.pressed === "birth" && birth.rows === 10 && birth.nextOff, "birth day: " + JSON.stringify(birth));
+  await evaluate(`document.querySelector('.pk-pick button[data-day="0"]').click()`); await sleep(400);
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  const setMode = (m) => evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(m)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(m)}); 1`);
+  for (const mode of ["light", "dark"]) { await setMode(mode); await go("#/overview", 300); await go("#/pakshi", 1800); await shot("pakshi-" + mode); await evaluate(`document.querySelector(".pk-grids").scrollIntoView({ block: "center" })`); await sleep(400); await shot("pakshi-table-" + mode); }
+  await setMode(mode0);
+  await viewport(390, 844, true);
+  return `${desk.cells} cells × 2 widths match the engine; ${desk.boxes} info boxes; current yāma ${desk.curYama + 1} marked; 8 days; ${tl.labels + ticks.labels} timeline labels apart (phone ${phone.cells} cells, no side scroll)`;
 });
 
 // ── journeys: annual (add new journeys for this workstream above this line) ──
