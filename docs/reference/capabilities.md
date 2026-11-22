@@ -93,7 +93,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Sahams (37), avakahaḍā, male/female rāśis, mṛtyu bhāga, ghāta chakra, vedhasthāna, jīva/deha, śodhana piṇḍas ([guide](../guides/auxiliary.md)) | verified (published reference chart) |
 | Sarvatobhadra with vedha, Kota and Saṅghaṭṭa chakras, natal and transit ([guide](../guides/chakras.md)) | verified (placements and layout vs published reference chart) |
 | Varṣaphala: muntha, pañcādhikārīs, pañcavargīya bala, year lord ([guide](../guides/annual.md)) | verified (strengths, muntha, office-bearers); year-lord score differs (xfail) |
-| Pañca pakṣī: birth bird, ruling and dying birds, yāma tables | implemented (birds verified; first-yāma activity convention differs) |
+| Pañca pakṣī: birth bird, ruling and dying birds, day and night yāma tables with sub-periods, ±3 days | implemented (birds verified; first-yāma activity convention differs) |
+| Parivartana yoga and its Mahā, Khala and Dainya kinds | verified (unit test; Ramana chart: Jupiter–Saturn, Dainya) |
 | KP significator tables by bhāva and graha, equal-cusp lords | verified (published reference chart) |
 | Lal Kitab | planned (`LK-01`) |
 

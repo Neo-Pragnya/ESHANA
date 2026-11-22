@@ -5,6 +5,22 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+### Added (review round 6)
+- **Charts:** ārūḍha padas on top of each rāśi and aspect marks at the bottom, wrapped inside the rāśi, in South and
+  North Indian charts; crowded North Indian houses fit their triangle or diamond. A journey checks that no label
+  overlaps another or leaves its rāśi.
+- **Parivartana:** exchanged grahas are also marked in their partner's sign (with additional aspects on); new yogas
+  Parivartana, Mahā, Khala and Dainya parivartana (pack `vedic.yogas@0.3`, condition `parivartana`).
+- **Jyotish Chakra:** hovering a transit graha draws a line to where it is now; hover details sit in a card beside
+  the wheel instead of a popup over it.
+- **Dark theme:** chart writing reaches 4.5:1 contrast (aspect marks 3:1), checked by a journey.
+- **Kota chakra** redrawn as a fort (Bāhya, Prākāra, Madhya, Stambha) with entry and exit arrows; **Sarvatobhadra**
+  framed by nakshatra, pada-sound and pada bands on all four sides, with red/green vedha borders
+  (`chakras.yaml` gains `pada_syllables`).
+- **Pañca pakṣī:** full day and night tables (five yāmas × five birds), sub-periods, a day picker over the three days
+  either side (`vedic.panch_pakshi.nearby_days`) and info boxes.
+- **Sahams:** what each of the 37 signifies and how it is read, in info boxes (interpretation, sources named).
+
 ### Added (review round 5)
 - **Five analysis categories** (features `maitri`, `dashas_extended`, `auxiliary`, `chakras`, `annual`; all included in
   `features: ["all"]`), each with its own rule pack, guide and studio page, and an accuracy test against the

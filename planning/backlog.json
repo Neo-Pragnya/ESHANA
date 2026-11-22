@@ -1886,6 +1886,106 @@
       "track": "primary",
       "milestone": "0.4 · review round 5",
       "source": "owner review round 5"
+    },
+    {
+      "id": "FB-35",
+      "area": "vedic",
+      "title": "Charts: ārūḍha padas on top, aspect marks at the bottom, no overlaps (journey)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "acceptance/studio/journeys.mjs 'chart cells never overlap'"
+    },
+    {
+      "id": "FB-36",
+      "area": "vedic",
+      "title": "Transit graha hover: line to where it is now",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'hovering a transit graha draws a line'"
+    },
+    {
+      "id": "FB-37",
+      "area": "vedic",
+      "title": "Parivartana: exchanged graha marked in its partner's sign",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'parivartana: each exchanged graha is marked'"
+    },
+    {
+      "id": "FB-38",
+      "area": "vedic",
+      "title": "Parivartana yoga (and Mahā, Khala, Dainya kinds) in the yoga list",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "vedic.yogas@0.3; unit test parivartana_yoga_and_its_kind"
+    },
+    {
+      "id": "FB-39",
+      "area": "vedic",
+      "title": "Kota chakra in the reference fort format",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'chakras: Kota fort'"
+    },
+    {
+      "id": "FB-40",
+      "area": "vedic",
+      "title": "Sarvatobhadra in the reference format (bands on four sides, vedha borders)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'chakras: Sarvatobhadra frame'; accuracy test_sarvatobhadra_pada_sounds"
+    },
+    {
+      "id": "FB-41",
+      "area": "vedic",
+      "title": "Pañca pakṣī: full day and night tables, day picker, info boxes",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "vedic.panch_pakshi.nearby_days; pakṣī journey"
+    },
+    {
+      "id": "FB-42",
+      "area": "vedic",
+      "title": "Sahams: what each signifies, in info boxes",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "reading_reference.json sahams; test_every_saham_and_pakshi_activity_has_a_meaning"
+    },
+    {
+      "id": "FB-43",
+      "area": "vedic",
+      "title": "Chakra hover details beside the wheel, not over it",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'hover details sit in the panel'"
+    },
+    {
+      "id": "FB-44",
+      "area": "vedic",
+      "title": "Dark theme: readable chart writing",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 6",
+      "source": "owner review round 6",
+      "evidence": "journey 'dark theme: chart writing has readable contrast'"
     }
   ]
 }
