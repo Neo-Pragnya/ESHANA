@@ -280,8 +280,11 @@ function renderWheel(host, panel) {
     s('line', { x1: x0, y1: y0, x2: x1, y2: y1, stroke: 'var(--accent)', 'stroke-width': 4 }, inner);
   }
   if (S.centre === 'nadi') {
+    // the South Indian chart with the four Nadi directions in its middle square
     const box = s('g', { class: 'centre nadi-centre' }, svg);
-    nadiCentre(box, innerR * Math.SQRT2 * .98);
+    const side = innerR * Math.SQRT2 * .98, cell = side / 4;
+    southGrid(box, 1, -side / 2, -side / 2, cell, { compact: true, noTitle: true, noMid: true });
+    nadiCentre(box, side / 2 * .98);
   } else if (S.centre === 'south' || S.centre === 'north') {
     const box = s('g', { class: 'centre' }, svg); // not rotated with focus: stays readable
     const side = innerR * Math.SQRT2 * .98, cell = side / 4, x0 = -side / 2, y0 = -side / 2;
@@ -529,7 +532,7 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
     list.forEach((gid, k) => grahaLine(g, gid, x + 6, top + k * lineH, d, { compact, fs }));
     g.addEventListener('click', () => { const hh = houseOf(sign); if (hh && d === 1) go('#/house/' + hh); });
   }
-  s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
+  if (!opts.noMid) s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
   if (!opts.noTitle) {
     const t = s('text', { x: x0 + 2 * W, y: y0 + 2 * H - 4, 'text-anchor': 'middle', 'font-size': opts.compact ? Math.max(15, W * .17) : 18, 'font-weight': 800, fill: 'var(--ink)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''}`;
     const t2 = s('text', { x: x0 + 2 * W, y: y0 + 2 * H + 16, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t2.textContent = opts.sub || (DIV_AREA[d] || '');
@@ -734,33 +737,34 @@ function sudarshana() {
 /* ── the Nadi direction matrix: the zodiac as a spiral of three rounds through the four directions ───────────── */
 const NADI_Q = { Fire: { d: [1, -1], dir: 'East', trikona: 'Dharma', houses: '1 · 5 · 9', c: '#ff7a59' }, Earth: { d: [1, 1], dir: 'South', trikona: 'Artha', houses: '2 · 6 · 10', c: '#7cc982' },
   Air: { d: [-1, 1], dir: 'West', trikona: 'Kama', houses: '3 · 7 · 11', c: '#e7c35a' }, Water: { d: [-1, -1], dir: 'North', trikona: 'Moksha', houses: '4 · 8 · 12', c: '#6fa8f5' } };
-/* the chakra's centre as the four Nadi directions: each quadrant holds the grahas (and the lagna) in the signs of its
-   element, with degree and sign; North (water) top-left, East (fire) top-right, West (air) bottom-left, South (earth)
-   bottom-right, as on the Nadi page. The D1 placement is already on the rings around it. */
-function nadiCentre(box, side) {
-  const half = side / 2, ELS = ['Fire', 'Earth', 'Air', 'Water'];
+/* the four Nadi directions as quadrants inside a square of the given side centred at (cx, cy): each holds the grahas
+   (and the lagna) in the signs of its element, with degree and sign; North (water) top-left, East (fire) top-right,
+   West (air) bottom-left, South (earth) bottom-right, as on the Nadi page. Sizes scale with the square. */
+function nadiCentre(box, side, cx = 0, cy = 0) {
+  const half = side / 2, ELS = ['Fire', 'Earth', 'Air', 'Water'], pad = half * .06;
   const ids = ['lagna'].filter(() => ASC != null).concat(GRAHA_ORDER.filter(g => GR[g]));
   const lonOfId = g => g === 'lagna' ? ASC : GR[g].lon;
   for (const el of ELS) {
-    const q = NADI_Q[el], [dx, dy] = q.d, x0 = dx > 0 ? 0 : -half, y0 = dy > 0 ? 0 : -half;
+    const q = NADI_Q[el], [dx, dy] = q.d, x0 = cx + (dx > 0 ? 0 : -half), y0 = cy + (dy > 0 ? 0 : -half);
     const g = s('g', { class: 'nadi-q', 'data-dir': q.dir.toLowerCase() }, box);
-    s('rect', { x: x0 + 2, y: y0 + 2, width: half - 4, height: half - 4, rx: 10, fill: q.c, 'fill-opacity': .16, stroke: q.c, 'stroke-opacity': .55, 'stroke-width': 1.5 }, g);
-    const hx = dx > 0 ? x0 + half - 12 : x0 + 12, anchor = dx > 0 ? 'end' : 'start';
-    const t = s('text', { x: hx, y: y0 + 32, 'text-anchor': anchor, 'font-size': 24, 'font-weight': 800, 'letter-spacing': 2, fill: q.c, class: 'nadi-dir' }, g); t.textContent = q.dir.toUpperCase();
-    const t2 = s('text', { x: hx, y: y0 + 54, 'text-anchor': anchor, 'font-size': 15, fill: 'var(--muted)' }, g); t2.textContent = `${q.trikona} · ${el.toLowerCase()}`; const tt2 = s('title', {}, t2); tt2.textContent = `${q.trikona} trikoṇa: ${el.toLowerCase()} signs, bhāvas ${q.houses} of the natural zodiac`;
+    s('rect', { x: x0 + 1.5, y: y0 + 1.5, width: half - 3, height: half - 3, rx: half * .05, fill: q.c, 'fill-opacity': .16, stroke: q.c, 'stroke-opacity': .55, 'stroke-width': 1.2 }, g);
+    const hx = dx > 0 ? x0 + half - pad : x0 + pad, anchor = dx > 0 ? 'end' : 'start', hs = half * .11;
+    const t = s('text', { x: hx, y: y0 + pad + hs * .85, 'text-anchor': anchor, 'font-size': hs, 'font-weight': 800, 'letter-spacing': 1, fill: q.c, class: 'nadi-dir' }, g); t.textContent = q.dir.toUpperCase();
+    const tt = s('title', {}, t); tt.textContent = `${q.dir}: ${q.trikona} trikoṇa, ${el.toLowerCase()} signs, bhāvas ${q.houses} of the natural zodiac`;
     const here = ids.filter(id => ELEMENT[signOf(lonOfId(id)) % 4] === el).sort((a, b) => (signOf(lonOfId(a)) - signOf(lonOfId(b))) || (norm(lonOfId(b)) - norm(lonOfId(a))));
-    const rows = Math.max(1, here.length), avail = half - 84, lh = Math.min(34, avail / rows), fs = Math.min(25, lh * .8);
+    const top = y0 + pad + hs * 1.35, avail = half - (top - y0) - pad * .6, rows = Math.max(1, here.length);
+    const lh = Math.min(half * .14, avail / rows), fs = Math.min(half * .12, lh * .86);
     here.forEach((id, k) => {
-      const lon = lonOfId(id), meta = G[id] || G.lagna, y = y0 + 80 + fs * .8 + k * lh;
+      const lon = lonOfId(id), meta = G[id] || G.lagna, y = top + fs * .9 + k * lh;
       const row = s('g', { class: 'nadi-g', 'data-body': id, style: 'cursor:pointer' }, g);
       const tx = s('text', { x: hx, y, 'text-anchor': anchor, 'font-size': fs, 'font-weight': 800, fill: meta.dot === '#E6E9F0' ? 'var(--ink)' : meta.dot, class: 'gtxt' }, row);
       tx.textContent = meta.abbr + (flags(id) ? ' ' + flags(id) : '');
-      const d2 = s('tspan', { 'font-size': fs * .8, 'font-weight': 500, fill: 'var(--muted)' }, tx); d2.textContent = `  ${inSignDM(lon)} ${SIGN_AB[signOf(lon)]}`;
+      const d2 = s('tspan', { 'font-size': fs * .8, 'font-weight': 500, fill: 'var(--muted)' }, tx); d2.textContent = ` ${inSignDM(lon)} ${SIGN_AB[signOf(lon)]}`;
       row.addEventListener('mousemove', ev => placeTip(ev, id));
       row.addEventListener('mouseleave', untip);
-      if (id !== 'lagna') row.addEventListener('click', () => go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id));
+      if (id !== 'lagna') row.addEventListener('click', ev => { ev.stopPropagation(); go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id); });
     });
-    if (!here.length) { const e = s('text', { x: hx, y: y0 + 66, 'text-anchor': anchor, 'font-size': 12, fill: 'var(--muted)', 'font-style': 'italic' }, g); e.textContent = 'no graha'; }
+    if (!here.length) { const e = s('text', { x: hx, y: top + half * .08, 'text-anchor': anchor, 'font-size': half * .08, fill: 'var(--muted)', 'font-style': 'italic' }, g); e.textContent = 'no graha'; }
   }
 }
 function nadiLinks(id) { /* report.nadi@0.1: trines (same element and direction), 2nd/12th and 7th from the graha's sign; a retrograde graha also acts from the previous sign */
