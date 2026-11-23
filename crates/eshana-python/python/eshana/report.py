@@ -804,7 +804,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
     p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
-    p.add_argument("--centre", choices=["nadi", "south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
+    p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
     p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p

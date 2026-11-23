@@ -279,17 +279,14 @@ function renderWheel(host, panel) {
     const a = angOf(ASC), [x0, y0] = pt(S.centre === 'lanes' ? 96 : innerR, a), [x1, y1] = pt(RINGS.tick[1] + 12, a);
     s('line', { x1: x0, y1: y0, x2: x1, y2: y1, stroke: 'var(--accent)', 'stroke-width': 4 }, inner);
   }
-  if (S.centre === 'nadi') {
-    // the South Indian chart with the four Nadi directions in its middle square
-    const box = s('g', { class: 'centre nadi-centre' }, svg);
-    const side = innerR * Math.SQRT2 * .98, cell = side / 4;
-    southGrid(box, 1, -side / 2, -side / 2, cell, { compact: true, noTitle: true, noMid: true });
-    nadiCentre(box, side / 2 * .98);
-  } else if (S.centre === 'south' || S.centre === 'north') {
-    const box = s('g', { class: 'centre' }, svg); // not rotated with focus: stays readable
+  if (S.centre === 'south' || S.centre === 'north') {
+    const box = s('g', { class: 'centre' + (S.centre === 'south' ? ' nadi-centre' : '') }, svg); // not rotated with focus: stays readable
     const side = innerR * Math.SQRT2 * .98, cell = side / 4, x0 = -side / 2, y0 = -side / 2;
-    if (S.centre === 'south') southGrid(box, 1, x0, y0, cell, { compact: true });
-    else northGrid(box, 1, x0, y0, side, { compact: true });
+    if (S.centre === 'south') {
+      // the South Indian chart with the four Nadi directions in its middle square
+      southGrid(box, 1, x0, y0, cell, { compact: true, noTitle: true, noMid: true });
+      nadiCentre(box, side / 2 * .98);
+    } else northGrid(box, 1, x0, y0, side, { compact: true });
   } else {
     // orbit lanes with planet markers, plus drishti arcs
     const items = GRAHA_ORDER.filter(g => GR[g]).map(g => ({ g, a: angOf(GR[g].lon) })).sort((x, y) => x.a - y.a);

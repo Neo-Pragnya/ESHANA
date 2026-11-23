@@ -66,7 +66,7 @@ page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
   const centre = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.centre === v), onclick: () => { S.centre = v; save(); redraw(); } }, t);
   put(b, pageHead('chakra', 'Jyotish Chakra', 'The Graha-Nakshatra Mandala: every graha placed by its exact degree on the nakshatra, pada (navāṃśa) and rāśi rings.'),
     h('div', { class: 'toolbar' },
-      h('div', { class: 'grp' }, h('b', {}, 'Centre'), centre('nadi', 'Nadi directions'), centre('south', 'South Indian'), centre('north', 'North Indian'), centre('lanes', 'Orbit lanes')), visGroup(),
+      h('div', { class: 'grp' }, h('b', {}, 'Centre'), centre('south', 'South Indian'), centre('north', 'North Indian'), centre('lanes', 'Orbit lanes')), visGroup(),
       h('div', { class: 'grp' }, h('b', {}, 'Rings'), toggle('markers', 'markers', redraw), toggle('ticks', 'degrees', redraw), toggle('nak', 'nakshatras', redraw), toggle('pada', 'padas', redraw), toggle('dres', 'dreshkāṇas', redraw), toggle('houses', 'bhāvas', redraw), toggle('sav', 'SAV', redraw)),
       h('div', { class: 'grp' }, h('b', {}, 'Layers'), toggle('needles', 'needles', redraw), toggle('drishti', 'drishti arcs', redraw), toggle('aspect_marks', 'graha aspects', redraw), toggle('rashi_marks', 'rāśi aspects (◇)', redraw), toggle('rashi_drishti', 'rāśi drishti lines', redraw), toggle('arudha', 'ārūḍha padas', redraw), toggle('west_aspects', 'Western aspects', redraw), transit ? toggle('transits', 'transits', redraw) : null),
       h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', redraw), toggle('extra_rashi', 'additional rāśi aspects', redraw)),

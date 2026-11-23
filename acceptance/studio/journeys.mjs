@@ -127,13 +127,15 @@ await journey("the chakra draws every ring and a point for every graha", async (
   return `27 / 108 / 12 rings, ${c.pts} points`;
 });
 
-await journey("the chakra centre shows the four Nadi directions with each graha in its element's quadrant", async () => {
+await journey("the South Indian centre shows the four Nadi directions in its middle square, each graha in its element's quadrant", async () => {
   await go("#/chakra", 1400);
-  // Nadi directions is the default for new and existing settings (a one-time migration); the journey before this one
-  // switched to the South Indian centre, so pick Nadi again here
-  const mig = await evaluate(`S.nadiCentreV1 === true`);
-  expect(mig, "settings were not migrated to the Nadi centre");
-  await evaluate(`[...document.querySelectorAll('#chakra .tab')].find(b => b.textContent === 'Nadi directions').click()`); await sleep(1200);
+  // there is no separate Nadi centre: the South Indian centre carries the quadrants
+  const tabs = await evaluate(`[...document.querySelectorAll('#chakra .toolbar .grp')].find(g => g.querySelector('b')?.textContent === 'Centre').querySelectorAll('.tab').length`);
+  const nadiTab = await evaluate(`[...document.querySelectorAll('#chakra .tab')].some(b => /Nadi/.test(b.textContent))`);
+  expect(tabs === 3 && !nadiTab, `centre tabs: ${tabs}, Nadi tab present: ${nadiTab}`);
+  await evaluate(`[...document.querySelectorAll('#chakra .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1200);
+  const cells = await evaluate(`document.querySelectorAll('#chakra svg.wheel .nadi-centre .cell').length`);
+  expect(cells === 12, `${cells} rāśi boxes around the Nadi square`);
   const r = await evaluate(`(() => { const svg = document.querySelector('#chakra svg.wheel'); const qs = [...svg.querySelectorAll('.nadi-centre .nadi-q')];
     return qs.map(q => ({ dir: q.dataset.dir, bodies: [...q.querySelectorAll('.nadi-g')].map(g => g.dataset.body) })); })()`);
   expect(r.length === 4, `${r.length} quadrants in the centre`);
@@ -144,8 +146,6 @@ await journey("the chakra centre shows the four Nadi directions with each graha 
   const placed = r.flatMap(q => q.bodies).filter(b => b !== "lagna").length;
   expect(placed === Object.keys(model.pos).length, `${placed} grahas in the quadrants for ${Object.keys(model.pos).length}`);
   await shot("chakra-nadi-centre");
-  // the remaining centre journeys use the South Indian centre
-  await evaluate(`[...document.querySelectorAll('#chakra .tab')].find(b => b.textContent === 'South Indian').click()`); await sleep(1200);
   return r.map(q => `${q.dir} ${q.bodies.length}`).join(", ");
 });
 

@@ -8,7 +8,8 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 ### Added (review round 8)
 - Charts: graha text larger and bolder than the aspect marks; bigger South Indian cells; full-width D1 charts; light-
   theme graha colours deepened. Inside a rāśi the higher degree is written higher.
-- Jyotish Chakra: the centre shows the four Nadi directions (default; South, North and orbit lanes remain).
+- Jyotish Chakra: the South Indian centre (the default) shows the four Nadi directions in its middle square; the
+  separate Nadi centre option is gone (saved settings move to South). North and orbit lanes remain.
 - Gender (`--gender`, `gender=`): shown with the name, picks the Kua number.
 - Numerology: growth, intensity, letter transits (physical, mental, spiritual) and essence by year.
 - Filters: separate switches for rāśi aspects, ārūḍha padas, additional graha aspects and additional rāśi aspects.
