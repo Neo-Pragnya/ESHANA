@@ -79,7 +79,7 @@ reports: build-release
 	.venv/bin/eshana-report --from-json dist/vedic-chennai.json --title "From the CLI" --place "Chennai" \
 	  -o examples/reports/example-from-cli.html
 	.venv/bin/eshana-report --date 1879-12-30 --time 01:00 --offset-minutes 321 --lat 9.9333 --lon 78.1167 \
-	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --place "Madurai, India" \
+	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --gender male --place "Madurai, India" \
 	  --title "Reference chart" --reference 2026-11-21T00:00:00Z -o examples/reports/reference-ramana.html
 
 # Website chart gallery (CHK-22): screenshots of real reports, examples/gallery/*.webp + website/src/data/gallery.json
@@ -132,7 +132,7 @@ studio-journeys: build-release
 	node acceptance/studio/journeys.mjs target/journeys/studio.html $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/studio)
 	# the reference chart (born 1879, read today): daśās that have ended, a parivartana, a crowded chart
 	.venv/bin/eshana-report --date 1879-12-30 --time 01:00 --offset-minutes 321 --lat 9.9333 --lon 78.1167 \
-	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --place "Madurai, India" \
+	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --gender male --place "Madurai, India" \
 	  --reference 2026-11-21T00:00:00Z -o target/journeys/ramana.html
 	node acceptance/studio/journeys.mjs target/journeys/ramana.html $(if $(JOURNEY_SHOTS),--shots $(JOURNEY_SHOTS)/ramana)
 site-journeys:

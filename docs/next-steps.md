@@ -10,6 +10,12 @@ State on 2026-11-22. The ledger of every task is [`planning/TRACKING.md`](../pla
 
 ## Done
 
+**0.3.3 (2026-11-22): review round 8**
+- Readable charts: graha text larger and bolder than the marks, full-width D1 charts, the higher degree written higher, mūlatrikoṇa △.
+- The South Indian centre of the Jyotish Chakra shows the four Nadi directions in its middle square.
+- Gender with the name (Kua for the person); growth, intensity, letter transits and essence in name numerology.
+- Separate filters for rāśi aspects, ārūḍha padas, additional graha aspects and additional rāśi aspects.
+
 **0.3.2 (2026-11-22): review rounds 5 and 6**
 - Five analysis categories: maitri and dignities in 16 divisions; seven more daśā systems; sahams, avakahaḍā, mṛtyu bhāga, ghāta, vedhasthāna, jīva/deha, śodhana; Sarvatobhadra, Kota and Saṅghaṭṭa; varṣaphala, pañca pakṣī and KP tables — each compared with a published reference chart.
 - Charts with padas on top and aspects at the bottom (no overlaps, tested); parivartana marks and yogas; transit hover line; docked hover details; dark-theme contrast.

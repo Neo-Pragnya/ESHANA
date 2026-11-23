@@ -14,12 +14,12 @@ function arc(r0, r1, a0, a1) {
 }
 const grahasIn = (lo, hi) => GRAHA_ORDER.filter(g => GR[g] && norm(GR[g].lon - lo) < hi - lo);
 
-/* flags shown next to a graha in the charts: R retrograde, C combust, ↑ exalted, ↓ debilitated, ◎ own/moolatrikona, V vargottama */
+/* flags shown next to a graha in the charts: R retrograde, C combust, ↑ exalted, ↓ debilitated, △ mūlatrikoṇa, ◎ own sign, V vargottama */
 function flags(id, d = 1) {
   const st = STRENGTH[id] || {}, out = [];
   if (GR[id] && GR[id].retro && !['rahu', 'ketu'].includes(id)) out.push('R');
   if (st.combust) out.push('C');
-  if (d === 1) { if (st.dignity === 'exalted') out.push('↑'); else if (st.dignity === 'debilitated') out.push('↓'); else if (st.dignity === 'own' || st.dignity === 'moolatrikona') out.push('◎'); }
+  if (d === 1) { if (st.dignity === 'exalted') out.push('↑'); else if (st.dignity === 'debilitated') out.push('↓'); else if (st.dignity === 'moolatrikona') out.push('△'); else if (st.dignity === 'own') out.push('◎'); }
   if (GR[id] && vargaSign(id, 9) === signOf(GR[id].lon)) out.push('V');
   return out.join('');
 }
@@ -62,7 +62,7 @@ function aspectItems(sign) {
 function rashiItems(sign) {
   if (!S.layers.rashi_marks) return [];
   const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
-  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
+  const extra = S.layers.extra_rashi ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
   return list.length || extra.length ? [{ text: '◇', lead: true }].concat(list.map(r => ({ text: G[r.from].abbr })), extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] }))) : [];
 }
 function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
@@ -85,7 +85,7 @@ const RASHI_ASPECTED = (() => { const m = {}; for (const r of ((val('vedic.drish
 function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
   if (!S.layers.rashi_marks) return 0;
   const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
-  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
+  const extra = S.layers.extra_rashi ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
   if (!list.length && !extra.length) return 0;
   const items = [{ text: '◇', fill: 'var(--muted)', lead: true }]
     .concat(list.map(r => ({ text: G[r.from].abbr, fill: G[r.from].dot, italic: true })))
@@ -96,7 +96,7 @@ function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, d
 function aspectTargets(id) {
   const out = DRISHTI.filter(d => d.from === id).map(d => ({ sign: d.sign, kind: d.kind === 'special' ? 'special' : 'graha', label: nth(d.house_from_graha) }));
   for (const r of ((val('vedic.drishti.rashi') || {}).aspects || [])) if (r.from === id) for (const t of r.aspects_signs) out.push({ sign: t, kind: 'rashi', label: 'rāśi' });
-  if (S.layers.extra_aspects) for (const d of ADDITIONAL) if (d.from === id) out.push({ sign: d.sign, kind: 'extra', label: (d.drishti === 'rashi' ? 'rāśi' : nth(d.house_from_graha)) + EXTRA_MARK[d.basis] });
+  for (const d of ADDITIONAL) if (d.from === id && (d.drishti === 'rashi' ? S.layers.extra_rashi : S.layers.extra_aspects)) out.push({ sign: d.sign, kind: 'extra', label: (d.drishti === 'rashi' ? 'rāśi' : nth(d.house_from_graha)) + EXTRA_MARK[d.basis] });
   return out;
 }
 /* hovering a graha animates its aspects: flowing curves to every sign it sees, the signs lit, the boxes outlined */
@@ -166,7 +166,7 @@ function markerRing(parent) {
 }
 
 /* ── the graha legend: dignity, motion, combustion, aspects, markers for every graha at a glance ───────────────── */
-const DIGNITY_BADGE = { exalted: ['↑ uccha', 'b-up'], debilitated: ['↓ nīca', 'b-down'], moolatrikona: ['◎ mūlatrikoṇa', 'b-moola'], own: ['◎ own sign', 'b-own'] };
+const DIGNITY_BADGE = { exalted: ['↑ uccha', 'b-up'], debilitated: ['↓ nīca', 'b-down'], moolatrikona: ['△ mūlatrikoṇa', 'b-moola'], own: ['◎ own sign', 'b-own'] };
 function grahaLegend() {
   const rel = val('vedic.relationships') || {}, sb = (val('vedic.shadbala') || {}).grahas || {};
   const relTo = (g) => { const lord = GR[g] ? SIGN_LORD[signOf(GR[g].lon)] : null; const x = lord && lord !== g && rel[g] ? rel[g][lord] : null; return x && x.combined ? x.combined.replace(/_/g, ' ') : null; };
@@ -280,10 +280,13 @@ function renderWheel(host, panel) {
     s('line', { x1: x0, y1: y0, x2: x1, y2: y1, stroke: 'var(--accent)', 'stroke-width': 4 }, inner);
   }
   if (S.centre === 'south' || S.centre === 'north') {
-    const box = s('g', { class: 'centre' }, svg); // not rotated with focus: stays readable
+    const box = s('g', { class: 'centre' + (S.centre === 'south' ? ' nadi-centre' : '') }, svg); // not rotated with focus: stays readable
     const side = innerR * Math.SQRT2 * .98, cell = side / 4, x0 = -side / 2, y0 = -side / 2;
-    if (S.centre === 'south') southGrid(box, 1, x0, y0, cell, { compact: true });
-    else northGrid(box, 1, x0, y0, side, { compact: true });
+    if (S.centre === 'south') {
+      // the South Indian chart with the four Nadi directions in its middle square
+      southGrid(box, 1, x0, y0, cell, { compact: true, noTitle: true, noMid: true });
+      nadiCentre(box, side / 2 * .98);
+    } else northGrid(box, 1, x0, y0, side, { compact: true });
   } else {
     // orbit lanes with planet markers, plus drishti arcs
     const items = GRAHA_ORDER.filter(g => GR[g]).map(g => ({ g, a: angOf(GR[g].lon) })).sort((x, y) => x.a - y.a);
@@ -471,9 +474,13 @@ function transitControls() {
 const SOUTH_CELL = { 11: [0, 0], 0: [1, 0], 1: [2, 0], 2: [3, 0], 3: [3, 1], 4: [3, 2], 5: [3, 3], 6: [2, 3], 7: [1, 3], 8: [0, 3], 9: [0, 2], 10: [0, 1] };
 function placements(d) {
   const out = {}; for (const g of GRAHA_ORDER) { if (!GR[g]) continue; const sg = vargaSign(g, d); if (sg == null) continue; (out[sg] = out[sg] || []).push(g); }
-  for (const k in out) out[k].sort((a, b) => (vargaDeg(a, d) || 0) - (vargaDeg(b, d) || 0));
+  for (const k in out) out[k].sort(byDegreeDesc(d));
   return out;
 }
+/* inside a rāśi the higher degree is written higher: sort by degree in the sign, highest first (the lagna by its own
+   degree, like any graha) */
+const byDegreeDesc = d => (a, b) => (vargaDeg(b, d) ?? -1) - (vargaDeg(a, d) ?? -1);
+const cellList = (sign, d, pl) => (vargaSign('lagna', d) === sign ? ['lagna'] : []).concat(pl[sign] || []).sort(byDegreeDesc(d));
 /* ārūḍha padas by sign: D1, or in the navāṃśa (pada navāṃśa: the same rule applied to the D9 chart) */
 function arudhaMarks(d = 1) {
   const a = val(d === 9 ? 'vedic.jaimini.arudha_padas_d9' : 'vedic.jaimini.arudha_padas'); if (!a || !S.layers.arudha) return {};
@@ -485,7 +492,7 @@ function grahaLine(parent, id, x, y, d, opts) {
   const g = s('g', { class: 'gl', 'data-body': id }, parent);
   if (!opts.compact) marker(g, id, x + 8, y - 4, 6.3, { noLabel: true, passive: true });
   const deg = vargaDeg(id, d), lon = d === 1 ? lonOf(id) : null;
-  const t = s('text', { x: x + (opts.compact ? 0 : 19), y, 'font-size': opts.fs || 12.5, 'font-weight': 700, fill: (G[id] || G.lagna).dot === '#E6E9F0' ? 'var(--ink)' : (G[id] || G.lagna).dot, class: 'gtxt' }, g);
+  const t = s('text', { x: x + (opts.compact ? 0 : 19), y, 'font-size': opts.fs || 12.5, 'font-weight': 800, fill: (G[id] || G.lagna).dot === '#E6E9F0' ? 'var(--ink)' : (G[id] || G.lagna).dot, class: 'gtxt' }, g);
   t.textContent = (G[id] || G.lagna).abbr;
   const f = flags(id, d); if (f) { const fs = s('tspan', { 'font-size': (opts.fs || 12.5) * .72, dy: -4, fill: 'var(--accent)' }, t); fs.textContent = f; }
   const t2 = s('tspan', { 'font-size': (opts.fs || 12.5) * .8, 'font-weight': 500, fill: 'var(--muted)', dy: f ? 4 : 0 }, t);
@@ -505,7 +512,7 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
     const nm = s('text', { x: x + W - 5, y: y + small + 2, 'text-anchor': 'end', 'font-size': small, fill: 'var(--muted)' }, g); nm.textContent = opts.compact ? SIGN_AB[sign] : SIGN_SKT[sign];
     if (lag != null) { const hs = s('text', { x: x + 5, y: y + small + 2, 'font-size': small, 'font-weight': 700, fill: 'var(--accent2)' }, g); hs.textContent = (sign - lag + 12) % 12 + 1; }
     if (lag === sign) s('path', { d: `M${x} ${y + 20}L${x + 20} ${y}`, stroke: 'var(--accent)', 'stroke-width': 2 }, g);
-    const list = (vargaSign('lagna', d) === sign ? ['lagna'] : []).concat(pl[sign] || []);
+    const list = cellList(sign, d, pl);
     // ārūḍha padas sit at the top, under the house number and sign name
     const ps = opts.compact ? Math.max(9, small * .9) : 9.5, padaY = y + small + 2 + ps * 1.25;
     if (ar[sign]) { const at = s('text', { x: x + 6, y: padaY, 'font-size': ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); at.textContent = ar[sign].join(' ');
@@ -515,14 +522,14 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
     let bottom = y + H - 6;
     if (d === 1) { const ah = aspectMarks(g, sign, x + 6, bottom, 'start', am, maxW); bottom -= ah; const rh = rashiMarks(g, sign, x + 6, bottom, 'start', am * .95, maxW); bottom -= rh; }
     // grahas fill the space between: shrink the line height (and drop the icon) when a sign is crowded
-    let fs = opts.compact ? Math.max(10.5, Math.min(18, W * .15 * (list.length > 4 ? .8 : 1))) : 12.5, lineH = opts.compact ? fs * 1.22 : 18;
-    const top = ar[sign] ? padaY + (opts.compact ? fs * 1.3 : 21) : y + (opts.compact ? small * 2.4 : 32), room = bottom - fs * .9 - top;
+    let fs = opts.compact ? Math.max(10.5, Math.min(18, W * .15 * (list.length > 4 ? .8 : 1))) : 14.5, lineH = opts.compact ? fs * 1.22 : 20;
+    const top = ar[sign] ? padaY + (opts.compact ? fs * 1.3 : 23) : y + (opts.compact ? small * 2.4 : 34), room = bottom - fs * .9 - top;
     let compact = opts.compact;
-    if (list.length > 1 && (list.length - 1) * lineH > room) { lineH = Math.max(9, room / (list.length - 1)); if (lineH < 18) { compact = true; fs = Math.min(fs, lineH * .85); } }
+    if (list.length > 1 && (list.length - 1) * lineH > room) { lineH = Math.max(9, room / (list.length - 1)); if (lineH < 20) { compact = true; fs = Math.min(fs, lineH * .8); } }
     list.forEach((gid, k) => grahaLine(g, gid, x + 6, top + k * lineH, d, { compact, fs }));
     g.addEventListener('click', () => { const hh = houseOf(sign); if (hh && d === 1) go('#/house/' + hh); });
   }
-  s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
+  if (!opts.noMid) s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
   if (!opts.noTitle) {
     const t = s('text', { x: x0 + 2 * W, y: y0 + 2 * H - 4, 'text-anchor': 'middle', 'font-size': opts.compact ? Math.max(15, W * .17) : 18, 'font-weight': 800, fill: 'var(--ink)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''}`;
     const t2 = s('text', { x: x0 + 2 * W, y: y0 + 2 * H + 16, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t2.textContent = opts.sub || (DIV_AREA[d] || '');
@@ -542,7 +549,7 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     s('polygon', { points: poly.map(p => p.join(',')).join(' '), class: hIdx === 0 ? 'cellbg lagna' : 'cellbg', 'stroke-width': 1.3 }, g);
     // one stack, top to bottom: ārūḍha padas, sign number, grahas, rāśi drishti (◇), graha drishti. It is measured first,
     // centred on the house, kept inside its polygon, and shrunk in steps when a crowded house cannot hold it.
-    const list = (hIdx === 0 ? ['lagna'] : []).concat(pl[sign] || []), maxW = big ? S0 * .34 : S0 * .26;
+    const list = cellList(sign, d, pl), maxW = big ? S0 * .34 : S0 * .26;
     const ys = poly.map(p2 => p2[1]), minY = Math.min(...ys), maxY = Math.max(...ys);
     // horizontal span of the polygon at height y (the houses are triangles and diamonds)
     const spanAt = (y) => { const xs = []; poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length]; if ((a[1] - y) * (b[1] - y) <= 0 && a[1] !== b[1]) xs.push(a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1])); });
@@ -551,7 +558,7 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     // height, so the side triangles use their full width instead of being centred on the centroid near the edge
     const layout = (k, mw = maxW) => {
       // a graha row's raised flags (ᴿ, ◎) sit a fixed 4 px up, so rows keep that allowance when the stack shrinks
-      const nfs = (opts.compact ? 10 : 12) * k, fs = (opts.compact ? 9.5 : 11.5) * k, lineH = fs * 1.05 + 4, ps = 9 * k;
+      const nfs = (opts.compact ? 10 : 12.5) * k, fs = (opts.compact ? 9.5 : 13) * k, lineH = fs * 1.05 + 4, ps = 9.5 * k;
       const as = (opts.compact ? 8.5 : 10) * k, rs = (opts.compact ? 8 : 9.5) * k;
       const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, mw) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, mw) : [[]];
       const rLines = rl[0].length ? rl.length : 0, aLines = al[0].length ? al.length : 0;
@@ -593,10 +600,12 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     g.addEventListener('click', () => { if (d === 1) go('#/house/' + (hIdx + 1)); });
   });
 }
+/* South Indian cell size (user units); fonts stay fixed, so a bigger cell leaves more room for grahas and marks */
+const SOUTH_W = 160;
 function chartSVG(kind, d, opts = {}) {
-  const svg = s('svg', { viewBox: kind === 'north' ? '-4 -4 448 448' : '-4 -4 568 491', role: 'img', 'aria-label': `D${d} ${kind === 'north' ? 'North' : 'South'} Indian chart`, class: 'chart ' + kind });
-  if (kind === 'north') { northGrid(svg, d, 0, 0, 440, opts); const t = s('text', { x: 220, y: 436, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''} · North Indian`; }
-  else southGrid(svg, d, 0, 0, 140, opts);
+  const svg = s('svg', { viewBox: kind === 'north' ? '-4 -4 528 528' : `-4 -4 ${4 * SOUTH_W + 8} ${(4 * SOUTH_W * .86 + 11).toFixed(0)}`, role: 'img', 'aria-label': `D${d} ${kind === 'north' ? 'North' : 'South'} Indian chart`, class: 'chart ' + kind });
+  if (kind === 'north') { northGrid(svg, d, 0, 0, 520, opts); const t = s('text', { x: 260, y: 516, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''} · North Indian`; }
+  else southGrid(svg, d, 0, 0, SOUTH_W, opts);
   return svg;
 }
 
@@ -725,6 +734,36 @@ function sudarshana() {
 /* ── the Nadi direction matrix: the zodiac as a spiral of three rounds through the four directions ───────────── */
 const NADI_Q = { Fire: { d: [1, -1], dir: 'East', trikona: 'Dharma', houses: '1 · 5 · 9', c: '#ff7a59' }, Earth: { d: [1, 1], dir: 'South', trikona: 'Artha', houses: '2 · 6 · 10', c: '#7cc982' },
   Air: { d: [-1, 1], dir: 'West', trikona: 'Kama', houses: '3 · 7 · 11', c: '#e7c35a' }, Water: { d: [-1, -1], dir: 'North', trikona: 'Moksha', houses: '4 · 8 · 12', c: '#6fa8f5' } };
+/* the four Nadi directions as quadrants inside a square of the given side centred at (cx, cy): each holds the grahas
+   (and the lagna) in the signs of its element, with degree and sign; North (water) top-left, East (fire) top-right,
+   West (air) bottom-left, South (earth) bottom-right, as on the Nadi page. Sizes scale with the square. */
+function nadiCentre(box, side, cx = 0, cy = 0) {
+  const half = side / 2, ELS = ['Fire', 'Earth', 'Air', 'Water'], pad = half * .06;
+  const ids = ['lagna'].filter(() => ASC != null).concat(GRAHA_ORDER.filter(g => GR[g]));
+  const lonOfId = g => g === 'lagna' ? ASC : GR[g].lon;
+  for (const el of ELS) {
+    const q = NADI_Q[el], [dx, dy] = q.d, x0 = cx + (dx > 0 ? 0 : -half), y0 = cy + (dy > 0 ? 0 : -half);
+    const g = s('g', { class: 'nadi-q', 'data-dir': q.dir.toLowerCase() }, box);
+    s('rect', { x: x0 + 1.5, y: y0 + 1.5, width: half - 3, height: half - 3, rx: half * .05, fill: q.c, 'fill-opacity': .16, stroke: q.c, 'stroke-opacity': .55, 'stroke-width': 1.2 }, g);
+    const hx = dx > 0 ? x0 + half - pad : x0 + pad, anchor = dx > 0 ? 'end' : 'start', hs = half * .11;
+    const t = s('text', { x: hx, y: y0 + pad + hs * .85, 'text-anchor': anchor, 'font-size': hs, 'font-weight': 800, 'letter-spacing': 1, fill: q.c, class: 'nadi-dir' }, g); t.textContent = q.dir.toUpperCase();
+    const tt = s('title', {}, t); tt.textContent = `${q.dir}: ${q.trikona} trikoṇa, ${el.toLowerCase()} signs, bhāvas ${q.houses} of the natural zodiac`;
+    const here = ids.filter(id => ELEMENT[signOf(lonOfId(id)) % 4] === el).sort((a, b) => (signOf(lonOfId(a)) - signOf(lonOfId(b))) || (norm(lonOfId(b)) - norm(lonOfId(a))));
+    const top = y0 + pad + hs * 1.35, avail = half - (top - y0) - pad * .6, rows = Math.max(1, here.length);
+    const lh = Math.min(half * .14, avail / rows), fs = Math.min(half * .12, lh * .86);
+    here.forEach((id, k) => {
+      const lon = lonOfId(id), meta = G[id] || G.lagna, y = top + fs * .9 + k * lh;
+      const row = s('g', { class: 'nadi-g', 'data-body': id, style: 'cursor:pointer' }, g);
+      const tx = s('text', { x: hx, y, 'text-anchor': anchor, 'font-size': fs, 'font-weight': 800, fill: meta.dot === '#E6E9F0' ? 'var(--ink)' : meta.dot, class: 'gtxt' }, row);
+      tx.textContent = meta.abbr + (flags(id) ? ' ' + flags(id) : '');
+      const d2 = s('tspan', { 'font-size': fs * .8, 'font-weight': 500, fill: 'var(--muted)' }, tx); d2.textContent = ` ${inSignDM(lon)} ${SIGN_AB[signOf(lon)]}`;
+      row.addEventListener('mousemove', ev => placeTip(ev, id));
+      row.addEventListener('mouseleave', untip);
+      if (id !== 'lagna') row.addEventListener('click', ev => { ev.stopPropagation(); go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id); });
+    });
+    if (!here.length) { const e = s('text', { x: hx, y: top + half * .08, 'text-anchor': anchor, 'font-size': half * .08, fill: 'var(--muted)', 'font-style': 'italic' }, g); e.textContent = 'no graha'; }
+  }
+}
 function nadiLinks(id) { /* report.nadi@0.1: trines (same element and direction), 2nd/12th and 7th from the graha's sign; a retrograde graha also acts from the previous sign */
   const gr = GR[id]; if (!gr) return [];
   const homes = [signOf(gr.lon)]; if (gr.retro && !['rahu', 'ketu'].includes(id)) homes.push((signOf(gr.lon) + 11) % 12);

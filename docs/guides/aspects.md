@@ -61,7 +61,7 @@ aspects add Mars +15 at 90–120° and 210–240°, Jupiter +30 at 120–150° a
 ## Additional aspects (optional)
 
 Two conventions used by some practitioners. They are computed in `vedic.drishti.additional` and shown in the studio
-only when **additional aspects** is switched on. It is off by default.
+only when **additional graha aspects** or **additional rāśi aspects** is switched on. Both are off by default.
 
 ### Retrograde shadow (ʳ)
 
@@ -109,6 +109,9 @@ Each entry has:
 | Aspects page | the matrix, aspects on houses and cusps (D1, D9) | a table: who casts, why, from where, onto what |
 | Graha page | aspects cast and received | the additional aspects it casts |
 
-Switch them on in the **Layers** of the Jyotish Chakra, **Show** on the Charts page, or **Additional** on the
-Aspects page. One switch covers all of them. The **Include** switches also hide the outer planets and the upagrahas
+Switch them on in the **Additional** group of the Jyotish Chakra, **Show** on the Charts page, or **Additional** on
+the Aspects page. There are two switches, and they work separately: **additional graha aspects** (the graha marks
+such as `Saʳ` and `Ju⇄`) and **additional rāśi aspects** (the extra ◇ rāśi marks). Each switch also filters the
+Aspects page tables and the graha pages. The normal marks have their own switches too: **graha aspects**, **rāśi
+aspects (◇)** and **ārūḍha padas** (the padas at the top of each rāśi). The **Include** switches also hide the outer planets and the upagrahas
 everywhere.

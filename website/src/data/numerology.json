@@ -97,6 +97,7 @@
   ],
   "input": {
    "date_of_birth": null,
+   "gender": null,
    "name": "Ada Lovelace"
   },
   "interpretations": [],
@@ -106,13 +107,13 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.3.2",
+   "engine_version": "0.3.3",
    "provider": null,
    "rulesets": [
     "numerology.chaldean@0.1"
    ]
   },
-  "schema_version": "0.3.2",
+  "schema_version": "0.3.3",
   "warnings": []
  },
  "pythagorean": {
@@ -258,6 +259,7 @@
   ],
   "input": {
    "date_of_birth": "1815-12-10",
+   "gender": null,
    "name": "Ada Lovelace"
   },
   "interpretations": [],
@@ -267,13 +269,13 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.3.2",
+   "engine_version": "0.3.3",
    "provider": null,
    "rulesets": [
     "numerology.pythagorean@0.1"
    ]
   },
-  "schema_version": "0.3.2",
+  "schema_version": "0.3.3",
   "warnings": []
  }
 }

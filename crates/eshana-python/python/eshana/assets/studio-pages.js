@@ -17,6 +17,8 @@ const tabs = (items, cur, onPick) => h('div', { class: 'tabs', role: 'tablist' }
 const visToggle = (key, text) => h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: S[key] !== false, onchange: e => { S[key] = e.target.checked; save(); applyVisibility(); route(); } }), text);
 const visGroup = () => h('div', { class: 'grp' }, h('b', {}, 'Include'), visToggle('showOuter', 'Uranus, Neptune, Pluto'), visToggle('showUpa', 'upagrahas'));
 const toggle = (key, text, after) => h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: !!S.layers[key], onchange: e => { S.layers[key] = e.target.checked; save(); after(); } }), text);
+/* additional aspects shown under the two switches: graha drishti (and exchange marks) and rāśi drishti */
+const extraShown = d => d.drishti === 'rashi' ? !!S.layers.extra_rashi : !!S.layers.extra_aspects;
 const pageHead = (sig, title, sub) => h('header', { class: 'phead' }, h('span', { class: 'phead-sigil', html: sigil(sig, 'big') }), h('div', {}, h('h2', {}, title), sub ? h('p', { class: 'lead' }, sub) : null));
 const T = iso => Date.parse(iso);
 const missing = (what, why) => h('div', { class: 'card empty' }, h('p', {}, `${what} is not available for this chart.`), note(why));
@@ -66,14 +68,15 @@ page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
     h('div', { class: 'toolbar' },
       h('div', { class: 'grp' }, h('b', {}, 'Centre'), centre('south', 'South Indian'), centre('north', 'North Indian'), centre('lanes', 'Orbit lanes')), visGroup(),
       h('div', { class: 'grp' }, h('b', {}, 'Rings'), toggle('markers', 'markers', redraw), toggle('ticks', 'degrees', redraw), toggle('nak', 'nakshatras', redraw), toggle('pada', 'padas', redraw), toggle('dres', 'dreshkāṇas', redraw), toggle('houses', 'bhāvas', redraw), toggle('sav', 'SAV', redraw)),
-      h('div', { class: 'grp' }, h('b', {}, 'Layers'), toggle('needles', 'needles', redraw), toggle('drishti', 'drishti arcs', redraw), toggle('aspect_marks', 'aspect marks', redraw), toggle('rashi_marks', 'rāśi drishti marks', redraw), toggle('extra_aspects', 'additional aspects', redraw), toggle('rashi_drishti', 'rāśi drishti lines', redraw), toggle('west_aspects', 'Western aspects', redraw), transit ? toggle('transits', 'transits', redraw) : null),
+      h('div', { class: 'grp' }, h('b', {}, 'Layers'), toggle('needles', 'needles', redraw), toggle('drishti', 'drishti arcs', redraw), toggle('aspect_marks', 'graha aspects', redraw), toggle('rashi_marks', 'rāśi aspects (◇)', redraw), toggle('rashi_drishti', 'rāśi drishti lines', redraw), toggle('arudha', 'ārūḍha padas', redraw), toggle('west_aspects', 'Western aspects', redraw), transit ? toggle('transits', 'transits', redraw) : null),
+      h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', redraw), toggle('extra_rashi', 'additional rāśi aspects', redraw)),
       h('div', { class: 'grp' }, h('b', {}, 'Turn'), h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'template'), onclick: () => { S.orientation = 'template'; save(); redraw(); } }, 'Mesha at 11'),
         h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'lagna'), disabled: ASC == null, onclick: () => { S.orientation = 'lagna'; save(); redraw(); } }, 'Lagna at top'),
         h('label', { class: 'tog' }, h('input', { type: 'checkbox', id: 'turn-on-select', checked: S.turnOnSelect !== false, onchange: e => { S.turnOnSelect = e.target.checked; save(); if (FOCUS) focusSeg(FOCUS[0], FOCUS[1], panel); } }), 'turn to selection'))),
     transit && S.layers.transits ? transitControls() : null,
     h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, side),
     h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:#6FAF1F' }), 'pushkara navāṃśa'), h('span', {}, h('i', { style: 'background:#3ED9E4' }), 'vargottama'), h('span', {}, h('i', { style: 'background:#D7141F' }), 'gaṇḍānta'),
-      h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · ◎ own · V vargottama')));
+      h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · △ mūlatrikoṇa · ◎ own · V vargottama')));
   b.append(grahaLegend());
   renderWheel(host, panel); resetFocus(panel);
 }, { blurb: 'nakshatras, padas, navāṃśa and every point' });
@@ -85,9 +88,11 @@ page('charts', () => 'Charts', 'Chart', (b) => {
   const style = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.chart === v), onclick: () => { S.chart = v; save(); re(); } }, t);
   const icons = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.icons === v), onclick: () => { S.icons = v; save(); re(); } }, t);
   const kind = S.chart === 'north' ? 'north' : 'south';
+  // the D1 charts get full-width rows so grahas, padas and every aspect mark have room; the rest share a grid
+  const wide = h('div', { class: 'wide-charts' });
+  wide.append(card(kind === 'north' ? 'Rāśi · D1 (North Indian)' : 'Rāśi · D1', h('div', { class: 'figure wide' }, chartSVG(kind, 1))));
+  if (S.chart === 'both') wide.append(card('Rāśi · D1 (North Indian)', h('div', { class: 'figure wide' }, chartSVG('north', 1))));
   const grid = h('div', { class: 'grid2' });
-  grid.append(card('Rāśi · D1', h('div', { class: 'figure' }, chartSVG(kind, 1))));
-  if (S.chart === 'both') grid.append(card('Rāśi · D1 (North Indian)', h('div', { class: 'figure' }, chartSVG('north', 1))));
   const ov = S.chalit || 'none';
   if (ov !== 'none') {
     const fig = ov === 'circle' ? chalitCircle() : kind === 'south' ? chalitSquare() : null;
@@ -106,8 +111,9 @@ page('charts', () => 'Charts', 'Chart', (b) => {
     h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian'), style('both', 'Both')),
       h('div', { class: 'grp' }, h('b', {}, 'Icons'), icons('sphere', 'Spheres'), icons('glyph', 'Glyphs'), icons('badge', 'Badges')), visGroup(),
       h('div', { class: 'grp' }, h('b', {}, 'Bhāva chalit'), ...[['none', 'Off'], ['square', 'Concentric squares'], ['circle', 'Circle']].map(([v, t]) => h('button', { class: 'tab', 'aria-selected': String((S.chalit || 'none') === v), onclick: () => { S.chalit = v; save(); re(); } }, t))),
-      h('div', { class: 'grp' }, h('b', {}, 'Show'), toggle('aspect_marks', 'aspect marks', re), toggle('rashi_marks', 'rāśi drishti marks', re), toggle('extra_aspects', 'additional aspects', re), toggle('arudha', 'ārūḍha padas', re))),
-    grid, grahaLegend(), note('In each house: graha, degree, nakshatra; small marks R retrograde, C combust, ↑ exalted, ↓ debilitated, ◎ own sign, V vargottama. Translucent letters along the bottom of a house are the grahas aspecting it (graha drishti; * special); ◇ letters above them are rāśi drishti. Hover a graha to light up the houses it aspects.'));
+      h('div', { class: 'grp' }, h('b', {}, 'Show'), toggle('aspect_marks', 'graha aspects', re), toggle('rashi_marks', 'rāśi aspects (◇)', re), toggle('arudha', 'ārūḍha padas', re)),
+      h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', re), toggle('extra_rashi', 'additional rāśi aspects', re))),
+    wide, grid, grahaLegend(), note('In each house: graha (higher degree higher), degree, nakshatra; small marks R retrograde, C combust, ↑ exalted, ↓ debilitated, △ mūlatrikoṇa, ◎ own sign, V vargottama. Translucent letters along the bottom of a house are the grahas aspecting it (graha drishti; * special); ◇ letters above them are rāśi drishti. Hover a graha to light up the houses it aspects.'));
 }, { blurb: 'rāśi, navāṃśa, bhāva chalit, Sudarshana' });
 
 /* ── vargas ───────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -179,7 +185,7 @@ page('planet', (id) => G[id] ? `${G[id].en}` : 'Graha', 'Grahas & bhāvas', (b, 
     h('div', { class: 'grid2' },
       card('Aspects it casts', given.length ? table(['To', 'House', 'Graha drishti', 'Virūpa'], given) : note('none on grahas'), signsAspected.length ? table(['House', 'Sign', 'Bhāva', 'Grahas there', 'Kind'], signsAspected) : null),
       card('Aspects it receives', received.length ? table(['From', 'House', 'Graha drishti', 'Virūpa'], received) : note('none'))),
-    S.layers.extra_aspects ? card('Additional aspects it casts', extraTable(ADDITIONAL.filter(d => d.from === id)), note(EXTRA_NOTE)) : null,
+    S.layers.extra_aspects || S.layers.extra_rashi ? card('Additional aspects it casts', extraTable(ADDITIONAL.filter(d => d.from === id && extraShown(d))), note(EXTRA_NOTE)) : null,
     h('div', { class: 'grid2' },
       card('Yogas and doshas it takes part in', yog.length ? h('ul', { class: 'list' }, yog.map(y => h('li', {}, h('b', {}, y.name), ' — ', y.rule))) : note('none present')),
       card('Vargas', table(['Varga', 'Sign', 'Degree', ''], vargaRows))),
@@ -456,8 +462,8 @@ page('aspects', () => 'Aspects', 'Grahas & bhāvas', (b) => {
     h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Chart'), tabs([['d1', 'D1 · rāśi'], ['d9', 'D9 · navāṃśa']], vg, k => { ASP_VARGA = k; route(); })),
       h('div', { class: 'grp' }, h('b', {}, 'View'), tabs(views, ASP_VIEW, k => { ASP_VIEW = k; route(); }))),
     card(null, body),
-    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'show additional aspects (retrograde shadow, parivartana)', () => route()))),
-    S.layers.extra_aspects ? card('Additional aspects', extraTable(ADDITIONAL), note(EXTRA_NOTE)) : null,
+    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects (retrograde shadow, parivartana)', () => route()), toggle('extra_rashi', 'additional rāśi aspects', () => route()))),
+    S.layers.extra_aspects || S.layers.extra_rashi ? card('Additional aspects', extraTable(ADDITIONAL.filter(extraShown)), note(EXTRA_NOTE)) : null,
     note(a.note), a.house_conventions ? note(a.house_conventions) : null,
     note('Rāhu and Ketu have no sputa drishti in Bṛhat Parāśara Horā Śāstra, so their bars are empty; some programs assign them aspects by other conventions.'));
 }, { blurb: 'every aspect, D1 and D9, as charts' });
@@ -934,7 +940,22 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
       P.capstone ? tile('capstone', `Capstone (${P.capstone.letter})`, P.capstone.value) : null,
       P.first_vowel ? tile('first_vowel', `First vowel (${P.first_vowel.letter})`, P.first_vowel.value) : null,
       P.bridge_life_path_expression != null ? tile('bridge_life_path_expression', 'Bridge: path ↔ expression', P.bridge_life_path_expression) : null,
-      P.bridge_soul_personality != null ? tile('bridge_soul_personality', 'Bridge: soul ↔ personality', P.bridge_soul_personality) : null));
+      P.bridge_soul_personality != null ? tile('bridge_soul_personality', 'Bridge: soul ↔ personality', P.bridge_soul_personality) : null,
+      P.growth ? tile('growth', 'Growth (first name)', P.growth) : null,
+      P.intensity && P.intensity.numbers.length ? tile('intensity', `Intensity (${P.intensity.numbers.join(', ')})`, P.intensity.numbers[0]) : null));
+    // letter transits and essence (name-based timing): now, and year by year
+    if (P.transits_by_age) {
+      const tr = P.transits_at_reference, L = x => x ? `${x.letter} (${x.value})` : '—';
+      if (tr) out.push(h('h3', { class: 'section-t' }, `Letter transits now (age ${tr.age})`), h('div', { class: 'ntiles' },
+        tr.physical ? tile('transit_physical', `Physical · ${tr.physical.letter}`, tr.physical.value, { small: true }) : null,
+        tr.mental ? tile('transit_mental', `Mental · ${tr.mental.letter}`, tr.mental.value, { small: true }) : null,
+        tr.spiritual ? tile('transit_spiritual', `Spiritual · ${tr.spiritual.letter}`, tr.spiritual.value, { small: true }) : null,
+        tile('essence', 'Essence', tr.essence)));
+      out.push(h('details', { class: 'card ntransits' }, h('summary', {}, 'Letter transits and essence, year by year (ages 0–99)'),
+        table(['Age', 'Physical (first name)', 'Mental (middle names)', 'Spiritual (last name)', 'Essence'],
+          P.transits_by_age.map(y => [tr && y.age === tr.age ? h('b', {}, `${y.age} · now`) : String(y.age), L(y.physical), L(y.mental), L(y.spiritual), h('b', {}, String(y.essence))])),
+        note(P.conventions && P.conventions.transits ? P.conventions.transits : '')));
+    }
     if (P.cycles_at_reference) { const c = P.cycles_at_reference;
       out.push(h('h3', { class: 'section-t' }, `Now · ${c.date}${age != null ? ` (age ${age})` : ''}`), h('div', { class: 'ntiles' }, tile('personal_year', 'Personal year', c.personal_year), tile('personal_month', 'Personal month', c.personal_month), tile('personal_day', 'Personal day', c.personal_day), tile('universal_year', 'Universal year', c.universal_year))); }
     if (P.pinnacles) {
@@ -983,7 +1004,7 @@ page('numerology', () => 'Numerology', 'Traditions', (b) => {
         facts([['Missing', L.missing.join(', ') || 'none'], ['Repeated', L.repeated.join(', ') || 'none']]), note(L.conventions)),
       card('Arrows (lines of the grid)', table(['Line', 'Numbers', 'State', 'Said to show'], arrows.map(a => [a.name, a.numbers.join('-'), h('span', { class: 'badge ' + (a.state === 'complete' ? 'b-up' : a.state === 'missing' ? 'b-down' : 'b-soft') }, a.state), (NR.arrows || {})[a.name] || ''])), note((NR.roles || {}).lo_shu || ''))));
     if (L.kua) { const K = L.kua, KR = NR.kua || {};
-      out.push(card('Kua number (Eight Mansions)', facts([['Man', h('span', {}, h('b', {}, String(K.male)), ` · ${K.male_group} group`)], ['Woman', h('span', {}, h('b', {}, String(K.female)), ` · ${K.female_group} group`)], ['Solar year', String(K.solar_year)]]),
+      out.push(card('Kua number (Eight Mansions)', K.number != null ? h('div', { class: 'stat kua-mine' }, h('b', {}, String(K.number)), h('span', {}, ` ${K.gender} · ${K.group} group`)) : null, facts([['Man', h('span', { class: K.gender === 'male' ? 'kua-sel' : '' }, h('b', {}, String(K.male)), ` · ${K.male_group} group`)], ['Woman', h('span', { class: K.gender === 'female' ? 'kua-sel' : '' }, h('b', {}, String(K.female)), ` · ${K.female_group} group`)], ['Solar year', String(K.solar_year)]]), K.number == null ? note('Give the gender (--gender male|female) to pick one.') : null,
         KR.about ? h('p', {}, label('interpretation'), ' ', KR.about) : null,
         KR.groups ? note(`East group: ${KR.groups.east} West group: ${KR.groups.west}`) : null, note(K.conventions))); }
   }

@@ -107,5 +107,6 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Solar arc and other progressions, returns | planned (`WES-05`) |
 | Human Design: design instant, gates and lines, channels, centres, type, authority, profile; detailed or schematic BodyGraph | verified |
 | Numerology: Pythagorean and Chaldean, extended numbers, Indian (mulank, bhagyank), Lo Shu | verified |
+| Numerology: Kua by gender, Chaldean compounds 10–52, growth, intensity, letter transits and essence by year | verified (engine tests, studio journeys) |
 | Ephemeris tables at any step; sign ingresses including retrograde re-entries | verified |
 | Stations, eclipses, returns | planned (`AST-06`) |
