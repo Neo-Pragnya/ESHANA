@@ -1998,6 +1998,76 @@
       "milestone": "0.4 · review round 6",
       "source": "owner review round 6",
       "evidence": "journey 'dark theme: chart writing has readable contrast'"
+    },
+    {
+      "id": "FB-45",
+      "area": "vedic",
+      "title": "Charts: graha text larger and bolder than marks, bigger full-width charts, no crunching",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "journey 'round 8 charts'"
+    },
+    {
+      "id": "FB-46",
+      "area": "vedic",
+      "title": "Jyotish Chakra: South Indian centre with the four Nadi directions in its middle square",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "journey 'the South Indian centre shows the four Nadi directions'"
+    },
+    {
+      "id": "FB-47",
+      "area": "num",
+      "title": "Gender with the name; Kua for the person",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "kua_numbers; test_report gender; numerology Kua journey"
+    },
+    {
+      "id": "FB-48",
+      "area": "num",
+      "title": "More name numerology: growth, intensity, letter transits, essence",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "growth_intensity_and_transits; numerology growth journey"
+    },
+    {
+      "id": "FB-49",
+      "area": "vedic",
+      "title": "Grahas in a rāśi ordered by degree, higher degree on top",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "journey 'round 8 charts' degree order"
+    },
+    {
+      "id": "FB-50",
+      "area": "vedic",
+      "title": "Separate filters: rāśi aspects, additional rāśi aspects, ārūḍha padas",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "journey 'round 8 charts' filters"
+    },
+    {
+      "id": "FB-51",
+      "area": "vedic",
+      "title": "Mūlatrikoṇa legend (△)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "0.4 · review round 8",
+      "source": "owner review round 8",
+      "evidence": "journey 'round 8 charts' △"
     }
   ]
 }

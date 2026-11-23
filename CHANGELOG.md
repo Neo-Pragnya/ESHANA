@@ -5,6 +5,10 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-22
+
+Review round 8. Schema 0.3.3 adds fields only.
+
 ### Added (review round 8)
 - Charts: graha text larger and bolder than the aspect marks; bigger South Indian cells; full-width D1 charts; light-
   theme graha colours deepened. Inside a rāśi the higher degree is written higher.

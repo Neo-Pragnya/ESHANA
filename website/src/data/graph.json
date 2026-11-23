@@ -210,7 +210,7 @@
    "causal",
    "hypothesized"
   ],
-  "schema_version": "0.3.2"
+  "schema_version": "0.3.3"
  },
  "mermaid": [
   "flowchart LR",
