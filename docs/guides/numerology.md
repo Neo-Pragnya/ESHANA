@@ -29,6 +29,7 @@ For "Ada Lovelace" (Pythagorean): letters `ADALOVELACE`, expression 36 → 9, so
 | `--y-vowel` | consonant | how Y splits vowels from consonants |
 | `--life-path-method` | `reduce_parts` | reduce month, day and year separately then sum; or `total_digits` |
 | `--year` | none | adds the personal year for that calendar year |
+| `--gender` | none | `male` or `female`; picks the person's own Kua number (anything else is refused with `ESH-RULES`) |
 
 ## Normalisation is visible
 
@@ -62,19 +63,36 @@ The conventions are stated in each result's `conventions` field:
 What each number is *said to describe* is interpretation. It is not in the engine: the studio shows paraphrased
 notes, labelled as such.
 
+## Growth, intensity, letter transits and essence
+
+`numerology.pythagorean.extended` also carries, for a name:
+
+| Field | What it is |
+|---|---|
+| `growth` | the first name alone, reduced (also called the key number) |
+| `intensity` | the digits that occur in the name more often than the average count per digit (letters ÷ 9) |
+| `transits_by_age` | ages 0–99. Each year has a **physical** letter from the first name, a **mental** letter from the middle name(s) and a **spiritual** letter from the last name. Each letter rules for as many years as its value, and the name repeats |
+| `transits_at_reference` | the same for the age on `reference_date` |
+| `essence` | in each year, the sum of the three transit values, reduced |
+
+For example, "Ada Lovelace" has no middle name, so it has no mental transit. Its physical letters are A (1 year),
+D (4 years) and A (1 year), and then the cycle repeats. The studio shows growth, intensity and the current transits
+and essence as tiles, with a year-by-year table. What each number is said to mean is labelled interpretation.
+
 ## Not here yet
 
-Name-change cycles, other alphabets (Hebrew gematria, abjad), Kua numbers and compound-number readings. Each will
-be its own named rule pack, with a cited source.
+Name-change cycles and other alphabets (Hebrew gematria, abjad). Each will be its own named rule pack, with a cited
+source.
 
 ## Kua number (Eight Mansions)
 
-`numerology.lo_shu` carries `kua`: the Kua (Gua) number of Eight Mansions feng shui for a man and for a woman, since
-ESHANA does not take sex as an input. The Chinese solar year starts at Lichun, taken as 4 February, so a birth on
+`numerology.lo_shu` carries `kua`: the Kua (Gua) number of Eight Mansions feng shui for a man and for a woman. Both are always
+listed; pass `gender` (`--gender`, `gender=` in Python) and `kua` also gains `gender`, `number` and `group` for that
+person. The Chinese solar year starts at Lichun, taken as 4 February, so a birth on
 2 February 1991 counts as 1990. Reduce the year's last two digits to one digit *r*; before 2000 the man's Kua is
 10 − *r* and the woman's *r* + 5, from 2000 on 9 − *r* and *r* + 6 (reduced to 1–9). A Kua of 5 is read as 2 for a
 man and 8 for a woman. Kua 1, 3, 4 and 9 form the east group, 2, 6, 7 and 8 the west group. Example: 15 May 1990
-gives man 1 (east), woman 8 (west). The studio shows both in a card under the Lo Shu grid.
+gives man 1 (east), woman 8 (west). The studio shows both in a card under the Lo Shu grid and highlights the person's own when a gender is given.
 
 ## Compound numbers (Chaldean)
 

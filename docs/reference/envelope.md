@@ -32,4 +32,6 @@ removed or renamed field bumps it. Consumers should ignore unknown keys and pin 
 
 Schema 0.3.2 adds the analysis attributes (`vedic.maitri.*`, `vedic.dasha.*` for seven more systems, `vedic.aux.*`, `vedic.chakra.*`, `vedic.varshaphala`, `vedic.panch_pakshi`), `vedic.jaimini.arudha_padas_d9`, `lordships_by_varga` in the special points, `significator_table` in `vedic.kp` and `kua` in `numerology.lo_shu`.
 
+Unreleased (round 8), adding fields only: the numerology request takes `gender` (`male` or `female`), echoed in `input`; `numerology.lo_shu.kua` gains `gender`, `number` and `group` when it is given; `numerology.pythagorean.extended` gains `growth`, `intensity`, `transits_by_age` and `transits_at_reference` (each year with `essence`).
+
 Schema 0.3.1 adds `tone` (1–6) and `base` (1–5) to every Human Design activation, next to `gate`, `line` and `color`. It also adds the `vedic.upagrahas` and `vedic.drishti.additional` attributes and `houses`, `house_and_lord` and `house_madhya` in `vedic.aspects`.
