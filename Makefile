@@ -109,9 +109,9 @@ dist: build-release wasm
 	python3 scripts/pypi_readme.py
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin sdist --out ../../dist
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
-# the SBOM for what is in dist/ (SEC-03); the attest workflow writes the published one after upload
+# the SBOM for what is in dist/ (SEC-03), kept out of dist/ so publish does not upload it; the attest workflow attaches the published one to the GitHub release
 sbom:
-	python3 scripts/sbom.py --out dist/eshana-$(VERSION).cdx.json --dist dist
+	python3 scripts/sbom.py --out target/sbom/eshana-$(VERSION).cdx.json --dist dist
 dist-linux: wasm
 	rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --zig \

@@ -74,7 +74,7 @@ gh attestation verify eshana-<version>-<tags>.whl --repo Neo-Pragnya/ESHANA
 
 The wheels are built on the maintainer's machine, so the provenance says which workflow and commit observed those
 digests, not that GitHub built them; tag-built wheels (section 6) would make it build provenance in full.
-`make sbom` writes the same SBOM for a local `dist/` before upload.
+`make sbom` writes the same SBOM for a local `dist/` (into `target/sbom/`, so `make publish` does not upload it).
 
 ## 5. Update the website
 
