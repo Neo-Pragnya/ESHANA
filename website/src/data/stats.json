@@ -35,9 +35,9 @@
  "tasks": 258,
  "tasks_by_status": {
   "implemented": 14,
-  "proposed": 15,
+  "proposed": 14,
   "released": 1,
-  "verified": 228
+  "verified": 229
  },
  "tzdb_version": "2026f",
  "version": "0.5.0"
