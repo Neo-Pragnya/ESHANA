@@ -43,6 +43,51 @@ pub const HOUSE_SYSTEMS: &[Method] = &[
         "stable",
         "time-trisection of the diurnal and nocturnal semi-arcs; undefined near the poles",
     ),
+    m(
+        "porphyry",
+        "stable",
+        "each quadrant between the angles trisected in ecliptic longitude",
+    ),
+    m(
+        "sripati",
+        "stable",
+        "bhāva chalit: midpoints of the Porphyry cusps, which become bhāva madhyas",
+    ),
+    m(
+        "koch",
+        "stable",
+        "Ascendants at the times that trisect the MC degree's semi-diurnal arc; undefined near the poles",
+    ),
+    m(
+        "regiomontanus",
+        "stable",
+        "the equator in 30° parts, projected by circles through the horizon's north and south points",
+    ),
+    m(
+        "campanus",
+        "stable",
+        "the prime vertical in 30° parts, projected the same way",
+    ),
+    m(
+        "alcabitius",
+        "stable",
+        "the Ascendant degree's semi-arcs trisected in right ascension; undefined near the poles",
+    ),
+    m(
+        "topocentric",
+        "stable",
+        "Polich–Page: Regiomontanus-style circles with pole heights of 1/3 and 2/3 of tan φ",
+    ),
+    m(
+        "morinus",
+        "stable",
+        "the equator in 30° parts from the east point, projected along circles of ecliptic longitude",
+    ),
+    m(
+        "meridian",
+        "stable",
+        "axial rotation: the equator in 30° parts from the MC, projected along circles of declination",
+    ),
 ];
 
 /// Lunar node models.
@@ -269,7 +314,11 @@ mod tests {
 
     #[test]
     fn unknown_method_is_esh_method() {
-        assert_eq!(require("house_system", "koch").unwrap_err().code(), "ESH-METHOD");
+        assert_eq!(
+            require("house_system", "vehlow").unwrap_err().code(),
+            "ESH-METHOD"
+        );
+        assert_eq!(require("house_system", "koch").unwrap(), "koch");
         assert_eq!(require("nope", "x").unwrap_err().code(), "ESH-METHOD");
         assert_eq!(require("house_system", "placidus").unwrap(), "placidus");
     }

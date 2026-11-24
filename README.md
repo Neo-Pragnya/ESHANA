@@ -111,7 +111,7 @@ belong to one school, and readings someone wrote. ESHANA pulls them apart so eac
   "derived_attributes": [{ "id": "vedic.moon.nakshatra", "epistemic": "tradition_rule", "value": { "name": "Punarvasu", "pada": 3 } }],
   "interpretations": [],
   "calculation": { "ayanamsha": "lahiri", "house_system": "whole_sign", "config_hash": "fnv1a64:…" },
-  "provenance": { "engine_version": "0.4.4", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
+  "provenance": { "engine_version": "0.5.0", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
 }
 ```
 
@@ -451,7 +451,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 
 <!-- REFERENCE:START -->
 <details>
-<summary><b>⚙️ All 24 operations</b> (the <code>op</code> of a request)</summary>
+<summary><b>⚙️ All 25 operations</b> (the <code>op</code> of a request)</summary>
 
 | | `op` | What it answers |
 |---|---|---|
@@ -476,6 +476,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 | 📆 | `progressions` | secondary progressions with fractional age and named angle methods |
 | 🔢 | `kp_table` | the KP 1–249 horary number table |
 | 🎯 | `kp_horary` | a KP horary chart: the number fixes the Ascendant |
+| 🌄 | `rise_set` | rise, upper transit and set of any body, and twilight, for local days at a place |
 | 🧪 | `synthetic_chart` | positions you place by hand, labelled synthetic (the playground) |
 | 📊 | `research_window_score` | the experimental window score, with coverage and sensitivity |
 | ℹ️ | `info` | versions, operations, method families and ayanāṃśa definitions |
@@ -484,7 +485,7 @@ Fields of each: [docs/reference/request.md](docs/reference/request.md).
 </details>
 
 <details>
-<summary><b>🧰 All 25 CLI commands</b></summary>
+<summary><b>🧰 All 27 CLI commands</b></summary>
 
 | Command | What it does |
 |---|---|
@@ -513,6 +514,8 @@ Fields of each: [docs/reference/request.md](docs/reference/request.md).
 | `eshana doctor` | Show the environment, providers, rule packs and error codes |
 | `eshana explain` | Explain a stable error code, e.g. ESH-LATITUDE |
 | `eshana schema` | Print the JSON Schema of the result envelope |
+| `eshana rise-set` | Rise, upper transit and set of bodies, and twilight, for local days at a place |
+| `eshana kernel` | JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME` |
 
 Every command prints one JSON envelope; `--compact` for one line. Errors print an error envelope and exit 2.
 </details>
@@ -523,7 +526,7 @@ Every command prints one JSON envelope; `--compact` for one line. Errors print a
 | Family | Method ids |
 |---|---|
 | `ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` |
-| `house_system` | `whole_sign`, `equal`, `placidus` |
+| `house_system` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` |
 | `node_model` | `mean`, `true` |
 | `divisional_chart` | `d1`, `d2`, `d3`, `d4`, `d5`, `d6`, `d7`, `d8`, `d9`, `d10`, `d12`, `d16`, `d20`, `d24`, `d27`, `d30`, `d40`, `d45`, `d60` |
 | `year_convention` | `julian`, `gregorian`, `savana`, `sidereal` |

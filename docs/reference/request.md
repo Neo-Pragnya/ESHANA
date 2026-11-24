@@ -46,6 +46,7 @@ meaning).
 | `research_window_score` | `windows` (as a muhūrta or calendar result gives them); experimental model `research.window_score@0.1`, specified in `docs/design/research-models.md` |
 | `kp_table` | none; the 1–249 KP horary numbers |
 | `kp_horary` | `number` (1–249), `chart` (moment and place of judgement, sidereal settings, optional `kp_cusp_occupancy`) |
+| `rise_set` | `place` (with optional `altitude_m`), `date` (first local day), `timezone` or `utc_offset_minutes`, `days` (1–366, default 1), `bodies` (default Sun and Moon), `sunrise` (convention), `twilight` (default true), `config`, `spk_path` |
 | `methods` | none; returns every method family and id (`kind: methods`) |
 | `info` | none |
 
@@ -55,13 +56,15 @@ meaning).
 |---|---|---|
 | `when.utc` | string | alternative to `date`/`time`; not both |
 | `when.date`, `when.time`, `when.timezone`, `when.utc_offset_minutes`, `when.fold`, `when.uncertainty_minutes` | | see [Time](../concepts/time.md) |
+| `when.calendar` | string | `gregorian` (default, proleptic), `julian` or `auto` (Julian before 1582-10-15); signed years for BCE |
 | `place.latitude`, `place.longitude`, `place.altitude_m` | number | degrees |
 | `config.provider`, `.zodiac`, `.ayanamsha`, `.house_system`, `.node_model` | string | see [CLI](cli.md) |
+| `config.topocentric` | bool | positions as seen from `place` (parallax applied; up to ~1° for the Moon); `calculation.positions_reference` says which |
 | `system` | string | `vedic` or `western` |
 | `bodies` | array of ids | `sun`, `moon`, `mercury` … `pluto`, `mean_node`, `true_node` |
 | `divisions`, `dasha`, `year_convention` | | Vedic |
 | `aspects`, `orb_scale` | | Western |
-| `spk_path` | string | kernel for the `spk` provider |
+| `spk_path` | string | kernel for the `spk` provider: a path, or a catalogue name such as `de440` (see `eshana kernel list`) |
 | `assume_defaults` | bool | let the engine default a missing ayanāṃśa to Lahiri and **record** that; off by default |
 
 From Python: `eshana.execute(request_dict)` returns the envelope dict (or raises `EshanaError`). From the shell:

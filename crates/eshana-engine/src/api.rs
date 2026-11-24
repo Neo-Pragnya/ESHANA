@@ -10,7 +10,7 @@ use eshana_core::{
     SCHEMA_VERSION,
 };
 use eshana_ephemeris::{frames, provider_by_id, EphemerisProvider, ProviderOptions};
-use eshana_time::{FoldPolicy, Instant};
+use eshana_time::{Calendar, FoldPolicy, Instant};
 use serde::Deserialize;
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -37,6 +37,9 @@ pub struct When {
     pub fold: Option<String>,
     /// Birth-time uncertainty (± minutes) for an approximate time.
     pub uncertainty_minutes: Option<f64>,
+    /// Calendar of `date`: `gregorian` (proleptic, ISO 8601; the default), `julian`, or `auto` (Julian before
+    /// 1582-10-15). Years are astronomical: `-0043` is 44 BCE.
+    pub calendar: Option<String>,
 }
 
 /// A place on Earth.
@@ -65,6 +68,9 @@ pub struct ConfigIn {
     pub house_system: Option<String>,
     /// `mean` or `true`.
     pub node_model: Option<String>,
+    /// Positions as seen from the place (parallax applied; up to ~1° for the Moon) instead of from the Earth's
+    /// centre. Needs `place`. Default false.
+    pub topocentric: Option<bool>,
 }
 
 /// A chart-style request.
@@ -126,7 +132,7 @@ pub struct ChartRequest {
 }
 
 /// Every operation (`op`) a request may name. A unit test keeps this list and the [`Request`] enum in step.
-pub const OPERATIONS: [&str; 24] = [
+pub const OPERATIONS: [&str; 25] = [
     "positions",
     "chart",
     "human_design",
@@ -148,6 +154,7 @@ pub const OPERATIONS: [&str; 24] = [
     "progressions",
     "kp_table",
     "kp_horary",
+    "rise_set",
     "synthetic_chart",
     "research_window_score",
     "info",
@@ -211,6 +218,33 @@ pub struct IngressRequest {
     #[serde(default)]
     pub config: ConfigIn,
     /// SPK kernel path.
+    pub spk_path: Option<String>,
+}
+
+/// Rise, transit and set of bodies over local days at a place (AST-08).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RiseSetRequest {
+    /// The observer (latitude, longitude, altitude).
+    pub place: Place,
+    /// First local date, `YYYY-MM-DD`.
+    pub date: String,
+    /// IANA zone for the local days.
+    pub timezone: Option<String>,
+    /// Fixed offset in minutes east, when no zone is known.
+    pub utc_offset_minutes: Option<i32>,
+    /// Number of days (1–366). Default 1.
+    pub days: Option<u32>,
+    /// Body ids. Default sun and moon.
+    pub bodies: Option<Vec<String>>,
+    /// `upper_limb_refracted` (default), `centre_refracted` or `centre_unrefracted`.
+    pub sunrise: Option<String>,
+    /// Include civil, nautical and astronomical twilight. Default true.
+    pub twilight: Option<bool>,
+    /// Settings (provider).
+    #[serde(default)]
+    pub config: ConfigIn,
+    /// SPK kernel path or catalogue name.
     pub spk_path: Option<String>,
 }
 
@@ -442,6 +476,8 @@ pub enum Request {
     },
     /// Environment, providers and error catalogue.
     Info,
+    /// Rise, upper transit and set of bodies, and twilight, for local days at a place.
+    RiseSet(RiseSetRequest),
 }
 
 /// The engine. Holds provider instances so a kernel is read once per process.
@@ -468,6 +504,8 @@ struct Moment {
     center: Instant,
     half_width_days: f64,
     quality: &'static str,
+    /// How the date was read (calendar conversions, the pre-1582 reading), for the assumptions.
+    notes: Vec<String>,
 }
 
 fn resolve_when(w: &When) -> Result<Moment> {
@@ -478,20 +516,45 @@ fn resolve_when(w: &When) -> Result<Moment> {
                 "give either utc or date/time, not both".into(),
             ));
         }
+        if w.calendar.is_some() {
+            return Err(EshanaError::Input(
+                "calendar applies to a local date; a utc instant is always proleptic Gregorian (ISO 8601)"
+                    .into(),
+            ));
+        }
         return Ok(Moment {
             center: Instant::parse_utc(u)?,
             half_width_days: 0.0,
             quality: "exact",
+            notes: vec![],
         });
     }
     let date = w
         .date
         .as_deref()
         .ok_or_else(|| EshanaError::Input("when needs utc, or date (and time)".into()))?;
+    let cal = match w.calendar.as_deref() {
+        Some(c) => Calendar::parse(c)?,
+        None => Calendar::Gregorian,
+    };
+    let mut notes = vec![];
+    // no silent historical reading: a date before the Gregorian reform without a calendar says how it was read
+    let (g, conv) = eshana_time::parse_date_in(date, cal)?;
+    if w.calendar.is_none() && (i32::from(g.year()), g.month(), g.day()) < (1582, 10, 15) {
+        notes.push(format!(
+            "{date} read as proleptic Gregorian (ISO 8601); give calendar = julian or auto for a date written in the Julian calendar"
+        ));
+    }
+    if let Some(c) = conv {
+        notes.push(format!(
+            "calendar {}: {c}",
+            w.calendar.as_deref().unwrap_or("gregorian")
+        ));
+    }
     let civil = |time: &str| -> Result<Instant> {
         match (&w.timezone, w.utc_offset_minutes) {
-            (Some(z), _) => Instant::from_local_str(date, time, z, fold),
-            (None, Some(o)) => Instant::from_offset_str(date, time, o),
+            (Some(z), _) => Instant::from_local_str_in(date, time, z, fold, cal).map(|x| x.0),
+            (None, Some(o)) => Instant::from_offset_str_in(date, time, o, cal).map(|x| x.0),
             (None, None) => Err(EshanaError::Input(
                 "local time needs timezone (IANA name) or utc_offset_minutes; ESHANA will not assume one"
                     .into(),
@@ -505,17 +568,20 @@ fn resolve_when(w: &When) -> Result<Moment> {
                 center: Instant::from_jd_utc(start.jd_ut + 0.5),
                 half_width_days: 0.5,
                 quality: "date_only",
+                notes,
             })
         }
         (Some(t), Some(u)) if u > 0.0 => Ok(Moment {
             center: civil(t)?,
             half_width_days: u / 1440.0,
             quality: "approximate",
+            notes,
         }),
         (Some(t), _) => Ok(Moment {
             center: civil(t)?,
             half_width_days: 0.0,
             quality: "exact",
+            notes,
         }),
     }
 }
@@ -669,6 +735,7 @@ impl Engine {
             Request::Matching { a, b } => self.matching_op(a, b),
             Request::Ephemeris(r) => self.ephemeris_op(r),
             Request::Ingresses(r) => self.ingress_op(r),
+            Request::RiseSet(r) => self.rise_set_op(r),
             Request::Stations(r) => self.stations_op(r),
             Request::Crossings(r) => self.crossings_op(r),
             Request::Rulesets => Ok(json!({
@@ -775,6 +842,7 @@ impl Engine {
         let sidereal = cfg.zodiac == ZodiacSystem::Sidereal;
 
         assumptions.push("UTC is used as UT1 (differs by under 0.9 s)".into());
+        assumptions.extend(mo.notes.iter().cloned());
         if inst.zone.is_some() {
             assumptions.push(format!(
                 "civil time resolved with IANA tzdb {}",
@@ -809,8 +877,26 @@ impl Engine {
             let dec = (b.sin() * eps_true.cos() + b.cos() * eps_true.sin() * l.sin()).asin();
             (norm360(eshana_core::deg(ra)), eshana_core::deg(dec))
         };
+        let topo = r.config.topocentric.unwrap_or(false);
+        if topo && r.place.is_none() {
+            return Err(EshanaError::Input("topocentric positions need place".into()));
+        }
+        if topo {
+            assumptions.push("positions are topocentric: parallax for the place's latitude and altitude applied (Meeus ch. 40); speeds stay geocentric".into());
+        }
         for b in &wanted {
-            let p = provider.position(inst.jd_tt, *b)?;
+            let mut p = provider.position(inst.jd_tt, *b)?;
+            if let (true, Some(pl), Some(dist)) = (topo, r.place.as_ref(), p.distance_au) {
+                let obs = crate::rising::Observer {
+                    lat: pl.latitude,
+                    lon: pl.longitude,
+                    height_m: pl.altitude_m.unwrap_or(0.0),
+                };
+                let (l, bt) =
+                    crate::rising::topocentric(p.longitude_deg, p.latitude_deg, dist, inst.jd_ut, obs);
+                p.longitude_deg = l;
+                p.latitude_deg = bt;
+            }
             let lon = zodiac_lon(p.longitude_deg, &cfg, t);
             let mut o = Map::new();
             o.insert("id".into(), json!(b.id()));
@@ -1205,10 +1291,13 @@ impl Engine {
                 "birth_time_quality": mo.quality,
                 "time_window_minutes": if hw > 0.0 { json!(hw * 2.0 * 1440.0) } else { Value::Null },
                 "place": place_json,
+                // the date as written and its calendar, when a calendar was named (TIME-03)
+                "calendar": r.when.calendar.as_deref().map(|c| json!({"name": c, "date_as_written": r.when.date})),
             },
             "calculation": {
                 "system": system,
                 "frame": FRAME_APPARENT_ECLIPTIC_OF_DATE,
+                "positions_reference": if r.config.topocentric.unwrap_or(false) { "topocentric" } else { "geocentric" },
                 "provider": cfg.provider,
                 "zodiac": cfg.zodiac,
                 "ayanamsha": cfg.ayanamsha,
@@ -2426,6 +2515,68 @@ impl Engine {
         )
     }
 
+    fn rise_set_op(&self, r: &RiseSetRequest) -> Result<Value> {
+        let mut assumptions = vec![];
+        let cfg = build_config(&r.config, None, false, &mut assumptions)?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let days = r.days.unwrap_or(1);
+        if !(1..=366).contains(&days) {
+            return Err(EshanaError::Input("days must be 1 to 366".into()));
+        }
+        let conv = crate::panchanga::Rising::parse(r.sunrise.as_deref())?;
+        let bodies: Vec<Body> = match &r.bodies {
+            Some(b) => b.iter().map(|x| Body::parse(x)).collect::<Result<_>>()?,
+            None => vec![Body::Sun, Body::Moon],
+        };
+        if let Some(b) = bodies.iter().find(|b| b.is_node()) {
+            return Err(EshanaError::Input(format!(
+                "{} is a point, not a body that rises",
+                b.id()
+            )));
+        }
+        let obs = crate::rising::Observer {
+            lat: r.place.latitude,
+            lon: r.place.longitude,
+            height_m: r.place.altitude_m.unwrap_or(0.0),
+        };
+        let start = eshana_time::parse_date(&r.date)?;
+        let mut out = vec![];
+        for k in 0..days {
+            let jd = eshana_time::jd_from_gregorian(
+                i32::from(start.year()),
+                start.month() as u32,
+                f64::from(start.day()),
+            ) + f64::from(k);
+            let (y, m, d, _) = eshana_time::gregorian_from_jd(jd);
+            let date = eshana_time::iso_date(y, m, d);
+            let midnight = match (&r.timezone, r.utc_offset_minutes) {
+                (Some(z), _) => Instant::from_local_str(&date, "00:00", z, FoldPolicy::Earliest)?,
+                (None, Some(o)) => Instant::from_offset_str(&date, "00:00", o)?,
+                (None, None) => {
+                    return Err(EshanaError::Input(
+                        "rise_set needs timezone (IANA name) or utc_offset_minutes for the local days".into(),
+                    ))
+                }
+            };
+            let off = f64::from(midnight.civil_offset_s.unwrap_or(0));
+            let mut day = json!({"date": date, "bodies": bodies.iter().map(|b| crate::rising::body_day(provider.as_ref(), *b, midnight.jd_ut, obs, conv, off)).collect::<Result<Vec<_>>>()?});
+            if r.twilight.unwrap_or(true) {
+                day["twilight"] = crate::rising::twilight(provider.as_ref(), midnight.jd_ut, obs, off)?;
+            }
+            out.push(day);
+        }
+        assumptions.push(format!("rise and set: {} (refraction 34′ at the horizon, no temperature or pressure model; the Moon's parallax and semidiameter included)", conv.id()));
+        assumptions.push("twilight: the Sun's centre, geometric, at −6°, −12° and −18°".into());
+        assumptions.push("transit is the upper culmination (hour angle 0)".into());
+        Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "rise_set",
+                  "input": {"place": {"latitude_deg": obs.lat, "longitude_deg": obs.lon, "altitude_m": obs.height_m}, "date": r.date, "days": days,
+                            "timezone": r.timezone, "utc_offset_minutes": r.utc_offset_minutes},
+                  "calculation": {"provider": cfg.provider, "sunrise": conv.id(), "config_hash": crate::methods::config_hash(&cfg)},
+                  "days": out,
+                  "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "provider": cfg.provider, "provider_data": provider.info().data, "assumptions": assumptions},
+                  "interpretations": []}))
+    }
+
     fn ingress_op(&self, r: &IngressRequest) -> Result<Value> {
         let mut assumptions = vec![];
         let cfg = build_config(&r.config, None, false, &mut assumptions)?;
@@ -2572,6 +2723,7 @@ impl Engine {
                     .clone()
                     .or_else(|| base.config.house_system.clone()),
                 node_model: ov.node_model.clone().or_else(|| base.config.node_model.clone()),
+                topocentric: ov.topocentric.or(base.config.topocentric),
             }
         };
         let (mut ra, mut rb) = (base.clone(), base.clone());

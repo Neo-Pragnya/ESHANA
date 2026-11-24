@@ -1,0 +1,132 @@
+{
+ "source": "Swiss Ephemeris (pyswisseph, Moshier analytic, test-only oracle, never shipped) for apparent tropical longitudes at 12:00 UT",
+ "note": "ESHANA computes these with the DE440 kernel; the Moon is compared with a wider tolerance because the oracle's delta-T model (Stephenson-Morrison-Hohenkerk) and ESHANA's (Espenak-Meeus) differ by up to ~35 s before 1650, and the Moon moves ~0.55 arcsec per second.",
+ "cases": [
+  {
+   "id": "1555-julian",
+   "date": "1555-08-20",
+   "calendar": "julian",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2289253.0,
+   "delta_t_s_oracle": 167.77,
+   "tropical_longitude_deg": {
+    "sun": 156.084044,
+    "moon": 193.048468,
+    "mercury": 182.413843,
+    "venus": 126.313982,
+    "mars": 216.365849,
+    "jupiter": 211.252346,
+    "saturn": 10.602527
+   }
+  },
+  {
+   "id": "1582-cutover-julian",
+   "date": "1582-10-04",
+   "calendar": "auto",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2299160.0,
+   "delta_t_s_oracle": 115.19,
+   "tropical_longitude_deg": {
+    "sun": 200.735987,
+    "moon": 57.987324,
+    "mercury": 194.600553,
+    "venus": 166.527297,
+    "mars": 105.979672,
+    "jupiter": 312.305959,
+    "saturn": 334.668572
+   }
+  },
+  {
+   "id": "1582-cutover-gregorian",
+   "date": "1582-10-15",
+   "calendar": "auto",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2299161.0,
+   "delta_t_s_oracle": 115.19,
+   "tropical_longitude_deg": {
+    "sun": 201.730655,
+    "moon": 72.5927,
+    "mercury": 196.31328,
+    "venus": 167.739953,
+    "mars": 106.400058,
+    "jupiter": 312.326957,
+    "saturn": 334.628827
+   }
+  },
+  {
+   "id": "1600-julian",
+   "date": "1600-02-29",
+   "calendar": "julian",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2305517.0,
+   "delta_t_s_oracle": 88.55,
+   "tropical_longitude_deg": {
+    "sun": 350.209085,
+    "moon": 287.862938,
+    "mercury": 323.612711,
+    "venus": 304.062024,
+    "mars": 119.005583,
+    "jupiter": 132.984646,
+    "saturn": 207.641205
+   }
+  },
+  {
+   "id": "1650",
+   "date": "1650-07-01",
+   "calendar": "gregorian",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2323892.0,
+   "delta_t_s_oracle": 42.97,
+   "tropical_longitude_deg": {
+    "sun": 99.527435,
+    "moon": 127.324957,
+    "mercury": 125.681617,
+    "venus": 116.309153,
+    "mars": 79.802717,
+    "jupiter": 209.684573,
+    "saturn": 94.701523
+   }
+  },
+  {
+   "id": "1720",
+   "date": "1720-11-15",
+   "calendar": "gregorian",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2349596.0,
+   "delta_t_s_oracle": 10.47,
+   "tropical_longitude_deg": {
+    "sun": 233.349739,
+    "moon": 58.608933,
+    "mercury": 244.811732,
+    "venus": 254.055187,
+    "mars": 211.703252,
+    "jupiter": 203.880891,
+    "saturn": 237.290617
+   }
+  },
+  {
+   "id": "1790",
+   "date": "1790-04-02",
+   "calendar": "gregorian",
+   "time": "12:00",
+   "utc_offset_minutes": 0,
+   "jd_ut": 2374936.0,
+   "delta_t_s_oracle": 21.6,
+   "tropical_longitude_deg": {
+    "sun": 12.923675,
+    "moon": 233.026964,
+    "mercury": 349.215521,
+    "venus": 350.949043,
+    "mars": 133.059274,
+    "jupiter": 141.583794,
+    "saturn": 358.092591
+   }
+  }
+ ]
+}

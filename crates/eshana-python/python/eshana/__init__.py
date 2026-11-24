@@ -66,8 +66,11 @@ class Context:
         utc_offset_minutes: Optional[int] = None,
         fold: Optional[str] = None,
         uncertainty_minutes: Optional[float] = None,
+        calendar: Optional[str] = None,
     ) -> "Context":
-        """Local civil date and time in an IANA zone. Omit ``time`` for an unknown birth time."""
+        """Local civil date and time in an IANA zone. Omit ``time`` for an unknown birth time. ``calendar`` is
+        ``gregorian`` (proleptic, the default), ``julian`` or ``auto`` (Julian before 1582-10-15); a signed year such
+        as ``-0043-03-15`` is 44 BCE."""
         when = {
             "date": date,
             "time": time,
@@ -75,6 +78,7 @@ class Context:
             "utc_offset_minutes": utc_offset_minutes,
             "fold": fold,
             "uncertainty_minutes": uncertainty_minutes,
+            "calendar": calendar,
         }
         return cls({k: v for k, v in when.items() if v is not None}, _place(latitude, longitude))
 
@@ -245,6 +249,20 @@ class ChartEngine:
         """Longitudes at regular steps: transit animation, secondary progressions (one day per year)."""
         req = {"op": "ephemeris", "start_utc": start_utc, "step_days": step_days, "count": count,
                "bodies": list(bodies) if bodies else None, "config": self._cfg(zodiac=zodiac, ayanamsha=ayanamsha)}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def rise_set(self, latitude: float, longitude: float, date: str, timezone: Optional[str] = None,
+                 utc_offset_minutes: Optional[int] = None, days: int = 1, bodies: Optional[Iterable[str]] = None,
+                 sunrise: Optional[str] = None, twilight: bool = True, altitude_m: Optional[float] = None) -> Dict[str, Any]:
+        """Rise, upper transit and set of bodies (default Sun and Moon), and civil, nautical and astronomical
+        twilight, for ``days`` local days from ``date`` at a place."""
+        req = {"op": "rise_set", "place": {"latitude": latitude, "longitude": longitude, "altitude_m": altitude_m},
+               "date": date, "timezone": timezone, "utc_offset_minutes": utc_offset_minutes, "days": days,
+               "bodies": list(bodies) if bodies else None, "sunrise": sunrise, "twilight": twilight,
+               "config": self._cfg()}
+        req["place"] = {k: v for k, v in req["place"].items() if v is not None}
         if self.spk_path:
             req["spk_path"] = self.spk_path
         return execute({k: v for k, v in req.items() if v is not None})

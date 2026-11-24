@@ -383,7 +383,7 @@
    "UTC is used as UT1 (differs by under 0.9 s)",
    "Human Design gate numbering and the centre/channel structure are implemented from public structure only; branded terminology, text and diagrams are not included; legal review pending (ADR-009)"
   ],
-  "engine_version": "0.4.4",
+  "engine_version": "0.5.0",
   "provider": "analytic",
   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",

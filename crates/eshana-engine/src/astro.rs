@@ -123,7 +123,13 @@ pub fn to_sidereal(apparent_tropical_deg: f64, model: Ayanamsha, t: f64) -> f64 
 /// `lst_deg` is the local apparent sidereal time (the right ascension of the Midheaven).
 #[must_use]
 pub fn asc_mc(lst_deg: f64, lat_deg: f64, t: f64) -> (f64, f64) {
-    let eps = rad(true_obliquity_deg(t));
+    asc_mc_eps(lst_deg, lat_deg, true_obliquity_deg(t))
+}
+
+/// [`asc_mc`] for a given true obliquity in degrees.
+#[must_use]
+pub fn asc_mc_eps(lst_deg: f64, lat_deg: f64, eps_deg: f64) -> (f64, f64) {
+    let eps = rad(eps_deg);
     let th = rad(lst_deg);
     let phi = rad(lat_deg);
     let mc = deg(th.sin().atan2(th.cos() * eps.cos()));
@@ -150,7 +156,157 @@ pub fn local_apparent_sidereal_deg(gmst_deg: f64, east_longitude_deg: f64, t: f6
 /// [`EshanaError::LatitudeUnsupported`] for Placidus at or beyond the polar circles, or when the semi-arc
 /// iteration has no solution.
 pub fn houses(system: HouseSystem, lst_deg: f64, lat_deg: f64, t: f64) -> Result<[f64; 12]> {
-    let (asc, mc) = asc_mc(lst_deg, lat_deg, t);
+    house_cusps(system, lst_deg, lat_deg, true_obliquity_deg(t))
+}
+
+/// The ecliptic longitude where a "house circle" meets the ecliptic: the great circle through the north and south
+/// points of the horizon that crosses the equator at right ascension `ra` and behaves as a horizon at pole height
+/// `pole` (Asc: ra = RAMC + 90°, pole = latitude; MC: ra = RAMC, pole = 0).
+fn circle_cusp(ra_deg: f64, pole_deg: f64, eps: f64) -> f64 {
+    let r = rad(ra_deg);
+    norm360(deg(r
+        .sin()
+        .atan2(r.cos() * eps.cos() - rad(pole_deg).tan() * eps.sin())))
+}
+
+/// Put an intermediate cusp in its quadrant: houses 11 and 12 lie between the MC and the Ascendant, 2 and 3 between
+/// the Ascendant and the IC (counter-clockwise in longitude); a value on the opposite side is turned by 180°.
+fn in_arc(v: f64, from: f64, to: f64) -> f64 {
+    if norm360(v - from) <= norm360(to - from) {
+        v
+    } else {
+        norm360(v + 180.0)
+    }
+}
+
+/// House cusps for a given true obliquity (degrees): the core of [`houses`], also used by the oracle tests.
+///
+/// # Errors
+/// As [`houses`].
+pub fn house_cusps(system: HouseSystem, lst_deg: f64, lat_deg: f64, eps_deg: f64) -> Result<[f64; 12]> {
+    let (asc, mc) = asc_mc_eps(lst_deg, lat_deg, eps_deg);
+    let eps = rad(eps_deg);
+    let ic = norm360(mc + 180.0);
+    let polar = |name: &str| -> Result<()> {
+        if lat_deg.abs() >= 90.0 - eps_deg {
+            Err(EshanaError::LatitudeUnsupported(format!(
+                "{name} houses are undefined at latitude {lat_deg:.2}° (polar circle is {:.2}°); use whole_sign, equal,                  porphyry, regiomontanus or campanus",
+                90.0 - eps_deg
+            )))
+        } else {
+            Ok(())
+        }
+    };
+    // the twelve cusps from the four intermediate ones of the eastern half (11, 12, 2, 3); the rest are opposite
+    let from_quadrants = |c11: f64, c12: f64, c2: f64, c3: f64| -> [f64; 12] {
+        let (c11, c12) = (in_arc(c11, mc, asc), in_arc(c12, mc, asc));
+        let (c2, c3) = (in_arc(c2, asc, ic), in_arc(c3, asc, ic));
+        [
+            asc,
+            c2,
+            c3,
+            ic,
+            norm360(c11 + 180.0),
+            norm360(c12 + 180.0),
+            norm360(asc + 180.0),
+            norm360(c2 + 180.0),
+            norm360(c3 + 180.0),
+            mc,
+            c11,
+            c12,
+        ]
+    };
+    let mut c = [0.0; 12];
+    match system {
+        HouseSystem::Regiomontanus | HouseSystem::Topocentric | HouseSystem::Campanus => {
+            let phi = rad(lat_deg);
+            // h: the cusp circle's equator crossing, counted from the MC (11: 30°, 12: 60°, 2: 120°, 3: 150° for
+            // Regiomontanus); pole: tan P = tan φ · sin h, or Polich–Page's thirds of tan φ
+            let cusp = |k: f64| -> f64 {
+                let h = match system {
+                    // Campanus divides the prime vertical: the point at elevation a crosses the equator
+                    // atan2(sin a, cos a · cos φ) from the east point
+                    HouseSystem::Campanus => {
+                        let a = rad(90.0 - k);
+                        90.0 - deg(a.sin().atan2(a.cos() * phi.cos()))
+                    }
+                    _ => k,
+                };
+                let pole = match system {
+                    HouseSystem::Topocentric => {
+                        let third = if (k - 30.0).abs() < 1e-9 || (k - 150.0).abs() < 1e-9 {
+                            1.0
+                        } else {
+                            2.0
+                        };
+                        deg((third / 3.0 * phi.tan()).atan())
+                    }
+                    _ => deg((phi.tan() * rad(h).sin()).atan()),
+                };
+                circle_cusp(lst_deg + h, pole, eps)
+            };
+            c = from_quadrants(cusp(30.0), cusp(60.0), cusp(120.0), cusp(150.0));
+        }
+        HouseSystem::Koch => {
+            polar("Koch")?;
+            // the Ascendants at the sidereal times that trisect the MC degree's semi-diurnal arc
+            let dec_mc = (eps.sin() * rad(mc).sin()).asin();
+            let x = -rad(lat_deg).tan() * dec_mc.tan();
+            if x.abs() >= 1.0 {
+                return Err(EshanaError::LatitudeUnsupported(format!(
+                    "Koch cusps do not exist at latitude {lat_deg:.2}° for this sidereal time; use whole_sign or equal"
+                )));
+            }
+            let sda = deg(x.acos());
+            let asc_at = |lst: f64| asc_mc_eps(lst, lat_deg, eps_deg).0;
+            c = from_quadrants(
+                asc_at(lst_deg - 2.0 * sda / 3.0),
+                asc_at(lst_deg - sda / 3.0),
+                asc_at(lst_deg + sda / 3.0),
+                asc_at(lst_deg + 2.0 * sda / 3.0),
+            );
+        }
+        HouseSystem::Alcabitius => {
+            polar("Alcabitius")?;
+            // the Ascendant degree's semi-arcs, trisected in right ascension from the MC and from the Ascendant
+            let dec = (eps.sin() * rad(asc).sin()).asin();
+            let x = (-rad(lat_deg).tan() * dec.tan()).clamp(-1.0, 1.0);
+            let sda = deg(x.acos());
+            let sna = 180.0 - sda;
+            let on_ecliptic = |ra: f64| circle_cusp(ra, 0.0, eps);
+            c = from_quadrants(
+                on_ecliptic(lst_deg + sda / 3.0),
+                on_ecliptic(lst_deg + 2.0 * sda / 3.0),
+                on_ecliptic(lst_deg + sda + sna / 3.0),
+                on_ecliptic(lst_deg + sda + 2.0 * sna / 3.0),
+            );
+        }
+        HouseSystem::Morinus | HouseSystem::Meridian => {
+            // the equator in twelve 30° parts from RAMC + 90° (house 1); Morinus projects them along circles of
+            // ecliptic longitude, Meridian along circles of declination
+            for (k, v) in c.iter_mut().enumerate() {
+                let r = rad(lst_deg + 90.0 + 30.0 * k as f64);
+                *v = if system == HouseSystem::Morinus {
+                    norm360(deg((r.sin() * eps.cos()).atan2(r.cos())))
+                } else {
+                    norm360(deg(r.sin().atan2(r.cos() * eps.cos())))
+                };
+            }
+        }
+        _ => c = classic_cusps(system, lst_deg, lat_deg, eps_deg, asc, mc)?,
+    }
+    Ok(c)
+}
+
+/// Whole sign, equal, Porphyry, Śrīpati and Placidus.
+fn classic_cusps(
+    system: HouseSystem,
+    lst_deg: f64,
+    lat_deg: f64,
+    eps_deg: f64,
+    asc: f64,
+    mc: f64,
+) -> Result<[f64; 12]> {
     let mut c = [0.0; 12];
     match system {
         HouseSystem::WholeSign => {
@@ -192,7 +348,6 @@ pub fn houses(system: HouseSystem, lst_deg: f64, lat_deg: f64, t: f64) -> Result
             }
         }
         HouseSystem::Placidus => {
-            let eps_deg = true_obliquity_deg(t);
             if lat_deg.abs() >= 90.0 - eps_deg {
                 return Err(EshanaError::LatitudeUnsupported(format!(
                     "Placidus houses are undefined at latitude {lat_deg:.2}° (polar circle is {:.2}°); \
@@ -251,6 +406,7 @@ pub fn houses(system: HouseSystem, lst_deg: f64, lat_deg: f64, t: f64) -> Result
                 c12,
             ];
         }
+        _ => unreachable!("handled by house_cusps"),
     }
     Ok(c)
 }

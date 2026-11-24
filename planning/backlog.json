@@ -200,10 +200,18 @@
       "id": "TIME-03",
       "area": "core",
       "title": "Julian/Gregorian cut-over and BCE dates",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "note": "Proleptic Gregorian only in 0.1; providers' ranges avoid 1582.",
-      "source": "master plan 6.1"
+      "source": "master plan 6.1",
+      "acceptance": "Julian, Gregorian and auto (1582 cut-over) calendars and BCE years; conversions recorded; the skipped days refused; results match an independent oracle.",
+      "evidence": "eshana-time: Calendar (gregorian/julian/auto), jd_from_julian/julian_from_jd, proleptic gregorian_from_jd (fixes the pre-1582 round-trip bug), parse_date_in with signed years; when.calendar in requests, --calendar in the CLI, calendar= in Python; input.calendar and an assumption record the conversion. Tests: julian_calendar_matches_meeus (Meeus 7.b), proleptic_gregorian_roundtrips_before_1582, calendars_read_dates; accuracy/test_historical_calendar.py (7 dates 1555-1790 with DE440: JD exact, planets within 3″ of the oracle, the Moon within its ΔT-model allowance); acceptance 18_time_and_sky.",
+      "evidence_paths": [
+        "crates/eshana-time/src/lib.rs",
+        "crates/eshana-engine/src/api.rs",
+        "accuracy/test_historical_calendar.py",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "TIME-04",
@@ -220,9 +228,14 @@
       "id": "TIME-05",
       "area": "core",
       "title": "Forecast delta-T beyond 2027 validated against IERS predictions",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Currently Espenak-Meeus continuation; differs from Skyfield by up to 28 s in 2060."
+      "note": "Currently Espenak-Meeus continuation; differs from Skyfield by up to 28 s in 2060.",
+      "acceptance": "ΔT sane across millennia and the post-2027 forecast tied to IERS Bulletin A.",
+      "evidence": "delta_t_polynomial: full Espenak–Meeus set −500..2150 plus the long-term parabola (the year 100 no longer explodes); delta_t_forecast: IERS Bulletin A Vol. XXXIX No. 047 trend (UT1−UTC −0.10 s at 2027.0, −0.179 s/yr) blended into Espenak–Meeus by 2050. Tests delta_t_follows_espenak_meeus_across_millennia (NASA canon values) and forecast_follows_bulletin_a_then_the_long_term_curve.",
+      "evidence_paths": [
+        "crates/eshana-time/src/lib.rs"
+      ]
     },
     {
       "id": "PROV-01",
@@ -260,9 +273,14 @@
       "id": "PROV-04",
       "area": "core",
       "title": "SPK type 3 (Chebyshev with velocity) and other segment types",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Only type 2 is read; planetary DE kernels use it."
+      "note": "Only type 2 is read; planetary DE kernels use it.",
+      "acceptance": "Type-3 SPK segments read; large kernels usable without loading them into memory.",
+      "evidence": "spk.rs: segment type 3 (velocity coefficients) beside type 2; kernels over 256 MB read on demand one record at a time (Store::File); identity hashes head+tail MiB for large files. Test reads_type_2_and_type_3_segments (synthetic in-memory kernels); golden tests unchanged with de440s.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/spk.rs"
+      ]
     },
     {
       "id": "PROV-05",
@@ -279,9 +297,16 @@
       "id": "PROV-06",
       "area": "core",
       "title": "Distribute or auto-fetch a kernel with checksum verification",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Deliberately manual in 0.1 (local-first, no network). Needs a design."
+      "note": "Deliberately manual in 0.1 (local-first, no network). Needs a design.",
+      "acceptance": "A kernel can be fetched and checked against the publisher's checksum; the engine stays offline.",
+      "evidence": "kernels.rs catalogue (de440s, de440, de441 parts 1-2, de442s, de442 with NAIF sizes and MD5 from aa_checksums.txt), an RFC 1321 MD5 (tested with the RFC vectors), resolve() for catalogue names in the kernel folder; eshana kernel list/verify/path; scripts/fetch_kernel.py (resumable, kept only when size and MD5 match). Verified end to end: local de440s and downloaded de440 both match NAIF.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/kernels.rs",
+        "crates/eshana-cli/src/main.rs",
+        "scripts/fetch_kernel.py"
+      ]
     },
     {
       "id": "AST-01",
@@ -310,9 +335,17 @@
       "id": "AST-03",
       "area": "astro",
       "title": "More house systems (Koch, Regiomontanus, Campanus, Porphyry)",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.4"
+      "source": "master plan 4.4",
+      "acceptance": "Koch, Regiomontanus, Campanus and more, each checked against an independent oracle.",
+      "evidence": "house_cusps: Koch, Regiomontanus, Campanus, Alcabitius, Topocentric (Polich–Page), Morinus, Meridian beside Placidus, Porphyry, Śrīpati, equal, whole sign; listed in eshana methods. Test house_systems_match_the_oracle: 9 systems × 84 latitude/sidereal-time pairs (−50° to 64°) within 0.01°.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/astro.rs",
+        "crates/eshana-core/src/lib.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "benchmarks/golden/houses_oracle.json"
+      ]
     },
     {
       "id": "AST-04",
@@ -357,9 +390,16 @@
       "id": "AST-08",
       "area": "astro",
       "title": "Rise, set and topocentric positions",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.1"
+      "source": "master plan 4.1",
+      "acceptance": "Rise, set, transit and twilight for any body; topocentric positions; checked against an independent oracle.",
+      "evidence": "rising.rs and op rise_set / eshana rise-set / ChartEngine.rise_set: rise, upper transit, set per local day (1-366 days), polar days flagged, civil/nautical/astronomical twilight; config.topocentric (Meeus ch. 40 parallax, IERS ellipsoid, altitude). Tests rise_and_set_match_the_oracle (Sun, Moon, Venus at Delhi, London, Sydney, Tromsø on three dates: within 30 s, worst 18 s) and topocentric_shift_matches_the_oracle (within 2″, Moon shifts up to 58′); acceptance 18_time_and_sky.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/rising.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "VED-01",
@@ -1113,7 +1153,8 @@
       "area": "astro",
       "title": "Star-based and further ayanamshas (Yukteshwar, true Chitrapaksha, Revati, Pushya)",
       "status": "proposed",
-      "track": "primary"
+      "track": "primary",
+      "evidence": "Waiting on the star catalogue: the true (star-anchored) ayanāṃśas need each anchor star's J2000 position and proper motion from Hipparcos (I/311); CDS (SIMBAD, VizieR) and the CfA mirror were unavailable on 2026-11-24. The frame code (precess_ecliptic_from_j2000) is ready."
     },
     {
       "id": "VED-09",

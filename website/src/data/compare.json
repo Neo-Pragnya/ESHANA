@@ -7,6 +7,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "vedic",
    "zodiac": "sidereal"
@@ -18,6 +19,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "vedic",
    "zodiac": "sidereal"
@@ -429,6 +431,7 @@
   ],
   "input": {
    "birth_time_quality": "exact",
+   "calendar": null,
    "civil_offset_s": 19800,
    "civil_zone": "Asia/Kolkata",
    "delta_t_s": 58.184,
@@ -452,7 +455,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -472,7 +475,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -498,6 +501,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "western",
    "zodiac": "tropical"
@@ -509,6 +513,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "true",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "western",
    "zodiac": "tropical"
@@ -562,6 +567,7 @@
   ],
   "input": {
    "birth_time_quality": "exact",
+   "calendar": null,
    "civil_offset_s": 0,
    "civil_zone": null,
    "delta_t_s": 69.184,
@@ -579,7 +585,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -596,7 +602,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -621,6 +627,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "western",
    "zodiac": "tropical"
@@ -632,6 +639,7 @@
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
+   "positions_reference": "geocentric",
    "provider": "analytic",
    "system": "western",
    "zodiac": "sidereal"
@@ -956,6 +964,7 @@
   ],
   "input": {
    "birth_time_quality": "exact",
+   "calendar": null,
    "civil_offset_s": 0,
    "civil_zone": null,
    "delta_t_s": 64.184,
@@ -974,7 +983,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -993,7 +1002,7 @@
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date",
     "western system with a sidereal zodiac: a Western sidereal variant"
    ],
-   "engine_version": "0.4.4",
+   "engine_version": "0.5.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",

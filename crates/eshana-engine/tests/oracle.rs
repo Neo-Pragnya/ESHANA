@@ -104,3 +104,114 @@ fn engine_houses_match_swiss_in_the_tropical_zodiac() {
         }
     }
 }
+
+/// AST-03: every house system against the oracle's cusps for the same ARMC, latitude and obliquity (seven latitudes
+/// from −50° to 64°, twelve sidereal times). Agreement within 0.01°.
+#[test]
+fn house_systems_match_the_oracle() {
+    use eshana_core::HouseSystem;
+    let doc: Value =
+        serde_json::from_str(include_str!("../../../benchmarks/golden/houses_oracle.json")).unwrap();
+    let mut checked = 0;
+    for row in doc["rows"].as_array().unwrap() {
+        let (lat, armc, eps) = (
+            row["lat"].as_f64().unwrap(),
+            row["armc"].as_f64().unwrap(),
+            row["eps"].as_f64().unwrap(),
+        );
+        for (name, want) in row["cusps"].as_object().unwrap() {
+            let Some(want) = want.as_array() else { continue };
+            let sys = HouseSystem::parse(name).unwrap();
+            let got = eshana_engine::astro::house_cusps(sys, armc, lat, eps)
+                .unwrap_or_else(|e| panic!("{name} lat {lat} armc {armc}: {e}"));
+            for (i, w) in want.iter().enumerate() {
+                let w = w.as_f64().unwrap();
+                assert!(
+                    angular_diff(got[i], w).abs() < 0.01,
+                    "{name} lat {lat} armc {armc} cusp {}: got {:.4} want {w:.4}",
+                    i + 1,
+                    got[i]
+                );
+            }
+            checked += 1;
+        }
+    }
+    assert!(checked > 500, "{checked}");
+}
+
+/// AST-08: rise, set and upper transit of the Sun, the Moon and Venus at four places (including Tromsø, inside
+/// the Arctic circle) on three dates, against the oracle's rise_trans. Within 30 s, and the same events exist.
+#[test]
+fn rise_and_set_match_the_oracle() {
+    let doc: Value =
+        serde_json::from_str(include_str!("../../../benchmarks/golden/rise_set_oracle.json")).unwrap();
+    let e = Engine::new();
+    let mut checked = 0;
+    for row in doc["rows"].as_array().unwrap() {
+        let env = run(
+            &e,
+            json!({"op": "rise_set", "place": {"latitude": row["lat"], "longitude": row["lon"]},
+            "date": row["date"], "utc_offset_minutes": 0, "bodies": ["sun", "moon", "venus"], "twilight": false}),
+        );
+        for b in env["days"][0]["bodies"].as_array().unwrap() {
+            let id = b["body"].as_str().unwrap();
+            for k in ["rise", "set", "transit"] {
+                let want = row["events"][id][k].as_f64();
+                let got = b[k]["jd_ut"].as_f64();
+                match (want, got) {
+                    (None, None) => {}
+                    (Some(w), Some(g)) => {
+                        assert!(
+                            (g - w).abs() * 86_400.0 < 30.0,
+                            "{} {} {id} {k}: {:.1} s",
+                            row["place"],
+                            row["date"],
+                            (g - w) * 86_400.0
+                        );
+                        checked += 1;
+                    }
+                    _ => panic!(
+                        "{} {} {id} {k}: oracle {want:?}, ESHANA {got:?}",
+                        row["place"], row["date"]
+                    ),
+                }
+            }
+        }
+    }
+    assert!(checked > 80, "{checked}");
+}
+
+/// AST-08: the topocentric shift (topocentric minus geocentric longitude) of the Moon and the Sun at three places
+/// (including Quito at 2,850 m) against the oracle's. Comparing the shift keeps the provider's own error out of it.
+#[test]
+fn topocentric_shift_matches_the_oracle() {
+    let doc: Value =
+        serde_json::from_str(include_str!("../../../benchmarks/golden/topocentric_oracle.json")).unwrap();
+    let e = Engine::new();
+    for row in doc["rows"].as_array().unwrap() {
+        let req = |topo: bool| {
+            json!({"op": "positions", "when": {"utc": row["utc"]}, "bodies": ["moon", "sun"],
+            "place": {"latitude": row["lat"], "longitude": row["lon"], "altitude_m": row["alt"]}, "config": {"topocentric": topo}})
+        };
+        let (topo, geo) = (run(&e, req(true)), run(&e, req(false)));
+        assert_eq!(topo["calculation"]["positions_reference"], "topocentric");
+        for b in ["moon", "sun"] {
+            let ours = angular_diff(
+                pos(&topo, b)["longitude_deg"].as_f64().unwrap(),
+                pos(&geo, b)["longitude_deg"].as_f64().unwrap(),
+            );
+            let want = angular_diff(
+                row["topocentric"][b].as_f64().unwrap(),
+                row["geocentric"][b].as_f64().unwrap(),
+            );
+            assert!(
+                (ours - want).abs() * 3600.0 < 2.0,
+                "{} {} {b}: shift {:.1}″ vs {:.1}″",
+                row["place"],
+                row["utc"],
+                ours * 3600.0,
+                want * 3600.0
+            );
+        }
+    }
+}

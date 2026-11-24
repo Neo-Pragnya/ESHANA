@@ -17,21 +17,24 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | Flag | Meaning |
 |---|---|
 | `--utc 2000-01-01T12:00:00Z` | a UTC instant, or an RFC 3339 string with an offset |
-| `--date YYYY-MM-DD` `--time HH:MM[:SS]` `--tz Zone` | local civil time in an IANA zone. Omit `--time` for an unknown birth time |
+| `--date YYYY-MM-DD` `--time HH:MM[:SS]` `--tz Zone` | local civil time in an IANA zone. Omit `--time` for an unknown birth time. A signed year (`-0043-03-15`) is BCE |
+| `--calendar gregorian\|julian\|auto` | how `--date` is written (default proleptic Gregorian; `auto` switches at 1582-10-15) |
 | `--offset-minutes N` | fixed UTC offset east, when no zone is known (instead of `--tz`) |
 | `--fold reject\|earliest\|latest` | what to do with a repeated local time (default `reject`) |
 | `--uncertainty-minutes N` | birth-time uncertainty, ± minutes |
 | `--lat DEG --lon DEG` | place; needed for houses and the Ascendant |
+| `--altitude-m M` | height above sea level, for `--topocentric` |
 
 ## Settings (shared)
 
 | Flag | Values | Default |
 |---|---|---|
 | `--provider` | `analytic`, `spk` | `analytic` |
-| `--spk PATH` | JPL SPK kernel (or `ESHANA_SPK`) | none |
+| `--spk PATH\|NAME` | JPL SPK kernel (or `ESHANA_SPK`); a catalogue name such as `de440` is looked up in the kernel folder | none |
+| `--topocentric` | positions as seen from the place (parallax) | geocentric |
 | `--zodiac` | `tropical`, `sidereal` | tropical (sidereal for `chart vedic`) |
-| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
-| `--houses` | `whole_sign`, `equal`, `placidus` | `whole_sign` (recorded) |
+| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
+| `--houses` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` | `whole_sign` (recorded) |
 | `--node` | `mean`, `true` | `mean` (recorded); `true` for `human-design` |
 | `--bodies a,b,c` | body ids | ten planets + the node |
 | `--divisions 1,9,10` | 1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60 | none |
@@ -66,6 +69,8 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana progress --at T [--angles METHOD] <birth options>` | secondary progressions: fractional age, positions at birth + age days, angles under a named method |
 | `eshana kp-table` | the KP 1–249 horary number table |
 | `eshana kp-horary --number N --utc T --lat φ --lon λ [--kp-occupancy ID]` | KP horary chart: the number fixes the Ascendant; the moment and place are those of judgement (ayanāṃśa defaults to krishnamurti, recorded) |
+| `eshana rise-set --date D --tz ZONE --lat φ --lon λ [--days N] [--bodies sun,moon,venus] [--sunrise C] [--no-twilight]` | rise, upper transit and set of each body, and civil, nautical and astronomical twilight, for local days |
+| `eshana kernel list\|verify PATH\|path NAME` | the JPL kernels ESHANA knows; check a downloaded one against NAIF's MD5 |
 | `eshana methods` | every method family and id the engine implements |
 | `eshana request FILE\|-` | send a raw JSON request |
 | `eshana doctor` | versions, tz database, providers, rule packs, error codes |

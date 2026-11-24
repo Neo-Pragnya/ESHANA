@@ -27,6 +27,7 @@ pub mod packs;
 pub mod panchanga;
 pub mod progress;
 pub mod research;
+pub mod rising;
 pub mod search;
 pub mod synthetic;
 pub mod vargas_ext;

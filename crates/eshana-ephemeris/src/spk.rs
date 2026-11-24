@@ -1,5 +1,9 @@
-//! A reader for JPL SPK kernels (DAF container, segment type 2: Chebyshev position polynomials), enough to
-//! serve the planetary DE kernels such as `de440s.bsp` / `de440.bsp` / `de441`.
+//! A reader for JPL SPK kernels (DAF container; segment type 2, Chebyshev position polynomials, and type 3,
+//! Chebyshev position and velocity polynomials), enough to serve the planetary DE kernels such as `de440s.bsp`,
+//! `de440.bsp`, `de442.bsp` and the two `de441` parts.
+//!
+//! Kernels up to 256 MB are read into memory; larger ones (each `de441` part is about 1.6 GB) are read on demand,
+//! one Chebyshev record at a time, so a 13,000-year kernel costs a file handle, not 1.6 GB of memory.
 //!
 //! The kernel is **user supplied**. NASA/JPL ephemerides are public-domain data; ESHANA does not bundle them,
 //! so no kernel licence is carried into the package. Only little-endian IEEE kernels are accepted.
@@ -18,12 +22,58 @@ struct Segment {
     end_et: f64,
     start_addr: usize,
     end_addr: usize,
+    /// SPK data type: 2 (position coefficients) or 3 (position and velocity coefficients).
+    ty: i32,
 }
 
-/// An SPK kernel loaded into memory.
+/// Kernels larger than this are read on demand instead of into memory.
+const IN_MEMORY_MAX: u64 = 256 * 1024 * 1024;
+
+/// The kernel bytes: in memory, or a file read on demand.
+#[derive(Debug)]
+enum Store {
+    Mem(Vec<u8>),
+    File {
+        file: std::sync::Mutex<std::fs::File>,
+        len: usize,
+    },
+}
+
+impl Store {
+    fn len(&self) -> usize {
+        match self {
+            Store::Mem(d) => d.len(),
+            Store::File { len, .. } => *len,
+        }
+    }
+
+    /// `n` bytes at `off`.
+    fn bytes(&self, off: usize, n: usize) -> Result<Vec<u8>> {
+        let short = || EshanaError::Provider("kernel truncated".into());
+        match self {
+            Store::Mem(d) => d.get(off..off + n).map(<[u8]>::to_vec).ok_or_else(short),
+            Store::File { file, len } => {
+                use std::io::{Read, Seek, SeekFrom};
+                if off + n > *len {
+                    return Err(short());
+                }
+                let mut f = file
+                    .lock()
+                    .map_err(|_| EshanaError::Provider("kernel file lock poisoned".into()))?;
+                let mut buf = vec![0u8; n];
+                f.seek(SeekFrom::Start(off as u64))
+                    .and_then(|_| f.read_exact(&mut buf))
+                    .map_err(|e| EshanaError::Provider(format!("reading the kernel: {e}")))?;
+                Ok(buf)
+            }
+        }
+    }
+}
+
+/// An SPK kernel, indexed.
 #[derive(Debug)]
 pub struct SpkProvider {
-    data: Vec<u8>,
+    data: Store,
     /// Keyed by (target, center); a pair can have several segments covering different time spans.
     segs: HashMap<(i32, i32), Vec<Segment>>,
     identity: String,
@@ -31,16 +81,14 @@ pub struct SpkProvider {
     jd_max: f64,
 }
 
-fn rd_f64(d: &[u8], off: usize) -> Result<f64> {
-    d.get(off..off + 8)
+fn rd_f64(d: &Store, off: usize) -> Result<f64> {
+    d.bytes(off, 8)
         .map(|b| f64::from_le_bytes(b.try_into().expect("8 bytes")))
-        .ok_or_else(|| EshanaError::Provider("kernel truncated".into()))
 }
 
-fn rd_i32(d: &[u8], off: usize) -> Result<i32> {
-    d.get(off..off + 4)
+fn rd_i32(d: &Store, off: usize) -> Result<i32> {
+    d.bytes(off, 4)
         .map(|b| i32::from_le_bytes(b.try_into().expect("4 bytes")))
-        .ok_or_else(|| EshanaError::Provider("kernel truncated".into()))
 }
 
 fn fnv1a64(data: &[u8]) -> u64 {
@@ -58,9 +106,19 @@ impl SpkProvider {
     /// # Errors
     /// [`EshanaError::Provider`] when the file is missing or not a little-endian SPK.
     pub fn open(path: &str) -> Result<Self> {
-        let data =
-            std::fs::read(path).map_err(|e| EshanaError::Provider(format!("cannot read '{path}': {e}")))?;
-        Self::from_bytes(data, path)
+        let cannot = |e: std::io::Error| EshanaError::Provider(format!("cannot read '{path}': {e}"));
+        let len = std::fs::metadata(path).map_err(cannot)?.len();
+        if len > IN_MEMORY_MAX {
+            let file = std::fs::File::open(path).map_err(cannot)?;
+            return Self::from_store(
+                Store::File {
+                    file: std::sync::Mutex::new(file),
+                    len: len as usize,
+                },
+                path,
+            );
+        }
+        Self::from_bytes(std::fs::read(path).map_err(cannot)?, path)
     }
 
     /// Index a kernel already in memory (used by tests).
@@ -68,10 +126,18 @@ impl SpkProvider {
     /// # Errors
     /// [`EshanaError::Provider`] when the bytes are not a little-endian SPK.
     pub fn from_bytes(data: Vec<u8>, name: &str) -> Result<Self> {
-        if data.len() < 1024 || !data.starts_with(b"DAF/SPK") {
+        Self::from_store(Store::Mem(data), name)
+    }
+
+    fn from_store(data: Store, name: &str) -> Result<Self> {
+        if data.len() < 1024 {
             return Err(EshanaError::Provider(format!("'{name}' is not a DAF/SPK file")));
         }
-        if !data[88..96].starts_with(b"LTL-IEEE") {
+        let head = data.bytes(0, 1024)?;
+        if !head.starts_with(b"DAF/SPK") {
+            return Err(EshanaError::Provider(format!("'{name}' is not a DAF/SPK file")));
+        }
+        if !head[88..96].starts_with(b"LTL-IEEE") {
             return Err(EshanaError::Provider(
                 "only little-endian SPK kernels are supported".into(),
             ));
@@ -82,7 +148,7 @@ impl SpkProvider {
                 "unexpected SPK summary shape ND={nd} NI={ni}"
             )));
         }
-        let internal = String::from_utf8_lossy(&data[16..76]).trim().to_string();
+        let internal = String::from_utf8_lossy(&head[16..76]).trim().to_string();
         let mut rec = rd_i32(&data, 76)? as usize; // forward pointer: first summary record (1-based)
         let sum_doubles = nd + ni.div_ceil(2);
         let mut segs: HashMap<(i32, i32), Vec<Segment>> = HashMap::new();
@@ -105,7 +171,7 @@ impl SpkProvider {
                     rd_i32(&data, ints + 16)? as usize,
                     rd_i32(&data, ints + 20)? as usize,
                 );
-                if ty != 2 {
+                if ty != 2 && ty != 3 {
                     continue; // other segment types are ignored; planetary DE kernels use type 2
                 }
                 min_et = min_et.min(start_et);
@@ -115,20 +181,38 @@ impl SpkProvider {
                     end_et,
                     start_addr: sa,
                     end_addr: ea,
+                    ty,
                 });
             }
             rec = next;
         }
         if segs.is_empty() {
-            return Err(EshanaError::Provider("no type-2 segments found in kernel".into()));
+            return Err(EshanaError::Provider(
+                "no type-2 or type-3 segments found in kernel".into(),
+            ));
         }
-        let identity = format!(
-            "{} | {} | {} bytes | fnv1a64 {:016x}",
-            name_of(name),
-            internal,
-            data.len(),
-            fnv1a64(&data)
-        );
+        // a kernel in memory is hashed whole; a large one by its first and last MiB (it identifies, not authenticates)
+        let identity = match &data {
+            Store::Mem(d) => format!(
+                "{} | {} | {} bytes | fnv1a64 {:016x}",
+                name_of(name),
+                internal,
+                d.len(),
+                fnv1a64(d)
+            ),
+            Store::File { len, .. } => {
+                let mib = 1 << 20;
+                let mut sample = data.bytes(0, mib.min(*len))?;
+                sample.extend(data.bytes(len.saturating_sub(mib), mib.min(*len))?);
+                format!(
+                    "{} | {} | {} bytes | fnv1a64(head+tail MiB) {:016x}",
+                    name_of(name),
+                    internal,
+                    len,
+                    fnv1a64(&sample)
+                )
+            }
+        };
         Ok(Self {
             data,
             segs,
@@ -158,9 +242,16 @@ impl SpkProvider {
         let n = rd_f64(&self.data, a(end))? as usize;
         let idx = (((et - init) / intlen).floor() as usize).min(n - 1);
         let rec0 = seg.start_addr + idx * rsize;
-        let mid = rd_f64(&self.data, a(rec0))?;
-        let radius = rd_f64(&self.data, a(rec0 + 1))?;
-        let ncoef = (rsize - 2) / 3;
+        // one read for the whole record: MID, RADIUS, then the coefficients
+        let rec: Vec<f64> = self
+            .data
+            .bytes(a(rec0), rsize * 8)?
+            .chunks_exact(8)
+            .map(|b| f64::from_le_bytes(b.try_into().expect("8 bytes")))
+            .collect();
+        let (mid, radius) = (rec[0], rec[1]);
+        // type 2: x, y, z position coefficients; type 3: the same, then vx, vy, vz velocity coefficients
+        let ncoef = (rsize - 2) / if seg.ty == 3 { 6 } else { 3 };
         let s = (et - mid) / radius;
         // Chebyshev values and derivatives.
         let mut tk = vec![0.0; ncoef];
@@ -177,11 +268,17 @@ impl SpkProvider {
         let (mut p, mut v) = ([0.0; 3], [0.0; 3]);
         for c in 0..3 {
             for k in 0..ncoef {
-                let coef = rd_f64(&self.data, a(rec0 + 2 + c * ncoef + k))?;
+                let coef = rec[2 + c * ncoef + k];
                 p[c] += coef * tk[k];
-                v[c] += coef * dk[k];
+                if seg.ty == 2 {
+                    v[c] += coef * dk[k];
+                } else {
+                    v[c] += rec[2 + (3 + c) * ncoef + k] * tk[k];
+                }
             }
-            v[c] /= radius;
+            if seg.ty == 2 {
+                v[c] /= radius;
+            }
         }
         Ok((p, v))
     }
@@ -307,6 +404,54 @@ mod tests {
     fn missing_file_is_a_provider_error() {
         let e = SpkProvider::open("/definitely/not/here.bsp").unwrap_err();
         assert_eq!(e.code(), "ESH-PROVIDER");
+    }
+
+    /// A minimal DAF/SPK in memory: one segment of the given type, one record, constant polynomials.
+    fn tiny_kernel(ty: i32) -> Vec<u8> {
+        let mut d = vec![0u8; 4 * 1024];
+        d[..8].copy_from_slice(b"DAF/SPK ");
+        d[8..12].copy_from_slice(&2i32.to_le_bytes());
+        d[12..16].copy_from_slice(&6i32.to_le_bytes());
+        d[16..76].copy_from_slice(&[b' '; 60]);
+        d[76..80].copy_from_slice(&2i32.to_le_bytes()); // first summary record
+        d[88..96].copy_from_slice(b"LTL-IEEE");
+        let put = |d: &mut Vec<u8>, off: usize, v: f64| d[off..off + 8].copy_from_slice(&v.to_le_bytes());
+        // summary record 2: next 0, prev 0, count 1, then the summary
+        put(&mut d, 1024, 0.0);
+        put(&mut d, 1024 + 16, 1.0);
+        put(&mut d, 1024 + 24, -1e9);
+        put(&mut d, 1024 + 32, 1e9);
+        let ints = 1024 + 40;
+        let ncoef = 2usize;
+        let rsize = 2 + ncoef * if ty == 3 { 6 } else { 3 };
+        let (sa, n_dir) = (385usize, 4usize); // data begins at word 385 (record 4)
+        let ea = sa + rsize + n_dir - 1;
+        for (k, v) in [10i32, 0, 1, ty, sa as i32, ea as i32].iter().enumerate() {
+            d[ints + 4 * k..ints + 4 * k + 4].copy_from_slice(&v.to_le_bytes());
+        }
+        let w = |i: usize| (i - 1) * 8;
+        let mut words = vec![0.0, 1e9]; // MID, RADIUS
+        words.extend([7.0, 0.0, 8.0, 0.0, 9.0, 0.0]); // x, y, z: constant 7, 8, 9 km
+        if ty == 3 {
+            words.extend([0.5, 0.0, 0.25, 0.0, 0.125, 0.0]); // vx, vy, vz: constant
+        }
+        words.extend([-1e9, 2e9, rsize as f64, 1.0]); // INIT, INTLEN, RSIZE, N
+        for (k, v) in words.iter().enumerate() {
+            put(&mut d, w(sa + k), *v);
+        }
+        d
+    }
+
+    #[test]
+    fn reads_type_2_and_type_3_segments() {
+        let k2 = SpkProvider::from_bytes(tiny_kernel(2), "t2").unwrap();
+        let (p, v) = k2.segment_state(10, 0, 0.0).unwrap();
+        assert_eq!(p, [7.0, 8.0, 9.0]);
+        assert_eq!(v, [0.0, 0.0, 0.0]); // derivative of a constant
+        let k3 = SpkProvider::from_bytes(tiny_kernel(3), "t3").unwrap();
+        let (p, v) = k3.segment_state(10, 0, 0.0).unwrap();
+        assert_eq!(p, [7.0, 8.0, 9.0]);
+        assert_eq!(v, [0.5, 0.25, 0.125]); // velocity from its own coefficients
     }
 
     #[test]

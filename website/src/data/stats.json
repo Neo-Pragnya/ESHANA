@@ -13,7 +13,7 @@
   "deluce",
   "djwhal_khul"
  ],
- "capabilities": 24,
+ "capabilities": 25,
  "doc_pages": 65,
  "error_codes": 14,
  "expansion": "Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations",
@@ -26,15 +26,15 @@
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 252,
- "scenarios": 122,
+ "rust_tests": 265,
+ "scenarios": 131,
  "tasks": 257,
  "tasks_by_status": {
   "implemented": 12,
-  "proposed": 48,
+  "proposed": 42,
   "released": 1,
-  "verified": 196
+  "verified": 202
  },
  "tzdb_version": "2026f",
- "version": "0.4.4"
+ "version": "0.5.0"
 }

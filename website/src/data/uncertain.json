@@ -6,6 +6,7 @@
   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
   "house_system": "whole_sign",
   "node_model": "mean",
+  "positions_reference": "geocentric",
   "provider": "analytic",
   "system": "vedic",
   "zodiac": "sidereal"
@@ -115,6 +116,7 @@
  "houses": null,
  "input": {
   "birth_time_quality": "date_only",
+  "calendar": null,
   "civil_offset_s": null,
   "civil_zone": null,
   "delta_t_s": 58.184,
@@ -206,7 +208,7 @@
    "birth time quality is date_only: positions are evaluated over a window of ±720.0 minutes and given as intervals",
    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
   ],
-  "engine_version": "0.4.4",
+  "engine_version": "0.5.0",
   "provider": "analytic",
   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",

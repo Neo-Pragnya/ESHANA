@@ -5,6 +5,33 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-24
+
+Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
+
+### Added
+- Calendars and BCE dates (TIME-03): `when.calendar` = `gregorian` (default, proleptic), `julian` or `auto` (the
+  1582 cut-over; the ten skipped days are refused); signed astronomical years (`-0043-03-15`); the date as written is
+  kept in `input.calendar` and a converted date is recorded as an assumption.
+- ΔT across five millennia (TIME-05): the full Espenak–Meeus set (−500 to 2150) and the long-term parabola outside
+  it; after 2027 a forecast from IERS Bulletin A (Vol. XXXIX No. 047) blended into the long-term curve by 2050.
+- Kernel catalogue (PROV-06): `eshana kernel list | verify | path`, NAIF's published MD5 for DE440s, DE440, DE441
+  (both parts) and DE442; a catalogue name works as `--spk`; `scripts/fetch_kernel.py` downloads and checks one.
+- SPK type-3 segments, and kernels over 256 MB read on demand (PROV-04).
+- `rise_set` operation and `eshana rise-set` (AST-08): rise, upper transit and set of any body over up to 366 local
+  days, with polar days flagged, and civil, nautical and astronomical twilight; within 30 s of an independent oracle
+  at four places including Tromsø.
+- Topocentric positions (AST-08): `config.topocentric` / `--topocentric` apply the parallax for the place and its
+  altitude; `calculation.positions_reference` records it.
+- House systems (AST-03): Koch, Regiomontanus, Campanus, Alcabitius, Topocentric (Polich–Page), Morinus and
+  Meridian, each within 0.01° of an independent oracle across seven latitudes and twelve sidereal times; Porphyry and
+  Śrīpati now listed in `eshana methods`.
+
+### Fixed
+- Dates before 1582 now round-trip: the Julian-day inverse used the Julian calendar before 1582 while the forward
+  conversion was proleptic Gregorian.
+- ΔT before 1800 no longer extrapolates the 1800–1860 polynomial (the year 100 gave a nonsensical instant).
+
 ### Changed
 - The download buttons' tooltips and screen-reader labels follow the interface language (Hindi strings pending the
   owner's review, listed in `pending_review`).

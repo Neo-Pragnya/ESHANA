@@ -374,6 +374,23 @@ pub enum HouseSystem {
     Porphyry,
     /// Śrīpati (bhāva chalit): cusps are the midpoints between Porphyry cusps, which become bhāva madhyas.
     Sripati,
+    /// Koch (birthplace): cusps are the Ascendants at the sidereal times that trisect the Midheaven degree's
+    /// semi-diurnal arc; undefined beyond the polar circles.
+    Koch,
+    /// Regiomontanus: the celestial equator divided into twelve 30° parts, projected by circles through the
+    /// north and south points of the horizon.
+    Regiomontanus,
+    /// Campanus: the prime vertical divided into twelve 30° parts, projected the same way.
+    Campanus,
+    /// Alcabitius: the Ascendant degree's diurnal and nocturnal semi-arcs trisected in right ascension.
+    Alcabitius,
+    /// Topocentric (Polich–Page): Regiomontanus-style circles with pole heights of one and two thirds of the
+    /// latitude's tangent.
+    Topocentric,
+    /// Morinus: the equator divided from the east point, projected along circles of ecliptic longitude.
+    Morinus,
+    /// Meridian (axial rotation): the equator divided from the Midheaven, projected along circles of declination.
+    Meridian,
 }
 
 impl HouseSystem {
@@ -386,6 +403,13 @@ impl HouseSystem {
             HouseSystem::Placidus => "placidus",
             HouseSystem::Porphyry => "porphyry",
             HouseSystem::Sripati => "sripati",
+            HouseSystem::Koch => "koch",
+            HouseSystem::Regiomontanus => "regiomontanus",
+            HouseSystem::Campanus => "campanus",
+            HouseSystem::Alcabitius => "alcabitius",
+            HouseSystem::Topocentric => "topocentric",
+            HouseSystem::Morinus => "morinus",
+            HouseSystem::Meridian => "meridian",
         }
     }
 
@@ -400,6 +424,13 @@ impl HouseSystem {
             "placidus" => Ok(HouseSystem::Placidus),
             "porphyry" => Ok(HouseSystem::Porphyry),
             "sripati" | "bhava_chalit" => Ok(HouseSystem::Sripati),
+            "koch" => Ok(HouseSystem::Koch),
+            "regiomontanus" => Ok(HouseSystem::Regiomontanus),
+            "campanus" => Ok(HouseSystem::Campanus),
+            "alcabitius" => Ok(HouseSystem::Alcabitius),
+            "topocentric" | "polich_page" => Ok(HouseSystem::Topocentric),
+            "morinus" => Ok(HouseSystem::Morinus),
+            "meridian" | "axial" | "axial_rotation" => Ok(HouseSystem::Meridian),
             other => Err(EshanaError::Input(format!("unknown house system '{other}'"))),
         }
     }

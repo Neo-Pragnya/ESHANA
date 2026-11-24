@@ -48,6 +48,7 @@ OPS = {
     "kp_horary": ("🎯", "a KP horary chart: the number fixes the Ascendant"),
     "synthetic_chart": ("🧪", "positions you place by hand, labelled synthetic (the playground)"),
     "research_window_score": ("📊", "the experimental window score, with coverage and sensitivity"),
+    "rise_set": ("🌄", "rise, upper transit and set of any body, and twilight, for local days at a place"),
     "info": ("ℹ️", "versions, operations, method families and ayanāṃśa definitions"),
 }
 

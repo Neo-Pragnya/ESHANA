@@ -7,6 +7,7 @@
 
 pub mod analytic;
 pub mod frames;
+pub mod kernels;
 pub mod spk;
 
 use eshana_core::{Body, EshanaError, Result};
@@ -129,7 +130,8 @@ pub fn provider_by_id(id: &str, opts: &ProviderOptions) -> Result<Box<dyn Epheme
                             .into(),
                     )
                 })?;
-            Ok(Box::new(spk::SpkProvider::open(&path)?))
+            // a catalogue name (de440) is looked up in the kernel folder
+            Ok(Box::new(spk::SpkProvider::open(&kernels::resolve(&path)?)?))
         }
         other => Err(EshanaError::Config(format!(
             "unknown provider '{other}'; known: {}",

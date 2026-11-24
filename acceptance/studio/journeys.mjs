@@ -1418,7 +1418,7 @@ await journey("interface language is a reader setting: English by default, Hindi
   expect(kept === "hi", "choice not kept after reload: " + kept);
   // the download buttons speak the chosen language too
   await go("#/charts", 1500);
-  const dl = await evaluate(`(() => { const b = document.querySelector('section.page:not([hidden]) .imgbar button.imgbtn'); return b ? b.title + ' | ' + b.getAttribute('aria-label') : null; })()`);
+  const dl = await evaluate(`(async () => { for (let i = 0; i < 20; i++) { window.eshanaExport.scan(); const b = document.querySelector('section.page:not([hidden]) .imgbar button.imgbtn'); if (b) return b.title + ' | ' + b.getAttribute('aria-label'); await new Promise(r => setTimeout(r, 150)); } return null; })()`);
   expect(dl && /डाउनलोड/.test(dl) && !/Download/.test(dl), "download labels in Hindi: " + dl);
   await shot("language-hi");
   await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
