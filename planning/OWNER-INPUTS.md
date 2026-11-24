@@ -251,6 +251,21 @@ Corrections:
 
 ---
 
+## 5b. New Hindi labels to review (added 2026-11-24, after your approval of the catalogue)
+
+The download buttons' tooltips and screen-reader labels now follow the interface language. These four strings are
+mine, listed under `pending_review` in `hi.json`; correct any as `key: current → better`, or tick to accept.
+
+| Key | English | Hindi (draft) |
+|---|---|---|
+| `ui.download_group` | Download {label} as an image | {label} को चित्र के रूप में डाउनलोड करें |
+| `ui.download_title` | Download “{label}” as {kind}, as shown now | “{label}” को {kind} के रूप में डाउनलोड करें, जैसा अभी दिख रहा है |
+| `ui.download_aria` | Download {label} as {kind} | {label} को {kind} के रूप में डाउनलोड करें |
+| `ui.download_error` | Could not create the image: | चित्र नहीं बन सका: |
+
+- [ ] Accept as written
+- [ ] Corrections:
+
 ## 6. Anything else
 
 Other priorities, changes to the order, things in the studio you want different, or a set of timed births for RES-03:

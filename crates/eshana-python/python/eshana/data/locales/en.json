@@ -58,6 +58,10 @@
   "copy": "Copy summary",
   "not_computed": "Not computed",
   "not_computed_note": "These were refused by the engine, so they are left out rather than guessed.",
-  "translation_note": ""
+  "translation_note": "",
+  "download_group": "Download {label} as an image",
+  "download_title": "Download “{label}” as {kind}, as shown now",
+  "download_aria": "Download {label} as {kind}",
+  "download_error": "Could not create the image: "
  }
 }

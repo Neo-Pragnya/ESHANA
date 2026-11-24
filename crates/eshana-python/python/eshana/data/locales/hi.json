@@ -58,6 +58,16 @@
   "copy": "सारांश कॉपी करें",
   "not_computed": "गणना नहीं हुई",
   "not_computed_note": "इंजन ने इन्हें अस्वीकार किया, इसलिए अनुमान लगाने के बजाय इन्हें छोड़ दिया गया है।",
-  "translation_note": "हिंदी अनुवाद: मसौदा, अभी समीक्षा नहीं हुई (draft translation, not yet reviewed)."
- }
+  "translation_note": "हिंदी अनुवाद: मसौदा, अभी समीक्षा नहीं हुई (draft translation, not yet reviewed).",
+  "download_group": "{label} को चित्र के रूप में डाउनलोड करें",
+  "download_title": "“{label}” को {kind} के रूप में डाउनलोड करें, जैसा अभी दिख रहा है",
+  "download_aria": "{label} को {kind} के रूप में डाउनलोड करें",
+  "download_error": "चित्र नहीं बन सका: "
+ },
+ "pending_review": [
+  "ui.download_aria",
+  "ui.download_error",
+  "ui.download_group",
+  "ui.download_title"
+ ]
 }

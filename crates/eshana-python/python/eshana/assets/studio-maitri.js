@@ -43,7 +43,6 @@ function mtFilter(wrap, kinds) {
   const shown = h('small', { class: 'note' });
   return h('div', { class: 'chips mt-filter', role: 'group', 'aria-label': 'Filter the grid' }, h('b', { class: 'mt-ftitle' }, 'Filter'), ...btns, clear, shown);
 }
-const mtLegend = items => h('div', { class: 'mt-legend' }, items.map(([cls, text]) => h('span', {}, h('i', { class: cls }), text)));
 
 function mtRelationships(rel) {
   const R = {}; rel.rows.forEach(x => { R[x.from + '>' + x.to] = x; });

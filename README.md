@@ -597,14 +597,20 @@ make preview           # local preview of the studio and the website
 ```
 
 ```mermaid
-flowchart LR
-    V["✅ make verify"] --> A["🥒 acceptance<br/>PROMOTE"]
-    A --> J["🌐 browser journeys<br/>both reference charts"]
-    J --> S["🛡️ cargo deny · audit<br/>dist scan"]
-    S --> T["🧪 TestPyPI"]
-    T --> P["📦 PyPI"]
-    P --> M["🔀 merge to main"]
-    M --> G["🌍 GitHub Pages<br/>docs-site workflow"]
+flowchart TB
+    subgraph gates["🧪 Gates"]
+        direction LR
+        V["✅ make verify<br/>tests · accuracy"] --> A["🥒 acceptance<br/>PROMOTE"] --> J["🌐 browser journeys<br/>both reference charts"] --> S["🛡️ cargo deny · audit<br/>dist scan"]
+    end
+    subgraph ship["📦 Ship"]
+        direction LR
+        W["🛞 wheels<br/>macOS · Linux x86_64 · aarch64"] --> T["🧪 TestPyPI"] --> P["📦 PyPI"] --> I["🔍 install from PyPI<br/>macOS · Linux containers"]
+    end
+    subgraph site["🌍 Publish"]
+        direction LR
+        M["🔀 PR checks · merge to main"] --> G["🌍 GitHub Pages<br/>docs, demos, README images"]
+    end
+    gates --> ship --> site
 ```
 
 Work is tracked in [`planning/backlog.json`](planning/backlog.json), rendered as
