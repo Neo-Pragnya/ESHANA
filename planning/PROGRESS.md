@@ -6,7 +6,7 @@
 
 Done means *verified* or *released*, with evidence; `[~]` means *implemented* (code exists, not yet proven). The full ledger with evidence is [TRACKING.md](TRACKING.md); the readable plan is [NEXT-STEPS.md](NEXT-STEPS.md).
 
-Released: 0.4.1 (2026-11-24), 0.4.0 (2026-11-24), 0.3.3 (2026-11-22), 0.3.2 (2026-11-22), 0.3.1 (2026-11-21), 0.3.0 (2026-11-21), 0.2.0 (2026-11-21), 0.1.0 (2026-11-21) (PyPI `eshana`).
+Released: 0.4.2 (2026-11-24), 0.4.1 (2026-11-24), 0.4.0 (2026-11-24), 0.3.3 (2026-11-22), 0.3.2 (2026-11-22), 0.3.1 (2026-11-21), 0.3.0 (2026-11-21), 0.2.0 (2026-11-21), 0.1.0 (2026-11-21) (PyPI `eshana`).
 
 ## Milestones
 

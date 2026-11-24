@@ -5,6 +5,17 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-11-24
+
+### Changed
+- README for GitHub: light and dark heroes (`<picture>`), an animated muhūrta-composition diagram drawn from a real
+  run (`assets/readme/src/muhurta_svg.py`), Mermaid diagrams (crate architecture, the `eshana-report new` sequence,
+  the release pipeline), GitHub alerts, formulas in LaTeX, a Python cookbook whose outputs were run, an FAQ, the full
+  23-view gallery, and reference tables (operations, CLI commands, method families, error codes) generated from the
+  engine by `scripts/readme_sections.py` and checked by `make docs-check`.
+- The PyPI description follows it, with GitHub-only syntax converted (Mermaid → a link, alerts → bold notes, math →
+  code).
+
 ## [0.4.1] - 2026-11-24
 
 ### Changed

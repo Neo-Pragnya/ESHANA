@@ -33,7 +33,24 @@ def absolute(path: str) -> str:
     return f"{REPO}/{kind}/main/{path}"
 
 
+ALERTS = {"NOTE": "📝 Note", "TIP": "💡 Tip", "IMPORTANT": "❗ Important", "WARNING": "⚠️ Warning", "CAUTION": "🛑 Caution"}
+
+
+def pypi_only(text: str) -> str:
+    """GitHub-only Markdown becomes something PyPI renders: <picture> → its <img>, Mermaid → a link to the diagram on
+    GitHub, alerts → bold blockquotes, math → readable code. Code fences are left alone."""
+    text = re.sub(r"<picture>.*?(<img [^>]*/>).*?</picture>", r"\1", text, flags=re.S)
+    text = re.sub(r"```mermaid\n.*?```", f"> 📊 *A diagram is here on GitHub: [view the README there]({REPO}#readme).*", text, flags=re.S)
+    text = re.sub(r"^> \[!(\w+)\]$", lambda m: f"> **{ALERTS.get(m.group(1), m.group(1).title())}**  ", text, flags=re.M)
+    text = text.replace("```math\n", "```text\n")
+    parts = re.split(r"(```.*?```)", text, flags=re.S)  # inline $…$ math outside code becomes `…`
+    for i in range(0, len(parts), 2):
+        parts[i] = re.sub(r"(?<![\w`$])\$(?!\()([^$`\n]+?)\$", lambda m: "`" + m.group(1).replace("\\text{", "").replace("}", "").replace("{", "") + "`", parts[i])
+    return "".join(parts)
+
+
 def render(text: str) -> str:
+    text = pypi_only(text)
     text = re.sub(r'(src|href)="([^"]+)"', lambda m: f'{m.group(1)}="{absolute(m.group(2))}"', text)
     text = re.sub(r"\]\(([^)\s]+)\)", lambda m: f"]({absolute(m.group(1))})", text)
     return HEADER + text

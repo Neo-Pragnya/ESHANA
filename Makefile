@@ -99,6 +99,7 @@ gallery: reports
 # ── release (docs/guides/publishing.md) ───────────────────────────────────────────────────────────────────────
 # Files are versioned, so publish uploads only this version's files from dist/.
 dist: build-release wasm
+	python3 scripts/readme_sections.py
 	python3 scripts/pypi_readme.py
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin sdist --out ../../dist
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
@@ -173,6 +174,7 @@ demo: build-release
 	python3 scripts/build_demo.py website/src/data
 docs-check:
 	python3 scripts/check_docs.py
+	python3 scripts/readme_sections.py --check
 	python3 scripts/pypi_readme.py --check
 # reference docs vs the installed wheel (operations, error codes, CLI commands, methods); --write regenerates methods.md
 capabilities-check: build-release

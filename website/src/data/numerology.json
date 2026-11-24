@@ -107,7 +107,7 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.4.1",
+   "engine_version": "0.4.2",
    "provider": null,
    "rulesets": [
     "numerology.chaldean@0.1"
@@ -269,7 +269,7 @@
    "assumptions": [
     "numerology is a symbolic tradition: these numbers are labelled tradition_rule, not measurements"
    ],
-   "engine_version": "0.4.1",
+   "engine_version": "0.4.2",
    "provider": null,
    "rulesets": [
     "numerology.pythagorean@0.1"
