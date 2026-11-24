@@ -129,10 +129,14 @@ pub struct ChartRequest {
     /// Further divisional charts by method id (`varga_method` family, e.g. `d81_navanavamsha`), Vedic only.
     #[serde(default)]
     pub varga_methods: Vec<String>,
+    /// User rule packs in the `yogas.yaml` format (RULE-02), Vedic only: each is checked like the built-in pack and
+    /// reported under its own id as `user.yogas.<id>`.
+    #[serde(default)]
+    pub user_rule_packs: Vec<String>,
 }
 
 /// Every operation (`op`) a request may name. A unit test keeps this list and the [`Request`] enum in step.
-pub const OPERATIONS: [&str; 28] = [
+pub const OPERATIONS: [&str; 29] = [
     "positions",
     "chart",
     "human_design",
@@ -158,13 +162,15 @@ pub const OPERATIONS: [&str; 28] = [
     "returns",
     "gochara",
     "eclipses",
+    "synastry",
     "synthetic_chart",
     "research_window_score",
     "info",
 ];
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 21] = [
+pub const FEATURES: [&str; 22] = [
+    "lal_kitab",
     "panchanga",
     "strength",
     "relationships",
@@ -481,6 +487,19 @@ pub enum Request {
     Info,
     /// Rise, upper transit and set of bodies, and twilight, for local days at a place.
     RiseSet(RiseSetRequest),
+    /// Two charts compared: inter-aspects and house overlays (synastry), a midpoint composite and a Davison chart.
+    Synastry {
+        /// First person.
+        a: ChartRequest,
+        /// Second person.
+        b: ChartRequest,
+        /// Orb multiplier for the inter-aspects (default 1.0).
+        orb_scale: Option<f64>,
+        /// Include the composite (midpoint) chart (default true).
+        composite: Option<bool>,
+        /// Include the Davison chart (midpoint in time and space; default true).
+        davison: Option<bool>,
+    },
     /// Solar and lunar eclipses in a range, with type, time of greatest eclipse and magnitude.
     Eclipses {
         /// Range start, UTC ISO.
@@ -819,6 +838,19 @@ impl Engine {
             Request::Ephemeris(r) => self.ephemeris_op(r),
             Request::Ingresses(r) => self.ingress_op(r),
             Request::RiseSet(r) => self.rise_set_op(r),
+            Request::Synastry {
+                a,
+                b,
+                orb_scale,
+                composite,
+                davison,
+            } => self.synastry_op(
+                a,
+                b,
+                orb_scale.unwrap_or(1.0),
+                composite.unwrap_or(true),
+                davison.unwrap_or(true),
+            ),
             Request::Eclipses {
                 start_utc,
                 end_utc,
@@ -970,9 +1002,10 @@ impl Engine {
     #[allow(clippy::too_many_lines)]
     fn chart(&self, r: &ChartRequest, system: Option<&str>, kind: &str) -> Result<Value> {
         let mut assumptions: Vec<String> = vec![];
-        if !r.features.is_empty() && system != Some("vedic") {
+        let western_features = system == Some("western") && r.features.iter().all(|f| f == "dignities");
+        if !r.features.is_empty() && system != Some("vedic") && !western_features {
             return Err(EshanaError::Config(
-                "features are Vedic: use them with system=vedic".into(),
+                "features are Vedic: use them with system=vedic (a western chart takes only features=[\"dignities\"])".into(),
             ));
         }
         let cfg = build_config(&r.config, system, r.assume_defaults, &mut assumptions)?;
@@ -1215,6 +1248,27 @@ impl Engine {
                         "houses",
                     ));
                 }
+                if r.features.iter().any(|f| f == "dignities") {
+                    let lons: BTreeMap<String, f64> =
+                        pos_by_body.iter().map(|(k, v)| (k.clone(), v.0)).collect();
+                    // sect: the Sun above the horizon (between the Descendant and the Ascendant through the MC)
+                    let day = match (asc_lon, lons.get("sun")) {
+                        (Some(a), Some(s)) if hw == 0.0 => Some(norm360(s - a) >= 180.0),
+                        _ => None,
+                    };
+                    if day.is_none() {
+                        assumptions.push("essential dignities: the sect (day or night) needs the exact birth time and place; triplicity is shown but not scored".into());
+                    }
+                    rulesets.push(crate::western_dignities::rule_id());
+                    derived.push(attr(
+                        "western.dignities",
+                        "western.essential_dignities",
+                        &crate::western_dignities::rule_id(),
+                        Epistemic::TraditionRule,
+                        crate::western_dignities::dignities(&lons, day)?,
+                        &["positions".to_string(), "houses".to_string()],
+                    ));
+                }
                 if r.aspects {
                     let scale = r.orb_scale.unwrap_or(1.0);
                     let ids: Vec<&String> = pos_by_body.keys().filter(|k| !k.contains("node")).collect();
@@ -1382,7 +1436,7 @@ impl Engine {
                     ));
                 }
                 let feats = expand_features(&r.features)?;
-                if !feats.is_empty() {
+                if !feats.is_empty() || !r.user_rule_packs.is_empty() {
                     self.vedic_features(
                         &feats,
                         &cfg,
@@ -1496,10 +1550,20 @@ impl Engine {
         let mut omitted: Vec<String> = vec![];
         let mut need = |what: &str, why: &str| omitted.push(format!("{what} omitted: {why}"));
         rulesets.push(core_rule.clone());
+        let dignity_rule = packs::split_rule("vedic-dignity.yaml");
+        let relationships_rule = packs::split_rule("vedic-relationships.yaml");
+        let drishti_rule = packs::split_rule("vedic-drishti.yaml");
+        let strength_rule = packs::split_rule("vedic-strength.yaml");
+        rulesets.extend([
+            dignity_rule.clone(),
+            relationships_rule.clone(),
+            drishti_rule.clone(),
+            strength_rule.clone(),
+        ]);
         if feats.contains("strength") {
             push(
                 "vedic.strength",
-                &core_rule,
+                &strength_rule,
                 jyotish::strength(&vc),
                 &["positions", "houses"],
             );
@@ -1507,7 +1571,7 @@ impl Engine {
         if feats.contains("relationships") {
             push(
                 "vedic.relationships",
-                &core_rule,
+                &relationships_rule,
                 jyotish::panchadha_maitri(&vc),
                 &["positions"],
             );
@@ -1515,19 +1579,19 @@ impl Engine {
         if feats.contains("drishti") {
             push(
                 "vedic.drishti.graha",
-                &core_rule,
+                &drishti_rule,
                 jyotish::graha_drishti(&vc),
                 &["positions"],
             );
             push(
                 "vedic.drishti.additional",
-                &core_rule,
+                &drishti_rule,
                 jyotish::additional_drishti(&vc),
                 &["positions"],
             );
             push(
                 "vedic.drishti.rashi",
-                &core_rule,
+                &drishti_rule,
                 json!({"rule": "movable signs aspect fixed signs except the adjacent one; fixed aspect movable except the adjacent one; dual aspect dual",
                 "aspects": jyotish::rashi_drishti(&vc)}),
                 &["positions"],
@@ -1546,7 +1610,7 @@ impl Engine {
             if !vargas.is_empty() {
                 push(
                     "vedic.drishti.vargas",
-                    &core_rule,
+                    &drishti_rule,
                     json!({"rule": "graha, rashi and additional drishti by the same rules as the rasi chart, between the signs each graha occupies in the varga", "vargas": vargas}),
                     &["positions"],
                 );
@@ -1668,6 +1732,28 @@ impl Engine {
                 "vedic.yogas",
                 &rule,
                 jyotish::yogas(&vc),
+                &["positions", "houses"],
+            );
+        }
+        if feats.contains("lal_kitab") {
+            let rule = crate::lal_kitab::rule_id();
+            rulesets.push(rule.clone());
+            match crate::lal_kitab::chart(&vc) {
+                Ok(v) => push("vedic.lal_kitab", &rule, v, &["positions", "houses"]),
+                Err(e) => need("lal_kitab", &e.to_string()),
+            }
+        }
+        for src in &r.user_rule_packs {
+            let pk = packs::user_yogas(src)?;
+            let rule = packs::rule_id(&pk.id, &pk.version);
+            rulesets.push(rule.clone());
+            let mut v = jyotish::yogas_with(&vc, &pk);
+            v["source"] =
+                json!("user rule pack: checked by the same grammar as vedic.yogas, not reviewed by ESHANA");
+            push(
+                &format!("user.yogas.{}", pk.id),
+                &rule,
+                v,
                 &["positions", "houses"],
             );
         }
@@ -2659,6 +2745,111 @@ impl Engine {
         )
     }
 
+    fn synastry_op(
+        &self,
+        a: &ChartRequest,
+        b: &ChartRequest,
+        scale: f64,
+        composite: bool,
+        davison: bool,
+    ) -> Result<Value> {
+        let system = a
+            .system
+            .clone()
+            .or_else(|| b.system.clone())
+            .unwrap_or_else(|| "western".into());
+        let (ea, eb) = (
+            self.chart(a, Some(&system), "computed_chart")?,
+            self.chart(b, Some(&system), "computed_chart")?,
+        );
+        let bodies = |e: &Value| -> Vec<(String, f64, f64)> {
+            e["positions"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|p| !p["id"].as_str().unwrap_or("").contains("node"))
+                .filter_map(|p| {
+                    Some((
+                        p["id"].as_str()?.to_string(),
+                        p["longitude_deg"].as_f64()?,
+                        p["speed_deg_per_day"].as_f64().unwrap_or(0.0),
+                    ))
+                })
+                .collect()
+        };
+        let (pa, pb) = (bodies(&ea), bodies(&eb));
+        let mut inter = vec![];
+        for (ia, la, _) in &pa {
+            for (ib, lb, _) in &pb {
+                if let Some(asp) = astro::aspect_between(*la, 0.0, *lb, 0.0, scale) {
+                    inter.push(json!({"a": ia, "b": ib, "aspect": asp.name, "exact_angle": asp.angle, "separation_deg": asp.separation, "orb_deg": asp.orb}));
+                }
+            }
+        }
+        let cusps = |e: &Value| -> Option<[f64; 12]> {
+            let v = e["houses"]["cusps_deg"].as_array()?;
+            let mut c = [0.0; 12];
+            for (i, x) in v.iter().take(12).enumerate() {
+                c[i] = x.as_f64()?;
+            }
+            Some(c)
+        };
+        let overlay = |who: &[(String, f64, f64)], into: Option<[f64; 12]>| -> Value {
+            match into {
+                Some(c) => json!(who
+                    .iter()
+                    .map(|(id, l, _)| json!({"body": id, "house": astro::house_of(*l, &c)}))
+                    .collect::<Vec<_>>()),
+                None => Value::Null,
+            }
+        };
+        let mid = |x: f64, y: f64| norm360(x + angular_diff(y, x) / 2.0); // the nearer midpoint
+        let mut out = json!({"schema_version": SCHEMA_VERSION, "kind": "synastry",
+            "calculation": {"system": system, "orb_scale": scale, "zodiac": ea["calculation"]["zodiac"], "ayanamsha": ea["calculation"]["ayanamsha"],
+                            "aspects": "Ptolemaic (conjunction, sextile, square, trine, opposition) between every body of A and every body of B"},
+            "inter_aspects": inter,
+            "house_overlays": {"a_in_b": overlay(&pa, cusps(&eb)), "b_in_a": overlay(&pb, cusps(&ea))},
+            "a": {"positions": ea["positions"], "houses": ea["houses"]}, "b": {"positions": eb["positions"], "houses": eb["houses"]},
+            "interpretations": [],
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "a": ea["provenance"], "b": eb["provenance"]}});
+        if composite {
+            let pos: Vec<Value> = pa.iter().filter_map(|(id, la, _)| {
+                let lb = pb.iter().find(|x| &x.0 == id)?.1;
+                Some(json!({"id": id, "longitude_deg": mid(*la, lb), "sign": astro::sign_index(mid(*la, lb))}))
+            }).collect();
+            let houses = match (cusps(&ea), cusps(&eb)) {
+                (Some(ca), Some(cb)) => {
+                    json!({"method": "cusp_midpoints", "cusps_deg": (0..12).map(|i| mid(ca[i], cb[i])).collect::<Vec<_>>()})
+                }
+                _ => Value::Null,
+            };
+            out["composite"] = json!({"method": "midpoints (the nearer of the two arcs)", "positions": pos, "houses": houses});
+        }
+        if davison {
+            let (ma, mb) = (resolve_when(&a.when)?, resolve_when(&b.when)?);
+            let mut d = a.clone();
+            d.when = When {
+                utc: Some(Instant::from_jd_utc((ma.center.jd_ut + mb.center.jd_ut) / 2.0).utc),
+                ..When::default()
+            };
+            d.place = match (&a.place, &b.place) {
+                (Some(x), Some(y)) => Some(Place {
+                    latitude: (x.latitude + y.latitude) / 2.0,
+                    longitude: norm360(x.longitude + angular_diff(y.longitude, x.longitude) / 2.0 + 180.0)
+                        - 180.0,
+                    altitude_m: None,
+                }),
+                _ => None,
+            };
+            d.features = vec![];
+            let de = self.chart(&d, Some(&system), "computed_chart")?;
+            out["davison"] = json!({"method": "midpoint in time (UT) and space (latitude, the nearer longitude)",
+                                    "instant_utc": de["input"]["instant_utc"], "place": de["input"]["place"],
+                                    "positions": de["positions"], "houses": de["houses"]});
+        }
+        Ok(out)
+    }
+
     fn gochara_op(
         &self,
         natal: &ChartRequest,
@@ -3134,6 +3325,19 @@ impl Engine {
 pub const WESTERN_RULESET: &str = "western.basic@0.1";
 
 fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
+    if let Some(sch) = r.school.as_deref().filter(|x| crate::gematria::handles(x)) {
+        let name = r
+            .name
+            .as_deref()
+            .ok_or_else(|| EshanaError::Input(format!("{sch} reads a name: give name")))?;
+        let g = crate::gematria::analyze(name, sch)?;
+        return Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "numerology", "input": {"name": name, "school": sch},
+            "gematria": g, "interpretations": [],
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "rulesets": [g["rule"]],
+                "assumptions": ["the name is read in its own script; nothing is transliterated"]}}),
+        );
+    }
     let school = numerology::School::parse(r.school.as_deref().unwrap_or("pythagorean"))?;
     let keep = r.keep_master_numbers.unwrap_or(true);
     let y = match r.y_policy.as_deref().unwrap_or("consonant") {

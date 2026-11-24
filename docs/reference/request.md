@@ -27,7 +27,7 @@ meaning).
 | `positions` | a chart request without `system` |
 | `chart` | a chart request with `system`: `vedic` or `western` |
 | `human_design` | a chart request (exact time required) |
-| `numerology` | `name`, `date_of_birth`, `school`, `keep_master_numbers`, `y_policy`, `life_path_method`, `reference_year` |
+| `numerology` | `name`, `date_of_birth`, `school` (`pythagorean`, `chaldean`; `hebrew_gematria` or `abjad` with the name in Hebrew or Arabic letters), `keep_master_numbers`, `y_policy`, `life_path_method`, `reference_year` |
 | `compare` | `base` (a chart request), `a` and `b` (config overrides) |
 | `graph` | `chart` (a chart request with `system`), `format` |
 | `panchanga` | `chart` (a chart request with `place`, sidereal), `natal_moon_deg` |
@@ -49,6 +49,7 @@ meaning).
 | `rise_set` | `place` (with optional `altitude_m`), `date` (first local day), `timezone` or `utc_offset_minutes`, `days` (1–366, default 1), `bodies` (default Sun and Moon), `sunrise` (convention), `twilight` (default true), `config`, `spk_path` |
 | `returns` | `natal` (a chart request with an exact time; its zodiac settings apply), `body` (default `sun`), `start_utc`, `end_utc` (≤ 120 years; Moon ≤ 10), `place` (relocated return), `charts` (default true) |
 | `gochara` | `natal` (sidereal settings), `start_utc`, `end_utc` (≤ 30 years), `bodies` (default the nine grahas) |
+| `synastry` | `a`, `b` (chart requests; `system` from `a`, default western), `orb_scale`, `composite` (default true), `davison` (default true) |
 | `eclipses` | `start_utc`, `end_utc` (≤ 200 years), `kinds` (`solar`, `lunar`; default both), `config`, `spk_path` |
 | `methods` | none; returns every method family and id (`kind: methods`) |
 | `info` | none |
@@ -66,6 +67,9 @@ meaning).
 | `system` | string | `vedic` or `western` |
 | `bodies` | array of ids | `sun`, `moon`, `mercury` … `pluto`, `mean_node`, `true_node`; optional `ceres`, `pallas`, `juno`, `vesta` (kernel `sb441-n16`) and `chiron` (a JPL Horizons kernel) with `--spk de440,…` |
 | `divisions`, `dasha`, `year_convention` | | Vedic |
+| `features` | array | Vedic feature names (`all` for every one, including `lal_kitab`); a western chart takes only `dignities` (essential dignities, pack `western.dignities`) |
+| `varga_methods` | array | further vargas by method id: `d2_parivritti`, `d3_parivritti`, `d30_parivritti`, `d60_parivritti`, `d81_navanavamsha`, `d108_ashtottaramsha_cyclic`, `d144_dvadasha_dvadashamsha`, `d150_parivritti` |
+| `user_rule_packs` | array of YAML text | user yoga packs in the `yogas.yaml` format (Vedic), checked by the same grammar and reported as `user.yogas.<id>` |
 | `aspects`, `orb_scale` | | Western |
 | `spk_path` | string | kernel for the `spk` provider: a path, or a catalogue name such as `de440` (see `eshana kernel list`) |
 | `assume_defaults` | bool | let the engine default a missing ayanāṃśa to Lahiri and **record** that; off by default |

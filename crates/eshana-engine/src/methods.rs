@@ -142,6 +142,16 @@ pub const EVENT_SEARCHES: &[Method] = &[
 pub const NUMEROLOGY_SCHOOLS: &[Method] = &[
     m("pythagorean", "stable", "1–9 letter values in alphabet order"),
     m("chaldean", "stable", "1–8 letter values of the Chaldean table"),
+    m(
+        "hebrew_gematria",
+        "opt_in",
+        "mispar hechrechi: Hebrew letters 1–400 (the name in Hebrew script)",
+    ),
+    m(
+        "abjad",
+        "opt_in",
+        "eastern abjad order: Arabic letters 1–1000 (the name in Arabic script)",
+    ),
 ];
 
 /// Every family with the methods it holds. Families added by later operations register here too.

@@ -1,0 +1,17 @@
+# Rule pack: vedic.relationships@0.1 (split from vedic.core 0.3; values unchanged). Values follow Brihat Parashara Hora Shastra
+# (BPHS) as commonly taught; where schools differ the convention is named.
+id: vedic.relationships
+version: "0.1"
+
+# Naisargika (natural) relationships, BPHS.
+natural_friendship:
+  sun:     {friends: [moon, mars, jupiter],    neutral: [mercury],                       enemies: [venus, saturn]}
+  moon:    {friends: [sun, mercury],           neutral: [mars, jupiter, venus, saturn],  enemies: []}
+  mars:    {friends: [sun, moon, jupiter],     neutral: [venus, saturn],                 enemies: [mercury]}
+  mercury: {friends: [sun, venus],             neutral: [mars, jupiter, saturn],         enemies: [moon]}
+  jupiter: {friends: [sun, moon, mars],        neutral: [saturn],                        enemies: [mercury, venus]}
+  venus:   {friends: [mercury, saturn],        neutral: [mars, jupiter],                 enemies: [sun, moon]}
+  saturn:  {friends: [mercury, venus],         neutral: [jupiter],                       enemies: [sun, moon, mars]}
+
+# Temporary (tatkalika) friends: grahas in these houses counted from a graha.
+temporary_friend_houses: [2, 3, 4, 10, 11, 12]

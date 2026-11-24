@@ -1,0 +1,50 @@
+# Western essential dignities (WES-04). Each scheme is named; nothing is mixed between schools.
+# Sources: Claudius Ptolemy, Tetrabiblos I.17–22 (domiciles, exaltations, the "Egyptian" terms he reports),
+# Dorotheus of Sidon, Carmen Astrologicum I.1 (triplicity rulers by day and night, with the participating ruler),
+# the Chaldean faces (decans in the descending planetary order from Mars at 0° Aries).
+# Scores are the usual point weights of the essential-dignity table (domicile 5 … face 1; detriment −5, fall −4).
+id: western.dignities
+version: "0.1"
+schemes:
+  triplicity: dorothean
+  terms: egyptian
+  faces: chaldean
+scores: {domicile: 5, exaltation: 4, triplicity: 3, term: 2, face: 1, detriment: -5, fall: -4}
+
+# Sign index 0 = Aries.
+domicile: [mars, venus, mercury, moon, sun, mercury, venus, mars, jupiter, saturn, saturn, jupiter]
+
+# [sign index, degree of exact exaltation]; the fall is the opposite sign.
+exaltation:
+  sun: [0, 19]
+  moon: [1, 3]
+  mercury: [5, 15]
+  venus: [11, 27]
+  mars: [9, 28]
+  jupiter: [3, 15]
+  saturn: [6, 21]
+
+# Element (fire, earth, air, water = sign index mod 4): [day ruler, night ruler, participating ruler].
+triplicity:
+  - [sun, jupiter, saturn]
+  - [venus, moon, mars]
+  - [saturn, mercury, jupiter]
+  - [venus, mars, moon]
+
+# Egyptian terms: for each sign, [ruler, end degree] in order (each sign's terms reach 30).
+terms:
+  - [[jupiter, 6], [venus, 12], [mercury, 20], [mars, 25], [saturn, 30]]
+  - [[venus, 8], [mercury, 14], [jupiter, 22], [saturn, 27], [mars, 30]]
+  - [[mercury, 6], [jupiter, 12], [venus, 17], [mars, 24], [saturn, 30]]
+  - [[mars, 7], [venus, 13], [mercury, 19], [jupiter, 26], [saturn, 30]]
+  - [[jupiter, 6], [venus, 11], [saturn, 18], [mercury, 24], [mars, 30]]
+  - [[mercury, 7], [venus, 17], [jupiter, 21], [mars, 28], [saturn, 30]]
+  - [[saturn, 6], [mercury, 14], [jupiter, 21], [venus, 28], [mars, 30]]
+  - [[mars, 7], [venus, 11], [mercury, 19], [jupiter, 24], [saturn, 30]]
+  - [[jupiter, 12], [venus, 17], [mercury, 21], [saturn, 26], [mars, 30]]
+  - [[mercury, 7], [jupiter, 14], [venus, 22], [saturn, 26], [mars, 30]]
+  - [[mercury, 7], [venus, 13], [jupiter, 20], [mars, 25], [saturn, 30]]
+  - [[venus, 12], [jupiter, 16], [mercury, 19], [mars, 28], [saturn, 30]]
+
+# Faces (decans): the Chaldean order, from Mars at 0° Aries, repeating every seven decans.
+faces: [mars, sun, venus, mercury, moon, saturn, jupiter]

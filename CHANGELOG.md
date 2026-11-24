@@ -41,7 +41,23 @@ Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
   Horizons kernel, `scripts/fetch_kernel.py horizons:2060`), within 1″ of Horizons; several kernels at once
   (`--spk de440,sb441-n16`); SPK type 21.
 
+- Western essential dignities (WES-04): `features: ["dignities"]` on a western chart; domicile, exaltation,
+  Dorothean triplicity by sect, Egyptian terms, Chaldean faces, detriment and fall, scores, peregrine planets and
+  mutual receptions, from the new `western.dignities` pack (the terms reach the classical totals 79, 82, 76, 66, 57).
+- `synastry` operation and `eshana synastry` (WES-02): inter-aspects, house overlays both ways, a midpoint composite
+  (cusp midpoints) and a Davison chart (midpoint in time and space).
+- Gematria and abjad (NUM-04): numerology schools `hebrew_gematria` and `abjad` for names written in Hebrew or Arabic
+  letters (nothing is transliterated); the basmala gives the classic 786.
+- Varga schools (VED-03, VED-09): `d30_parivritti`, `d60_parivritti` and `d150_parivritti` beside the Parāśari
+  defaults.
+- User rule packs (RULE-02): yoga packs given with a chart request (`user_rule_packs`, `--rule-pack FILE`), checked by
+  the same grammar and reported under their own id.
+- Lal Kitab (LK-01, **draft**): `features: ["lal_kitab"]`: the Lal Kitab chart and pakka ghar, pending the owner's
+  review of the table.
+
 ### Changed
+- `vedic.core` split (VED-05): dignities, relationships, drishti and strength are now packs of their own
+  (`vedic.dignity`, `vedic.relationships`, `vedic.drishti`, `vedic.strength`), values unchanged; attributes cite them.
 - The `analytic` provider (0.2.0) uses VSOP87B for the Sun and Mercury to Neptune: worst error against JPL DE440s
   from 17′ (Saturn) and 16″ (Sun) to under 3″ for every planet and 0.3″ for the Sun. Sunrise, returns, ingresses and
   every planetary position are more accurate with no data files; the accuracy tolerances are tightened to match.

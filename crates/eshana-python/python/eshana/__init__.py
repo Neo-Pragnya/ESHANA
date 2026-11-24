@@ -278,6 +278,13 @@ class ChartEngine:
                "charts": charts, "place": _place(latitude, longitude)}
         return execute({k: v for k, v in req.items() if v is not None})
 
+    def synastry(self, a: Context, b: Context, orb_scale: Optional[float] = None, composite: bool = True,
+                 davison: bool = True) -> Dict[str, Any]:
+        """Two charts compared: inter-aspects, house overlays, a midpoint composite and a Davison chart."""
+        req = {"op": "synastry", "a": self._base(a, "western", self._cfg()), "b": self._base(b, "western", self._cfg()),
+               "orb_scale": orb_scale, "composite": composite, "davison": davison}
+        return execute({k: v for k, v in req.items() if v is not None})
+
     def gochara(self, natal: Context, start_utc: str, end_utc: str, ayanamsha: str = "lahiri",
                 bodies: Optional[Iterable[str]] = None) -> Dict[str, Any]:
         """Transits counted from the natal Moon and lagna, with retrograde and combustion intervals."""

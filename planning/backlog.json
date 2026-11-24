@@ -444,10 +444,15 @@
       "id": "VED-03",
       "area": "vedic",
       "title": "D30 and D60 with a documented school choice",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "note": "Returns ESH-RULES today rather than guessing.",
-      "source": "master plan 4.3"
+      "source": "master plan 4.3",
+      "acceptance": "D30 and D60 with a documented school choice.",
+      "evidence": "Defaults stay Parāśari (unequal 5-5-8-7-5 triṃśāṃśa; D60 from the sign); cyclic alternatives d30_parivritti and d60_parivritti in the varga_method family, each named and opt-in (test cyclic_d30_d60_d150); documented in docs/reference/request.md.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vargas_ext.rs"
+      ]
     },
     {
       "id": "VED-04",
@@ -464,9 +469,16 @@
       "id": "VED-05",
       "area": "vedic",
       "title": "Graha drishti, dignities, relationships, strengths as separate packs",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 4.3"
+      "source": "master plan 4.3",
+      "acceptance": "Drishti, dignities, relationships and strengths as separate packs.",
+      "evidence": "vedic-core.yaml split into vedic-dignity, vedic-relationships, vedic-drishti and vedic-strength (values identical: checked by a key-by-key comparison with the 0.3 pack); merged at load time; attributes cite their pack; vedic.core 0.4. All Rust tests pass unchanged.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/vedic-dignity.yaml",
+        "crates/eshana-engine/rulesets/vedic-drishti.yaml",
+        "crates/eshana-engine/src/packs.rs"
+      ]
     },
     {
       "id": "VED-06",
@@ -519,9 +531,15 @@
       "id": "WES-02",
       "area": "western",
       "title": "Synastry and composite charts",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.4"
+      "source": "master plan 4.4",
+      "acceptance": "Synastry and composite charts.",
+      "evidence": "synastry op / eshana synastry / ChartEngine.synastry: inter-aspects (Ptolemaic), house overlays both ways, midpoint composite with cusp midpoints, Davison chart (midpoint instant and place); acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "WES-03",
@@ -543,8 +561,15 @@
       "id": "WES-04",
       "area": "western",
       "title": "Dignities as a separate rule pack",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Western dignities as a separate rule pack.",
+      "evidence": "western-dignities.yaml (western.dignities@0.1): domicile, exaltation, Dorothean triplicity by sect, Egyptian terms, Chaldean faces, detriment/fall, scores, peregrine, mutual receptions; features: [\"dignities\"] on western charts. Tests egyptian_terms_have_the_classical_totals (79/82/76/66/57) and known_dignities; acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/western-dignities.yaml",
+        "crates/eshana-engine/src/western_dignities.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "HD-01",
@@ -636,15 +661,28 @@
       "id": "NUM-03",
       "area": "num",
       "title": "Cycles, pinnacles, karmic debts",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Cycles, pinnacles and karmic debts.",
+      "evidence": "numerology_ext.rs: karmic debts 13/14/16/19, karmic lessons, pinnacles and challenges, life cycles, personal years (tests worked_pythagorean_numbers, personal_year_cycle; studio journey numerology page).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/numerology_ext.rs",
+        "crates/eshana-engine/src/numerology.rs"
+      ]
     },
     {
       "id": "NUM-04",
       "area": "num",
       "title": "Other alphabets (Hebrew gematria, abjad) as named packs",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Hebrew gematria and abjad as named packs.",
+      "evidence": "gematria.yaml (numerology.gematria@0.1): hebrew_gematria (mispar hechrechi) and abjad (eastern order); the name must be in its script (Latin refused). Test known_values: שלום 376, חי 18, بسم 102, the basmala 786; acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/gematria.yaml",
+        "crates/eshana-engine/src/gematria.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "GRA-01",
@@ -1189,8 +1227,13 @@
       "id": "VED-09",
       "area": "vedic",
       "title": "D150 and non-Parashara vargas",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "D150 and non-Parāśari vargas.",
+      "evidence": "varga_method family: d2/d3/d30/d60/d150 parivṛtti (cyclic), d81 navanavāṃśa, d108 cyclic, d144 dvādaśa-dvādaśāṃśa; D150 is the cyclic 0°12′ nāḍyāṃśa (the Candra Kalā Nāḍī mapping is not implemented and says so). Tests in vargas_ext.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vargas_ext.rs"
+      ]
     },
     {
       "id": "VED-10",
@@ -1238,8 +1281,14 @@
       "id": "MAT-02",
       "area": "vedic",
       "title": "Rajju and vedha doshas, matching calendar",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "Rajju and vedha with the matching calendar.",
+      "evidence": "matching_ext.rs: Rajju, Vedha and the supplementary factors beside the 36-point aṣṭakūṭa (tests rajju_groups_have_their_members, vedha_is_symmetric_and_covers_every_nakshatra); pair_calendar op (test pair_calendar_explains_both_people_and_the_event_for_each_window; acceptance 16_matching).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/matching_ext.rs",
+        "crates/eshana-engine/tests/calendar.rs"
+      ]
     },
     {
       "id": "MUH-01",
@@ -1261,8 +1310,14 @@
       "id": "LK-01",
       "area": "vedic",
       "title": "Lal Kitab",
-      "status": "proposed",
-      "track": "primary"
+      "status": "implemented",
+      "track": "primary",
+      "acceptance": "Lal Kitab chart and rules.",
+      "evidence": "lal-kitab.yaml (vedic.lal_kitab@0.1, status draft): the Lal Kitab chart (houses fixed to signs, grahas by whole-sign house from the lagna) and pakka ghar (test houses_count_from_the_lagna_and_signs_are_fixed). The pakka ghar table awaits owner review (OWNER-INPUTS 5c); aspects, sleeping houses, varshphal and remedies are not implemented without a reviewed source.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/lal-kitab.yaml",
+        "crates/eshana-engine/src/lal_kitab.rs"
+      ]
     },
     {
       "id": "WES-05",
@@ -1280,8 +1335,15 @@
       "id": "RULE-02",
       "area": "core",
       "title": "Load user rule packs at run time with the same validator",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "User rule packs at run time with the same validator.",
+      "evidence": "packs::user_yogas: the yogas.yaml grammar plus limits (64 KiB, 200 definitions, unique ids, version, no vedic. namespace); user_rule_packs / --rule-pack; reported as user.yogas.<id> with <id>@<version>. Acceptance: a pack claiming vedic. is refused.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/packs.rs",
+        "crates/eshana-engine/src/jyotish.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "VED-14",

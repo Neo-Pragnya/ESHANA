@@ -150,7 +150,9 @@ def test_stations_and_crossings_match_the_raw_request():
 
 def test_rulesets_are_yaml_and_listed():
     packs = {p["file"] for p in ChartEngine.rulesets()["packs"]}
-    assert packs == {"vedic-core.yaml", "bala.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml"}
+    assert packs == {"vedic-core.yaml", "vedic-dignity.yaml", "vedic-relationships.yaml", "vedic-drishti.yaml",
+                     "vedic-strength.yaml", "bala.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml",
+                     "western-dignities.yaml", "gematria.yaml", "lal-kitab.yaml"}
 
 
 def test_features_are_vedic_only():

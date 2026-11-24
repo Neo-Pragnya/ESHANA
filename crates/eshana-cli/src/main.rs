@@ -132,6 +132,9 @@ struct ChartOpts {
     /// Further vargas by method id, e.g. d81_navanavamsha,d144_dvadasha_dvadashamsha (see `eshana methods`)
     #[arg(long, value_delimiter = ',')]
     varga_methods: Vec<String>,
+    /// A user yoga pack (the yogas.yaml format), checked like the built-in one; repeatable (vedic)
+    #[arg(long = "rule-pack")]
+    rule_packs: Vec<String>,
 }
 
 #[derive(Args, Clone, Default)]
@@ -513,6 +516,30 @@ enum Cmd {
         #[arg(long, value_delimiter = ',')]
         transit_bodies: Option<Vec<String>>,
     },
+    /// Synastry of two births: inter-aspects, house overlays, a midpoint composite and a Davison chart
+    Synastry {
+        /// First birth: date,time,zone,lat,lon
+        #[arg(long)]
+        a: String,
+        /// Second birth: date,time,zone,lat,lon
+        #[arg(long)]
+        b: String,
+        /// Orb multiplier for the inter-aspects (default 1.0)
+        #[arg(long)]
+        orb_scale: Option<f64>,
+        /// Leave out the composite chart
+        #[arg(long)]
+        no_composite: bool,
+        /// Leave out the Davison chart
+        #[arg(long)]
+        no_davison: bool,
+        /// tropical (default) or sidereal; sidereal needs --ayanamsha
+        #[arg(long)]
+        zodiac: Option<String>,
+        /// Ayanamsha when sidereal
+        #[arg(long)]
+        ayanamsha: Option<String>,
+    },
     /// Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude
     Eclipses {
         /// Range start, UTC ISO
@@ -629,6 +656,7 @@ fn chart_json(o: &ChartOpts, system: Option<&str>, assume: bool) -> Value {
         "assume_defaults": assume, "features": o.features, "dasha_levels": o.dasha_levels,
         "dasha_systems": o.dasha_systems, "reference_utc": o.reference_utc, "sunrise": o.sunrise,
         "kp_cusp_occupancy": o.kp_occupancy, "varga_methods": o.varga_methods,
+        "user_rule_packs": o.rule_packs.iter().map(|p| std::fs::read_to_string(p).unwrap_or_else(|e| format!("# cannot read {p}: {e}"))).collect::<Vec<_>>(),
     })
 }
 
@@ -705,6 +733,27 @@ fn main() -> ExitCode {
             json!({"op": "panchanga", "chart": c, "natal_moon_deg": natal_moon})
         }
         Cmd::KpTable => json!({"op": "kp_table"}),
+        Cmd::Synastry {
+            a,
+            b,
+            orb_scale,
+            no_composite,
+            no_davison,
+            zodiac,
+            ayanamsha,
+        } => {
+            let side = |spec: &str| {
+                let mut v = person_json(spec, ayanamsha.as_deref().unwrap_or("lahiri"));
+                v["system"] = json!(if zodiac.as_deref() == Some("sidereal") {
+                    "vedic"
+                } else {
+                    "western"
+                });
+                v["config"] = json!({"zodiac": zodiac.clone().unwrap_or_else(|| "tropical".into()), "ayanamsha": ayanamsha});
+                v
+            };
+            json!({"op": "synastry", "a": side(a), "b": side(b), "orb_scale": orb_scale, "composite": !no_composite, "davison": !no_davison})
+        }
         Cmd::Returns {
             natal,
             return_body,

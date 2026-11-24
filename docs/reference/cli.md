@@ -42,6 +42,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `--dasha-levels N`, `--dasha-systems` | 1–5; `vimshottari`, `yogini` | 2; `vimshottari` |
 | `--features a,b` | `panchanga`, `strength`, `relationships`, `drishti`, `ashtakavarga`, `jaimini`, `kp`, `yogas`, `sade_sati`, `all` (Vedic only) | none |
 | `--reference-utc T` | instant for "current" daśā periods | none (nothing is "current") |
+| `--rule-pack FILE` | a user yoga pack (the `yogas.yaml` format), checked like the built-in one; repeatable | none |
 | `--sunrise` | `upper_limb_refracted`, `centre_refracted`, `centre_unrefracted` | `upper_limb_refracted` |
 | `--aspects`, `--orb-scale F` | | off, 1.0 |
 
@@ -72,6 +73,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana rise-set --date D --tz ZONE --lat φ --lon λ [--days N] [--bodies sun,moon,venus] [--sunrise C] [--no-twilight]` | rise, upper transit and set of each body, and civil, nautical and astronomical twilight, for local days |
 | `eshana returns --start T --end T [--return-body sun\|moon\|…] [--at-lat φ --at-lon λ] [--no-charts] <birth options>` | solar, lunar or any body's returns to the natal longitude, with a chart at each (relocated with --at-lat/--at-lon) |
 | `eshana gochara --start T --end T [--transit-bodies a,b] <birth options with --ayanamsha>` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana synastry --a D,T,TZ,LAT,LON --b D,T,TZ,LAT,LON [--orb-scale F] [--no-composite] [--no-davison]` | inter-aspects, house overlays, a midpoint composite and a Davison chart |
 | `eshana eclipses --start T --end T [--kinds solar,lunar]` | solar and lunar eclipses: type, time of greatest eclipse, magnitude |
 | `eshana kernel list\|verify PATH\|path NAME` | the JPL kernels ESHANA knows; check a downloaded one against NAIF's MD5 |
 | `eshana methods` | every method family and id the engine implements |

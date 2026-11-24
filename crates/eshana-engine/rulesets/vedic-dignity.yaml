@@ -1,0 +1,25 @@
+# Rule pack: vedic.dignity@0.1 (split from vedic.core 0.3; values unchanged). Values follow Brihat Parashara Hora Shastra
+# (BPHS) as commonly taught; where schools differ the convention is named.
+id: vedic.dignity
+version: "0.1"
+conventions:
+  combustion: "Orbs in degrees from the Sun; Mercury and Venus use smaller orbs when retrograde"
+
+dignity:
+  sun:     {exaltation: [0, 10],  debilitation: [6, 10],  own: [4],      moolatrikona: [4, 0, 20]}
+  moon:    {exaltation: [1, 3],   debilitation: [7, 3],   own: [3],      moolatrikona: [1, 3, 30]}
+  mars:    {exaltation: [9, 28],  debilitation: [3, 28],  own: [0, 7],   moolatrikona: [0, 0, 12]}
+  mercury: {exaltation: [5, 15],  debilitation: [11, 15], own: [2, 5],   moolatrikona: [5, 15, 20]}
+  jupiter: {exaltation: [3, 5],   debilitation: [9, 5],   own: [8, 11],  moolatrikona: [8, 0, 10]}
+  venus:   {exaltation: [11, 27], debilitation: [5, 27],  own: [1, 6],   moolatrikona: [6, 0, 15]}
+  saturn:  {exaltation: [6, 20],  debilitation: [0, 20],  own: [9, 10],  moolatrikona: [10, 0, 20]}
+  rahu:    {exaltation: [1, 20],  debilitation: [7, 20],  own: [],       moolatrikona: null}
+  ketu:    {exaltation: [7, 20],  debilitation: [1, 20],  own: [],       moolatrikona: null}
+
+combustion_orbs:
+  moon: 12
+  mars: 17
+  mercury: {direct: 14, retrograde: 12}
+  jupiter: 11
+  venus: {direct: 10, retrograde: 8}
+  saturn: 15

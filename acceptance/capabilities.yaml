@@ -30,7 +30,7 @@ capabilities:
   - { id: ephemeris-events, title: "Ephemeris tables for animation and progressions; sign ingresses including retrograde re-entries; stations, retrograde intervals and crossings of a point; transit Ashtakavarga as dated segments", dimension: core, blocker: true }
   - { id: kp-horary, title: "KP horary: the 1-249 table tiles the zodiac; the number fixes the Ascendant and the moment of judgement the rest; cusp occupancy is a named method", dimension: core, blocker: true }
   - { id: muhurta, title: "Muhurta windows composed from exact factor intervals under versioned profiles; a personal calendar with tara and chandra bala, birth and event places apart, JSON, CSV and ICS", dimension: core, blocker: true }
-  - { id: time-and-sky, title: "Julian, Gregorian and BCE dates with the 1582 cut-over; a checked JPL kernel catalogue; rise, transit, set and twilight; topocentric positions; twelve house systems; returns, eclipses and gochara; asteroids and Chiron from kernels", dimension: core, blocker: true }
+  - { id: time-and-sky, title: "Julian, Gregorian and BCE dates with the 1582 cut-over; a checked JPL kernel catalogue; rise, transit, set and twilight; topocentric positions; twelve house systems; returns, eclipses and gochara; asteroids and Chiron from kernels; synastry, essential dignities, gematria and user rule packs", dimension: core, blocker: true }
   - { id: schema, title: "Results validate against the published JSON Schema", dimension: interop, blocker: false }
 
 surface:
@@ -65,4 +65,5 @@ surface:
   - eshana returns
   - eshana gochara
   - eshana eclipses
+  - eshana synastry
   - eshana-report

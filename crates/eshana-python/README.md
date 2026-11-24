@@ -404,7 +404,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 
 <!-- REFERENCE:START -->
 <details>
-<summary><b>⚙️ All 28 operations</b> (the <code>op</code> of a request)</summary>
+<summary><b>⚙️ All 29 operations</b> (the <code>op</code> of a request)</summary>
 
 | | `op` | What it answers |
 |---|---|---|
@@ -433,6 +433,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 | 🔁 | `returns` | solar, lunar or any body's returns to its natal longitude, with a chart at each (relocatable) |
 | 🚶 | `gochara` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
 | 🌑 | `eclipses` | solar and lunar eclipses: type, time of greatest eclipse, magnitude, γ |
+| 💑 | `synastry` | two charts compared: inter-aspects, house overlays, midpoint composite, Davison chart |
 | 🧪 | `synthetic_chart` | positions you place by hand, labelled synthetic (the playground) |
 | 📊 | `research_window_score` | the experimental window score, with coverage and sensitivity |
 | ℹ️ | `info` | versions, operations, method families and ayanāṃśa definitions |
@@ -441,7 +442,7 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 </details>
 
 <details>
-<summary><b>🧰 All 30 CLI commands</b></summary>
+<summary><b>🧰 All 31 CLI commands</b></summary>
 
 | Command | What it does |
 |---|---|
@@ -473,6 +474,7 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 | `eshana rise-set` | Rise, upper transit and set of bodies, and twilight, for local days at a place |
 | `eshana returns` | Solar, lunar or any body's returns to its natal longitude in a range, with a chart at each |
 | `eshana gochara` | Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana synastry` | Synastry of two births: inter-aspects, house overlays, a midpoint composite and a Davison chart |
 | `eshana eclipses` | Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude |
 | `eshana kernel` | JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME` |
 
@@ -491,10 +493,10 @@ Every command prints one JSON envelope; `--compact` for one line. Errors print a
 | `year_convention` | `julian`, `gregorian`, `savana`, `sidereal` |
 | `sunrise` | `upper_limb_refracted`, `centre_refracted`, `centre_unrefracted` |
 | `event_search` | `ingresses`, `stations`, `crossings` |
-| `numerology_school` | `pythagorean`, `chaldean` |
+| `numerology_school` | `pythagorean`, `chaldean`, `hebrew_gematria`, `abjad` |
 | `kp_cusp_occupancy` | `cusp_start`, `cusp_midpoint` |
 | `muhurta_profile` | `daily_avoidances`, `general_auspicious`, `abhijit`, `brahma_muhurta`, `personal_general`, `pair_general`, `travel` |
-| `varga_method` | `d2_parivritti`, `d3_parivritti`, `d81_navanavamsha`, `d108_ashtottaramsha_cyclic`, `d144_dvadasha_dvadashamsha` |
+| `varga_method` | `d2_parivritti`, `d3_parivritti`, `d81_navanavamsha`, `d108_ashtottaramsha_cyclic`, `d144_dvadasha_dvadashamsha`, `d30_parivritti`, `d60_parivritti`, `d150_parivritti` |
 | `progression_angles` | `solar_arc_longitude`, `naibod_ra`, `quotidian` |
 | `research_model` | `research.window_score@0.1` |
 

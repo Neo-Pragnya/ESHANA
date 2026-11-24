@@ -90,3 +90,43 @@ Feature: Calendars and BCE dates, JPL kernels, rise and set, topocentric positio
   Scenario: An asteroid without a kernel that carries it is refused
     When I run "eshana positions --utc 2026-11-24T12:00:00Z --bodies ceres"
     Then the exit code is 2
+
+  Scenario: Synastry with a composite and a Davison chart
+    When I run "eshana synastry --a 1990-05-15,14:30,Asia/Kolkata,28.6139,77.209 --b 1992-08-20,09:15,Asia/Kolkata,19.076,72.8777"
+    Then it succeeds
+    And the output contains each of:
+      """
+      inter_aspects
+      house_overlays
+      composite
+      davison
+      """
+
+  Scenario: Western essential dignities
+    When I run "eshana chart western --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.209 --features dignities"
+    Then it succeeds
+    And the output contains each of:
+      """
+      western.dignities
+      peregrine
+      exaltation
+      """
+
+  Scenario: Gematria reads a name in its own script and refuses a Latin spelling
+    When I run "eshana numerology --name שלום --school hebrew_gematria"
+    Then it succeeds
+    And the JSON output at "gematria.total" equals 376
+    When I run "eshana numerology --name Shalom --school hebrew_gematria"
+    Then the exit code is 2
+
+  Scenario: A user rule pack cannot claim the built-in namespace
+    Given the file "pack.yaml" with content:
+      """
+      id: vedic.mine
+      version: "1"
+      yogas: []
+      doshas: []
+      """
+    When I run "eshana chart vedic --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6 --lon 77.2 --rule-pack pack.yaml"
+    Then the exit code is 2
+    And the output contains "namespace"
