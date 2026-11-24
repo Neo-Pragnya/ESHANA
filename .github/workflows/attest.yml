@@ -68,5 +68,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {on=1; next} on && /^## \[/ {exit} on' CHANGELOG.md > notes.md
-          printf '\n---\nInstall: `pip install eshana==%s`. Verify a file: `gh attestation verify <file> --repo %s`.\n' "$VERSION" "$GITHUB_REPOSITORY" >> notes.md
+          {
+            echo
+            echo "---"
+            echo "Install: \`pip install eshana==${VERSION}\`. Verify a file: \`gh attestation verify <file> --repo ${GITHUB_REPOSITORY}\`."
+          } >> notes.md
           gh release create "v${VERSION}" dist/* --title "ESHANA ${VERSION}" --notes-file notes.md --target "$GITHUB_SHA"
