@@ -131,7 +131,7 @@ pub fn provider_by_id(id: &str, opts: &ProviderOptions) -> Result<Box<dyn Epheme
                     )
                 })?;
             // a catalogue name (de440) is looked up in the kernel folder
-            Ok(Box::new(spk::SpkProvider::open(&kernels::resolve(&path)?)?))
+            Ok(Box::new(spk::SpkProvider::open(&kernels::locate(&path)?)?))
         }
         other => Err(EshanaError::Config(format!(
             "unknown provider '{other}'; known: {}",

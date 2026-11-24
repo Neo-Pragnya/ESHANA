@@ -123,7 +123,7 @@ pub fn kernel_dir() -> PathBuf {
 ///
 /// # Errors
 /// `ESH-CONFIG` when a catalogue name is given but the file is not in the kernel folder (with how to fetch it).
-pub fn resolve(spec: &str) -> Result<String> {
+pub fn locate(spec: &str) -> Result<String> {
     let is_name = !spec.contains('/') && !spec.contains('\\') && !Path::new(spec).exists();
     match (is_name, find(spec)) {
         (true, Some(k)) => {
@@ -326,7 +326,7 @@ mod tests {
         assert_eq!(find("de441_part-1.bsp").unwrap().name, "de441-part1");
         assert!(find("de999").is_none());
         // a path or an unknown name is passed through unchanged
-        assert_eq!(resolve("/tmp/x.bsp").unwrap(), "/tmp/x.bsp");
-        assert_eq!(resolve("mykernel.bsp").unwrap(), "mykernel.bsp");
+        assert_eq!(locate("/tmp/x.bsp").unwrap(), "/tmp/x.bsp");
+        assert_eq!(locate("mykernel.bsp").unwrap(), "mykernel.bsp");
     }
 }
