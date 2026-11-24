@@ -216,7 +216,7 @@ Not promised: measured against independent references and written down.
 | ⏱️ Stations and crossings | Swiss Ephemeris event search | within the stated solver tolerance |
 | 📚 Published charts | printed reference values | see the accuracy report |
 
-The Swiss Ephemeris (AGPL) is used **only** as an offline test oracle and is never bundled. Details:
+The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, never linked. Details:
 [accuracy report](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/accuracy/birth-chart-accuracy.md) · [provider accuracy](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/golden/accuracy.md) ·
 [accuracy guide](https://github.com/Neo-Pragnya/ESHANA/blob/main/docs/guides/accuracy-suite.md).
 
