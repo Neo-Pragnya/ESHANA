@@ -57,8 +57,9 @@ These restate `AGENTS.md` for the new areas; they do not replace it.
 
 ## Status (2026-11-23)
 
-All 33 tasks have been worked. 29 are *verified* with evidence in `backlog.json`; 3 are *implemented*; 1 is still
-*proposed*. APP-07 (guided chart creation, `eshana-report new`) was added at the owner's request and is verified.
+All 35 tasks have been worked. 31 are *verified* with evidence in `backlog.json`; 3 are *implemented*; 1 is still
+*proposed*. APP-07 (guided chart creation, `eshana-report new`), APP-08 (download any chart as an image) and REP-20 (chart text
+hierarchy) were added at the owner's request and are verified.
 
 Closed by the owner on 2026-11-23: APP-01 (ADR-013 accepted as written) and APP-04 (Hindi catalogue approved; the
 interface language became a reader setting, English by default).
@@ -73,5 +74,5 @@ interface language became a reader setting, English by default).
 What each waiting item needs, in detail and as a form to fill in: [OWNER-INPUTS.md](OWNER-INPUTS.md).
 
 Evidence for every task is in its `evidence` field. The checks that hold it: `make verify`, `make acceptance`
-(122 scenarios), `make studio-journeys` (59 journeys per file, the WebAssembly parity check and 5 journeys for `eshana-report new`), and the oracles in
+(122 scenarios), `make studio-journeys` (61 journeys per file, the WebAssembly parity check and 5 journeys for `eshana-report new`), and the oracles in
 `benchmarks/golden/` (events, KP horary cusps, ayanāṃśas).

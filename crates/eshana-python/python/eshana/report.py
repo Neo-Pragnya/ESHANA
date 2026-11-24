@@ -460,7 +460,7 @@ SECTION_TITLES = {
 }
 SECTIONS = tuple(SECTION_TITLES)
 ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js", "studio-dashas.js", "studio-maitri.js", "studio-analysis.js",
-          "studio-live.js", "studio-chakras.js", "studio-annual.js", "studio-locale.js", "studio-boot.js")
+          "studio-live.js", "studio-chakras.js", "studio-annual.js", "studio-locale.js", "studio-export.js", "studio-boot.js")
 
 
 def _asset(name: str) -> str:

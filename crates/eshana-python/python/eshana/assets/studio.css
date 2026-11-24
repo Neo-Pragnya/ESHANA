@@ -183,7 +183,7 @@ footer{position:relative;z-index:1;grid-column:2;padding:0 28px 30px;color:var(-
 @media (max-width:980px){.app{grid-template-columns:1fr}#menu{display:inline-flex}nav.side{position:fixed;top:57px;left:0;width:260px;z-index:40;transform:translateX(-105%);transition:transform .3s;background:var(--panel-solid)}
 body.nav-open nav.side{transform:none}.grid2,.grid2.wide{grid-template-columns:1fr}main{padding:16px}footer{grid-column:1;padding:0 16px 24px}.panel{position:static}.who{display:none}}
 @media (max-width:560px){.tools .btn span.t{display:none}.phead-sigil{display:none}.phero{flex-direction:column;align-items:flex-start}}
-@media print{#sky,nav.side,.topbar,.toolbar,.drawer,#palette{display:none!important}.app{display:block}section.page{display:block!important;page-break-after:always}.card{box-shadow:none;break-inside:avoid;background:#fff}body{background:#fff;color:#111}}
+@media print{.imgbar,#sky,nav.side,.topbar,.toolbar,.drawer,#palette{display:none!important}.app{display:block}section.page{display:block!important;page-break-after:always}.card{box-shadow:none;break-inside:avoid;background:#fff}body{background:#fff;color:#111}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ESHANA gimbal mark: three rings turning about vertical, horizontal and diagonal axes, precessing as a whole */
@@ -776,3 +776,13 @@ g.pk-yama{background:none}
 .pg-list li.sel{background:var(--accent,#c9a227);color:var(--bg,#111)}
 .pg-list:focus-visible{outline:2px solid var(--accent,#c9a227);outline-offset:2px}
 textarea{width:100%;font:inherit;background:transparent;color:inherit;border:1px solid var(--line,#8884);border-radius:6px;padding:6px}
+
+/* image download bar over every chart drawing (studio-export.js) */
+.imghost{position:relative}
+.imgbar{position:absolute;z-index:3;display:flex;gap:4px;opacity:.6;transition:opacity .15s}
+.imghost:hover>.imgbar,.imgbar:focus-within,.imgbar:hover{opacity:1}
+.imgbtn{font:600 11px/1 var(--font, system-ui, sans-serif);letter-spacing:.02em;padding:5px 8px;border-radius:7px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--panel, #14183a) 88%,transparent);color:var(--ink);cursor:pointer;backdrop-filter:blur(4px)}
+.imgbtn:hover{border-color:var(--accent)}.imgbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.imgbtn[disabled]{opacity:.6;cursor:progress}
+@media (hover:none){.imgbar{opacity:1}}

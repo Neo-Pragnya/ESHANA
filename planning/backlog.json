@@ -2582,6 +2582,39 @@
       ]
     },
     {
+      "id": "APP-08",
+      "area": "app",
+      "title": "Download any chart drawing as an image (PNG and SVG), as currently shown",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "owner request 2026-11-23",
+      "depends_on": [],
+      "acceptance": "Every chart drawing offers PNG and SVG downloads; the file reflects the current layers, filters, theme and language; the SVG stands alone; the PNG is print-sized with a caption.",
+      "evidence": "studio-export.js: a bar over every svg[role=img] ≥ 160 px (38 drawings on 14 pages in both reference files); styles and CSS variables resolved into the copy, outside url(#id) definitions copied in; PNG ≥ 1600 px on the page background with name, chart, birth data and engine version. Journey 'every chart drawing can be downloaded…': a bar on every drawing on every page, PNG 1908×1756 image/png, SVG with no var(--) and a namespace, the ārūḍha layer switched off disappears from the export, and the button starts a download with the file name.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-export.js",
+        "acceptance/studio/journeys.mjs",
+        "docs/guides/html-report.md"
+      ]
+    },
+    {
+      "id": "REP-20",
+      "area": "app",
+      "title": "Chart text hierarchy: grahas primary, ārūḍha and aspect marks secondary, flags as superscripts, crowded signs managed",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "owner request 2026-11-23",
+      "depends_on": [],
+      "acceptance": "In every chart cell the graha text is the largest and bold; marks are smaller; flags are superscripts everywhere; nothing overlaps or leaves its cell; a visual test guards it.",
+      "evidence": "southCellLayout searches sizes, then two columns, then smaller sizes, then no degrees; secondary text = 0.64 × graha size (cap 9.5); North Indian marks follow the same ratio; Nadi quadrant flags are raised tspans and crowded quadrants use two columns when larger. Journey 'chart text: grahas are the largest…' audits South and North charts, both chakra centres, every varga and the overview on both reference files (graha size ≥ 1.2 × marks, no overlaps, inside the cell, no unfitted cell, no plain-text flags); the existing overlap and contrast journeys still pass (61/61 per file).",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-charts.js",
+        "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
       "id": "METH-01",
       "area": "astro",
       "title": "Further ayanāṃśas with epoch, frame and multi-epoch reference values",

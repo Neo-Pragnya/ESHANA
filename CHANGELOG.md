@@ -6,6 +6,16 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 ## [Unreleased]
 
 ### Added
+- Download any chart as an image (`APP-08`): every chart drawing in the studio has PNG and SVG buttons; the export is
+  a snapshot of the current state (layers, filters, varga, rotation, theme, language). The PNG is at least 1600 px wide
+  with a caption; the SVG has every style resolved so it stands alone.
+
+### Fixed
+- Chart text hierarchy (`REP-20`): grahas stay the largest, bold text in every chart cell; ārūḍha padas and aspect marks
+  are secondary (at most 0.64 of the graha size, lighter weight). Crowded signs move grahas into two columns before
+  shrinking them. Flags are raised superscripts in the Nadi quadrants too (`Mo V` → Mo<sup>V</sup>), and a crowded Nadi
+  quadrant uses two columns when that gives larger text.
+
 - Guided chart creation (`APP-07`): `eshana-report new` opens a form on `127.0.0.1` (random token, host and origin
   checked, no external assets), waits, refuses invalid details with the engine's error code while keeping what was
   typed, writes one chart to a new file (never overwriting), optionally saves a profile revision (`--library`), shows

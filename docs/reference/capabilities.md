@@ -123,4 +123,5 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Pair calendar: windows that suit both people and the event, explained per window | verified |
 | Studio as a local application: live engine (WebAssembly), compare workspace, keyboard playground, profile library, interface catalogues | verified (ADR-013 accepted; Hindi catalogue reviewed; language is a reader setting, English by default) |
 | Guided chart creation: `eshana-report new` opens a local form, waits, refuses invalid details with the engine's code, writes the chart and stops | verified (Python tests, browser journey) |
+| Download any chart drawing as PNG (captioned, ≥ 1600 px) or standalone SVG, as currently shown | verified (browser journeys) |
 | Eclipses, returns as a search | planned (`AST-06`) |

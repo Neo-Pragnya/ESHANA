@@ -211,6 +211,30 @@ are the alternatives. They are drawn in the browser, with no image files.
 Pushkara navāṃśa, vargottama and gaṇḍānta follow the fixed rules printed in the Panchang Chakra template. They are the
 only values the page computes itself, and they are labelled `report.markers@0.1`.
 
+### Download a chart as an image
+
+Every chart drawing (the South and North Indian charts, every varga, the Jyotish Chakra, the Nadi matrix, the Western
+wheel, the BodyGraph, the timelines and the others) has **⤓ PNG** and **⤓ SVG** buttons in its top-right corner. The
+file is a snapshot of the drawing as it is on screen: the layers and filters you have switched on, the varga, the
+wheel's rotation and transit date, the theme and the interface language.
+
+- **PNG**: at least 1600 px wide, on the page's background, with a caption under it: the name, the chart, the birth
+  date, time and place, and the ESHANA version.
+- **SVG**: the drawing alone, with every colour and style written into the file, so it opens the same in any viewer or
+  editor.
+
+The images are made in your browser; nothing is uploaded. They contain the birth data shown on screen, so check them
+before you share one.
+
+### Text in the charts
+
+Grahas are the main text in every chart cell, in bold and at the largest size. Ārūḍha padas, graha aspects and rāśi
+aspects (◇) are secondary, always at most about two thirds of the graha size, and lighter. Flags sit as raised
+superscripts after the abbreviation (Mo<sup>V</sup> vargottama, Ma<sup>◎</sup> own sign, Ne<sup>R</sup> retrograde) everywhere,
+including the Nadi quadrants. When a sign is crowded, the chart first shrinks everything a little, then puts the
+grahas in two columns, then shrinks further, and leaves out the degrees only as a last resort; the marks never grow
+larger than the grahas.
+
 ### Compare workspace and playground
 
 **Compare** puts the natal, progressed and transit positions side by side under one date. Every change redraws all

@@ -1423,6 +1423,89 @@ await journey("interface language is a reader setting: English by default, Hindi
   return `toolbar 'settings' in Hindi: ${hi.settings}; ${valuesBefore ? "values identical" : "no degree values on the overview"}`;
 });
 
+// ── visual rules for chart text: grahas are the primary text; flags are superscripts; nothing spills out of a cell ──
+const CELL_AUDIT = `(() => { const bad = [], seen = { cells: 0, grahas: 0 };
+  const box = (e) => e.getBoundingClientRect();
+  const overlap = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+  for (const cell of document.querySelectorAll('section.page:not([hidden]) svg g.cell')) {
+    const gr = [...cell.querySelectorAll('text.gtxt')]; if (!gr.length) continue; seen.cells++; seen.grahas += gr.length;
+    const gfs = Math.min(...gr.map(t => parseFloat(t.getAttribute('font-size'))));
+    const sec = [...cell.querySelectorAll('text.arudha, text.aspmark')].map(t => parseFloat(t.getAttribute('font-size')));
+    const where = (cell.closest('svg').getAttribute('class') || '') + ' sign ' + cell.dataset.sign + ' fit ' + (cell.dataset.fit || '');
+    if (sec.length && gfs < Math.max(...sec) * 1.2) bad.push(where + ': graha ' + gfs.toFixed(1) + ' vs marks ' + Math.max(...sec).toFixed(1));
+    if (/unfitted/.test(cell.dataset.fit || '')) bad.push(where + ': did not fit');
+    const rect = cell.querySelector('rect.cellbg');
+    if (rect) { const R = box(rect); for (const t of gr) { const b = box(t); if (b.left < R.left - 1 || b.right > R.right + 1 || b.top < R.top - 1 || b.bottom > R.bottom + 1) bad.push(where + ': ' + t.textContent.slice(0, 12) + ' spills out of the cell'); } }
+    const marks = [...cell.querySelectorAll('text.arudha, text.aspmark')];
+    for (let i = 0; i < gr.length; i++) { for (let j = i + 1; j < gr.length; j++) if (overlap(box(gr[i]), box(gr[j]))) bad.push(where + ': ' + gr[i].textContent.slice(0, 6) + ' overlaps ' + gr[j].textContent.slice(0, 6));
+      for (const m of marks) if (overlap(box(gr[i]), box(m))) bad.push(where + ': ' + gr[i].textContent.slice(0, 6) + ' overlaps marks ' + m.textContent.slice(0, 10)); }
+  }
+  // flags (ᴿ, ᵛ, ◎ …) are raised superscripts in every graha label, never plain text after a space
+  for (const t of document.querySelectorAll('section.page:not([hidden]) text.gtxt')) {
+    const own = [...t.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+    if (/\\s/.test(own.trim()) || /[RCV↑↓△◎]$/.test(own.trim()) && own.trim().length > 2) bad.push('flag as plain text: "' + t.textContent.slice(0, 20) + '"');
+    for (const f of t.querySelectorAll('tspan.gflag')) if (!(parseFloat(f.getAttribute('dy')) < 0)) bad.push('flag not raised: ' + t.textContent.slice(0, 12));
+  }
+  return { bad: [...new Set(bad)], ...seen }; })()`;
+const setView = (js) => evaluate(`(() => { ${js}; save(); route(); return 1; })()`);
+
+await journey("chart text: grahas are the largest text in every cell, flags are superscripts, nothing overlaps or spills (South, North, chakra centres, vargas)", async () => {
+  await viewport(1440, 1000);
+  const cs0 = await evaluate(`JSON.stringify({ chart: S.chart, centre: S.centre })`);
+  const report = [];
+  let cells = 0, grahas = 0;
+  for (const [label, js, page] of [["south charts", "S.chart = 'south'", "#/charts"], ["north charts", "S.chart = 'north'", "#/charts"],
+    ["chakra, South centre", "S.centre = 'south'", "#/chakra"], ["chakra, North centre", "S.centre = 'north'", "#/chakra"],
+    ["vargas", "S.chart = 'south'", "#/vargas"], ["overview", "S.chart = 'south'", "#/overview"]]) {
+    await setView(js); await go(page, 1500);
+    const r = await evaluate(CELL_AUDIT); cells += r.cells; grahas += r.grahas;
+    if (r.bad.length) report.push(label + ": " + r.bad.slice(0, 4).join("; "));
+  }
+  // the Nadi quadrants in the chakra centre: superscript flags too
+  await setView("S.centre = 'south'"); await go("#/chakra", 1500);
+  const nadi = await evaluate(`[...document.querySelectorAll('section.page:not([hidden]) g.nadi-g text.gtxt')].filter(t => /\\s[RCV↑↓△◎]+$/.test([...t.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join(''))).map(t => t.textContent)`);
+  if (nadi.length) report.push("nadi quadrants: flags as plain text: " + nadi.join(", "));
+  await shot("chart-text-chakra");
+  const c = JSON.parse(cs0); await setView(`S.chart = ${JSON.stringify(c.chart)}; S.centre = ${JSON.stringify(c.centre)}`);
+  expect(!report.length, report.join(" | "));
+  expect(cells > 20, "too few cells checked: " + cells);
+  return `${cells} cells, ${grahas} graha labels`;
+});
+
+await journey("every chart drawing can be downloaded as PNG and SVG, exactly as shown (layers, theme), with a caption-sized PNG", async () => {
+  await viewport(1440, 1000);
+  const missing = [], counts = {};
+  for (const p of model.pages.filter((p) => !["planet", "house", "yoga", "point"].includes(p))) {
+    await go("#/" + p, 900);
+    const r = await evaluate(`(() => { const svgs = [...document.querySelectorAll('section.page:not([hidden]) svg[role=img]')].filter(s => s.getBoundingClientRect().width >= 160 && !/pcard-icon|hero-icon|bird/.test(s.getAttribute('class') || ''));
+      return { svgs: svgs.length, bars: svgs.filter(s => s._imgbar && s._imgbar.isConnected && s._imgbar.querySelectorAll('button.imgbtn').length === 2).length }; })()`);
+    if (r.svgs) counts[p] = r.svgs;
+    if (r.bars !== r.svgs) missing.push(`${p}: ${r.bars}/${r.svgs}`);
+  }
+  expect(!missing.length, "charts without a download bar: " + missing.join(", "));
+  await go("#/charts", 1500);
+  const exp = await evaluate(`(async () => { const svg = document.querySelector('section.page:not([hidden]) svg.chart');
+    const withA = window.eshanaExport.svgText(svg); const b = await window.eshanaExport.png(svg); const bmp = await createImageBitmap(b);
+    return { type: b.type, w: bmp.width, h: bmp.height, vars: (withA.match(/var\\(--/g) || []).length, arudha: (withA.match(/class="arudha"/g) || []).length,
+      name: window.eshanaExport.name(svg, 'png'), standalone: /^<\\?xml[\\s\\S]*<svg[^>]+xmlns="http:\\/\\/www.w3.org\\/2000\\/svg"/.test(withA) }; })()`);
+  expect(exp.type === "image/png" && exp.w >= 1600 && exp.h > 800, "png: " + JSON.stringify(exp));
+  expect(exp.vars === 0 && exp.standalone, "svg export not standalone: " + JSON.stringify(exp));
+  expect(/\.png$/.test(exp.name) && exp.name.length < 80, "file name: " + exp.name);
+  // the export follows the current state: switch the ārūḍha layer off and the file has none
+  const off = await evaluate(`(async () => { S.layers.arudha = false; save(); route(); await new Promise(r => setTimeout(r, 900));
+    const svg = document.querySelector('section.page:not([hidden]) svg.chart'); const n = (window.eshanaExport.svgText(svg).match(/class="arudha"/g) || []).length;
+    S.layers.arudha = true; save(); route(); return n; })()`);
+  expect(exp.arudha > 0 && off === 0, `ārūḍha in export: on ${exp.arudha}, off ${off}`);
+  // the button itself starts a download (the browser fires a click on a blob link with the file name)
+  const dl = await evaluate(`(async () => { await new Promise(r => setTimeout(r, 900)); let name = null; const orig = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { if (this.download) name = this.download; };
+    document.querySelector('section.page:not([hidden]) .imgbar button[data-kind="svg"]').click();
+    for (let i = 0; i < 40 && !name; i++) await new Promise(r => setTimeout(r, 100)); HTMLAnchorElement.prototype.click = orig; return name; })()`);
+  expect(dl && dl.endsWith(".svg"), "the SVG button did not start a download: " + dl);
+  await shot("download-bar");
+  return `${Object.values(counts).reduce((a, b) => a + b, 0)} drawings on ${Object.keys(counts).length} pages; PNG ${exp.w}×${exp.h}; ${exp.name}`;
+});
+
 // ── journeys: annual (add new journeys for this workstream above this line) ──
 
 ws.close(); chrome.kill(); server.close();
