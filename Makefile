@@ -69,14 +69,14 @@ reports: build-release
 	mkdir -p dist
 	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
 	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
-	  -o examples/reports/example-birth-chart.html
+	  --calendar-days 14 -o examples/reports/example-birth-chart.html
 	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
 	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
 	  --partner 1992-08-20,09:15,Asia/Kolkata,19.076,72.8777 --title "Compatibility example" --icons glyph \
-	  -o examples/reports/example-compatibility.html
+	  --calendar-days 14 -o examples/reports/example-compatibility.html
 	.venv/bin/eshana-report --date 1990-05-15 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 --name "Example Person" \
 	  --place "New Delhi, India (time unknown)" --title "Unknown birth time" --reference 2026-11-21T00:00:00Z \
-	  -o examples/reports/example-unknown-time.html
+	  --calendar-days 14 -o examples/reports/example-unknown-time.html
 	.venv/bin/eshana-report --date 1985-11-03 --time 06:45 --tz Europe/London --lat 51.5074 --lon=-0.1278 \
 	  --systems western,numerology --name "Sample Western" --place "London, UK" --theme light \
 	  -o examples/reports/example-western.html
@@ -90,7 +90,8 @@ reports: build-release
 	  -o examples/reports/example-from-cli.html
 	.venv/bin/eshana-report --date 1879-12-30 --time 01:00 --offset-minutes 321 --lat 9.9333 --lon 78.1167 \
 	  --node true --sunrise centre_unrefracted --name "Sri Ramana Maharishi" --gender male --place "Madurai, India" \
-	  --title "Reference chart" --reference 2026-11-21T00:00:00Z -o examples/reports/reference-ramana.html
+	  --title "Reference chart" --reference 2026-11-21T00:00:00Z \
+	  --calendar-days 14 -o examples/reports/reference-ramana.html
 
 # Website chart gallery (CHK-22): screenshots of real reports, examples/gallery/*.webp + website/src/data/gallery.json
 gallery: reports

@@ -11,7 +11,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.4.3"
+version = "0.4.4"
 edition = "2021"
 rust-version = "1.85"
 license = "Apache-2.0"
@@ -21,10 +21,10 @@ keywords = ["astronomy", "ephemeris", "astrology", "numerology", "symbolic"]
 categories = ["science", "algorithms"]
 
 [workspace.dependencies]
-eshana-core = { path = "crates/eshana-core", version = "0.4.3" }
-eshana-time = { path = "crates/eshana-time", version = "0.4.3" }
-eshana-ephemeris = { path = "crates/eshana-ephemeris", version = "0.4.3" }
-eshana-engine = { path = "crates/eshana-engine", version = "0.4.3" }
+eshana-core = { path = "crates/eshana-core", version = "0.4.4" }
+eshana-time = { path = "crates/eshana-time", version = "0.4.4" }
+eshana-ephemeris = { path = "crates/eshana-ephemeris", version = "0.4.4" }
+eshana-engine = { path = "crates/eshana-engine", version = "0.4.4" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"

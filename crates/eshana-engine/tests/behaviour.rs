@@ -438,3 +438,51 @@ fn south_node_carries_its_tropical_longitude() {
         .rem_euclid(360.0);
     assert!((d - 180.0).abs() < 1e-9);
 }
+
+fn attr<'a>(r: &'a Value, id: &str) -> &'a Value {
+    r["derived_attributes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|a| a["id"] == id)
+        .unwrap_or_else(|| panic!("no {id}"))
+}
+
+/// Drishti inside a varga follows the rāśi-chart rules on the varga's signs: every graha aspects the 7th sign from
+/// where it sits in that varga (plus its special aspects), and the vargas reported are exactly those requested.
+#[test]
+fn varga_drishti_uses_the_varga_signs() {
+    let r = run(
+        json!({"op": "chart", "system": "vedic", "when": kolkata(), "place": hyd(),
+        "config": {"zodiac": "sidereal", "ayanamsha": "lahiri", "house_system": "whole_sign", "node_model": "mean"},
+        "divisions": [9, 10, 60], "features": ["drishti", "aspects"]}),
+    );
+    let vargas = attr(&r, "vedic.drishti.vargas")["value"]["vargas"]
+        .as_array()
+        .unwrap();
+    let divs: Vec<u64> = vargas.iter().map(|v| v["division"].as_u64().unwrap()).collect();
+    assert_eq!(divs, [9, 10, 60]);
+    for v in vargas {
+        let d = v["division"].as_u64().unwrap();
+        for g in ["sun", "moon", "mars", "jupiter", "saturn"] {
+            let sign = attr(&r, &format!("vedic.{g}.d{d}"))["value"]["index"]
+                .as_u64()
+                .unwrap();
+            let seventh = v["graha"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|x| x["from"] == g && x["house_from_graha"] == 7)
+                .unwrap();
+            assert_eq!(seventh["sign"].as_u64().unwrap(), (sign + 6) % 12, "{g} in D{d}");
+        }
+        assert!(v["rashi"].as_array().is_some_and(|a| !a.is_empty()));
+    }
+    // sputa drishti: D1, D9 and every requested varga, each with houses from its own lagna
+    let asp = &attr(&r, "vedic.aspects")["value"];
+    assert_eq!(asp["divisions"], json!([1, 9, 10, 60]));
+    for k in ["d1", "d9", "d10", "d60"] {
+        assert!(asp[k].is_object(), "{k}");
+        assert!(asp["houses"][k]["sun"]["lagna"].is_object(), "houses {k}");
+    }
+}

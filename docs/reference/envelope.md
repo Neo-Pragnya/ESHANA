@@ -50,4 +50,6 @@ Schema 0.3.3 (round 8) adds fields only: the numerology request takes `gender` (
 
 Schema 0.4.0 adds fields and values only: envelope kinds `methods`, `stations`, `crossings`, `ashtakavarga_transits`, `muhurta_windows`, `personal_calendar`, `pair_calendar`, `progressions`, `synthetic_chart`, `research_window_score`, `kp_table` and `kp_horary`; `calculation.config_hash` on charts and event searches; the chart request's optional `kp_cusp_occupancy` and `varga_methods`; six more ayanāṃśa ids; error codes `ESH-METHOD`, `ESH-RANGE-INVALID` and `ESH-LIMIT`. Existing fields and defaults are unchanged.
 
+In eshana 0.4.4, schema 0.4.0 gains optional fields only, so `schema_version` stays: the `vedic.drishti.vargas` attribute (graha, rāśi and additional drishti in each requested varga) and, in `vedic.aspects`, `divisions` and a `dN` matrix, `houses`, `house_and_lord` and `house_madhya` entry for every requested varga besides D9.
+
 Schema 0.3.1 adds `tone` (1–6) and `base` (1–5) to every Human Design activation, next to `gate`, `line` and `color`. It also adds the `vedic.upagrahas` and `vedic.drishti.additional` attributes and `houses`, `house_and_lord` and `house_madhya` in `vedic.aspects`.

@@ -92,16 +92,19 @@ function placeImgBar(bar) {
   bar.style.top = Math.max(0, r.top - hr.top + 6) + 'px'; bar.style.right = Math.max(0, hr.right - r.right + 6) + 'px';
 }
 function scanImgBars() {
-  $$('.imgbar').forEach(b => { if (!b._svg || !b._svg.isConnected) b.remove(); else placeImgBar(b); });
+  $$('.imgbar').forEach(b => { if (!b._svg || !b._svg.isConnected) b.remove(); else if (!b._strip) placeImgBar(b); });
   for (const svg of $$('section.page:not([hidden]) svg[role="img"]')) {
-    if (svg._imgbar || EXPORT_SKIP.test(svg.getAttribute('class') || '') || svg.closest('.imgbar')) continue;
+    if (svg._imgbar || EXPORT_SKIP.test(svg.getAttribute('class') || '') || svg.closest('.imgbar, .mini-chart')) continue;
     if (svg.getBoundingClientRect().width < 160) continue;
-    const host = svg.parentElement; if (getComputedStyle(host).position === 'static') host.classList.add('imghost');
+    // above the drawing, outside it, when it sits in a figure box; a round wheel keeps the bar over its empty corner
+    const host = svg.parentElement, strip = host.classList.contains('figure') && !svg.classList.contains('wheel');
+    if (!strip && getComputedStyle(host).position === 'static') host.classList.add('imghost');
     const label = exportLabel(svg);
-    const bar = h('div', { class: 'imgbar', role: 'group', 'aria-label': 'Download ' + label + ' as an image' },
+    const bar = h('div', { class: 'imgbar' + (strip ? ' imgstrip' : ''), role: 'group', 'aria-label': 'Download ' + label + ' as an image' },
       ...['png', 'svg'].map(k => h('button', { type: 'button', class: 'imgbtn', 'data-kind': k, title: `Download “${label}” as ${k.toUpperCase()}, as shown now`,
         'aria-label': `Download ${label} as ${k.toUpperCase()}`, onclick: (ev) => { ev.stopPropagation(); exportDownload(svg, k, ev.currentTarget); } }, '⤓ ' + k.toUpperCase())));
-    bar._svg = svg; svg._imgbar = bar; host.append(bar); placeImgBar(bar);
+    bar._svg = svg; svg._imgbar = bar; bar._strip = strip;
+    if (strip) host.insertBefore(bar, svg); else { host.append(bar); placeImgBar(bar); }
   }
 }
 let imgScanQueued = false;
