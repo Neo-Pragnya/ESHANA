@@ -1014,10 +1014,10 @@
       "id": "SEC-03",
       "area": "sec",
       "title": "Signed releases, SBOM, provenance attestations",
-      "status": "implemented",
+      "status": "verified",
       "track": "primary",
       "source": "master plan 7",
-      "evidence": "scripts/sbom.py writes a CycloneDX 1.5 SBOM of the 57 crates in the wheel (make sbom); .github/workflows/attest.yml downloads the files PyPI serves, checks PyPI's SHA-256, attests provenance and the SBOM (Sigstore) and creates the GitHub release with SHA256SUMS. Verified when the first attest run completes.",
+      "evidence": "scripts/sbom.py writes a CycloneDX 1.5 SBOM of the 57 crates in the wheel (make sbom); .github/workflows/attest.yml downloads the files PyPI serves, checks PyPI's SHA-256, attests provenance and the SBOM (Sigstore) and creates the GitHub release with SHA256SUMS.  Verified 2026-11-24: the attest run for 0.5.0 checked the four PyPI files against PyPI's digests, attested SLSA provenance and the SBOM, and created the GitHub release v0.5.0 with the files, eshana-0.5.0.cdx.json and SHA256SUMS; `gh attestation verify` on the sdist downloaded from PyPI succeeds for Neo-Pragnya/ESHANA.",
       "evidence_paths": [
         "scripts/sbom.py",
         ".github/workflows/attest.yml",
@@ -1071,9 +1071,9 @@
       "id": "REP-04",
       "area": "docs",
       "title": "Report on the website: demos section G and /reports/",
-      "status": "implemented",
+      "status": "verified",
       "track": "primary",
-      "note": "Pages enabled 2026-11-21 (build_type workflow); verified when the deploy completes."
+      "evidence": " Verified 2026-11-24: the docs-site workflow deployed main for 0.5.0 and the site serves it (version 0.5.0 on the home page, demos and /reports/)."
     },
     {
       "id": "REP-05",
