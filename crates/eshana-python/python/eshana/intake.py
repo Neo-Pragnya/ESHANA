@@ -142,8 +142,8 @@ def parse_form(form: Dict[str, str]) -> Tuple[Dict[str, Any], Dict[str, str]]:
 
 def check_birth(b: Dict[str, Any]) -> Dict[str, Any]:
     """The engine's resolution of the civil input (raises :class:`eshana.EshanaError` when it is not a valid moment)."""
-    from .profiles import resolve
-    return resolve({k: b.get(k) for k in ("date", "time", "timezone", "utc_offset_minutes", "fold", "latitude",
+    from .profiles import civil_to_utc
+    return civil_to_utc({k: b.get(k) for k in ("date", "time", "timezone", "utc_offset_minutes", "fold", "latitude",
                                           "longitude")})
 
 

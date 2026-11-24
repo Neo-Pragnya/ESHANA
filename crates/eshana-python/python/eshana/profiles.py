@@ -30,7 +30,7 @@ class ProfileError(ValueError):
     """A profile operation that cannot be done (unknown name, bad file)."""
 
 
-def resolve(fields: Dict[str, Any]) -> Dict[str, Any]:
+def civil_to_utc(fields: Dict[str, Any]) -> Dict[str, Any]:
     """The engine's resolution of a profile's civil input: UTC instant, zone, offset (seconds east)."""
     when = {k: fields[k] for k in ("date", "time", "timezone", "utc_offset_minutes", "fold") if fields.get(k) is not None}
     req: Dict[str, Any] = {"op": "positions", "when": when, "bodies": ["sun"], "config": {"zodiac": "tropical"}}
@@ -74,7 +74,7 @@ class ProfileLibrary:
         revs = self.data["profiles"].setdefault(name, [])
         base = copy.deepcopy(revs[-1]["fields"]) if revs else {}
         base.update({k: v for k, v in fields.items()})
-        rev = {"revision": len(revs) + 1, "saved_at": saved_at, "fields": base, "resolved": resolve(base)}
+        rev = {"revision": len(revs) + 1, "saved_at": saved_at, "fields": base, "resolved": civil_to_utc(base)}
         revs.append(rev)
         self._write()
         return copy.deepcopy(rev)
@@ -94,7 +94,7 @@ class ProfileLibrary:
     def replay(self, name: str, revision: Optional[int] = None) -> Dict[str, Any]:
         """Resolve the stored civil input again and compare with the stored instant, zone and offset."""
         rev = self.get(name, revision)
-        now = resolve(rev["fields"])
+        now = civil_to_utc(rev["fields"])
         stored = rev["resolved"]
         return {"name": name, "revision": rev["revision"], "stored": stored, "now": now,
                 "same_utc": stored["birth_utc"] == now["birth_utc"],

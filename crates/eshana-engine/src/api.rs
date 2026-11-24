@@ -2105,7 +2105,7 @@ impl Engine {
                 return Err(EshanaError::Input(format!("unknown factor '{f}' in show")));
             }
         }
-        let (cons, prof) = crate::muhurta::resolve(r.profile.as_deref(), &r.disable, &r.constraints)?;
+        let (cons, prof) = crate::muhurta::constraint_set(r.profile.as_deref(), &r.disable, &r.constraints)?;
         let mut v = crate::muhurta::windows(
             provider.as_ref(),
             a.jd_ut,

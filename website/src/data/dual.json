@@ -3,6 +3,7 @@
   "calculation": {
    "ayanamsha": "lahiri",
    "ayanamsha_deg": 23.751007457126555,
+   "config_hash": "fnv1a64:fcac5b6976a5f6f2",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -1876,7 +1877,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -1888,13 +1889,14 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.3.3",
+  "schema_version": "0.4.0",
   "warnings": []
  },
  "western": {
   "calculation": {
    "ayanamsha": null,
    "ayanamsha_deg": null,
+   "config_hash": "fnv1a64:953f6f86b764da3f",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "placidus",
    "node_model": "mean",
@@ -2834,7 +2836,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.0",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -2845,7 +2847,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.3.3",
+  "schema_version": "0.4.0",
   "warnings": []
  }
 }

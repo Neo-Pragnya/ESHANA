@@ -10,6 +10,12 @@ State on 2026-11-22. The ledger of every task is [`planning/TRACKING.md`](../pla
 
 ## Done
 
+**0.4.0 (2026-11-24): capability expansion**
+- Timing: stations and crossings, dated Aṣṭakavarga, muhūrta windows with versioned profiles, personal and pair calendars (JSON, CSV, ICS).
+- KP horary (1–249) with cusps checked against an offline reference; supplementary matching rules; seven conditional daśās, six more ayanāṃśas, further vargas, progressions.
+- The studio as a local app: the engine in the browser (`--live`), compare workspace, playground, profile library, interface language (English default, Hindi reviewed).
+- `eshana-report new` (a local form that writes the chart and stops); every chart downloadable as PNG or SVG; chart text hierarchy and superscript flags guarded by visual tests.
+
 **0.3.3 (2026-11-22): review round 8**
 - Readable charts: graha text larger and bolder than the marks, full-width D1 charts, the higher degree written higher, mūlatrikoṇa △.
 - The South Indian centre of the Jyotish Chakra shows the four Nadi directions in its middle square.

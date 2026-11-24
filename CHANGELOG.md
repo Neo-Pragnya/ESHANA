@@ -5,6 +5,8 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-24
+
 ### Added
 - Download any chart as an image (`APP-08`): every chart drawing in the studio has PNG and SVG buttons; the export is
   a snapshot of the current state (layers, filters, varga, rotation, theme, language). The PNG is at least 1600 px wide

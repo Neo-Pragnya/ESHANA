@@ -503,7 +503,7 @@ pub type Constraints = Vec<(String, Constraint)>;
 ///
 /// # Errors
 /// `ESH-METHOD` for an unknown profile; `ESH-INPUT` for an unknown constraint id or factor.
-pub fn resolve(
+pub fn constraint_set(
     profile: Option<&str>,
     disable: &[String],
     extra: &[Value],
@@ -703,15 +703,18 @@ mod tests {
 
     #[test]
     fn unknown_profile_is_esh_method_and_disable_must_be_in_profile() {
-        assert_eq!(resolve(Some("nope"), &[], &[]).unwrap_err().code(), "ESH-METHOD");
         assert_eq!(
-            resolve(Some("daily_avoidances"), &["no_panchaka".into()], &[])
+            constraint_set(Some("nope"), &[], &[]).unwrap_err().code(),
+            "ESH-METHOD"
+        );
+        assert_eq!(
+            constraint_set(Some("daily_avoidances"), &["no_panchaka".into()], &[])
                 .unwrap_err()
                 .code(),
             "ESH-INPUT"
         );
         assert_eq!(
-            resolve(None, &[], &[json!({"factor": "nope", "include": [1]})])
+            constraint_set(None, &[], &[json!({"factor": "nope", "include": [1]})])
                 .unwrap_err()
                 .code(),
             "ESH-INPUT"
