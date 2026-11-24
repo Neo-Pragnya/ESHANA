@@ -36,6 +36,40 @@ Delta-T difference ESHANA vs Swiss: worst 109.6 s, median 0.1 s (after 2027 both
 | polar Placidus refused (ESH-LATITUDE) | 2 |
 | rashi, nakshatra and pada compared | 440 |
 
+## `spk` provider (44 charts)
+
+| quantity | worst (arcsec) | median (arcsec) | tolerance (arcsec) |
+|---|---:|---:|---:|
+| sun | 0.43 | 0.13 | 1.5 |
+| moon | 2.06 | 0.51 | 4 |
+| moon_uncorrected | 102.74 | 0.65 | — |
+| mercury | 0.44 | 0.12 | 1.5 |
+| venus | 0.44 | 0.11 | 1.5 |
+| mars | 0.50 | 0.13 | 1.5 |
+| jupiter | 0.40 | 0.16 | 1.5 |
+| saturn | 0.51 | 0.16 | 1.5 |
+| uranus | 0.40 | 0.15 | 1.5 |
+| neptune | 2.20 | 0.18 | 4 |
+| pluto | 2.00 | 0.38 | 4 |
+| mean_node | 0.14 | 0.05 | 1 |
+| true_node | 36.40 | 9.40 | 60 |
+| ayanamsha | 0.27 | 0.08 | 0.5 |
+| asc (sidereal) | 3.20 | 0.09 | 6 |
+| mc (sidereal) | 2.20 | 0.12 | 6 |
+| cusps whole_sign | 0.00 | 0.00 | 1e-06 |
+| asc (tropical) | 3.18 | 0.15 | 6 |
+| mc (tropical) | 2.22 | 0.16 | 6 |
+| cusps equal | 3.20 | 0.13 | 6 |
+| cusps placidus | 3.20 | 0.16 | 6 |
+
+Delta-T difference ESHANA vs Swiss: worst 188.3 s, median 0.2 s (after 2027 both are forecasts).
+
+| categorical check | count |
+|---|---:|
+| disagreements | 0 |
+| polar Placidus refused (ESH-LATITUDE) | 2 |
+| rashi, nakshatra and pada compared | 484 |
+
 ## Published values
 
 | source | what is compared | result |
@@ -47,18 +81,18 @@ Delta-T difference ESHANA vs Swiss: worst 109.6 s, median 0.1 s (after 2027 both
 
 Printed input: November 20, 2026, 7:01 AM EST (-05:00), Fredericksburg, Virginia, United States. Differences are ESHANA minus the printed value (printed to 0.001°, so ±1.8″ is rounding).
 
-| graha | printed | analytic diff (arcsec) |
-|---|---:|---:|
-| lagna | 213.947 Vrischika · Anuradha 1 | -286.5 |
-| sun | 213.943 Vrischika · Anuradha 1 | -7.5 |
-| moon | 339.176 Meena · Uttara Bhadrapada 2 | -17.7 |
-| mars | 123.503 Simha · Magha 2 | -9.1 |
-| mercury | 194.471 Tula · Swati 3 | -7.8 |
-| jupiter | 121.98 Simha · Magha 1 | -7.7 |
-| venus | 179.445 Kanya · Chitra 2 | -9.3 |
-| saturn | 344.073 Meena · Uttara Bhadrapada 4 | -6.4 |
-| mean_node | 300.808 Kumbha · Dhanishta 3 | -7.3 |
-| south_node | 120.808 Simha · Magha 1 | -7.3 |
+| graha | printed | analytic diff (arcsec) | spk diff (arcsec) |
+|---|---:|---:|---:|
+| lagna | 213.947 Vrischika · Anuradha 1 | -286.5 | -286.5 |
+| sun | 213.943 Vrischika · Anuradha 1 | -7.5 | -7.5 |
+| moon | 339.176 Meena · Uttara Bhadrapada 2 | -17.7 | -20.2 |
+| mars | 123.503 Simha · Magha 2 | -9.1 | -9.3 |
+| mercury | 194.471 Tula · Swati 3 | -7.8 | -7.8 |
+| jupiter | 121.98 Simha · Magha 1 | -7.7 | -8.0 |
+| venus | 179.445 Kanya · Chitra 2 | -9.3 | -9.5 |
+| saturn | 344.073 Meena · Uttara Bhadrapada 4 | -6.4 | -6.7 |
+| mean_node | 300.808 Kumbha · Dhanishta 3 | -7.3 | -7.3 |
+| south_node | 120.808 Simha · Magha 1 | -7.3 | -7.3 |
 
 ## Pañcāṅga, ingresses and special lagnas
 
@@ -66,6 +100,10 @@ Printed input: November 20, 2026, 7:01 AM EST (-05:00), Fredericksburg, Virginia
   - sun sidereal ingresses 1990-2030: 480 found vs 480 Swiss; worst 0.00 h, median 0.00 h
   - jupiter sidereal ingresses 1990-2030: 60 found vs 60 Swiss; worst 0.07 h, median 0.01 h
   - saturn sidereal ingresses 1990-2030: 38 found vs 38 Swiss; worst 0.08 h, median 0.02 h
+- `spk`: worst rise/set difference vs Swiss (upper limb, latitude-normalised): sunrise 3.4 s, sunset 3.3 s, moonrise 10.2 s, moonset 10.3 s
+  - sun sidereal ingresses 1990-2030: 480 found vs 480 Swiss; worst 0.00 h, median 0.00 h
+  - jupiter sidereal ingresses 1990-2030: 60 found vs 60 Swiss; worst 0.03 h, median 0.00 h
+  - saturn sidereal ingresses 1990-2030: 38 found vs 38 Swiss; worst 0.05 h, median 0.01 h
 
 Special lagnas against PyJHora (Chennai 1996-12-07 10:34, centre-of-disc sunrise, Sun at birth):
 

@@ -52,11 +52,14 @@ golden:
 
 # ── birth-chart accuracy suite (docs/guides/accuracy-suite.md) ───────────────────────────────────────────────
 # Add ESHANA_SPK=/path/de440s.bsp to include the spk provider.
+# The local kernel is used when present, so the report matches CI's (which always has it).
+ESHANA_SPK ?= $(wildcard $(CURDIR)/target/kernel/de440s.bsp)
 accuracy-suite:
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv --release
-	.venv/bin/python -m pytest accuracy -q -n auto -p no:cacheprovider
+	ESHANA_SPK=$(ESHANA_SPK) .venv/bin/python -m pytest accuracy -q -n auto -p no:cacheprovider
 accuracy-report:
-	.venv/bin/python scripts/accuracy_report.py --check
+	@test -n "$(ESHANA_SPK)" || { echo "accuracy-report needs the JPL kernel (target/kernel/de440s.bsp or ESHANA_SPK=...), or the report loses its spk rows"; exit 1; }
+	ESHANA_SPK=$(ESHANA_SPK) .venv/bin/python scripts/accuracy_report.py --check
 # Rebuild the Swiss Ephemeris reference set (offline oracle; numbers only, nothing ships)
 reference:
 	uv run --no-project --with pyswisseph python scripts/build_reference.py
