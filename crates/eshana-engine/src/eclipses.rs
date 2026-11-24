@@ -27,8 +27,11 @@ const EARTH_RADIUS_KM: f64 = 6378.14;
 const MOON_RADIUS_KM: f64 = 1737.4;
 const SUN_RADIUS_KM: f64 = 696_000.0;
 
-/// Apparent ecliptic longitude, latitude (degrees) and distance (km) of the Sun and the Moon.
-fn sun_moon(p: &dyn EphemerisProvider, jd_ut: f64) -> Result<((f64, f64, f64), (f64, f64, f64))> {
+/// Apparent ecliptic longitude, latitude (degrees) and distance (km).
+type Place = (f64, f64, f64);
+
+/// The Sun's and the Moon's [`Place`].
+fn sun_moon(p: &dyn EphemerisProvider, jd_ut: f64) -> Result<(Place, Place)> {
     let inst = Instant::from_jd_utc(jd_ut);
     let (sl, sb, sd) = p.apparent(inst.jd_tt, Body::Sun)?;
     let (ml, mb, md) = p.apparent(inst.jd_tt, Body::Moon)?;
