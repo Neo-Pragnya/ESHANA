@@ -5,6 +5,17 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-11-24
+
+### Added
+- PyPI project links: Changelog and Issues, next to Homepage, Repository and Documentation.
+- Linux wheels (x86_64 and aarch64, manylinux2014) on PyPI alongside the macOS arm64 wheel, so `pip install eshana` on
+  Linux no longer needs a Rust compiler.
+
+### Fixed
+- CI installs the `wasm32-unknown-unknown` target from `rust-toolchain.toml`; the browser journeys, the acceptance
+  gate and the wheel scan build the in-browser engine and failed on runners without it.
+
 ## [0.4.2] - 2026-11-24
 
 ### Changed
