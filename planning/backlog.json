@@ -343,7 +343,8 @@
       "status": "proposed",
       "track": "primary",
       "source": "master plan 8.2",
-      "note": "Stations, retrograde intervals and point/aspect crossings ship (EVT-01, EVT-02). Eclipses and returns as a search remain."
+      "note": "Stations, retrograde intervals and point/aspect crossings ship (EVT-01, EVT-02). Eclipses and returns as a search remain.",
+      "evidence": "Partly delivered: EVT-01 (crossings and aspects), EVT-02 (stations and retrograde intervals) and ingresses are verified operations. Returns and eclipses are still open."
     },
     {
       "id": "AST-07",
@@ -683,11 +684,12 @@
       "id": "BIND-08",
       "area": "bind",
       "title": "Wheels for Linux, macOS and Windows",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
       "depends_on": [
         "BIND-06"
-      ]
+      ],
+      "evidence": "Wheels on PyPI since 0.4.3: macOS arm64 and Linux x86_64 and aarch64 (manylinux2014, zig), each smoke-tested in Docker and installed from PyPI. Windows and Intel macOS need release.yml (CI runners), which waits on the PyPI trusted-publisher setup (SEC-05)."
     },
     {
       "id": "RULE-01",
@@ -968,7 +970,8 @@
       "title": "Release workflow with PyPI trusted publishing (no token in GitHub)",
       "status": "implemented",
       "track": "primary",
-      "note": "Needs the GitHub publisher added on PyPI."
+      "note": "Needs the GitHub publisher added on PyPI.",
+      "evidence": "release.yml publishes with trusted publishing on a v* tag; it has not run yet: the owner must add the GitHub publisher on PyPI (project → Publishing: repository Neo-Pragnya/ESHANA, workflow release.yml, environment pypi)."
     },
     {
       "id": "VED-20",
@@ -1094,14 +1097,16 @@
       "area": "docs",
       "title": "Chart playground (drag planets, vargas follow)",
       "status": "proposed",
-      "track": "primary"
+      "track": "primary",
+      "evidence": "Partly delivered: APP-05 (synthetic positions) and APP-06 (accessible playground with keyboard edits and undo) are verified. Dragging a graha on the chart is still open."
     },
     {
       "id": "REP-08",
       "area": "docs",
       "title": "Interface languages beyond English",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Delivered by APP-04: locale catalogues as a reader setting (English default), Hindi reviewed by the owner (2026-11-23); every file carries every catalogue; journey \"interface language is a reader setting\" (now also checks the download labels)."
     },
     {
       "id": "AYA-02",
@@ -1139,8 +1144,9 @@
       "id": "VED-12",
       "area": "vedic",
       "title": "Ashtakavarga transit strength by date",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Delivered by EVT-03 (dated aṣṭakavarga: transit BAV/SAV as a step function between ingresses, op ashtakavarga_transits), verified in 0.4.0."
     },
     {
       "id": "VED-13",
@@ -1154,8 +1160,9 @@
       "id": "KP-02",
       "area": "vedic",
       "title": "KP horary by number",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Delivered by KP-03 (1–249 table), KP-04 (cusp geometry from the number), KP-05 (cusp-occupancy convention) and KP-06 (CLI, Python and the studio KP horary page), all verified in 0.4.0."
     },
     {
       "id": "MAT-02",
@@ -1168,8 +1175,9 @@
       "id": "MUH-01",
       "area": "vedic",
       "title": "Muhurta search",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "Delivered by MUH-02 (interval factor composition, boundary partition, the reason for every removed span) and MUH-04 (personal calendar views and JSON/CSV/ICS export), verified in 0.4.0; the expert-reviewed profiles are MUH-03."
     },
     {
       "id": "VAR-01",

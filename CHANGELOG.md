@@ -5,6 +5,12 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+### Changed
+- The download buttons' tooltips and screen-reader labels follow the interface language (Hindi strings pending the
+  owner's review, listed in `pending_review`).
+- README: the release-pipeline diagram is three readable rows (gates, ship, publish) and shows the platform wheels and
+  the install checks; every Mermaid diagram is checked to render.
+
 ## [0.4.4] - 2026-11-24
 
 ### Added

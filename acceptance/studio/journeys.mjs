@@ -1416,6 +1416,10 @@ await journey("interface language is a reader setting: English by default, Hindi
   await send("Page.reload"); await sleep(2500);
   const kept = await evaluate(`document.documentElement.lang`);
   expect(kept === "hi", "choice not kept after reload: " + kept);
+  // the download buttons speak the chosen language too
+  await go("#/charts", 1500);
+  const dl = await evaluate(`(() => { const b = document.querySelector('section.page:not([hidden]) .imgbar button.imgbtn'); return b ? b.title + ' | ' + b.getAttribute('aria-label') : null; })()`);
+  expect(dl && /डाउनलोड/.test(dl) && !/Download/.test(dl), "download labels in Hindi: " + dl);
   await shot("language-hi");
   await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
   await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /English/.test(r.parentElement.textContent)).click(), 1`);

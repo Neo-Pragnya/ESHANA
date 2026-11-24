@@ -17,6 +17,12 @@ function exportLabel(svg) {
   const aria = (svg.getAttribute('aria-label') || '').split(/[:;(]/)[0].trim();
   return (head && head.textContent.trim()) || aria || (sec && sec.querySelector('h1')?.textContent.trim()) || 'chart';
 }
+/* button labels in the reader's interface language (ui.download_* in the locale catalogue), English otherwise */
+const EXPORT_TEXT = { download_group: 'Download {label} as an image', download_title: 'Download “{label}” as {kind}, as shown now', download_aria: 'Download {label} as {kind}', download_error: 'Could not create the image: ' };
+function exportText(key, vars = {}) {
+  const L = (D.locales || {})[S.lang] || D.locale || {}, t = (L.ui && L.ui[key]) || EXPORT_TEXT[key];
+  return t.replace(/\{(\w+)\}/g, (_, k) => vars[k] != null ? vars[k] : '');
+}
 function exportSlug(t) { return String(t || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase().slice(0, 48) || 'chart'; }
 function exportName(svg, ext) { const who = D.subject && D.subject.name; return (who ? exportSlug(who) + '-' : '') + exportSlug(exportLabel(svg)) + '.' + ext; }
 
@@ -81,7 +87,7 @@ async function exportDownload(svg, kind, btn) {
   try {
     const blob = kind === 'png' ? await exportPNG(svg) : new Blob([exportSVGText(svg)], { type: 'image/svg+xml' });
     exportSave(blob, exportName(svg, kind));
-  } catch (e) { console.warn('image export failed', e); btn.title = 'Could not create the image: ' + e.message; }
+  } catch (e) { console.warn('image export failed', e); btn.title = exportText('download_error') + e.message; }
   finally { btn.disabled = false; btn.textContent = was; }
 }
 
@@ -100,9 +106,9 @@ function scanImgBars() {
     const host = svg.parentElement, strip = host.classList.contains('figure') && !svg.classList.contains('wheel');
     if (!strip && getComputedStyle(host).position === 'static') host.classList.add('imghost');
     const label = exportLabel(svg);
-    const bar = h('div', { class: 'imgbar' + (strip ? ' imgstrip' : ''), role: 'group', 'aria-label': 'Download ' + label + ' as an image' },
-      ...['png', 'svg'].map(k => h('button', { type: 'button', class: 'imgbtn', 'data-kind': k, title: `Download “${label}” as ${k.toUpperCase()}, as shown now`,
-        'aria-label': `Download ${label} as ${k.toUpperCase()}`, onclick: (ev) => { ev.stopPropagation(); exportDownload(svg, k, ev.currentTarget); } }, '⤓ ' + k.toUpperCase())));
+    const bar = h('div', { class: 'imgbar' + (strip ? ' imgstrip' : ''), role: 'group', 'aria-label': exportText('download_group', { label }) },
+      ...['png', 'svg'].map(k => h('button', { type: 'button', class: 'imgbtn', 'data-kind': k, title: exportText('download_title', { label, kind: k.toUpperCase() }),
+        'aria-label': exportText('download_aria', { label, kind: k.toUpperCase() }), onclick: (ev) => { ev.stopPropagation(); exportDownload(svg, k, ev.currentTarget); } }, '⤓ ' + k.toUpperCase())));
     bar._svg = svg; svg._imgbar = bar; bar._strip = strip;
     if (strip) host.insertBefore(bar, svg); else { host.append(bar); placeImgBar(bar); }
   }

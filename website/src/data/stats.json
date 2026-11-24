@@ -30,10 +30,10 @@
  "scenarios": 122,
  "tasks": 257,
  "tasks_by_status": {
-  "implemented": 11,
-  "proposed": 53,
+  "implemented": 12,
+  "proposed": 48,
   "released": 1,
-  "verified": 192
+  "verified": 196
  },
  "tzdb_version": "2026f",
  "version": "0.4.4"
