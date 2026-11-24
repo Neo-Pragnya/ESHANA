@@ -41,12 +41,15 @@ meaning).
 | `muhurta_windows` | `place` (the event place), `start_utc`, `end_utc` (at most 62 days), `timezone` or `utc_offset_minutes`, `profile`, `disable`, `constraints` (ids or `{factor, include \| exclude}`), `show`, `sunrise`, `config` (ayanāṃśa) |
 | `personal_calendar` | `natal` (a chart request: the birth), `muhurta` (as above: the event), `format` (`json`, `csv`, `ics`) |
 | `pair_calendar` | `a`, `b` (chart requests), `muhurta` (event place, range, constraints; default profile `pair_general`), `format` |
-| `progressions` | `natal` (a chart request), `at_utc`, `angle_method` (`solar_arc_longitude`, `naibod_ra`, `quotidian`; without it angles are unavailable), `year_days` (default 365.24219) |
+| `progressions` | `natal` (a chart request), `at_utc`, `angle_method` (`solar_arc_longitude`, `naibod_ra`, `quotidian`; without it angles are unavailable), `year_days` (default 365.24219); the result also carries `solar_arc_directions` (every natal point + the solar arc, and directed-to-natal aspects within 1°) |
 | `synthetic_chart` | `positions` (`[{body, longitude_deg, speed_deg_per_day?}]`, sidereal), `ascendant_deg`; no ephemeris; labelled synthetic |
 | `research_window_score` | `windows` (as a muhūrta or calendar result gives them); experimental model `research.window_score@0.1`, specified in `docs/design/research-models.md` |
 | `kp_table` | none; the 1–249 KP horary numbers |
 | `kp_horary` | `number` (1–249), `chart` (moment and place of judgement, sidereal settings, optional `kp_cusp_occupancy`) |
 | `rise_set` | `place` (with optional `altitude_m`), `date` (first local day), `timezone` or `utc_offset_minutes`, `days` (1–366, default 1), `bodies` (default Sun and Moon), `sunrise` (convention), `twilight` (default true), `config`, `spk_path` |
+| `returns` | `natal` (a chart request with an exact time; its zodiac settings apply), `body` (default `sun`), `start_utc`, `end_utc` (≤ 120 years; Moon ≤ 10), `place` (relocated return), `charts` (default true) |
+| `gochara` | `natal` (sidereal settings), `start_utc`, `end_utc` (≤ 30 years), `bodies` (default the nine grahas) |
+| `eclipses` | `start_utc`, `end_utc` (≤ 200 years), `kinds` (`solar`, `lunar`; default both), `config`, `spk_path` |
 | `methods` | none; returns every method family and id (`kind: methods`) |
 | `info` | none |
 
@@ -61,7 +64,7 @@ meaning).
 | `config.provider`, `.zodiac`, `.ayanamsha`, `.house_system`, `.node_model` | string | see [CLI](cli.md) |
 | `config.topocentric` | bool | positions as seen from `place` (parallax applied; up to ~1° for the Moon); `calculation.positions_reference` says which |
 | `system` | string | `vedic` or `western` |
-| `bodies` | array of ids | `sun`, `moon`, `mercury` … `pluto`, `mean_node`, `true_node` |
+| `bodies` | array of ids | `sun`, `moon`, `mercury` … `pluto`, `mean_node`, `true_node`; optional `ceres`, `pallas`, `juno`, `vesta` (kernel `sb441-n16`) and `chiron` (a JPL Horizons kernel) with `--spk de440,…` |
 | `divisions`, `dasha`, `year_convention` | | Vedic |
 | `aspects`, `orb_scale` | | Western |
 | `spk_path` | string | kernel for the `spk` provider: a path, or a catalogue name such as `de440` (see `eshana kernel list`) |

@@ -24,6 +24,8 @@ struct Segment {
     end_addr: usize,
     /// SPK data type: 2 (position coefficients) or 3 (position and velocity coefficients).
     ty: i32,
+    /// Which loaded kernel holds it.
+    kernel: usize,
 }
 
 /// Kernels larger than this are read on demand instead of into memory.
@@ -73,7 +75,8 @@ impl Store {
 /// An SPK kernel, indexed.
 #[derive(Debug)]
 pub struct SpkProvider {
-    data: Store,
+    /// The kernel files; each segment says which one it is in.
+    stores: Vec<Store>,
     /// Keyed by (target, center); a pair can have several segments covering different time spans.
     segs: HashMap<(i32, i32), Vec<Segment>>,
     identity: String,
@@ -119,6 +122,33 @@ impl SpkProvider {
             );
         }
         Self::from_bytes(std::fs::read(path).map_err(cannot)?, path)
+    }
+
+    /// Several kernels at once (a planetary kernel plus, say, an asteroid kernel): the first sets the date range;
+    /// a body is read from whichever kernel carries it (the first one that does).
+    ///
+    /// # Errors
+    /// As [`SpkProvider::open`], for any of the files.
+    pub fn open_many(paths: &[String]) -> Result<Self> {
+        let mut it = paths.iter();
+        let first = it
+            .next()
+            .ok_or_else(|| EshanaError::Config("no kernel given".into()))?;
+        let mut base = Self::open(first)?;
+        for path in it {
+            let more = Self::open(path)?;
+            let offset = base.stores.len();
+            for (key, list) in more.segs {
+                let entry = base.segs.entry(key).or_default();
+                entry.extend(list.into_iter().map(|mut s| {
+                    s.kernel += offset;
+                    s
+                }));
+            }
+            base.stores.extend(more.stores);
+            base.identity = format!("{} + {}", base.identity, more.identity);
+        }
+        Ok(base)
     }
 
     /// Index a kernel already in memory (used by tests).
@@ -171,7 +201,7 @@ impl SpkProvider {
                     rd_i32(&data, ints + 16)? as usize,
                     rd_i32(&data, ints + 20)? as usize,
                 );
-                if ty != 2 && ty != 3 {
+                if ty != 2 && ty != 3 && ty != 21 {
                     continue; // other segment types are ignored; planetary DE kernels use type 2
                 }
                 min_et = min_et.min(start_et);
@@ -182,13 +212,14 @@ impl SpkProvider {
                     start_addr: sa,
                     end_addr: ea,
                     ty,
+                    kernel: 0,
                 });
             }
             rec = next;
         }
         if segs.is_empty() {
             return Err(EshanaError::Provider(
-                "no type-2 or type-3 segments found in kernel".into(),
+                "no type-2, type-3 or type-21 segments found in kernel".into(),
             ));
         }
         // a kernel in memory is hashed whole; a large one by its first and last MiB (it identifies, not authenticates)
@@ -214,12 +245,91 @@ impl SpkProvider {
             }
         };
         Ok(Self {
-            data,
+            stores: vec![data],
             segs,
             identity,
             jd_min: JD_J2000 + min_et / 86_400.0,
             jd_max: JD_J2000 + max_et / 86_400.0,
         })
+    }
+
+    /// Type 21 (extended modified difference arrays): the record covering `et` evaluated as SPICE's SPKE21 does.
+    ///
+    /// Segment layout: N records of 4·MAXDIM + 11 doubles (TL, G[MAXDIM], X VX Y VY Z VZ, DT[MAXDIM×3], KQMAX1,
+    /// KQ[3]), then the N record end epochs, then a directory of every 100th epoch, then MAXDIM and N.
+    fn type21_state(&self, seg: &Segment, et: f64) -> Result<([f64; 3], [f64; 3])> {
+        let st = &self.stores[seg.kernel];
+        let a = |addr: usize| (addr - 1) * 8;
+        let maxdim = rd_f64(st, a(seg.end_addr - 1))? as usize;
+        let n = rd_f64(st, a(seg.end_addr))? as usize;
+        let dlsize = 4 * maxdim + 11;
+        let epochs0 = seg.start_addr + n * dlsize;
+        // the first record whose end epoch is at or after et
+        let (mut lo, mut hi) = (0usize, n - 1);
+        while lo < hi {
+            let mid = (lo + hi) / 2;
+            if rd_f64(st, a(epochs0 + mid))? < et {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        let rec: Vec<f64> = st
+            .bytes(a(seg.start_addr + lo * dlsize), dlsize * 8)?
+            .chunks_exact(8)
+            .map(|b| f64::from_le_bytes(b.try_into().expect("8 bytes")))
+            .collect();
+        let tl = rec[0];
+        let g = &rec[1..=maxdim];
+        let refs = &rec[maxdim + 1..maxdim + 7];
+        let (refpos, refvel) = ([refs[0], refs[2], refs[4]], [refs[1], refs[3], refs[5]]);
+        let dt = |j: usize, i: usize| rec[maxdim + 7 + i * maxdim + j]; // DT(j, i), j and i from 0
+        let kqmax1 = rec[4 * maxdim + 7] as usize;
+        let kq = [
+            rec[4 * maxdim + 8] as usize,
+            rec[4 * maxdim + 9] as usize,
+            rec[4 * maxdim + 10] as usize,
+        ];
+        let delta = et - tl;
+        let mut tp = delta;
+        let mq2 = kqmax1.saturating_sub(2);
+        let mut ks = kqmax1 - 1;
+        let mut fc = vec![0.0; maxdim + 2];
+        let mut wc = vec![0.0; maxdim + 2];
+        let mut w = vec![0.0; maxdim + 3];
+        fc[1] = 1.0; // FC(1), 1-based in the reference algorithm
+        for j in 1..=mq2 {
+            fc[j + 1] = tp / g[j - 1];
+            wc[j] = delta / g[j - 1];
+            tp = delta + g[j - 1];
+        }
+        for j in 1..=kqmax1 {
+            w[j] = 1.0 / j as f64;
+        }
+        let mut jx = 0;
+        let mut ks1 = ks.saturating_sub(1);
+        while ks >= 2 {
+            jx += 1;
+            for j in 1..=jx {
+                w[j + ks] = fc[j + 1] * w[j + ks - 1] - wc[j] * w[j + ks];
+            }
+            ks = ks1;
+            ks1 = ks1.saturating_sub(1);
+        }
+        let (mut p, mut v) = ([0.0; 3], [0.0; 3]);
+        for i in 0..3 {
+            let sum: f64 = (1..=kq[i]).rev().map(|j| dt(j - 1, i) * w[j + ks]).sum();
+            p[i] = refpos[i] + delta * (refvel[i] + delta * sum);
+        }
+        for j in 1..=jx {
+            w[j + ks] = fc[j + 1] * w[j + ks - 1] - wc[j] * w[j + ks];
+        }
+        ks -= 1;
+        for i in 0..3 {
+            let sum: f64 = (1..=kq[i]).rev().map(|j| dt(j - 1, i) * w[j + ks]).sum();
+            v[i] = refvel[i] + delta * sum;
+        }
+        Ok((p, v))
     }
 
     /// Position (km) and velocity (km/s) of `target` relative to `center` at ET seconds past J2000.
@@ -233,18 +343,20 @@ impl SpkProvider {
             .ok_or_else(|| {
                 EshanaError::OutOfRange(format!("ET {et:.0} s is outside the kernel segment for {target}"))
             })?;
+        if seg.ty == 21 {
+            return self.type21_state(seg, et);
+        }
         // Directory at the end of the segment: INIT, INTLEN, RSIZE, N.
         let a = |addr: usize| (addr - 1) * 8;
         let end = seg.end_addr;
-        let init = rd_f64(&self.data, a(end - 3))?;
-        let intlen = rd_f64(&self.data, a(end - 2))?;
-        let rsize = rd_f64(&self.data, a(end - 1))? as usize;
-        let n = rd_f64(&self.data, a(end))? as usize;
+        let init = rd_f64(&self.stores[seg.kernel], a(end - 3))?;
+        let intlen = rd_f64(&self.stores[seg.kernel], a(end - 2))?;
+        let rsize = rd_f64(&self.stores[seg.kernel], a(end - 1))? as usize;
+        let n = rd_f64(&self.stores[seg.kernel], a(end))? as usize;
         let idx = (((et - init) / intlen).floor() as usize).min(n - 1);
         let rec0 = seg.start_addr + idx * rsize;
         // one read for the whole record: MID, RADIUS, then the coefficients
-        let rec: Vec<f64> = self
-            .data
+        let rec: Vec<f64> = self.stores[seg.kernel]
             .bytes(a(rec0), rsize * 8)?
             .chunks_exact(8)
             .map(|b| f64::from_le_bytes(b.try_into().expect("8 bytes")))
@@ -293,8 +405,36 @@ impl SpkProvider {
         };
         match id {
             301 | 399 => Ok(add(self.segment_state(id, 3, et)?, self.segment_state(3, 0, et)?)),
-            other => self.segment_state(other, 0, et),
+            0 => Ok(([0.0; 3], [0.0; 3])),
+            other if self.segs.contains_key(&(other, 0)) => self.segment_state(other, 0, et),
+            // a body stored relative to another centre (asteroids are usually relative to the Sun, 10)
+            other => {
+                let centre = self
+                    .segs
+                    .keys()
+                    .find(|(t, _)| *t == other)
+                    .map(|(_, c)| *c)
+                    .ok_or_else(|| {
+                        EshanaError::BodyUnsupported(format!(
+                            "no kernel loaded carries NAIF id {other}; add one with it (e.g. sb441-n16)"
+                        ))
+                    })?;
+                Ok(add(
+                    self.segment_state(other, centre, et)?,
+                    self.bary(centre, et)?,
+                ))
+            }
         }
+    }
+}
+
+impl SpkProvider {
+    /// The id a loaded kernel uses for an asteroid: 2000000 + n (DE small-body files) or 20000000 + n (Horizons).
+    fn asteroid_id(&self, id: i32) -> Option<i32> {
+        let alt = 20_000_000 + (id - 2_000_000);
+        [id, alt]
+            .into_iter()
+            .find(|c| self.segs.keys().any(|(t, _)| t == c))
     }
 }
 
@@ -316,6 +456,12 @@ fn naif_id(body: Body) -> Option<i32> {
         Body::Uranus => 7,
         Body::Neptune => 8,
         Body::Pluto => 9,
+        // asteroids: NAIF ids 2000000 + number
+        Body::Ceres => 2_000_001,
+        Body::Pallas => 2_000_002,
+        Body::Juno => 2_000_003,
+        Body::Vesta => 2_000_004,
+        Body::Chiron => 2_002_060,
         Body::MeanNode | Body::TrueNode => return None,
     })
 }
@@ -345,7 +491,7 @@ impl EphemerisProvider for SpkProvider {
     }
 
     fn supports(&self, body: Body) -> bool {
-        body.is_node() || naif_id(body).is_some()
+        body.is_node() || naif_id(body).is_some_and(|id| id < 1000 || self.asteroid_id(id).is_some())
     }
 
     fn apparent(&self, jd_tt: f64, body: Body) -> Result<(f64, f64, Option<f64>)> {
@@ -363,6 +509,13 @@ impl EphemerisProvider for SpkProvider {
             return Ok((n, 0.0, None));
         }
         let id = naif_id(body).ok_or_else(|| EshanaError::BodyUnsupported(body.id().into()))?;
+        let id = if id >= 2_000_000 {
+            self.asteroid_id(id).ok_or_else(|| {
+                EshanaError::BodyUnsupported(format!("{}: no loaded kernel carries it; add one (sb441-n16 for Ceres, Pallas, Juno and Vesta; a JPL Horizons SPK for Chiron)", body.id()))
+            })?
+        } else {
+            id
+        };
         let g = (357.53 + 0.985_600_3 * (jd_tt - JD_J2000)).to_radians();
         let et = (jd_tt - JD_J2000) * 86_400.0 + 0.001_657 * g.sin() + 0.000_014 * (2.0 * g).sin();
         let (e_pos, e_vel) = self.bary(399, et)?;

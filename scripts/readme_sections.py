@@ -49,6 +49,9 @@ OPS = {
     "synthetic_chart": ("🧪", "positions you place by hand, labelled synthetic (the playground)"),
     "research_window_score": ("📊", "the experimental window score, with coverage and sensitivity"),
     "rise_set": ("🌄", "rise, upper transit and set of any body, and twilight, for local days at a place"),
+    "returns": ("🔁", "solar, lunar or any body's returns to its natal longitude, with a chart at each (relocatable)"),
+    "gochara": ("🚶", "transits counted from the natal Moon and lagna, with retrograde and combustion intervals"),
+    "eclipses": ("🌑", "solar and lunar eclipses: type, time of greatest eclipse, magnitude, γ"),
     "info": ("ℹ️", "versions, operations, method families and ayanāṃśa definitions"),
 }
 

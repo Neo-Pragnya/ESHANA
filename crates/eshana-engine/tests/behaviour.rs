@@ -486,3 +486,54 @@ fn varga_drishti_uses_the_varga_signs() {
         assert!(asp["houses"][k]["sun"]["lagna"].is_object(), "houses {k}");
     }
 }
+
+/// VED-06: gochara's combustion intervals are bounded by the vedic-core orb (Saturn 15°, Mercury 14° direct / 12°
+/// retrograde), and each segment's house from the Moon is counted from the natal Moon's sign.
+#[test]
+fn gochara_combustion_is_bounded_by_the_pack_orb() {
+    let r = run(
+        json!({"op": "gochara", "natal": {"when": kolkata(), "place": hyd(), "config": {"ayanamsha": "lahiri"}},
+        "start_utc": "2026-01-01T00:00:00Z", "end_utc": "2027-01-01T00:00:00Z", "bodies": ["saturn", "mercury"]}),
+    );
+    let moon_sign = r["calculation"]["natal_moon_sign"].as_u64().unwrap();
+    let sep = |body: &str, utc: &str| -> f64 {
+        let p = run(json!({"op": "positions", "when": {"utc": utc}, "bodies": [body, "sun"]}));
+        let lon = |id: &str| {
+            p["positions"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|x| x["id"] == id)
+                .unwrap()["longitude_deg"]
+                .as_f64()
+                .unwrap()
+        };
+        eshana_core::angular_diff(lon(body), lon("sun")).abs()
+    };
+    for t in r["transits"].as_array().unwrap() {
+        let body = t["body"].as_str().unwrap();
+        for seg in t["segments"].as_array().unwrap() {
+            let s = seg["sign"].as_u64().unwrap();
+            assert_eq!(
+                seg["house_from_moon"].as_u64().unwrap(),
+                (s + 12 - moon_sign) % 12 + 1
+            );
+        }
+        let list = t["combustion_intervals"].as_array().unwrap();
+        assert!(!list.is_empty(), "{body} is combust at least once a year");
+        for iv in list
+            .iter()
+            .filter(|i| i["clipped_start"] == false && i["clipped_end"] == false)
+        {
+            for edge in ["start_utc", "end_utc"] {
+                let d = sep(body, iv[edge].as_str().unwrap());
+                let ok = if body == "saturn" {
+                    (d - 15.0).abs() < 0.01
+                } else {
+                    (d - 14.0).abs() < 0.01 || (d - 12.0).abs() < 0.01
+                };
+                assert!(ok, "{body} {edge} {}: separation {d:.4}°", iv[edge]);
+            }
+        }
+    }
+}

@@ -476,6 +476,57 @@ enum Cmd {
         #[command(flatten)]
         set: Settings,
     },
+    /// Solar, lunar or any body's returns to its natal longitude in a range, with a chart at each
+    Returns {
+        #[command(flatten)]
+        natal: ChartOpts,
+        /// sun (default), moon or another body
+        #[arg(long = "return-body")]
+        return_body: Option<String>,
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO
+        #[arg(long)]
+        end: String,
+        /// Relocated return: degrees north of the place the chart is cast for
+        #[arg(long, allow_hyphen_values = true)]
+        at_lat: Option<f64>,
+        /// Relocated return: degrees east
+        #[arg(long, allow_hyphen_values = true)]
+        at_lon: Option<f64>,
+        /// Only the instants, without a chart at each
+        #[arg(long)]
+        no_charts: bool,
+    },
+    /// Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals
+    Gochara {
+        #[command(flatten)]
+        natal: ChartOpts,
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO (at most 30 years)
+        #[arg(long)]
+        end: String,
+        /// Comma-separated grahas (default the nine)
+        #[arg(long, value_delimiter = ',')]
+        transit_bodies: Option<Vec<String>>,
+    },
+    /// Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude
+    Eclipses {
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO (at most 200 years)
+        #[arg(long)]
+        end: String,
+        /// solar, lunar (default both)
+        #[arg(long, value_delimiter = ',')]
+        kinds: Option<Vec<String>>,
+        #[command(flatten)]
+        set: Settings,
+    },
     /// JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME`
     Kernel {
         /// list, verify or path
@@ -506,7 +557,6 @@ fn kernel_cmd(action: &str, target: Option<&str>, compact: bool) -> ExitCode {
                 .iter()
                 .map(|k| {
                     let mut v = serde_json::to_value(k).expect("json");
-                    v["url"] = json!(format!("{}{}", kernels::NAIF_PLANETS, k.file));
                     v["present"] = json!(dir.join(k.file).exists());
                     v
                 })
@@ -655,6 +705,36 @@ fn main() -> ExitCode {
             json!({"op": "panchanga", "chart": c, "natal_moon_deg": natal_moon})
         }
         Cmd::KpTable => json!({"op": "kp_table"}),
+        Cmd::Returns {
+            natal,
+            return_body,
+            start,
+            end,
+            at_lat,
+            at_lon,
+            no_charts,
+        } => json!({
+            "op": "returns", "natal": chart_json(natal, Some(if natal.set.zodiac.as_deref() == Some("sidereal") { "vedic" } else { "western" }), false),
+            "body": return_body, "start_utc": start, "end_utc": end, "charts": !no_charts,
+            "place": match (at_lat, at_lon) { (Some(a), Some(b)) => json!({"latitude": a, "longitude": b}), _ => Value::Null },
+        }),
+        Cmd::Gochara {
+            natal,
+            start,
+            end,
+            transit_bodies,
+        } => json!({
+            "op": "gochara", "natal": chart_json(natal, Some("vedic"), false), "start_utc": start, "end_utc": end,
+            "bodies": transit_bodies,
+        }),
+        Cmd::Eclipses {
+            start,
+            end,
+            kinds,
+            set,
+        } => json!({
+            "op": "eclipses", "start_utc": start, "end_utc": end, "kinds": kinds, "config": settings_json(set), "spk_path": set.spk,
+        }),
         Cmd::RiseSet {
             date,
             timezone,

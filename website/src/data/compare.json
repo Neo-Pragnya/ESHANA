@@ -26,9 +26,9 @@
   },
   "changes": [
    {
-    "a_longitude_deg": 131.9840244634008,
+    "a_longitude_deg": 132.02223139907767,
     "a_sign": "Simha",
-    "b_longitude_deg": 131.1008168234008,
+    "b_longitude_deg": 131.13902375907765,
     "b_sign": "Simha",
     "difference_deg": -0.8832076400000233,
     "id": "jupiter",
@@ -36,11 +36,11 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 353.52340486037343,
+    "a_longitude_deg": 353.5221878867814,
     "a_sign": "Meena",
-    "b_longitude_deg": 352.6401972203734,
+    "b_longitude_deg": 352.63898024678144,
     "b_sign": "Meena",
-    "difference_deg": -0.8832076400000233,
+    "difference_deg": -0.8832076399999664,
     "id": "mars",
     "kind": "position",
     "sign_changed": false
@@ -56,9 +56,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 39.95942640608184,
+    "a_longitude_deg": 39.9596411827239,
     "a_sign": "Vrishabha",
-    "b_longitude_deg": 39.07621876608184,
+    "b_longitude_deg": 39.0764335427239,
     "b_sign": "Vrishabha",
     "difference_deg": -0.8832076400000233,
     "id": "mercury",
@@ -76,9 +76,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 264.8349543522495,
+    "a_longitude_deg": 264.82906310617994,
     "a_sign": "Dhanu",
-    "b_longitude_deg": 263.9517467122495,
+    "b_longitude_deg": 263.9458554661799,
     "b_sign": "Dhanu",
     "difference_deg": -0.8832076400000233,
     "id": "neptune",
@@ -86,9 +86,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 207.3625201315338,
+    "a_longitude_deg": 207.36256153389485,
     "a_sign": "Tula",
-    "b_longitude_deg": 206.4793124915338,
+    "b_longitude_deg": 206.47935389389482,
     "b_sign": "Tula",
     "difference_deg": -0.8832076400000233,
     "id": "pluto",
@@ -96,9 +96,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 294.65592687232163,
+    "a_longitude_deg": 294.7334005938476,
     "a_sign": "Makara",
-    "b_longitude_deg": 293.7727192323216,
+    "b_longitude_deg": 293.85019295384757,
     "b_sign": "Makara",
     "difference_deg": -0.8832076400000233,
     "id": "saturn",
@@ -116,9 +116,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 43.74600268263739,
+    "a_longitude_deg": 43.74457555474485,
     "a_sign": "Vrishabha",
-    "b_longitude_deg": 42.86279504263739,
+    "b_longitude_deg": 42.86136791474485,
     "b_sign": "Vrishabha",
     "difference_deg": -0.8832076400000233,
     "id": "sun",
@@ -126,9 +126,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 263.7416518019792,
+    "a_longitude_deg": 263.72749491073466,
     "a_sign": "Dhanu",
-    "b_longitude_deg": 262.85844416197915,
+    "b_longitude_deg": 262.84428727073464,
     "b_sign": "Dhanu",
     "difference_deg": -0.8832076400000233,
     "id": "uranus",
@@ -136,9 +136,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 39.381787741338165,
+    "a_longitude_deg": 39.38231368878892,
     "a_sign": "Vrishabha",
-    "b_longitude_deg": 38.49858010133816,
+    "b_longitude_deg": 38.49910604878892,
     "b_sign": "Vrishabha",
     "difference_deg": -0.8832076400000233,
     "id": "venus",
@@ -147,14 +147,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 11.9840244634008,
-     "dms": "11°59′02″",
+     "degree_in_sign": 12.022231399077668,
+     "dms": "12°01′20″",
      "index": 4,
      "name": "Simha"
     },
     "b": {
-     "degree_in_sign": 11.100816823400805,
-     "dms": "11°06′03″",
+     "degree_in_sign": 11.139023759077645,
+     "dms": "11°08′20″",
      "index": 4,
      "name": "Simha"
     },
@@ -197,14 +197,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 23.523404860373432,
-     "dms": "23°31′24″",
+     "degree_in_sign": 23.52218788678141,
+     "dms": "23°31′20″",
      "index": 11,
      "name": "Meena"
     },
     "b": {
-     "degree_in_sign": 22.64019722037341,
-     "dms": "22°38′25″",
+     "degree_in_sign": 22.638980246781443,
+     "dms": "22°38′20″",
      "index": 11,
      "name": "Meena"
     },
@@ -229,14 +229,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 9.959426406081839,
-     "dms": "9°57′34″",
+     "degree_in_sign": 9.9596411827239,
+     "dms": "9°57′35″",
      "index": 1,
      "name": "Vrishabha"
     },
     "b": {
-     "degree_in_sign": 9.076218766081837,
-     "dms": "9°04′34″",
+     "degree_in_sign": 9.076433542723898,
+     "dms": "9°04′35″",
      "index": 1,
      "name": "Vrishabha"
     },
@@ -261,14 +261,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 24.834954352249497,
-     "dms": "24°50′06″",
+     "degree_in_sign": 24.829063106179944,
+     "dms": "24°49′45″",
      "index": 8,
      "name": "Dhanu"
     },
     "b": {
-     "degree_in_sign": 23.951746712249474,
-     "dms": "23°57′06″",
+     "degree_in_sign": 23.94585546617992,
+     "dms": "23°56′45″",
      "index": 8,
      "name": "Dhanu"
     },
@@ -295,13 +295,13 @@
    },
    {
     "a": {
-     "degree_in_sign": 27.362520131533813,
+     "degree_in_sign": 27.362561533894848,
      "dms": "27°21′45″",
      "index": 6,
      "name": "Tula"
     },
     "b": {
-     "degree_in_sign": 26.47931249153379,
+     "degree_in_sign": 26.479353893894825,
      "dms": "26°28′46″",
      "index": 6,
      "name": "Tula"
@@ -311,14 +311,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 24.65592687232163,
-     "dms": "24°39′21″",
+     "degree_in_sign": 24.73340059384759,
+     "dms": "24°44′00″",
      "index": 9,
      "name": "Makara"
     },
     "b": {
-     "degree_in_sign": 23.772719232321606,
-     "dms": "23°46′22″",
+     "degree_in_sign": 23.850192953847568,
+     "dms": "23°51′01″",
      "index": 9,
      "name": "Makara"
     },
@@ -361,14 +361,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 13.74600268263739,
-     "dms": "13°44′46″",
+     "degree_in_sign": 13.744575554744848,
+     "dms": "13°44′40″",
      "index": 1,
      "name": "Vrishabha"
     },
     "b": {
-     "degree_in_sign": 12.862795042637387,
-     "dms": "12°51′46″",
+     "degree_in_sign": 12.861367914744847,
+     "dms": "12°51′41″",
      "index": 1,
      "name": "Vrishabha"
     },
@@ -395,14 +395,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 23.741651801979174,
-     "dms": "23°44′30″",
+     "degree_in_sign": 23.727494910734663,
+     "dms": "23°43′39″",
      "index": 8,
      "name": "Dhanu"
     },
     "b": {
-     "degree_in_sign": 22.85844416197915,
-     "dms": "22°51′30″",
+     "degree_in_sign": 22.84428727073464,
+     "dms": "22°50′39″",
      "index": 8,
      "name": "Dhanu"
     },
@@ -411,14 +411,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 9.381787741338165,
-     "dms": "9°22′54″",
+     "degree_in_sign": 9.38231368878892,
+     "dms": "9°22′56″",
      "index": 1,
      "name": "Vrishabha"
     },
     "b": {
-     "degree_in_sign": 8.498580101338163,
-     "dms": "8°29′55″",
+     "degree_in_sign": 8.499106048788917,
+     "dms": "8°29′57″",
      "index": 1,
      "name": "Vrishabha"
     },
@@ -457,9 +457,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
     "vedic.parashari@0.3"
@@ -477,9 +477,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "ayanamsha-fagan_bradley@0.1",
     "vedic.parashari@0.3"
@@ -587,9 +587,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "western.basic@0.1"
    ],
@@ -604,9 +604,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "western.basic@0.1"
    ],
@@ -646,9 +646,9 @@
   },
   "changes": [
    {
-    "a_longitude_deg": 25.348183953248196,
+    "a_longitude_deg": 25.253137703459902,
     "a_sign": "Aries",
-    "b_longitude_deg": 1.4949891681007514,
+    "b_longitude_deg": 1.3999429183124583,
     "b_sign": "Aries",
     "difference_deg": -23.853194785147423,
     "id": "jupiter",
@@ -656,9 +656,9 @@
     "sign_changed": false
    },
    {
-    "a_longitude_deg": 327.9634785215895,
+    "a_longitude_deg": 327.9633064256632,
     "a_sign": "Aquarius",
-    "b_longitude_deg": 304.110283736442,
+    "b_longitude_deg": 304.1101116405157,
     "b_sign": "Aquarius",
     "difference_deg": -23.85319478514748,
     "id": "mars",
@@ -676,9 +676,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 271.8899648912809,
+    "a_longitude_deg": 271.88928414948685,
     "a_sign": "Capricorn",
-    "b_longitude_deg": 248.03677010613345,
+    "b_longitude_deg": 248.0360893643394,
     "b_sign": "Sagittarius",
     "difference_deg": -23.85319478514748,
     "id": "mercury",
@@ -696,9 +696,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 303.18078654010367,
+    "a_longitude_deg": 303.1931795825146,
     "a_sign": "Aquarius",
-    "b_longitude_deg": 279.3275917549562,
+    "b_longitude_deg": 279.3399847973671,
     "b_sign": "Capricorn",
     "difference_deg": -23.85319478514748,
     "id": "neptune",
@@ -706,9 +706,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 251.44396540332855,
+    "a_longitude_deg": 251.44394692413832,
     "a_sign": "Sagittarius",
-    "b_longitude_deg": 227.5907706181811,
+    "b_longitude_deg": 227.59075213899087,
     "b_sign": "Scorpio",
     "difference_deg": -23.85319478514748,
     "id": "pluto",
@@ -716,9 +716,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 40.23668022561965,
+    "a_longitude_deg": 40.39565875218701,
     "a_sign": "Taurus",
-    "b_longitude_deg": 16.383485440472203,
+    "b_longitude_deg": 16.542463967039563,
     "b_sign": "Aries",
     "difference_deg": -23.853194785147423,
     "id": "saturn",
@@ -736,9 +736,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 280.36965858923344,
+    "a_longitude_deg": 280.3689150486144,
     "a_sign": "Capricorn",
-    "b_longitude_deg": 256.51646380408596,
+    "b_longitude_deg": 256.5157202634669,
     "b_sign": "Sagittarius",
     "difference_deg": -23.85319478514748,
     "id": "sun",
@@ -746,9 +746,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 314.7901765274847,
+    "a_longitude_deg": 314.80924359284654,
     "a_sign": "Aquarius",
-    "b_longitude_deg": 290.9369817423372,
+    "b_longitude_deg": 290.95604880769906,
     "b_sign": "Capricorn",
     "difference_deg": -23.85319478514748,
     "id": "uranus",
@@ -756,9 +756,9 @@
     "sign_changed": true
    },
    {
-    "a_longitude_deg": 241.5668326238203,
+    "a_longitude_deg": 241.56579518417826,
     "a_sign": "Sagittarius",
-    "b_longitude_deg": 217.71363783867284,
+    "b_longitude_deg": 217.7126003990308,
     "b_sign": "Scorpio",
     "difference_deg": -23.85319478514748,
     "id": "venus",
@@ -767,14 +767,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 25.348183953248196,
-     "dms": "25°20′53″",
+     "degree_in_sign": 25.253137703459902,
+     "dms": "25°15′11″",
      "index": 0,
      "name": "Aries"
     },
     "b": {
-     "degree_in_sign": 1.4949891681007514,
-     "dms": "1°29′42″",
+     "degree_in_sign": 1.3999429183124583,
+     "dms": "1°24′00″",
      "index": 0,
      "name": "Aries"
     },
@@ -783,14 +783,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 27.96347852158948,
-     "dms": "27°57′49″",
+     "degree_in_sign": 27.963306425663177,
+     "dms": "27°57′48″",
      "index": 10,
      "name": "Aquarius"
     },
     "b": {
-     "degree_in_sign": 4.110283736442,
-     "dms": "4°06′37″",
+     "degree_in_sign": 4.110111640515697,
+     "dms": "4°06′36″",
      "index": 10,
      "name": "Aquarius"
     },
@@ -815,14 +815,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 1.889964891280897,
-     "dms": "1°53′24″",
+     "degree_in_sign": 1.8892841494868549,
+     "dms": "1°53′21″",
      "index": 9,
      "name": "Capricorn"
     },
     "b": {
-     "degree_in_sign": 8.036770106133446,
-     "dms": "8°02′12″",
+     "degree_in_sign": 8.036089364339404,
+     "dms": "8°02′10″",
      "index": 8,
      "name": "Sagittarius"
     },
@@ -847,14 +847,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 3.180786540103668,
-     "dms": "3°10′51″",
+     "degree_in_sign": 3.193179582514574,
+     "dms": "3°11′35″",
      "index": 10,
      "name": "Aquarius"
     },
     "b": {
-     "degree_in_sign": 9.327591754956188,
-     "dms": "9°19′39″",
+     "degree_in_sign": 9.339984797367094,
+     "dms": "9°20′24″",
      "index": 9,
      "name": "Capricorn"
     },
@@ -863,13 +863,13 @@
    },
    {
     "a": {
-     "degree_in_sign": 11.443965403328548,
+     "degree_in_sign": 11.443946924138316,
      "dms": "11°26′38″",
      "index": 8,
      "name": "Sagittarius"
     },
     "b": {
-     "degree_in_sign": 17.590770618181097,
+     "degree_in_sign": 17.590752138990865,
      "dms": "17°35′27″",
      "index": 7,
      "name": "Scorpio"
@@ -879,14 +879,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 10.23668022561965,
-     "dms": "10°14′12″",
+     "degree_in_sign": 10.39565875218701,
+     "dms": "10°23′44″",
      "index": 1,
      "name": "Taurus"
     },
     "b": {
-     "degree_in_sign": 16.383485440472203,
-     "dms": "16°23′01″",
+     "degree_in_sign": 16.542463967039563,
+     "dms": "16°32′33″",
      "index": 0,
      "name": "Aries"
     },
@@ -911,14 +911,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 10.369658589233438,
-     "dms": "10°22′11″",
+     "degree_in_sign": 10.368915048614383,
+     "dms": "10°22′08″",
      "index": 9,
      "name": "Capricorn"
     },
     "b": {
-     "degree_in_sign": 16.51646380408596,
-     "dms": "16°30′59″",
+     "degree_in_sign": 16.515720263466903,
+     "dms": "16°30′57″",
      "index": 8,
      "name": "Sagittarius"
     },
@@ -927,14 +927,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 14.790176527484675,
-     "dms": "14°47′25″",
+     "degree_in_sign": 14.809243592846542,
+     "dms": "14°48′33″",
      "index": 10,
      "name": "Aquarius"
     },
     "b": {
-     "degree_in_sign": 20.936981742337196,
-     "dms": "20°56′13″",
+     "degree_in_sign": 20.956048807699062,
+     "dms": "20°57′22″",
      "index": 9,
      "name": "Capricorn"
     },
@@ -943,14 +943,14 @@
    },
    {
     "a": {
-     "degree_in_sign": 1.5668326238202894,
-     "dms": "1°34′01″",
+     "degree_in_sign": 1.5657951841782562,
+     "dms": "1°33′57″",
      "index": 8,
      "name": "Sagittarius"
     },
     "b": {
-     "degree_in_sign": 7.713637838672838,
-     "dms": "7°42′49″",
+     "degree_in_sign": 7.712600399030805,
+     "dms": "7°42′45″",
      "index": 7,
      "name": "Scorpio"
     },
@@ -985,9 +985,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "western.basic@0.1"
    ],
@@ -1004,9 +1004,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
     "western.basic@0.1"

@@ -373,18 +373,34 @@
       "id": "AST-06",
       "area": "astro",
       "title": "Event search: transits, ingresses, stations, returns, eclipses",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "source": "master plan 8.2",
       "note": "Stations, retrograde intervals and point/aspect crossings ship (EVT-01, EVT-02). Eclipses and returns as a search remain.",
-      "evidence": "Partly delivered: EVT-01 (crossings and aspects), EVT-02 (stations and retrograde intervals) and ingresses are verified operations. Returns and eclipses are still open."
+      "evidence": "Transits/ingresses/stations/crossings: EVT-01, EVT-02. Returns: op returns (eshana returns), test returns_match_the_oracle (10 solar and lunar returns 2025-2040 within 60 s / 30 s). Eclipses: eclipses.rs (geometric, shadow radii 1.02 × (π☾ + π☉ ± s☉), hybrid from the topocentric diameter ratio), test eclipses_match_the_oracle: all 182 eclipses 2000-2040 same type, within 2 min (one faint penumbral extra that NASA lists).",
+      "acceptance": "Event search covers transits, ingresses, stations, returns and eclipses, checked against an independent oracle.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/eclipses.rs",
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "benchmarks/golden/eclipses_oracle.json",
+        "benchmarks/golden/returns_oracle.json"
+      ]
     },
     {
       "id": "AST-07",
       "area": "astro",
       "title": "Chiron, asteroids and other optional bodies",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Chiron and asteroids as optional bodies from kernels, checked against JPL Horizons.",
+      "evidence": "Body::Ceres/Pallas/Juno/Vesta/Chiron (opt in, never default); several kernels at once (--spk de440,sb441-n16); SPK type 21 (SPKE21 algorithm); both asteroid id styles; sb441-n16 in the kernel catalogue; scripts/fetch_kernel.py horizons:N. accuracy/test_optional_bodies.py: 5 bodies × 4 dates within 1″ of Horizons; refusal with a hint when no kernel carries the body.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/spk.rs",
+        "crates/eshana-core/src/lib.rs",
+        "accuracy/test_optional_bodies.py",
+        "accuracy/reference/horizons_optional_bodies.json"
+      ]
     },
     {
       "id": "AST-08",
@@ -456,10 +472,17 @@
       "id": "VED-06",
       "area": "vedic",
       "title": "Transits, gochara, retrograde windows, combustion",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "depends_on": [
         "AST-06"
+      ],
+      "acceptance": "Gochara, retrograde windows and combustion over a range.",
+      "evidence": "op gochara / eshana gochara: sign segments with house from natal Moon and lagna, retrograde intervals (stations solver), combustion intervals (events::combustion, vedic-core orbs, smaller retrograde orbs for Mercury and Venus). Test gochara_combustion_is_bounded_by_the_pack_orb (interval edges at the orb within 0.01°, houses from the Moon); acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/events.rs",
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/behaviour.rs"
       ]
     },
     {
@@ -504,10 +527,16 @@
       "id": "WES-03",
       "area": "western",
       "title": "Progressions, solar and lunar returns",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
       "depends_on": [
         "AST-06"
+      ],
+      "acceptance": "Progressions and solar and lunar returns.",
+      "evidence": "Secondary progressions: APP-03 / progressions op. Returns: op returns with charts and relocation; returns_match_the_oracle; acceptance 18_time_and_sky (solar return each year).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/oracle.rs"
       ]
     },
     {
@@ -1239,8 +1268,13 @@
       "id": "WES-05",
       "area": "western",
       "title": "Solar arc progressions and returns",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "Solar arc directions and returns.",
+      "evidence": "progressions result carries solar_arc_directions (every natal point + arc, directed-to-natal aspects within 1°); returns via op returns (WES-03).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs"
+      ]
     },
     {
       "id": "RULE-02",
@@ -2907,6 +2941,25 @@
         "crates/eshana-python/python/eshana/assets/studio-charts.js",
         "crates/eshana-python/python/eshana/assets/studio-pages.js",
         "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
+      "id": "PROV-07",
+      "area": "core",
+      "title": "Analytic provider on VSOP87: arc-second Sun and planets without data files",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "roadmap wave 2",
+      "source": "found while validating returns (2026-11-24)",
+      "depends_on": [],
+      "acceptance": "Sun and Mercury–Neptune from VSOP87B within a few arc-seconds of JPL DE440s; tolerances tightened; tables generated reproducibly from the IMCCE files.",
+      "evidence": "scripts/vsop87_tables.py (3,704 terms, truncation 1e-7, source SHA-256 recorded, --check) → crates/eshana-ephemeris/src/vsop87.rs; analytic provider 0.2.0: worst error vs DE440s Sun 0.3″, planets ≤ 2.7″ (was Saturn 1026″, Sun 16″); accuracy suite tolerances tightened (Sun 1.5″, planets 1.5–8″), 748 pass; a strict xfail (Jupiter across a D40 boundary) now passes and was removed.",
+      "evidence_paths": [
+        "scripts/vsop87_tables.py",
+        "crates/eshana-ephemeris/src/vsop87.rs",
+        "crates/eshana-ephemeris/src/analytic.rs",
+        "accuracy/tolerances.json",
+        "benchmarks/golden/accuracy.md"
       ]
     }
   ]

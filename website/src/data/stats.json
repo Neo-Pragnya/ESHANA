@@ -26,8 +26,8 @@
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 265,
- "scenarios": 131,
+ "rust_tests": 268,
+ "scenarios": 135,
  "tasks": 257,
  "tasks_by_status": {
   "implemented": 12,

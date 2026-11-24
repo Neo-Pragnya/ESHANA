@@ -1,19 +1,43 @@
 {
-  "_doc": "Arc-seconds unless named _deg. Body tolerances apply AFTER correcting for the documented difference between ESHANA's and Swiss Ephemeris's delta-T (future delta-T is a forecast; the two forecasts differ by up to ~200 s by 2140). Measured worst cases are in benchmarks/accuracy/birth-chart-accuracy.md; each tolerance sits above its measured worst case with margin, never at it.",
-  "body_arcsec": {
-    "spk": {"sun": 1.5, "moon": 4, "mercury": 1.5, "venus": 1.5, "mars": 1.5, "jupiter": 1.5, "saturn": 1.5,
-            "uranus": 1.5, "neptune": 4, "pluto": 4, "mean_node": 1, "true_node": 60},
-    "analytic": {"sun": 30, "moon": 15, "mercury": 30, "venus": 40, "mars": 150, "jupiter": 420, "saturn": 1100,
-                 "uranus": 130, "neptune": 75, "pluto": 75, "mean_node": 1, "true_node": 400}
+ "_doc": "Arc-seconds unless named _deg. Body tolerances apply AFTER correcting for the documented difference between ESHANA's and Swiss Ephemeris's delta-T (future delta-T is a forecast; the two forecasts differ by up to ~200 s by 2140). Measured worst cases are in benchmarks/accuracy/birth-chart-accuracy.md; each tolerance sits above its measured worst case with margin, never at it.",
+ "body_arcsec": {
+  "spk": {
+   "sun": 1.5,
+   "moon": 4,
+   "mercury": 1.5,
+   "venus": 1.5,
+   "mars": 1.5,
+   "jupiter": 1.5,
+   "saturn": 1.5,
+   "uranus": 1.5,
+   "neptune": 4,
+   "pluto": 4,
+   "mean_node": 1,
+   "true_node": 60
   },
-  "ayanamsha_arcsec": 0.5,
-  "angles_arcsec": 6,
-  "cusps_arcsec": 6,
-  "dasha_seconds_vs_rederived": 1,
-  "rederived_exact_deg": 1e-9,
-  "published": {
-    "rounding_deg": 0.0005,
-    "ayanamsha_variant_arcsec": 30,
-    "unstated_location_deg": 0.25
+  "analytic": {
+   "sun": 1.5,
+   "moon": 15,
+   "mercury": 1.5,
+   "venus": 1.5,
+   "mars": 2,
+   "jupiter": 2,
+   "saturn": 2,
+   "uranus": 3,
+   "neptune": 8,
+   "pluto": 75,
+   "mean_node": 1,
+   "true_node": 400
   }
+ },
+ "ayanamsha_arcsec": 0.5,
+ "angles_arcsec": 6,
+ "cusps_arcsec": 6,
+ "dasha_seconds_vs_rederived": 1,
+ "rederived_exact_deg": 1e-09,
+ "published": {
+  "rounding_deg": 0.0005,
+  "ayanamsha_variant_arcsec": 30,
+  "unstated_location_deg": 0.25
+ }
 }

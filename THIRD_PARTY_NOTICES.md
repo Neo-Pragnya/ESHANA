@@ -18,6 +18,9 @@ allow-list in CI; regenerate the exact list with `cargo tree --workspace --prefi
 ## Data and algorithms
 
 - **IANA Time Zone Database**: public domain.
+- **VSOP87B** (P. Bretagnon and G. Francou, "Planetary theories in rectangular and spherical variables: VSOP87
+  solutions", A&A 202, 309, 1988; files from IMCCE, ftp.imcce.fr/pub/ephem/planets/vsop87): the Earth's and the eight
+  planets' series, truncated, as numerical coefficients in `crates/eshana-ephemeris/src/vsop87.rs`.
 - **JPL approximate Keplerian elements** (E. M. Standish, "Keplerian Elements for Approximate Positions of the Major Planets",
   Table 1): published constants of a US-government laboratory; implemented independently.
 - **Meeus, *Astronomical Algorithms*** (lunar series, nutation, precession, delta-T polynomial after Espenak and Meeus):

@@ -14,7 +14,7 @@ flowchart TD
   U[Request JSON] --> E[Engine::execute_json]
   E --> T[eshana-time: civil to UTC, TT, JD, sidereal time]
   T --> P[EphemerisProvider]
-  P --> A[analytic: Keplerian elements + lunar series]
+  P --> A[analytic: VSOP87 + lunar series]
   P --> S[spk: JPL kernel you supply]
   P --> F[frames: precession, nutation, aberration]
   F --> D[Derivation: houses, Vedic, Western, Human Design]

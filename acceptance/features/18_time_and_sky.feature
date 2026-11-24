@@ -60,3 +60,33 @@ Feature: Calendars and BCE dates, JPL kernels, rise and set, topocentric positio
     Then it succeeds
     And the JSON output at "calculation.house_system" equals "regiomontanus"
     And the JSON output at "houses.cusps_deg" has at least 12 items
+
+  Scenario: A solar return each year, with a chart at each
+    When I run "eshana returns --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.209 --start 2025-01-01T00:00:00Z --end 2028-01-01T00:00:00Z"
+    Then it succeeds
+    And the JSON output at "returns" has at least 3 items
+    And the output contains "cusps_deg"
+
+  Scenario: Eclipses of a year, with their types
+    When I run "eshana eclipses --start 2026-01-01T00:00:00Z --end 2027-01-01T00:00:00Z"
+    Then it succeeds
+    And the output contains each of:
+      """
+      annular
+      total
+      partial
+      """
+
+  Scenario: Gochara counts houses from the natal Moon, with retrograde and combustion intervals
+    When I run "eshana gochara --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.209 --ayanamsha lahiri --start 2026-01-01T00:00:00Z --end 2027-01-01T00:00:00Z --transit-bodies mercury,saturn"
+    Then it succeeds
+    And the output contains each of:
+      """
+      house_from_moon
+      retrograde_intervals
+      combustion_intervals
+      """
+
+  Scenario: An asteroid without a kernel that carries it is refused
+    When I run "eshana positions --utc 2026-11-24T12:00:00Z --bodies ceres"
+    Then the exit code is 2

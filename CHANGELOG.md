@@ -27,6 +27,25 @@ Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
   Meridian, each within 0.01° of an independent oracle across seven latitudes and twelve sidereal times; Porphyry and
   Śrīpati now listed in `eshana methods`.
 
+- `returns` operation and `eshana returns` (WES-03, AST-06): every return of the Sun, the Moon or any body to its
+  natal longitude in a range, tropical or sidereal, with a chart at each and optional relocation; within a minute
+  (Sun) and 30 s (Moon) of an independent oracle.
+- Solar arc directions (WES-05): the progressions result carries every natal point moved by the solar arc and the
+  directed-to-natal aspects within 1°.
+- `gochara` operation and `eshana gochara` (VED-06): sign segments with the house from the natal Moon and lagna,
+  retrograde intervals and combustion intervals from the vedic-core orbs.
+- `eclipses` operation and `eshana eclipses` (AST-06): solar (partial, annular, total, hybrid) and lunar (penumbral,
+  partial, total) eclipses from the provider's own Sun and Moon; every eclipse of 2000–2040 matches an independent
+  oracle in type and within 2 minutes (plus the faint penumbral eclipse of 2016-08-18 that NASA's canon lists).
+- Optional bodies (AST-07): Ceres, Pallas, Juno, Vesta (JPL's `sb441-n16` kernel, in the catalogue) and Chiron (a JPL
+  Horizons kernel, `scripts/fetch_kernel.py horizons:2060`), within 1″ of Horizons; several kernels at once
+  (`--spk de440,sb441-n16`); SPK type 21.
+
+### Changed
+- The `analytic` provider (0.2.0) uses VSOP87B for the Sun and Mercury to Neptune: worst error against JPL DE440s
+  from 17′ (Saturn) and 16″ (Sun) to under 3″ for every planet and 0.3″ for the Sun. Sunrise, returns, ingresses and
+  every planetary position are more accurate with no data files; the accuracy tolerances are tightened to match.
+
 ### Fixed
 - Dates before 1582 now round-trip: the Julian-day inverse used the Julian calendar before 1582 while the forward
   conversion was proleptic Gregorian.

@@ -215,3 +215,89 @@ fn topocentric_shift_matches_the_oracle() {
         }
     }
 }
+
+/// AST-06: every solar and lunar eclipse from 2000 to 2040 (the oracle's list, including the hybrids of 2005, 2013 and
+/// 2023), found with the same type and the time of greatest eclipse within 2 minutes; and nothing extra.
+#[test]
+fn eclipses_match_the_oracle() {
+    let doc: Value =
+        serde_json::from_str(include_str!("../../../benchmarks/golden/eclipses_oracle.json")).unwrap();
+    let want = doc["rows"].as_array().unwrap();
+    let env = run(
+        &Engine::new(),
+        json!({"op": "eclipses", "start_utc": "2000-01-01T00:00:00Z", "end_utc": "2040-01-01T00:00:00Z"}),
+    );
+    // ESHANA also finds the faint penumbral lunar eclipse of 2016-08-18 (magnitude 0.019; NASA's canon lists it at
+    // 0.017), which the oracle's shadow model misses: extra penumbral eclipses under 0.03 are accepted
+    let got: Vec<&Value> = env["eclipses"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|g| {
+            !(g["type"] == "penumbral"
+                && g["penumbral_magnitude"].as_f64().unwrap() < 0.03
+                && !want.iter().any(|w| {
+                    (w["max_jd_ut"].as_f64().unwrap() - g["max_jd_ut"].as_f64().unwrap()).abs() < 0.01
+                }))
+        })
+        .collect();
+    assert_eq!(
+        got.len(),
+        want.len(),
+        "count: ESHANA {} vs oracle {}",
+        got.len(),
+        want.len()
+    );
+    for (g, w) in got.iter().zip(want) {
+        let (gj, wj) = (g["max_jd_ut"].as_f64().unwrap(), w["max_jd_ut"].as_f64().unwrap());
+        assert_eq!(g["kind"], w["kind"], "{}", g["max_utc"]);
+        assert!(
+            (gj - wj).abs() * 1440.0 < 2.0,
+            "{} {}: {:.1} min",
+            g["kind"],
+            g["max_utc"],
+            (gj - wj) * 1440.0
+        );
+        assert_eq!(g["type"], w["type"], "{} {}", g["kind"], g["max_utc"]);
+    }
+}
+
+/// WES-03 / AST-06: solar and lunar returns against the oracle's crossing solvers (first return after each start),
+/// with the default analytic provider (VSOP87 Sun since 0.5.0): within 60 s for the Sun and 30 s for the Moon.
+#[test]
+fn returns_match_the_oracle() {
+    let doc: Value =
+        serde_json::from_str(include_str!("../../../benchmarks/golden/returns_oracle.json")).unwrap();
+    let e = Engine::new();
+    for row in doc["rows"].as_array().unwrap() {
+        let body = row["body"].as_str().unwrap();
+        let start = row["start"].as_str().unwrap();
+        let days = if body == "sun" { 370 } else { 31 };
+        let end = eshana_time::Instant::from_jd_utc(
+            eshana_time::Instant::parse_utc(start).unwrap().jd_ut + f64::from(days),
+        )
+        .utc;
+        let env = run(
+            &e,
+            json!({"op": "returns", "natal": {"when": {"utc": row["birth_utc"]}, "system": "western"},
+            "body": body, "start_utc": start, "end_utc": end, "charts": false}),
+        );
+        let first = &env["returns"][0];
+        let (got, want) = (
+            first["jd_ut"].as_f64().unwrap(),
+            row["return_jd_ut"].as_f64().unwrap(),
+        );
+        let tol = if body == "sun" { 60.0 } else { 30.0 };
+        assert!(
+            (got - want).abs() * 86_400.0 < tol,
+            "{body} return after {start}: {:.1} s",
+            (got - want) * 86_400.0
+        );
+        // the natal longitude itself agrees with the oracle's within a few arc-seconds
+        let nl = env["calculation"]["natal_longitude_deg"].as_f64().unwrap();
+        assert!(
+            angular_diff(nl, row["natal_lon"].as_f64().unwrap()).abs() * 3600.0 < 15.0,
+            "{body} natal longitude"
+        );
+    }
+}

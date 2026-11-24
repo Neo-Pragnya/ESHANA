@@ -123,11 +123,9 @@ def test_dignities_in_sixteen_divisions(provider, spk):
     assert len(got) == 16 * 9
 
 
-KNOWN_CASES = [
-    pytest.param(p, spk, id=p) if spk else pytest.param(p, spk, id=p, marks=pytest.mark.xfail(
-        strict=True, reason="built-in ephemeris puts Jupiter about 3' later than the printed Aq 16°29'10\", "
-                            "across the D40 boundary at 16°30' (the JPL kernel matches)"))
-    for p, spk in PROVIDERS]
+# Until 0.5.0 the built-in ephemeris put Jupiter about 3' late, across the D40 boundary at 16°30' (printed
+# Aq 16°29'10"); with VSOP87 both providers match the reference here.
+KNOWN_CASES = [pytest.param(p, spk, id=p) for p, spk in PROVIDERS]
 
 
 @pytest.mark.parametrize("provider,spk", KNOWN_CASES)

@@ -382,16 +382,17 @@ Not promised: measured against independent references and written down.
 | What | Against | Result |
 |---|---|---|
 | 🌍 Positions, `spk` provider | an independent JPL DE440s pipeline | **0.3″** |
-| 🌍 Positions, `analytic` provider (40 charts) | Swiss Ephemeris (offline oracle) | Moon 6″ worst, Sun 18″; outer planets arc-minute class |
+| 🌍 Positions, `analytic` provider (40 charts) | Swiss Ephemeris (offline oracle) | Sun 0.4″, planets ≤ 1.4″ (Neptune 4.5″), Moon 6″ worst |
 | 🧭 Ascendant and cusps | Swiss Ephemeris | **3.2″** worst |
 | 🎯 KP horary cusps | Swiss Ephemeris `houses_armc` | **0.07″** |
 | 📐 Ten ayanāṃśas, 1800–2100 | Swiss Ephemeris | **0.05″** worst (De Luce) |
 | ⏱️ Stations and crossings | Swiss Ephemeris event search | within the stated solver tolerance |
 | 📚 Published charts | printed reference values | see the accuracy report |
 
-> **⚠️ Warning**  
-> The `analytic` provider is arc-minute class for Jupiter and Saturn. When that matters, use the `spk` provider with
-> a JPL kernel (`--provider spk --spk de440s.bsp`).
+> **💡 Tip**  
+> The `analytic` provider (VSOP87 since 0.5.0) is arc-second class for the Sun and planets with no data files. For
+> sub-arc-second work, historical dates, asteroids or Chiron, use the `spk` provider with a JPL kernel
+> (`eshana kernel list`, `--provider spk --spk de440`).
 
 The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, never linked. Details:
 [accuracy report](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/accuracy/birth-chart-accuracy.md) · [provider accuracy](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/golden/accuracy.md) ·
@@ -403,7 +404,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 
 <!-- REFERENCE:START -->
 <details>
-<summary><b>⚙️ All 25 operations</b> (the <code>op</code> of a request)</summary>
+<summary><b>⚙️ All 28 operations</b> (the <code>op</code> of a request)</summary>
 
 | | `op` | What it answers |
 |---|---|---|
@@ -429,6 +430,9 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 | 🔢 | `kp_table` | the KP 1–249 horary number table |
 | 🎯 | `kp_horary` | a KP horary chart: the number fixes the Ascendant |
 | 🌄 | `rise_set` | rise, upper transit and set of any body, and twilight, for local days at a place |
+| 🔁 | `returns` | solar, lunar or any body's returns to its natal longitude, with a chart at each (relocatable) |
+| 🚶 | `gochara` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| 🌑 | `eclipses` | solar and lunar eclipses: type, time of greatest eclipse, magnitude, γ |
 | 🧪 | `synthetic_chart` | positions you place by hand, labelled synthetic (the playground) |
 | 📊 | `research_window_score` | the experimental window score, with coverage and sensitivity |
 | ℹ️ | `info` | versions, operations, method families and ayanāṃśa definitions |
@@ -437,7 +441,7 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 </details>
 
 <details>
-<summary><b>🧰 All 27 CLI commands</b></summary>
+<summary><b>🧰 All 30 CLI commands</b></summary>
 
 | Command | What it does |
 |---|---|
@@ -467,6 +471,9 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 | `eshana explain` | Explain a stable error code, e.g. ESH-LATITUDE |
 | `eshana schema` | Print the JSON Schema of the result envelope |
 | `eshana rise-set` | Rise, upper transit and set of bodies, and twilight, for local days at a place |
+| `eshana returns` | Solar, lunar or any body's returns to its natal longitude in a range, with a chart at each |
+| `eshana gochara` | Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana eclipses` | Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude |
 | `eshana kernel` | JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME` |
 
 Every command prints one JSON envelope; `--compact` for one line. Errors print an error envelope and exit 2.
@@ -633,7 +640,7 @@ everywhere else. The studio's `--live` mode is that module, embedded. See [ADR-0
   ([ADR-011](https://github.com/Neo-Pragnya/ESHANA/blob/main/docs/adr/011-open-source-distribution.md)).
 - 🧪 **Experimental pieces are labelled.** Muhūrta purpose presets and the research window score wait for a
   practitioner's review. The conditional daśās wait for published worked examples.
-- 🔭 **Know the provider.** `analytic` is arc-minute class for Jupiter and Saturn; use `spk` with a JPL kernel when
+- 🔭 **Know the provider.** `analytic` is arc-second class (VSOP87; Pluto under an arc-minute); use `spk` with a JPL kernel when
   that matters.
 - 🧭 Next steps: [docs/next-steps.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/docs/next-steps.md) · changes: [CHANGELOG.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/CHANGELOG.md) ·
   design record: [ESHANA_Project_Vision_and_Master_Plan.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/ESHANA_Project_Vision_and_Master_Plan.md).

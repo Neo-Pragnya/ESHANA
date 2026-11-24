@@ -22,8 +22,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 11.9840244634008,
-     "dms": "11°59′02″",
+     "degree_in_sign": 12.022231399077668,
+     "dms": "12°01′20″",
      "index": 4,
      "name": "Simha"
     }
@@ -67,7 +67,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 11.9840244634008,
+     "degree_in_varga": 12.022231399077668,
      "division": 1,
      "index": 4,
      "rashi": "Simha"
@@ -82,7 +82,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 17.8562201706072,
+     "degree_in_varga": 18.200082591699015,
      "division": 9,
      "index": 3,
      "rashi": "Karka"
@@ -97,8 +97,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 23.523404860373432,
-     "dms": "23°31′24″",
+     "degree_in_sign": 23.52218788678141,
+     "dms": "23°31′20″",
      "index": 11,
      "name": "Meena"
     }
@@ -142,7 +142,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 23.523404860373432,
+     "degree_in_varga": 23.52218788678141,
      "division": 1,
      "index": 11,
      "rashi": "Meena"
@@ -157,7 +157,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 1.7106437433608903,
+     "degree_in_varga": 1.6996909810326883,
      "division": 9,
      "index": 10,
      "rashi": "Kumbha"
@@ -247,8 +247,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 9.959426406081839,
-     "dms": "9°57′34″",
+     "degree_in_sign": 9.9596411827239,
+     "dms": "9°57′35″",
      "index": 1,
      "name": "Vrishabha"
     }
@@ -292,7 +292,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 9.959426406081839,
+     "degree_in_varga": 9.9596411827239,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -307,7 +307,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 29.634837654736543,
+     "degree_in_varga": 29.636770644515096,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -397,8 +397,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 24.834954352249497,
-     "dms": "24°50′06″",
+     "degree_in_sign": 24.829063106179944,
+     "dms": "24°49′45″",
      "index": 8,
      "name": "Dhanu"
     }
@@ -442,7 +442,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 24.834954352249497,
+     "degree_in_varga": 24.829063106179944,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -457,7 +457,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 13.514589170245472,
+     "degree_in_varga": 13.4615679556195,
      "division": 9,
      "index": 7,
      "rashi": "Vrishchika"
@@ -472,7 +472,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 27.362520131533813,
+     "degree_in_sign": 27.362561533894848,
      "dms": "27°21′45″",
      "index": 6,
      "name": "Tula"
@@ -517,7 +517,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 27.362520131533813,
+     "degree_in_varga": 27.362561533894848,
      "division": 1,
      "index": 6,
      "rashi": "Tula"
@@ -532,7 +532,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 6.262681183804318,
+     "degree_in_varga": 6.26305380505363,
      "division": 9,
      "index": 2,
      "rashi": "Mithuna"
@@ -547,8 +547,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 24.65592687232163,
-     "dms": "24°39′21″",
+     "degree_in_sign": 24.73340059384759,
+     "dms": "24°44′00″",
      "index": 9,
      "name": "Makara"
     }
@@ -592,7 +592,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 24.65592687232163,
+     "degree_in_varga": 24.73340059384759,
      "division": 1,
      "index": 9,
      "rashi": "Makara"
@@ -607,7 +607,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 11.903341850894662,
+     "degree_in_varga": 12.60060534462832,
      "division": 9,
      "index": 4,
      "rashi": "Simha"
@@ -697,8 +697,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 13.74600268263739,
-     "dms": "13°44′46″",
+     "degree_in_sign": 13.744575554744848,
+     "dms": "13°44′40″",
      "index": 1,
      "name": "Vrishabha"
     }
@@ -742,7 +742,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 13.74600268263739,
+     "degree_in_varga": 13.744575554744848,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -757,7 +757,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 3.714024143736509,
+     "degree_in_varga": 3.7011799927036293,
      "division": 9,
      "index": 1,
      "rashi": "Vrishabha"
@@ -772,8 +772,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 23.741651801979174,
-     "dms": "23°44′30″",
+     "degree_in_sign": 23.727494910734663,
+     "dms": "23°43′39″",
      "index": 8,
      "name": "Dhanu"
     }
@@ -817,7 +817,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 23.741651801979174,
+     "degree_in_varga": 23.727494910734663,
      "division": 1,
      "index": 8,
      "rashi": "Dhanu"
@@ -832,7 +832,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 3.674866217812564,
+     "degree_in_varga": 3.547454196611966,
      "division": 9,
      "index": 7,
      "rashi": "Vrishchika"
@@ -847,8 +847,8 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_sign": 9.381787741338165,
-     "dms": "9°22′54″",
+     "degree_in_sign": 9.38231368878892,
+     "dms": "9°22′56″",
      "index": 1,
      "name": "Vrishabha"
     }
@@ -892,7 +892,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 9.381787741338165,
+     "degree_in_varga": 9.38231368878892,
      "division": 1,
      "index": 1,
      "rashi": "Vrishabha"
@@ -907,7 +907,7 @@
     "rule_version": "vedic.parashari@0.3",
     "tradition_id": "vedic.parashari",
     "value": {
-     "degree_in_varga": 24.436089672043494,
+     "degree_in_varga": 24.440823199100265,
      "division": 9,
      "index": 11,
      "rashi": "Meena"
@@ -1644,22 +1644,22 @@
   "positions": [
    {
     "body": "sun",
-    "declination_deg": 21.56264940217525,
-    "distance_au": 1.0135706713792172,
+    "declination_deg": 21.56246942570546,
+    "distance_au": 1.0135852447671636,
     "epistemic": "calculated",
     "id": "sun",
-    "latitude_deg": 9.933349262700162e-05,
-    "longitude_deg": 43.74600268263739,
+    "latitude_deg": 0.00015368055430154946,
+    "longitude_deg": 43.74457555474485,
     "retrograde": false,
-    "right_ascension_deg": 65.7037268479436,
+    "right_ascension_deg": 65.70220345977268,
     "sign": {
-     "degree_in_sign": 13.74600268263739,
-     "dms": "13°44′46″",
+     "degree_in_sign": 13.744575554744848,
+     "dms": "13°44′40″",
      "index": 1,
      "name": "Vrishabha"
     },
-    "speed_deg_per_day": 0.959616465707569,
-    "tropical_longitude_deg": 67.50145864076367
+    "speed_deg_per_day": 0.959576538348017,
+    "tropical_longitude_deg": 67.50003151287113
    },
    {
     "body": "moon",
@@ -1682,155 +1682,155 @@
    },
    {
     "body": "mercury",
-    "declination_deg": 20.98485547010574,
-    "distance_au": 1.316988728387818,
+    "declination_deg": 20.985088061008078,
+    "distance_au": 1.3170073016369759,
     "epistemic": "calculated",
     "id": "mercury",
-    "latitude_deg": 0.09116027105463557,
-    "longitude_deg": 39.95942640608184,
+    "latitude_deg": 0.09135585244338065,
+    "longitude_deg": 39.9596411827239,
     "retrograde": false,
-    "right_ascension_deg": 61.68652049516397,
+    "right_ascension_deg": 61.686706875457176,
     "sign": {
-     "degree_in_sign": 9.959426406081839,
-     "dms": "9°57′34″",
+     "degree_in_sign": 9.9596411827239,
+     "dms": "9°57′35″",
      "index": 1,
      "name": "Vrishabha"
     },
-    "speed_deg_per_day": 2.1733716029906702,
-    "tropical_longitude_deg": 63.71488236420813
+    "speed_deg_per_day": 2.1733439734397564,
+    "tropical_longitude_deg": 63.71509714085019
    },
    {
     "body": "venus",
-    "declination_deg": 20.317967277853672,
-    "distance_au": 1.728411991962447,
+    "declination_deg": 20.31820821965664,
+    "distance_au": 1.7284480668131506,
     "epistemic": "calculated",
     "id": "venus",
-    "latitude_deg": -0.4762325852459695,
-    "longitude_deg": 39.381787741338165,
+    "latitude_deg": -0.47608980044971055,
+    "longitude_deg": 39.38231368878892,
     "retrograde": false,
-    "right_ascension_deg": 61.19579510049961,
+    "right_ascension_deg": 61.19631634354097,
     "sign": {
-     "degree_in_sign": 9.381787741338165,
-     "dms": "9°22′54″",
+     "degree_in_sign": 9.38231368878892,
+     "dms": "9°22′56″",
      "index": 1,
      "name": "Vrishabha"
     },
-    "speed_deg_per_day": 1.2288032375622038,
-    "tropical_longitude_deg": 63.137243699464456
+    "speed_deg_per_day": 1.2287433396647174,
+    "tropical_longitude_deg": 63.13776964691521
    },
    {
     "body": "mars",
-    "declination_deg": 5.574808840786884,
-    "distance_au": 1.7900954418236459,
+    "declination_deg": 5.574346982259851,
+    "distance_au": 1.789836620352112,
     "epistemic": "calculated",
     "id": "mars",
-    "latitude_deg": -1.3101359471413407,
-    "longitude_deg": 353.52340486037343,
+    "latitude_deg": -1.3101332700252775,
+    "longitude_deg": 353.5221878867814,
     "retrograde": false,
-    "right_ascension_deg": 16.431735076080532,
+    "right_ascension_deg": 16.4306041412089,
     "sign": {
-     "degree_in_sign": 23.523404860373432,
-     "dms": "23°31′24″",
+     "degree_in_sign": 23.52218788678141,
+     "dms": "23°31′20″",
      "index": 11,
      "name": "Meena"
     },
-    "speed_deg_per_day": 0.7533467081337619,
-    "tropical_longitude_deg": 17.278860818499712
+    "speed_deg_per_day": 0.7534779047768225,
+    "tropical_longitude_deg": 17.277643844907725
    },
    {
     "body": "jupiter",
-    "declination_deg": 10.529730697104922,
-    "distance_au": 5.357975134541703,
+    "declination_deg": 10.516186170474292,
+    "distance_au": 5.354793299166319,
     "epistemic": "calculated",
     "id": "jupiter",
-    "latitude_deg": 1.207504753172154,
-    "longitude_deg": 131.9840244634008,
+    "latitude_deg": 1.2080940300942442,
+    "longitude_deg": 132.02223139907767,
     "retrograde": false,
-    "right_ascension_deg": 157.98660732499638,
+    "right_ascension_deg": 158.02293971397842,
     "sign": {
-     "degree_in_sign": 11.9840244634008,
-     "dms": "11°59′02″",
+     "degree_in_sign": 12.022231399077668,
+     "dms": "12°01′20″",
      "index": 4,
      "name": "Simha"
     },
-    "speed_deg_per_day": 0.08003380337839872,
-    "tropical_longitude_deg": 155.73948042152708
+    "speed_deg_per_day": 0.08000310629512342,
+    "tropical_longitude_deg": 155.77768735720394
    },
    {
     "body": "saturn",
-    "declination_deg": -16.121678151897694,
-    "distance_au": 9.538438030390635,
+    "declination_deg": -16.10117591568261,
+    "distance_au": 9.532301042256728,
     "epistemic": "calculated",
     "id": "saturn",
-    "latitude_deg": -0.8531693687490985,
-    "longitude_deg": 294.65592687232163,
+    "latitude_deg": -0.8568525579268446,
+    "longitude_deg": 294.7334005938476,
     "retrograde": true,
-    "right_ascension_deg": 321.119851725387,
+    "right_ascension_deg": 321.1977029064093,
     "sign": {
-     "degree_in_sign": 24.65592687232163,
-     "dms": "24°39′21″",
+     "degree_in_sign": 24.73340059384759,
+     "dms": "24°44′00″",
      "index": 9,
      "name": "Makara"
     },
-    "speed_deg_per_day": -0.00019438916751823854,
-    "tropical_longitude_deg": 318.4113828304479
+    "speed_deg_per_day": -6.46694843453588e-05,
+    "tropical_longitude_deg": 318.48885655197387
    },
    {
     "body": "uranus",
-    "declination_deg": -22.71404814533901,
-    "distance_au": 18.74567999551951,
+    "declination_deg": -22.715298336278362,
+    "distance_au": 18.747454903044133,
     "epistemic": "calculated",
     "id": "uranus",
-    "latitude_deg": -0.4218154318774697,
-    "longitude_deg": 263.7416518019792,
+    "latitude_deg": -0.42122589734091653,
+    "longitude_deg": 263.72749491073466,
     "retrograde": true,
-    "right_ascension_deg": 289.0217651528712,
+    "right_ascension_deg": 289.0064649420765,
     "sign": {
-     "degree_in_sign": 23.741651801979174,
-     "dms": "23°44′30″",
+     "degree_in_sign": 23.727494910734663,
+     "dms": "23°43′39″",
      "index": 8,
      "name": "Dhanu"
     },
-    "speed_deg_per_day": -0.027564409893443553,
-    "tropical_longitude_deg": 287.49710776010545
+    "speed_deg_per_day": -0.027573743233233472,
+    "tropical_longitude_deg": 287.48295086886094
    },
    {
     "body": "neptune",
-    "declination_deg": -21.406951851435526,
-    "distance_au": 29.41636383158728,
+    "declination_deg": -21.407694738772996,
+    "distance_au": 29.42057747482962,
     "epistemic": "calculated",
     "id": "neptune",
-    "latitude_deg": 0.7503433661967562,
-    "longitude_deg": 264.8349543522495,
+    "latitude_deg": 0.7504033176081295,
+    "longitude_deg": 264.82906310617994,
     "retrograde": true,
-    "right_ascension_deg": 290.0228343356729,
+    "right_ascension_deg": 290.01655725735526,
     "sign": {
-     "degree_in_sign": 24.834954352249497,
-     "dms": "24°50′06″",
+     "degree_in_sign": 24.829063106179944,
+     "dms": "24°49′45″",
      "index": 8,
      "name": "Dhanu"
     },
-    "speed_deg_per_day": -0.01852411150480293,
-    "tropical_longitude_deg": 288.5904103103758
+    "speed_deg_per_day": -0.018527121133615765,
+    "tropical_longitude_deg": 288.5845190643062
    },
    {
     "body": "pluto",
-    "declination_deg": -3.311009755076954,
-    "distance_au": 28.756187081382524,
+    "declination_deg": -3.3110072872044323,
+    "distance_au": 28.75616696807169,
     "epistemic": "calculated",
     "id": "pluto",
-    "latitude_deg": 15.230661362563705,
-    "longitude_deg": 207.3625201315338,
+    "latitude_deg": 15.230674231284555,
+    "longitude_deg": 207.36256153389485,
     "retrograde": true,
-    "right_ascension_deg": 232.64990949766025,
+    "right_ascension_deg": 232.64995146482522,
     "sign": {
-     "degree_in_sign": 27.362520131533813,
+     "degree_in_sign": 27.362561533894848,
      "dms": "27°21′45″",
      "index": 6,
      "name": "Tula"
     },
-    "speed_deg_per_day": -0.02652256428632427,
-    "tropical_longitude_deg": 231.1179760896601
+    "speed_deg_per_day": -0.026521833206061274,
+    "tropical_longitude_deg": 231.11801749202112
    },
    {
     "body": "mean_node",
@@ -1881,9 +1881,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "ayanamsha-lahiri@0.1",
     "vedic.parashari@0.3"
@@ -1917,8 +1917,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 5.739480421527077,
-     "dms": "5°44′22″",
+     "degree_in_sign": 5.777687357203945,
+     "dms": "5°46′40″",
      "index": 5,
      "name": "Virgo"
     }
@@ -1945,8 +1945,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 17.278860818499712,
-     "dms": "17°16′44″",
+     "degree_in_sign": 17.277643844907725,
+     "dms": "17°16′40″",
      "index": 0,
      "name": "Aries"
     }
@@ -2001,7 +2001,7 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 3.7148823642081297,
+     "degree_in_sign": 3.7150971408501903,
      "dms": "3°42′54″",
      "index": 2,
      "name": "Gemini"
@@ -2057,8 +2057,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 18.590410310375773,
-     "dms": "18°35′25″",
+     "degree_in_sign": 18.58451906430622,
+     "dms": "18°35′04″",
      "index": 9,
      "name": "Capricorn"
     }
@@ -2085,7 +2085,7 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 21.11797608966009,
+     "degree_in_sign": 21.118017492021124,
      "dms": "21°07′05″",
      "index": 7,
      "name": "Scorpio"
@@ -2113,8 +2113,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 18.411382830447906,
-     "dms": "18°24′41″",
+     "degree_in_sign": 18.488856551973868,
+     "dms": "18°29′20″",
      "index": 10,
      "name": "Aquarius"
     }
@@ -2169,8 +2169,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 7.501458640763673,
-     "dms": "7°30′05″",
+     "degree_in_sign": 7.500031512871132,
+     "dms": "7°30′00″",
      "index": 2,
      "name": "Gemini"
     }
@@ -2197,8 +2197,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 17.49710776010545,
-     "dms": "17°29′50″",
+     "degree_in_sign": 17.48295086886094,
+     "dms": "17°28′59″",
      "index": 9,
      "name": "Capricorn"
     }
@@ -2225,8 +2225,8 @@
     "rule_version": "western.basic@0.1",
     "tradition_id": "western.tropical",
     "value": {
-     "degree_in_sign": 3.137243699464456,
-     "dms": "3°08′14″",
+     "degree_in_sign": 3.13776964691521,
+     "dms": "3°08′16″",
      "index": 2,
      "name": "Gemini"
     }
@@ -2272,9 +2272,9 @@
      "applying": true,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 2.02459805731894,
+     "orb_deg": 2.062590216353783,
      "orb_scale": 1.0,
-     "separation_deg": 92.02459805731894
+     "separation_deg": 92.06259021635378
     }
    },
    {
@@ -2290,9 +2290,9 @@
      "applying": false,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 1.761978219236596,
+     "orb_deg": 1.7223441556672014,
      "orb_scale": 1.0,
-     "separation_deg": 88.2380217807634
+     "separation_deg": 88.2776558443328
     }
    },
    {
@@ -2308,9 +2308,9 @@
      "applying": true,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 2.602236722062628,
+     "orb_deg": 2.639917710288728,
      "orb_scale": 1.0,
-     "separation_deg": 92.60223672206263
+     "separation_deg": 92.63991771028873
     }
    },
    {
@@ -2326,9 +2326,9 @@
      "applying": false,
      "aspect": "conjunction",
      "exact_angle": 0.0,
-     "orb_deg": 5.267329453789383,
+     "orb_deg": 5.26854642738137,
      "orb_scale": 1.0,
-     "separation_deg": 5.267329453789383
+     "separation_deg": 5.26854642738137
     }
    },
    {
@@ -2344,9 +2344,9 @@
      "applying": true,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 1.3115494918760646,
+     "orb_deg": 1.3068752193984778,
      "orb_scale": 1.0,
-     "separation_deg": 88.68845050812394
+     "separation_deg": 88.69312478060152
     }
    },
    {
@@ -2362,9 +2362,9 @@
      "applying": true,
      "aspect": "sextile",
      "exact_angle": 60.0,
-     "orb_deg": 1.132522011948197,
+     "orb_deg": 1.2112127070661245,
      "orb_scale": 1.0,
-     "separation_deg": 58.8674779880518
+     "separation_deg": 58.788787292933876
     }
    },
    {
@@ -2380,9 +2380,9 @@
      "applying": true,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 0.21824694160574154,
+     "orb_deg": 0.20530702395319622,
      "orb_scale": 1.0,
-     "separation_deg": 89.78175305839426
+     "separation_deg": 89.7946929760468
     }
    },
    {
@@ -2398,9 +2398,9 @@
      "applying": true,
      "aspect": "conjunction",
      "exact_angle": 0.0,
-     "orb_deg": 3.786576276555543,
+     "orb_deg": 3.784934372020942,
      "orb_scale": 1.0,
-     "separation_deg": 3.786576276555543
+     "separation_deg": 3.784934372020942
     }
    },
    {
@@ -2416,9 +2416,9 @@
      "applying": false,
      "aspect": "conjunction",
      "exact_angle": 0.0,
-     "orb_deg": 0.577638664743688,
+     "orb_deg": 0.5773274939350017,
      "orb_scale": 1.0,
-     "separation_deg": 0.577638664743688
+     "separation_deg": 0.5773274939350017
     }
    },
    {
@@ -2434,9 +2434,9 @@
      "applying": false,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 3.955779961913322,
+     "orb_deg": 3.9616712079828744,
      "orb_scale": 1.0,
-     "separation_deg": 93.95577996191332
+     "separation_deg": 93.96167120798287
     }
    },
    {
@@ -2452,9 +2452,9 @@
      "applying": false,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 5.049082512183645,
+     "orb_deg": 5.063239403428156,
      "orb_scale": 1.0,
-     "separation_deg": 95.04908251218365
+     "separation_deg": 95.06323940342816
     }
    },
    {
@@ -2470,9 +2470,9 @@
      "applying": true,
      "aspect": "sextile",
      "exact_angle": 60.0,
-     "orb_deg": 2.5275657792843162,
+     "orb_deg": 2.5334984277149033,
      "orb_scale": 1.0,
-     "separation_deg": 57.472434220715684
+     "separation_deg": 57.4665015722851
     }
    },
    {
@@ -2488,9 +2488,9 @@
      "applying": false,
      "aspect": "conjunction",
      "exact_angle": 0.0,
-     "orb_deg": 1.093302550270323,
+     "orb_deg": 1.1015681954452816,
      "orb_scale": 1.0,
-     "separation_deg": 1.093302550270323
+     "separation_deg": 1.1015681954452816
     }
    },
    {
@@ -2506,9 +2506,9 @@
      "applying": true,
      "aspect": "square",
      "exact_angle": 90.0,
-     "orb_deg": 2.706593259212184,
+     "orb_deg": 2.6291609400472566,
      "orb_scale": 1.0,
-     "separation_deg": 87.29340674078782
+     "separation_deg": 87.37083905995274
     }
    },
    {
@@ -2524,9 +2524,9 @@
      "applying": false,
      "aspect": "sextile",
      "exact_angle": 60.0,
-     "orb_deg": 3.6208683295546393,
+     "orb_deg": 3.635066623160185,
      "orb_scale": 1.0,
-     "separation_deg": 56.37913167044536
+     "separation_deg": 56.364933376839815
     }
    },
    {
@@ -2542,9 +2542,9 @@
      "applying": true,
      "aspect": "conjunction",
      "exact_angle": 0.0,
-     "orb_deg": 4.364214941299224,
+     "orb_deg": 4.362261865955929,
      "orb_scale": 1.0,
-     "separation_deg": 4.364214941299224
+     "separation_deg": 4.362261865955929
     }
    }
   ],
@@ -2606,22 +2606,22 @@
   "positions": [
    {
     "body": "sun",
-    "declination_deg": 21.56264940217525,
-    "distance_au": 1.0135706713792172,
+    "declination_deg": 21.56246942570546,
+    "distance_au": 1.0135852447671636,
     "epistemic": "calculated",
     "id": "sun",
-    "latitude_deg": 9.933349262700162e-05,
-    "longitude_deg": 67.50145864076367,
+    "latitude_deg": 0.00015368055430154946,
+    "longitude_deg": 67.50003151287113,
     "retrograde": false,
-    "right_ascension_deg": 65.7037268479436,
+    "right_ascension_deg": 65.70220345977268,
     "sign": {
-     "degree_in_sign": 7.501458640763673,
-     "dms": "7°30′05″",
+     "degree_in_sign": 7.500031512871132,
+     "dms": "7°30′00″",
      "index": 2,
      "name": "Gemini"
     },
-    "speed_deg_per_day": 0.959616465707569,
-    "tropical_longitude_deg": 67.50145864076367
+    "speed_deg_per_day": 0.959576538348017,
+    "tropical_longitude_deg": 67.50003151287113
    },
    {
     "body": "moon",
@@ -2644,155 +2644,155 @@
    },
    {
     "body": "mercury",
-    "declination_deg": 20.98485547010574,
-    "distance_au": 1.316988728387818,
+    "declination_deg": 20.985088061008078,
+    "distance_au": 1.3170073016369759,
     "epistemic": "calculated",
     "id": "mercury",
-    "latitude_deg": 0.09116027105463557,
-    "longitude_deg": 63.71488236420813,
+    "latitude_deg": 0.09135585244338065,
+    "longitude_deg": 63.71509714085019,
     "retrograde": false,
-    "right_ascension_deg": 61.68652049516397,
+    "right_ascension_deg": 61.686706875457176,
     "sign": {
-     "degree_in_sign": 3.7148823642081297,
+     "degree_in_sign": 3.7150971408501903,
      "dms": "3°42′54″",
      "index": 2,
      "name": "Gemini"
     },
-    "speed_deg_per_day": 2.1733716029906702,
-    "tropical_longitude_deg": 63.71488236420813
+    "speed_deg_per_day": 2.1733439734397564,
+    "tropical_longitude_deg": 63.71509714085019
    },
    {
     "body": "venus",
-    "declination_deg": 20.317967277853672,
-    "distance_au": 1.728411991962447,
+    "declination_deg": 20.31820821965664,
+    "distance_au": 1.7284480668131506,
     "epistemic": "calculated",
     "id": "venus",
-    "latitude_deg": -0.4762325852459695,
-    "longitude_deg": 63.137243699464456,
+    "latitude_deg": -0.47608980044971055,
+    "longitude_deg": 63.13776964691521,
     "retrograde": false,
-    "right_ascension_deg": 61.19579510049961,
+    "right_ascension_deg": 61.19631634354097,
     "sign": {
-     "degree_in_sign": 3.137243699464456,
-     "dms": "3°08′14″",
+     "degree_in_sign": 3.13776964691521,
+     "dms": "3°08′16″",
      "index": 2,
      "name": "Gemini"
     },
-    "speed_deg_per_day": 1.2288032375622038,
-    "tropical_longitude_deg": 63.137243699464456
+    "speed_deg_per_day": 1.2287433396647174,
+    "tropical_longitude_deg": 63.13776964691521
    },
    {
     "body": "mars",
-    "declination_deg": 5.574808840786884,
-    "distance_au": 1.7900954418236459,
+    "declination_deg": 5.574346982259851,
+    "distance_au": 1.789836620352112,
     "epistemic": "calculated",
     "id": "mars",
-    "latitude_deg": -1.3101359471413407,
-    "longitude_deg": 17.278860818499712,
+    "latitude_deg": -1.3101332700252775,
+    "longitude_deg": 17.277643844907725,
     "retrograde": false,
-    "right_ascension_deg": 16.431735076080532,
+    "right_ascension_deg": 16.4306041412089,
     "sign": {
-     "degree_in_sign": 17.278860818499712,
-     "dms": "17°16′44″",
+     "degree_in_sign": 17.277643844907725,
+     "dms": "17°16′40″",
      "index": 0,
      "name": "Aries"
     },
-    "speed_deg_per_day": 0.7533467081337619,
-    "tropical_longitude_deg": 17.278860818499712
+    "speed_deg_per_day": 0.7534779047768225,
+    "tropical_longitude_deg": 17.277643844907725
    },
    {
     "body": "jupiter",
-    "declination_deg": 10.529730697104922,
-    "distance_au": 5.357975134541703,
+    "declination_deg": 10.516186170474292,
+    "distance_au": 5.354793299166319,
     "epistemic": "calculated",
     "id": "jupiter",
-    "latitude_deg": 1.207504753172154,
-    "longitude_deg": 155.73948042152708,
+    "latitude_deg": 1.2080940300942442,
+    "longitude_deg": 155.77768735720394,
     "retrograde": false,
-    "right_ascension_deg": 157.98660732499638,
+    "right_ascension_deg": 158.02293971397842,
     "sign": {
-     "degree_in_sign": 5.739480421527077,
-     "dms": "5°44′22″",
+     "degree_in_sign": 5.777687357203945,
+     "dms": "5°46′40″",
      "index": 5,
      "name": "Virgo"
     },
-    "speed_deg_per_day": 0.08003380337839872,
-    "tropical_longitude_deg": 155.73948042152708
+    "speed_deg_per_day": 0.08000310629512342,
+    "tropical_longitude_deg": 155.77768735720394
    },
    {
     "body": "saturn",
-    "declination_deg": -16.121678151897694,
-    "distance_au": 9.538438030390635,
+    "declination_deg": -16.10117591568261,
+    "distance_au": 9.532301042256728,
     "epistemic": "calculated",
     "id": "saturn",
-    "latitude_deg": -0.8531693687490985,
-    "longitude_deg": 318.4113828304479,
+    "latitude_deg": -0.8568525579268446,
+    "longitude_deg": 318.48885655197387,
     "retrograde": true,
-    "right_ascension_deg": 321.119851725387,
+    "right_ascension_deg": 321.1977029064093,
     "sign": {
-     "degree_in_sign": 18.411382830447906,
-     "dms": "18°24′41″",
+     "degree_in_sign": 18.488856551973868,
+     "dms": "18°29′20″",
      "index": 10,
      "name": "Aquarius"
     },
-    "speed_deg_per_day": -0.00019438916751823854,
-    "tropical_longitude_deg": 318.4113828304479
+    "speed_deg_per_day": -6.46694843453588e-05,
+    "tropical_longitude_deg": 318.48885655197387
    },
    {
     "body": "uranus",
-    "declination_deg": -22.71404814533901,
-    "distance_au": 18.74567999551951,
+    "declination_deg": -22.715298336278362,
+    "distance_au": 18.747454903044133,
     "epistemic": "calculated",
     "id": "uranus",
-    "latitude_deg": -0.4218154318774697,
-    "longitude_deg": 287.49710776010545,
+    "latitude_deg": -0.42122589734091653,
+    "longitude_deg": 287.48295086886094,
     "retrograde": true,
-    "right_ascension_deg": 289.0217651528712,
+    "right_ascension_deg": 289.0064649420765,
     "sign": {
-     "degree_in_sign": 17.49710776010545,
-     "dms": "17°29′50″",
+     "degree_in_sign": 17.48295086886094,
+     "dms": "17°28′59″",
      "index": 9,
      "name": "Capricorn"
     },
-    "speed_deg_per_day": -0.027564409893443553,
-    "tropical_longitude_deg": 287.49710776010545
+    "speed_deg_per_day": -0.027573743233233472,
+    "tropical_longitude_deg": 287.48295086886094
    },
    {
     "body": "neptune",
-    "declination_deg": -21.406951851435526,
-    "distance_au": 29.41636383158728,
+    "declination_deg": -21.407694738772996,
+    "distance_au": 29.42057747482962,
     "epistemic": "calculated",
     "id": "neptune",
-    "latitude_deg": 0.7503433661967562,
-    "longitude_deg": 288.5904103103758,
+    "latitude_deg": 0.7504033176081295,
+    "longitude_deg": 288.5845190643062,
     "retrograde": true,
-    "right_ascension_deg": 290.0228343356729,
+    "right_ascension_deg": 290.01655725735526,
     "sign": {
-     "degree_in_sign": 18.590410310375773,
-     "dms": "18°35′25″",
+     "degree_in_sign": 18.58451906430622,
+     "dms": "18°35′04″",
      "index": 9,
      "name": "Capricorn"
     },
-    "speed_deg_per_day": -0.01852411150480293,
-    "tropical_longitude_deg": 288.5904103103758
+    "speed_deg_per_day": -0.018527121133615765,
+    "tropical_longitude_deg": 288.5845190643062
    },
    {
     "body": "pluto",
-    "declination_deg": -3.311009755076954,
-    "distance_au": 28.756187081382524,
+    "declination_deg": -3.3110072872044323,
+    "distance_au": 28.75616696807169,
     "epistemic": "calculated",
     "id": "pluto",
-    "latitude_deg": 15.230661362563705,
-    "longitude_deg": 231.1179760896601,
+    "latitude_deg": 15.230674231284555,
+    "longitude_deg": 231.11801749202112,
     "retrograde": true,
-    "right_ascension_deg": 232.64990949766025,
+    "right_ascension_deg": 232.64995146482522,
     "sign": {
-     "degree_in_sign": 21.11797608966009,
+     "degree_in_sign": 21.118017492021124,
      "dms": "21°07′05″",
      "index": 7,
      "name": "Scorpio"
     },
-    "speed_deg_per_day": -0.02652256428632427,
-    "tropical_longitude_deg": 231.1179760896601
+    "speed_deg_per_day": -0.026521833206061274,
+    "tropical_longitude_deg": 231.11801749202112
    },
    {
     "body": "mean_node",
@@ -2842,9 +2842,9 @@
    ],
    "engine_version": "0.5.0",
    "provider": "analytic",
-   "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-   "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-   "provider_version": "0.1.0",
+   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+   "provider_version": "0.2.0",
    "rulesets": [
     "western.basic@0.1"
    ],

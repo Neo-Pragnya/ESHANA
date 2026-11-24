@@ -70,6 +70,9 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana kp-table` | the KP 1–249 horary number table |
 | `eshana kp-horary --number N --utc T --lat φ --lon λ [--kp-occupancy ID]` | KP horary chart: the number fixes the Ascendant; the moment and place are those of judgement (ayanāṃśa defaults to krishnamurti, recorded) |
 | `eshana rise-set --date D --tz ZONE --lat φ --lon λ [--days N] [--bodies sun,moon,venus] [--sunrise C] [--no-twilight]` | rise, upper transit and set of each body, and civil, nautical and astronomical twilight, for local days |
+| `eshana returns --start T --end T [--return-body sun\|moon\|…] [--at-lat φ --at-lon λ] [--no-charts] <birth options>` | solar, lunar or any body's returns to the natal longitude, with a chart at each (relocated with --at-lat/--at-lon) |
+| `eshana gochara --start T --end T [--transit-bodies a,b] <birth options with --ayanamsha>` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana eclipses --start T --end T [--kinds solar,lunar]` | solar and lunar eclipses: type, time of greatest eclipse, magnitude |
 | `eshana kernel list\|verify PATH\|path NAME` | the JPL kernels ESHANA knows; check a downloaded one against NAIF's MD5 |
 | `eshana methods` | every method family and id the engine implements |
 | `eshana request FILE\|-` | send a raw JSON request |

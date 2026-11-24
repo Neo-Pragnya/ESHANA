@@ -18,5 +18,5 @@ Feature: Provenance and the three-layer doctrine
 
   Scenario: The provider's measured accuracy is stated, not implied
     When I run "eshana positions --utc 2000-01-01T12:00:00Z"
-    Then the output contains "Low precision"
+    Then the output contains "Arc-second level"
     And the output contains "benchmarks/golden/accuracy.md"

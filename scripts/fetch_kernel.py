@@ -7,6 +7,11 @@ a checked download. The catalogue (names, sizes, checksums, spans) is the engine
     python scripts/fetch_kernel.py de440            # into the kernel folder (eshana kernel path de440)
     python scripts/fetch_kernel.py de441-part1 --dir ~/kernels
     python scripts/fetch_kernel.py --list
+    python scripts/fetch_kernel.py horizons:2060 --start 1900-01-01 --stop 2100-01-01   # Chiron, from JPL Horizons
+
+`horizons:N` asks JPL Horizons for an SPK of small body N (type 21, relative to the Sun) and saves it as
+`horizons-N.bsp` in the kernel folder; use it beside a planetary kernel: `--spk de440,horizons-2060.bsp` (a path).
+Horizons kernels have no published checksum; the script prints the MD5 of what it saved.
 
 An interrupted download resumes (HTTP Range). The file is written as NAME.part and renamed only after its size and
 MD5 match, so a kernel in the folder is always a verified one. Then use it with `--provider spk --spk de440` (a
@@ -41,13 +46,39 @@ def md5_of(path: Path) -> str:
     return h.hexdigest()
 
 
+def horizons(body: str, start: str, stop: str, folder: Path) -> int:
+    import base64
+    import urllib.parse
+    q = urllib.parse.urlencode({"format": "json", "COMMAND": f"'{body};'", "EPHEM_TYPE": "SPK", "START_TIME": f"'{start}'",
+                                "STOP_TIME": f"'{stop}'", "OBJ_DATA": "NO"})
+    with urllib.request.urlopen(f"https://ssd.jpl.nasa.gov/api/horizons.api?{q}", timeout=180) as r:
+        d = json.load(r)
+    if "spk" not in d:
+        print(f"Horizons returned no SPK for {body}: {d.get('result', d)[:300]}")
+        return 1
+    data = base64.b64decode(d["spk"])
+    if not data.startswith(b"DAF/SPK"):
+        print("Horizons answer is not an SPK file")
+        return 1
+    folder.mkdir(parents=True, exist_ok=True)
+    out = folder / f"horizons-{body}.bsp"
+    out.write_bytes(data)
+    print(f"✓ {out} ({len(data)} bytes, md5 {hashlib.md5(data, usedforsecurity=False).hexdigest()}, Horizons id {d.get('spk_file_id')}, {start} to {stop})")
+    print(f"  use it with: --provider spk --spk de440,{out}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("name", nargs="?", help="catalogue name, e.g. de440")
     ap.add_argument("--dir", help="where to put it (default: the kernel folder)")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--start", default="1900-01-01", help="horizons: first date")
+    ap.add_argument("--stop", default="2100-01-01", help="horizons: last date")
     a = ap.parse_args()
     cat = catalogue()
+    if a.name and a.name.startswith("horizons:"):
+        return horizons(a.name.split(":", 1)[1], a.start, a.stop, Path(a.dir).expanduser() if a.dir else Path(cat["kernel_dir"]))
     if a.list or not a.name:
         for k in cat["kernels"]:
             print(f"{k['name']:<12} {k['bytes'] / 1e6:8.1f} MB  {k['start']} … {k['end']}  {'✓ present' if k['present'] else ''}  {k['note']}")

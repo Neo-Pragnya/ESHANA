@@ -31,6 +31,12 @@ eshana chart western --utc 1600-03-10T12:00:00Z --provider spk --spk de440   # a
 | `de441-part1` | 1.65 GB | 13,201 BCE – 1969 | ancient dates |
 | `de441-part2` | 1.66 GB | 1969 – 17,191 | the far future |
 | `de442s`, `de442` | 33 / 120 MB | as DE440 | the 2025 integration |
+| `sb441-n16` | 646 MB | 1550 – 2650 | Ceres, Pallas, Juno, Vesta and twelve more asteroids (JPL SSD; type 2); use beside a planetary kernel |
+
+Chiron (and any other small body) comes from JPL Horizons: `python scripts/fetch_kernel.py horizons:2060 --start
+1900-01-01 --stop 2100-01-01` saves `horizons-2060.bsp` (SPK type 21); then `--spk de440,/path/to/horizons-2060.bsp
+--bodies chiron`. Several kernels are given comma-separated, a planetary one first. ESHANA reads segment types 2, 3
+and 21, and both asteroid numbering styles (2000000 + n and Horizons' 20000000 + n).
 
 Catalogue names are looked up in `$ESHANA_KERNEL_DIR`, else `$XDG_CACHE_HOME/eshana/kernels`, else
 `~/.cache/eshana/kernels`. The engine never downloads anything: the fetch script is a repository tool, not part of
@@ -42,8 +48,8 @@ result can be tied to the file that produced it (the hash identifies, it does no
 
 ## Behaviour
 
-- Reads little-endian DAF/SPK with type-2 (position) and type-3 (position and velocity) Chebyshev segments.
-  Anything else: `ESH-PROVIDER`.
+- Reads little-endian DAF/SPK with type-2 (position) and type-3 (position and velocity) Chebyshev segments and
+  type-21 extended modified difference arrays (JPL Horizons). Anything else: `ESH-PROVIDER`.
 - Out-of-span instants: `ESH-RANGE`, naming the kernel's span.
 - A missing kernel is `ESH-CONFIG` with the download link; a corrupt one is `ESH-PROVIDER`.
 - The kernel is read once per process (the Python `ChartEngine` and the CLI reuse it).

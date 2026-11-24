@@ -19,8 +19,10 @@ pub const NAIF_PLANETS: &str = "https://naif.jpl.nasa.gov/pub/naif/generic_kerne
 pub struct Kernel {
     /// Catalogue name, e.g. `de440`.
     pub name: &'static str,
-    /// File name at NAIF.
+    /// File name.
     pub file: &'static str,
+    /// Where to download it.
+    pub url: &'static str,
     /// Size in bytes.
     pub bytes: u64,
     /// MD5 from NAIF's `aa_checksums.txt`.
@@ -35,60 +37,13 @@ pub struct Kernel {
 
 /// The planetary kernels, as published by NAIF (checked 2026-11-24).
 pub const KERNELS: &[Kernel] = &[
-    Kernel {
-        name: "de440s",
-        file: "de440s.bsp",
-        bytes: 32_726_016,
-        md5: "3917ee56769db332790c751e2168843d",
-        start: "1849-12-26",
-        end: "2150-01-22",
-        note: "short DE440: modern charts (the golden tests use it)",
-    },
-    Kernel {
-        name: "de440",
-        file: "de440.bsp",
-        bytes: 119_799_808,
-        md5: "c9d581bfd84209dbeee8b1583939b148",
-        start: "1549-12-31",
-        end: "2650-01-25",
-        note: "DE440: from the Gregorian reform to 2650",
-    },
-    Kernel {
-        name: "de441-part1",
-        file: "de441_part-1.bsp",
-        bytes: 1_651_119_104,
-        md5: "7e5fcf9ecb5d08e1ab70c049baa60cd3",
-        start: "-13200-05-06",
-        end: "1969-07-30",
-        note: "DE441 part 1: ancient dates (read on demand, not loaded into memory)",
-    },
-    Kernel {
-        name: "de441-part2",
-        file: "de441_part-2.bsp",
-        bytes: 1_656_830_976,
-        md5: "ad8dfa4e505ef0e3a5d587a5b4705632",
-        start: "1969-06-28",
-        end: "17191-03-15",
-        note: "DE441 part 2: the far future",
-    },
-    Kernel {
-        name: "de442s",
-        file: "de442s.bsp",
-        bytes: 32_701_440,
-        md5: "cc49327e06088124c0e39d8dde9f0b58",
-        start: "1849-12-26",
-        end: "2150-01-22",
-        note: "short DE442 (2025)",
-    },
-    Kernel {
-        name: "de442",
-        file: "de442.bsp",
-        bytes: 119_771_136,
-        md5: "446656322267e7b819a26cb08a0d8718",
-        start: "1549-12-31",
-        end: "2650-01-25",
-        note: "DE442 (2025)",
-    },
+    Kernel { name: "de440s", file: "de440s.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp", bytes: 32_726_016, md5: "3917ee56769db332790c751e2168843d", start: "1849-12-26", end: "2150-01-22", note: "short DE440: modern charts (the golden tests use it)" },
+    Kernel { name: "de440", file: "de440.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp", bytes: 119_799_808, md5: "c9d581bfd84209dbeee8b1583939b148", start: "1549-12-31", end: "2650-01-25", note: "DE440: from the Gregorian reform to 2650" },
+    Kernel { name: "de441-part1", file: "de441_part-1.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de441_part-1.bsp", bytes: 1_651_119_104, md5: "7e5fcf9ecb5d08e1ab70c049baa60cd3", start: "-13200-05-06", end: "1969-07-30", note: "DE441 part 1: ancient dates (read on demand, not loaded into memory)" },
+    Kernel { name: "de441-part2", file: "de441_part-2.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de441_part-2.bsp", bytes: 1_656_830_976, md5: "ad8dfa4e505ef0e3a5d587a5b4705632", start: "1969-06-28", end: "17191-03-15", note: "DE441 part 2: the far future" },
+    Kernel { name: "de442s", file: "de442s.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de442s.bsp", bytes: 32_701_440, md5: "cc49327e06088124c0e39d8dde9f0b58", start: "1849-12-26", end: "2150-01-22", note: "short DE442 (2025)" },
+    Kernel { name: "de442", file: "de442.bsp", url: "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de442.bsp", bytes: 119_771_136, md5: "446656322267e7b819a26cb08a0d8718", start: "1549-12-31", end: "2650-01-25", note: "DE442 (2025)" },
+    Kernel { name: "sb441-n16", file: "sb441-n16.bsp", url: "https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/sb441-n16.bsp", bytes: 645_727_232, md5: "03b8f72822ff459643f43bc83a07506e", start: "1549-12-31", end: "2650-01-25", note: "16 massive asteroids of the DE441 integration (Ceres, Pallas, Juno, Vesta, …); JPL SSD publishes no checksum, so the MD5 is of the file downloaded 2026-11-24; use with a planetary kernel: --spk de440,sb441-n16" },
 ];
 
 /// The catalogue entry for a name (`de440`) or a file name (`de440.bsp`).

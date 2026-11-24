@@ -11,6 +11,7 @@ pub mod bala;
 pub mod chakras;
 pub mod dashas_ext;
 pub mod dated;
+pub mod eclipses;
 pub mod events;
 pub mod graph;
 pub mod hd;

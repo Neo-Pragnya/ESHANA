@@ -267,6 +267,33 @@ class ChartEngine:
             req["spk_path"] = self.spk_path
         return execute({k: v for k, v in req.items() if v is not None})
 
+    def returns(self, natal: Context, start_utc: str, end_utc: str, body: str = "sun", zodiac: str = "tropical",
+                ayanamsha: Optional[str] = None, latitude: Optional[float] = None, longitude: Optional[float] = None,
+                charts: bool = True) -> Dict[str, Any]:
+        """Every return of ``body`` (default the Sun) to its natal longitude in [start, end), with a chart at each;
+        ``latitude``/``longitude`` cast relocated return charts."""
+        system = "vedic" if zodiac == "sidereal" else "western"
+        natal_req = self._base(natal, system, self._cfg(zodiac=zodiac, ayanamsha=ayanamsha))
+        req = {"op": "returns", "natal": natal_req, "body": body, "start_utc": start_utc, "end_utc": end_utc,
+               "charts": charts, "place": _place(latitude, longitude)}
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def gochara(self, natal: Context, start_utc: str, end_utc: str, ayanamsha: str = "lahiri",
+                bodies: Optional[Iterable[str]] = None) -> Dict[str, Any]:
+        """Transits counted from the natal Moon and lagna, with retrograde and combustion intervals."""
+        natal_req = self._base(natal, "vedic", self._cfg(zodiac="sidereal", ayanamsha=ayanamsha))
+        req = {"op": "gochara", "natal": natal_req, "start_utc": start_utc, "end_utc": end_utc,
+               "bodies": list(bodies) if bodies else None}
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def eclipses(self, start_utc: str, end_utc: str, kinds: Optional[Iterable[str]] = None) -> Dict[str, Any]:
+        """Solar and lunar eclipses in [start, end): type, time of greatest eclipse and magnitude."""
+        req = {"op": "eclipses", "start_utc": start_utc, "end_utc": end_utc, "kinds": list(kinds) if kinds else None,
+               "config": self._cfg()}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute({k: v for k, v in req.items() if v is not None})
+
     def ingresses(self, body: str, start_utc: str, end_utc: str, zodiac: str = "sidereal",
                   ayanamsha: Optional[str] = "lahiri") -> Dict[str, Any]:
         """Every sign ingress of a body in a range, including retrograde re-entries."""
