@@ -26,3 +26,10 @@ rule named, offline by default). Task ids are those in `planning/backlog.json`.
 | BIND-08 (Windows, Intel macOS), SEC-05 | the PyPI trusted-publisher setup |
 | PROV-03 | a licensing decision: an AGPL-3.0 Swiss Ephemeris adapter as a separate package |
 | new Hindi labels | owner review (OWNER-INPUTS 5b) |
+
+## Status (2026-11-24)
+
+All five waves are implemented on `feat/wave1-time` for the single 0.5.0 release. AYA-02 was unblocked by the ESA
+archive's copy of the Hipparcos new reduction (CDS was unavailable). SEC-03 is verified by the first `attest` run
+after the PyPI upload; REP-04 when the Pages deploy for 0.5.0 completes. LK-01 is implemented and marked draft until
+the owner reviews the pakka ghar table (OWNER-INPUTS 5c).

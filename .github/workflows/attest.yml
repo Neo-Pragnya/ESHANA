@@ -1,0 +1,72 @@
+name: attest
+
+# After a version is on PyPI (SEC-03): download exactly the files PyPI serves, check them against PyPI's SHA-256,
+# write the SBOM (CycloneDX) and SHA256SUMS, attest provenance and the SBOM with GitHub's Sigstore-backed
+# attestations, and create the GitHub release with all of it attached.
+# The wheels are built and uploaded from the maintainer's machine (see docs/guides/publishing.md), so the provenance
+# records this workflow and commit observing those digests, not a build on GitHub. Verify a download with:
+#   gh attestation verify eshana-<version>-*.whl --repo Neo-Pragnya/ESHANA
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version on PyPI, e.g. 0.5.0"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # create the release
+      id-token: write       # Sigstore signing for the attestations
+      attestations: write
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Download the published files and check PyPI's digests
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, urllib.request
+          v = os.environ["VERSION"]
+          meta = json.load(urllib.request.urlopen(f"https://pypi.org/pypi/eshana/{v}/json"))
+          out = pathlib.Path("dist"); out.mkdir()
+          for f in meta["urls"]:
+              data = urllib.request.urlopen(f["url"]).read()
+              got = hashlib.sha256(data).hexdigest()
+              assert got == f["digests"]["sha256"], (f["filename"], got)
+              (out / f["filename"]).write_bytes(data)
+              print("ok", f["filename"], got)
+          PY
+
+      - name: SBOM and checksums
+        run: |
+          python3 scripts/sbom.py --out "dist/eshana-${VERSION}.cdx.json" --dist dist
+          (cd dist && sha256sum eshana-* > SHA256SUMS && cat SHA256SUMS)
+
+      - name: Attest provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: "dist/eshana-*.whl, dist/eshana-*.tar.gz"
+
+      - name: Attest the SBOM
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-path: "dist/eshana-*.whl, dist/eshana-*.tar.gz"
+          sbom-path: "dist/eshana-${{ inputs.version }}.cdx.json"
+
+      - name: GitHub release with the files, SBOM and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {on=1; next} on && /^## \[/ {exit} on' CHANGELOG.md > notes.md
+          printf '\n---\nInstall: `pip install eshana==%s`. Verify a file: `gh attestation verify <file> --repo %s`.\n' "$VERSION" "$GITHUB_REPOSITORY" >> notes.md
+          gh release create "v${VERSION}" dist/* --title "ESHANA ${VERSION}" --notes-file notes.md --target "$GITHUB_SHA"

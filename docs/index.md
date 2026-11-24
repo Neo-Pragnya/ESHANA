@@ -46,7 +46,8 @@ Read [The epistemic model](concepts/epistemic-model.md) first; everything else f
 
 ## Where to go next
 
-- New here? [Getting started](guides/getting-started.md), then the [Python guide](guides/python.md).
+- New here? [Getting started](guides/getting-started.md), then the [Python guide](guides/python.md) and the
+  [cookbook](guides/cookbook.md). From JavaScript: [JavaScript guide](guides/javascript.md); from an assistant: [MCP](guides/mcp.md).
 - Want a chart to read or share? [HTML chart reports](guides/html-report.md). All the options: [ways to use ESHANA](guides/ways-to-use.md).
 - How do we know it is right? [Birth-chart accuracy suite](guides/accuracy-suite.md).
 - The big picture in diagrams: [architecture](architecture/diagrams.md). What comes next: [next steps](next-steps.md).

@@ -710,17 +710,29 @@
       "id": "GRA-03",
       "area": "graph",
       "title": "Chitkala consumer: render the graph interactively",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 5.4, 10 Demo D"
+      "source": "master plan 5.4, 10 Demo D",
+      "evidence": "eshana graph --format chitkala emits Chitkala's import schema (metadata, universes, nodes, edges, sources), read by Chitkala's interactive 2D/3D viewer. Test graph_exports_svg_drawio_and_chitkala; acceptance scenario in 10_graph.feature.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/graph.rs",
+        "crates/eshana-engine/tests/behaviour.rs",
+        "acceptance/features/10_graph.feature"
+      ]
     },
     {
       "id": "GRA-04",
       "area": "graph",
       "title": "SVG and draw.io exports",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.7"
+      "source": "master plan 4.7",
+      "evidence": "--format svg (self-contained, columns by node type, epistemic colours, tooltips) and drawio (mxfile for diagrams.net); both parsed as well-formed XML by the acceptance suite.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/graph.rs",
+        "acceptance/features/10_graph.feature",
+        "docs/guides/graph.md"
+      ]
     },
     {
       "id": "BIND-01",
@@ -748,25 +760,44 @@
       "id": "BIND-03",
       "area": "bind",
       "title": "Node.js bindings (NAPI-RS)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 8.2"
+      "source": "master plan 8.2",
+      "evidence": "bindings/js: the eshana package for Node 18+ (WebAssembly, no native addon: ADR-014 records why NAPI-RS was not used), with TypeScript types; make js runs test.mjs, which checks parity with the native CLI.",
+      "evidence_paths": [
+        "bindings/js/index.mjs",
+        "bindings/js/index.d.ts",
+        "bindings/js/test.mjs",
+        "docs/adr/014-javascript-binding.md"
+      ]
     },
     {
       "id": "BIND-04",
       "area": "bind",
       "title": "Browser WASM bindings",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 8.2"
+      "source": "master plan 8.2",
+      "evidence": "The same package loads in browsers (fetch beside the module, or a URL/Response/bytes/Module); checked in headless Chrome, Moon 60.5236 equal to the CLI. The module has no imports.",
+      "evidence_paths": [
+        "bindings/js/index.mjs",
+        "docs/guides/javascript.md"
+      ]
     },
     {
       "id": "BIND-05",
       "area": "bind",
       "title": "MCP server: compute_positions, create_vedic_chart, compare_charts, compute_human_design, compute_numerology, explain_derivation",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 5.4"
+      "source": "master plan 5.4",
+      "evidence": "eshana-mcp: MCP over stdio with compute_positions, create_vedic_chart, create_western_chart, compare_charts, compute_human_design, compute_numerology, panchanga, find_eclipses, rise_and_set, explain_derivation and eshana_request; refusals carry ESH-* codes. Tests test_mcp.py; acceptance scenario in 12b_python_parity.feature.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/mcp.py",
+        "crates/eshana-python/tests/test_mcp.py",
+        "acceptance/features/12b_python_parity.feature",
+        "docs/guides/mcp.md"
+      ]
     },
     {
       "id": "BIND-06",
@@ -863,9 +894,15 @@
       "id": "QA-06",
       "area": "qa",
       "title": "Fuzzing of input and time parsers (cargo-fuzz)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "proptest 'never panics on text' covers the first level."
+      "evidence": "fuzz/: cargo-fuzz targets time_parsers (every time parser, calendars, fold policies, date round-trip), request_json (Engine::execute_json on arbitrary text must answer JSON) and chart_fields (a chart request with fuzzed date/time/zone/calendar/coordinates/ayanamsha/features). 60-90 s each locally (3.6M, 163k and 25k runs), no crash; make fuzz; weekly 5-minute run in security.yml.",
+      "evidence_paths": [
+        "fuzz/fuzz_targets/time_parsers.rs",
+        "fuzz/fuzz_targets/request_json.rs",
+        "fuzz/fuzz_targets/chart_fields.rs",
+        ".github/workflows/security.yml"
+      ]
     },
     {
       "id": "ACC-03",
@@ -880,16 +917,28 @@
       "id": "PERF-01",
       "area": "qa",
       "title": "Benchmarks: cold start, single chart, batch 100/1000; regression threshold",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 6.2, 11"
+      "source": "master plan 6.2, 11",
+      "evidence": "scripts/bench.py (make perf): cold start, one full chart (all features, 16 vargas, dasha), batches of 100 and 1,000 charts; fixed budgets everywhere plus a per-machine baseline with a 1.5x threshold (benchmarks/perf/baseline.json, M3 Ultra: 5 ms, 206 ms, 74 ms, 753 ms). Budgets run in the CI perf job.",
+      "evidence_paths": [
+        "scripts/bench.py",
+        "benchmarks/perf/baseline.json",
+        ".github/workflows/ci.yml"
+      ]
     },
     {
       "id": "QA-07",
       "area": "qa",
       "title": "Browser journeys for the website (real Chrome)",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "evidence": "acceptance/site/journeys.mjs (make site-journeys): nine journeys in real Chrome against the built site: hero animation, particle headline and gimbal, ambient sky, gallery images and report links, sigils, docs pages, theme memory, reduced motion, phone width. All pass locally on 2026-11-24 against the 0.5.0 build; run in CI by acceptance.yml.",
+      "evidence_paths": [
+        "acceptance/site/journeys.mjs",
+        ".github/workflows/acceptance.yml",
+        "Makefile"
+      ]
     },
     {
       "id": "DOC-01",
@@ -919,8 +968,14 @@
       "id": "DOC-04",
       "area": "docs",
       "title": "Cookbook: notebooks and agent recipes",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "evidence": "examples/notebooks: first chart, comparing methods, sky events, agent recipes (MCP tools in-process, explain_derivation); test_notebooks.py runs every code cell; docs/guides/cookbook.md with recipes and agent recipes.",
+      "evidence_paths": [
+        "examples/notebooks/01-first-chart.ipynb",
+        "crates/eshana-python/tests/test_notebooks.py",
+        "docs/guides/cookbook.md"
+      ]
     },
     {
       "id": "DOC-05",
@@ -959,9 +1014,15 @@
       "id": "SEC-03",
       "area": "sec",
       "title": "Signed releases, SBOM, provenance attestations",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
-      "source": "master plan 7"
+      "source": "master plan 7",
+      "evidence": "scripts/sbom.py writes a CycloneDX 1.5 SBOM of the 57 crates in the wheel (make sbom); .github/workflows/attest.yml downloads the files PyPI serves, checks PyPI's SHA-256, attests provenance and the SBOM (Sigstore) and creates the GitHub release with SHA256SUMS. Verified when the first attest run completes.",
+      "evidence_paths": [
+        "scripts/sbom.py",
+        ".github/workflows/attest.yml",
+        "docs/guides/publishing.md"
+      ]
     },
     {
       "id": "SEC-04",
@@ -1196,16 +1257,26 @@
       "id": "REP-06",
       "area": "docs",
       "title": "East Indian chart style",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "East Indian style on Charts and Vargas and --chart-style east: signs fixed with Mesha top centre, anticlockwise, corner squares cut diagonally, boxes numbered by house; screenshot-checked, no unfitted text.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-charts.js",
+        "crates/eshana-python/python/eshana/assets/studio-pages.js",
+        "docs/guides/html-report.md"
+      ]
     },
     {
       "id": "REP-07",
       "area": "docs",
       "title": "Chart playground (drag planets, vargas follow)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "evidence": "Partly delivered: APP-05 (synthetic positions) and APP-06 (accessible playground with keyboard edits and undo) are verified. Dragging a graha on the chart is still open."
+      "evidence": "Playground wheel: drag a graha (Ketu follows Rahu); the engine recomputes on release and Ctrl/Cmd+Z undoes. Browser journey 'dragging a graha round the wheel' drags the Sun half-way round and checks the sign, the list and undo; keyboard edits (APP-06) unchanged.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-live.js",
+        "acceptance/studio/journeys.mjs"
+      ]
     },
     {
       "id": "REP-08",
@@ -1219,9 +1290,14 @@
       "id": "AYA-02",
       "area": "astro",
       "title": "Star-based and further ayanamshas (Yukteshwar, true Chitrapaksha, Revati, Pushya)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "evidence": "Waiting on the star catalogue: the true (star-anchored) ayanāṃśas need each anchor star's J2000 position and proper motion from Hipparcos (I/311); CDS (SIMBAD, VizieR) and the CfA mirror were unavailable on 2026-11-24. The frame code (precess_ecliptic_from_j2000) is ready."
+      "evidence": "true_citra, true_revati, true_pushya, true_mula (eshana-engine/src/stars.rs): Hipparcos new reduction positions and proper motions (HIP 65474, 5737, 42911, 85927, ESA archive table public.hipparcos_newreduction, fetched 2026-11-24), carried to the date with precession, annual aberration and solar light deflection. tests/ayanamsha_oracle.rs: within 0.62″ of the Swiss Ephemeris true modes at 160 instants 1800–2200 (benchmarks/golden/ayanamsha_oracle.json true_epochs). Yukteshwar was already in METH-01.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/stars.rs",
+        "crates/eshana-engine/tests/ayanamsha_oracle.rs",
+        "benchmarks/golden/ayanamsha_oracle.json"
+      ]
     },
     {
       "id": "VED-09",

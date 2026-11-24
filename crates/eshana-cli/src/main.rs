@@ -72,7 +72,7 @@ struct Settings {
     /// tropical or sidereal
     #[arg(long)]
     zodiac: Option<String>,
-    /// lahiri, raman, krishnamurti, fagan_bradley, yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
+    /// lahiri, raman, krishnamurti, fagan_bradley, yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul, true_citra, true_revati, true_pushya, true_mula. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
     #[arg(long)]
     ayanamsha: Option<String>,
     /// whole_sign (default), equal, placidus, porphyry, sripati, koch, regiomontanus, campanus, alcabitius,
@@ -252,13 +252,13 @@ enum Cmd {
         #[arg(long = "b", value_name = "KEY=VALUE")]
         b: Vec<String>,
     },
-    /// Symbolic graph of a chart: json, mermaid or graphml
+    /// Symbolic graph of a chart: json, mermaid, graphml, svg, drawio or chitkala
     Graph {
         /// vedic or western
         system: String,
         #[command(flatten)]
         o: ChartOpts,
-        /// json (default), mermaid, graphml
+        /// json (default), mermaid, graphml, svg, drawio, chitkala
         #[arg(long, default_value = "json")]
         format: String,
     },

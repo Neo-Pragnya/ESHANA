@@ -7,7 +7,8 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [0.5.0] - 2026-11-24
 
-Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
+The roadmap waves (planning/WAVES.md): time and ephemeris foundations, events and asteroids, rule packs and
+traditions, outputs and bindings, and quality gates.
 
 ### Added
 - Calendars and BCE dates (TIME-03): `when.calendar` = `gregorian` (default, proleptic), `julian` or `auto` (the
@@ -23,6 +24,9 @@ Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
   at four places including Tromsø.
 - Topocentric positions (AST-08): `config.topocentric` / `--topocentric` apply the parallax for the place and its
   altitude; `calculation.positions_reference` records it.
+- True (star-anchored) ayanāṃśas (AYA-02): `true_citra`, `true_revati`, `true_pushya` and `true_mula` hold Spica,
+  ζ Psc, δ Cnc and λ Sco at their anchors, from Hipparcos positions and proper motions with aberration and light
+  deflection; within 0.62″ of an independent oracle at 160 instants over 1800–2200.
 - House systems (AST-03): Koch, Regiomontanus, Campanus, Alcabitius, Topocentric (Polich–Page), Morinus and
   Meridian, each within 0.01° of an independent oracle across seven latitudes and twelve sidereal times; Porphyry and
   Śrīpati now listed in `eshana methods`.
@@ -54,6 +58,25 @@ Wave 1 of the roadmap (planning/WAVES.md): time and ephemeris foundations.
   the same grammar and reported under their own id.
 - Lal Kitab (LK-01, **draft**): `features: ["lal_kitab"]`: the Lal Kitab chart and pakka ghar, pending the owner's
   review of the table.
+
+- Graph exports (GRA-03, GRA-04): `eshana graph … --format svg | drawio | chitkala`: a self-contained SVG laid out by
+  node type, a diagrams.net file, and Chitkala's import schema for interactive exploration.
+- JavaScript (BIND-03, BIND-04): the `eshana` package in `bindings/js`, the engine as WebAssembly for browsers and
+  Node 18+, with TypeScript types and a parity test against the CLI (ADR-014).
+- MCP server (BIND-05): `eshana-mcp` serves eleven tools over stdio (charts, positions, Human
+  Design, numerology, pañcāṅga, eclipses, rise and set, comparisons, `explain_derivation` and raw requests) so an assistant can compute charts locally
+  (`claude mcp add eshana -- eshana-mcp`); refusals come back with their `ESH-*` code.
+- East Indian chart style (REP-06): `--chart-style east` and an East Indian button on Charts and Vargas.
+- Playground drag (REP-07): drag a graha round the wheel; the engine recomputes on release and Ctrl/⌘+Z undoes.
+
+- Fuzzing (QA-06): `fuzz/` holds cargo-fuzz targets for the time parsers, the raw request entry point and chart
+  requests with fuzzed fields; `make fuzz`, and five minutes per target weekly in CI.
+- Benchmarks (PERF-01): `make perf` times cold start, one full chart and batches of 100 and 1,000 charts against fixed
+  budgets and, on a machine with a recorded baseline, a 1.5× regression threshold; budgets run in CI.
+- Supply chain (SEC-03): a CycloneDX SBOM of every crate in the wheel (`make sbom`), and an `attest` workflow that
+  checks the files PyPI serves, attests provenance and the SBOM, and creates the GitHub release with checksums.
+- Cookbook (DOC-04): four notebooks (first chart, comparing methods, sky events, agent recipes) that the test suite
+  runs cell by cell, and a cookbook guide.
 
 ### Changed
 - `vedic.core` split (VED-05): dignities, relationships, drishti and strength are now packs of their own

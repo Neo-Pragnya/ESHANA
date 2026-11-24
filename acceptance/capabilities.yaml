@@ -17,7 +17,7 @@ capabilities:
   - { id: numerology, title: "Numerology under a named school, with normalisation reported and schools never merged", dimension: core, blocker: true }
   - { id: uncertain-time, title: "An unknown or approximate birth time gives intervals and flags; the Ascendant and houses are never invented", dimension: safety, blocker: true }
   - { id: compare, title: "Method comparison explains differences as configuration, not defects", dimension: core, blocker: true }
-  - { id: graph, title: "Symbolic graph exports (json, mermaid, graphml) with relation classes; no causal edges", dimension: core, blocker: true }
+  - { id: graph, title: "Symbolic graph exports (json, mermaid, graphml, svg, drawio, chitkala) with relation classes; no causal edges", dimension: core, blocker: true }
   - { id: provenance, title: "Every result carries engine, provider, tzdb, rule versions and assumptions; interpretations stay empty; derived values name their rule", dimension: governance, blocker: true }
   - { id: determinism, title: "The same request returns the same bytes, twice and across processes", dimension: reliability, blocker: true }
   - { id: errors, title: "Errors are clean envelopes with stable ESH-* codes; refusals exit 2; explain knows every code", dimension: usability, blocker: true }

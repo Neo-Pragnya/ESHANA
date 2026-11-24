@@ -49,7 +49,13 @@ pub fn sign_index(lon_deg: f64) -> usize {
 /// the Swiss Ephemeris over 1950–2040 is checked in the golden tests.
 #[must_use]
 pub fn ayanamsha_deg(model: Ayanamsha, t: f64) -> f64 {
+    use crate::stars;
     let at_j2000 = match model {
+        // the true models follow their star (AYA-02), not a precession formula
+        Ayanamsha::TrueCitra => return stars::true_ayanamsha(&stars::SPICA, t),
+        Ayanamsha::TrueRevati => return stars::true_ayanamsha(&stars::ZETA_PSC, t),
+        Ayanamsha::TruePushya => return stars::true_ayanamsha(&stars::DELTA_CNC, t),
+        Ayanamsha::TrueMula => return stars::true_ayanamsha(&stars::LAMBDA_SCO, t),
         Ayanamsha::Lahiri => 23.857_092_354,
         Ayanamsha::Raman => 22.410_791_040,
         Ayanamsha::Krishnamurti => 23.760_240_040,
@@ -97,6 +103,23 @@ pub fn ayanamsha_definition(model: Ayanamsha) -> serde_json::Value {
             "Swiss Ephemeris SIDM_DELUCE",
         ),
         Ayanamsha::DjwhalKhul => ("J2000.0 (28.359679°)", "Swiss Ephemeris SIDM_DJWHAL_KHUL"),
+        Ayanamsha::TrueCitra | Ayanamsha::TrueRevati | Ayanamsha::TruePushya | Ayanamsha::TrueMula => {
+            let s = match model {
+                Ayanamsha::TrueCitra => crate::stars::SPICA,
+                Ayanamsha::TrueRevati => crate::stars::ZETA_PSC,
+                Ayanamsha::TruePushya => crate::stars::DELTA_CNC,
+                _ => crate::stars::LAMBDA_SCO,
+            };
+            return serde_json::json!({
+                "id": model.id(),
+                "epoch": format!("every instant: {} (HIP {}) held at {}° sidereal", s.name, s.hip, s.anchor_deg),
+                "value_at_j2000_deg": ayanamsha_deg(model, 0.0),
+                "frame": "apparent position of the star (proper motion, precession to the mean equinox of date, annual aberration, solar light deflection); nutation left out on both sides, as for the mean models",
+                "star": {"hip": s.hip, "name": s.name, "anchor_deg": s.anchor_deg, "epoch": "J1991.25 ICRS",
+                         "ra_deg": s.ra_deg, "dec_deg": s.dec_deg, "pm_ra_cosdec_mas_yr": s.pm_ra_mas, "pm_dec_mas_yr": s.pm_dec_mas},
+                "source": "Hipparcos new reduction (van Leeuwen 2007, CDS I/311) via the ESA archive; checked against the Swiss Ephemeris true modes",
+            });
+        }
     };
     serde_json::json!({
         "id": model.id(), "epoch": epoch, "value_at_j2000_deg": ayanamsha_deg(model, 0.0),

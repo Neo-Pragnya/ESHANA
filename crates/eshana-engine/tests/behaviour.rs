@@ -537,3 +537,44 @@ fn gochara_combustion_is_bounded_by_the_pack_orb() {
         }
     }
 }
+
+/// GRA-03 / GRA-04: SVG and draw.io exports draw every node; the CHITKALA document resolves every edge.
+#[test]
+fn graph_exports_svg_drawio_and_chitkala() {
+    let chart =
+        json!({"when": kolkata(), "place": hyd(), "system": "vedic", "config": {"ayanamsha": "lahiri"}});
+    let nodes = run(json!({"op": "graph", "chart": chart, "format": "json"}))["nodes"]
+        .as_array()
+        .unwrap()
+        .len();
+    let svg = run(json!({"op": "graph", "chart": chart, "format": "svg"}))["content"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(svg.matches("<rect x=").count(), nodes, "a box per node");
+    assert!(svg.starts_with("<svg") && svg.trim_end().ends_with("</svg>"));
+    let drawio = run(json!({"op": "graph", "chart": chart, "format": "drawio"}))["content"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    assert_eq!(drawio.matches("vertex=\"1\"").count(), nodes);
+    let ck: serde_json::Value = serde_json::from_str(
+        run(json!({"op": "graph", "chart": chart, "format": "chitkala"}))["content"]
+            .as_str()
+            .unwrap(),
+    )
+    .unwrap();
+    let ids: Vec<&str> = ck["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|n| n["id"].as_str().unwrap())
+        .collect();
+    assert_eq!(ids.len(), nodes);
+    for e in ck["edges"].as_array().unwrap() {
+        assert!(ids.contains(&e["from"].as_str().unwrap()) && ids.contains(&e["to"].as_str().unwrap()));
+    }
+    for k in ["metadata", "universes", "nodes", "edges", "sources"] {
+        assert!(ck.get(k).is_some(), "{k}");
+    }
+}

@@ -1,6 +1,6 @@
 {
  "accuracy_test_functions": 9,
- "adrs": 13,
+ "adrs": 14,
  "ayanamshas": [
   "lahiri",
   "raman",
@@ -11,13 +11,17 @@
   "ushashashi",
   "sassanian",
   "deluce",
-  "djwhal_khul"
+  "djwhal_khul",
+  "true_citra",
+  "true_revati",
+  "true_pushya",
+  "true_mula"
  ],
  "capabilities": 25,
- "doc_pages": 65,
+ "doc_pages": 69,
  "error_codes": 14,
  "expansion": "Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations",
- "python_tests": 65,
+ "python_tests": 69,
  "reference_charts": 44,
  "rulesets": [
   "vedic.parashari@0.3",
@@ -26,14 +30,14 @@
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 273,
- "scenarios": 139,
+ "rust_tests": 276,
+ "scenarios": 142,
  "tasks": 258,
  "tasks_by_status": {
-  "implemented": 13,
-  "proposed": 27,
+  "implemented": 14,
+  "proposed": 15,
   "released": 1,
-  "verified": 217
+  "verified": 228
  },
  "tzdb_version": "2026f",
  "version": "0.5.0"

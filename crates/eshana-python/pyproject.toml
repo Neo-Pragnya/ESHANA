@@ -25,6 +25,7 @@ dependencies = []
 
 [project.scripts]
 eshana-report = "eshana.report:main"
+eshana-mcp = "eshana.mcp:main"
 
 [project.optional-dependencies]
 test = ["pytest>=8", "jsonschema>=4"]

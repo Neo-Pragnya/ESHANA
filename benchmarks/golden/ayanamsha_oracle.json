@@ -15,7 +15,11 @@
     "ushashashi": 17.265069450436396,
     "sassanian": 17.200492543887833,
     "deluce": 25.023296061105953,
-    "djwhal_khul": 25.567207050436433
+    "djwhal_khul": 25.567207050436433,
+    "true_citra": 21.05024813121105,
+    "true_revati": 17.245977632039114,
+    "true_pushya": 19.932357949461007,
+    "true_mula": 21.788096821479712
    }
   },
   {
@@ -32,7 +36,11 @@
     "ushashashi": 17.962957101781676,
     "sassanian": 17.89837963700637,
     "deluce": 25.721180890100356,
-    "djwhal_khul": 26.265094701781713
+    "djwhal_khul": 26.265094701781713,
+    "true_citra": 21.747457203746677,
+    "true_revati": 17.945546766739824,
+    "true_pushya": 20.6308092388403,
+    "true_mula": 22.48582597415026
    }
   },
   {
@@ -49,7 +57,11 @@
     "ushashashi": 18.66099822789772,
     "sassanian": 18.59641979506506,
     "deluce": 26.419218607391088,
-    "djwhal_khul": 26.96313582789776
+    "djwhal_khul": 26.96313582789776,
+    "true_citra": 22.444823578831148,
+    "true_revati": 18.645264948628153,
+    "true_pushya": 21.329421846038784,
+    "true_mula": 23.18371053129289
    }
   },
   {
@@ -66,7 +78,11 @@
     "ushashashi": 19.359192854924572,
     "sassanian": 19.294613043858703,
     "deluce": 27.117409240333984,
-    "djwhal_khul": 27.66133045492461
+    "djwhal_khul": 27.66133045492461,
+    "true_citra": 23.142345057446732,
+    "true_revati": 19.345135685429568,
+    "true_pushya": 22.02817817952959,
+    "true_mula": 23.88176526491725
    }
   },
   {
@@ -83,7 +99,11 @@
     "ushashashi": 20.057540999554476,
     "sassanian": 19.992959400184247,
     "deluce": 27.81575280748109,
-    "djwhal_khul": 28.359678599554513
+    "djwhal_khul": 28.359678599554513,
+    "true_citra": 23.84001494849855,
+    "true_revati": 20.04516464961864,
+    "true_pushya": 22.727091550588312,
+    "true_mula": 24.57997288440913
    }
   },
   {
@@ -100,7 +120,11 @@
     "ushashashi": 20.406810892529563,
     "sassanian": 20.34222824526597,
     "deluce": 28.165020193414932,
-    "djwhal_khul": 28.7089484925296
+    "djwhal_khul": 28.7089484925296,
+    "true_citra": 24.18904865824868,
+    "true_revati": 20.395170786817914,
+    "true_pushya": 23.07669311492566,
+    "true_mula": 24.929205670541194
    }
   },
   {
@@ -117,7 +141,11 @@
     "ushashashi": 20.7560809221971,
     "sassanian": 20.6914971248749,
     "deluce": 28.514287571447255,
-    "djwhal_khul": 29.058218522197137
+    "djwhal_khul": 29.058218522197137,
+    "true_citra": 24.537983728640086,
+    "true_revati": 20.745277331287298,
+    "true_pushya": 23.42624330585528,
+    "true_mula": 25.278414831173166
    }
   },
   {
@@ -134,7 +162,1613 @@
     "ushashashi": 21.454736122962117,
     "sassanian": 21.390149719287194,
     "deluce": 29.21293703605403,
-    "djwhal_khul": 29.756873722962155
+    "djwhal_khul": 29.756873722962155,
+    "true_citra": 25.235960785826933,
+    "true_revati": 21.44561365820988,
+    "true_pushya": 24.125458792567173,
+    "true_mula": 25.97694708136089
+   }
+  }
+ ],
+ "true_epochs": [
+  {
+   "jd_tt": 2378496.5,
+   "t_centuries_tt": -1.999958932238193,
+   "ayanamsha_deg": {
+    "true_citra": 21.050179047655575,
+    "true_revati": 17.246008923545844,
+    "true_pushya": 19.93231747039259,
+    "true_mula": 21.78806050732527
+   }
+  },
+  {
+   "jd_tt": 2379409.6,
+   "t_centuries_tt": -1.9749596167008872,
+   "ayanamsha_deg": {
+    "true_citra": 21.087141366731856,
+    "true_revati": 17.27966323898488,
+    "true_pushya": 19.95695980121222,
+    "true_mula": 21.834061360517524
+   }
+  },
+  {
+   "jd_tt": 2380322.7,
+   "t_centuries_tt": -1.9499603011635815,
+   "ayanamsha_deg": {
+    "true_citra": 21.1198913273347,
+    "true_revati": 17.315960564700447,
+    "true_pushya": 20.002156504903382,
+    "true_mula": 21.857824199793242
+   }
+  },
+  {
+   "jd_tt": 2381235.8,
+   "t_centuries_tt": -1.9249609856262884,
+   "ayanamsha_deg": {
+    "true_citra": 21.15687418726708,
+    "true_revati": 17.349595742570898,
+    "true_pushya": 20.026806721896264,
+    "true_mula": 21.9038339185351
+   }
+  },
+  {
+   "jd_tt": 2382148.9,
+   "t_centuries_tt": -1.8999616700889828,
+   "ayanamsha_deg": {
+    "true_citra": 21.18960494360661,
+    "true_revati": 17.385914111388274,
+    "true_pushya": 20.07199457129863,
+    "true_mula": 21.927591669633102
+   }
+  },
+  {
+   "jd_tt": 2383062.0,
+   "t_centuries_tt": -1.874962354551677,
+   "ayanamsha_deg": {
+    "true_citra": 21.226607723712988,
+    "true_revati": 17.419530460486556,
+    "true_pushya": 20.09665684030425,
+    "true_mula": 21.973605921075205
+   }
+  },
+  {
+   "jd_tt": 2383975.1,
+   "t_centuries_tt": -1.849963039014371,
+   "ayanamsha_deg": {
+    "true_citra": 21.25932260062754,
+    "true_revati": 17.455866731705328,
+    "true_pushya": 20.14183426561317,
+    "true_mula": 21.997362508692333
+   }
+  },
+  {
+   "jd_tt": 2384888.2,
+   "t_centuries_tt": -1.8249637234770655,
+   "ayanamsha_deg": {
+    "true_citra": 21.296340299821026,
+    "true_revati": 17.489469201248255,
+    "true_pushya": 20.1665078158871,
+    "true_mula": 22.043378302440885
+   }
+  },
+  {
+   "jd_tt": 2385801.3,
+   "t_centuries_tt": -1.7999644079397723,
+   "ayanamsha_deg": {
+    "true_citra": 21.329043290009622,
+    "true_revati": 17.52581931119863,
+    "true_pushya": 20.21167699897373,
+    "true_mula": 22.067134658039038
+   }
+  },
+  {
+   "jd_tt": 2386714.4,
+   "t_centuries_tt": -1.7749650924024667,
+   "ayanamsha_deg": {
+    "true_citra": 21.366073457349444,
+    "true_revati": 17.559410575934464,
+    "true_pushya": 20.23635798117364,
+    "true_mula": 22.113153756092174
+   }
+  },
+  {
+   "jd_tt": 2387627.5,
+   "t_centuries_tt": -1.7499657768651609,
+   "ayanamsha_deg": {
+    "true_citra": 21.398765892948035,
+    "true_revati": 17.595772904512785,
+    "true_pushya": 20.281523341050416,
+    "true_mula": 22.13690675920668
+   }
+  },
+  {
+   "jd_tt": 2388540.6,
+   "t_centuries_tt": -1.724966461327855,
+   "ayanamsha_deg": {
+    "true_citra": 21.435808986388054,
+    "true_revati": 17.62935275103166,
+    "true_pushya": 20.306208478402013,
+    "true_mula": 22.18293254469171
+   }
+  },
+  {
+   "jd_tt": 2389453.7,
+   "t_centuries_tt": -1.6999671457905494,
+   "ayanamsha_deg": {
+    "true_citra": 21.46848817099371,
+    "true_revati": 17.665729798772816,
+    "true_pushya": 20.35137194357921,
+    "true_mula": 22.206678405300465
+   }
+  },
+  {
+   "jd_tt": 2390366.8,
+   "t_centuries_tt": -1.6749678302532562,
+   "ayanamsha_deg": {
+    "true_citra": 21.505547898919872,
+    "true_revati": 17.69929463044906,
+    "true_pushya": 20.376060788522807,
+    "true_mula": 22.252714044380184
+   }
+  },
+  {
+   "jd_tt": 2391279.9,
+   "t_centuries_tt": -1.6499685147159506,
+   "ayanamsha_deg": {
+    "true_citra": 21.538209954769684,
+    "true_revati": 17.735690343339968,
+    "true_pushya": 20.421220243115002,
+    "true_mula": 22.27645185383443
+   }
+  },
+  {
+   "jd_tt": 2392193.0,
+   "t_centuries_tt": -1.6249691991786448,
+   "ayanamsha_deg": {
+    "true_citra": 21.57529084778534,
+    "true_revati": 17.769235447197616,
+    "true_pushya": 20.445916687418148,
+    "true_mula": 22.322497084455733
+   }
+  },
+  {
+   "jd_tt": 2393106.1,
+   "t_centuries_tt": -1.599969883641339,
+   "ayanamsha_deg": {
+    "true_citra": 21.60793319113256,
+    "true_revati": 17.80565261124974,
+    "true_pushya": 20.49106855084247,
+    "true_mula": 22.346228257960888
+   }
+  },
+  {
+   "jd_tt": 2394019.2,
+   "t_centuries_tt": -1.5749705681040331,
+   "ayanamsha_deg": {
+    "true_citra": 21.64503392319901,
+    "true_revati": 17.839179055690465,
+    "true_pushya": 20.5157757971442,
+    "true_mula": 22.392279124251388
+   }
+  },
+  {
+   "jd_tt": 2394932.3,
+   "t_centuries_tt": -1.5499712525667402,
+   "ayanamsha_deg": {
+    "true_citra": 21.67765885361996,
+    "true_revati": 17.87561565579199,
+    "true_pushya": 20.560916774144815,
+    "true_mula": 22.41600842642555
+   }
+  },
+  {
+   "jd_tt": 2395845.4,
+   "t_centuries_tt": -1.5249719370294343,
+   "ayanamsha_deg": {
+    "true_citra": 21.714776355299733,
+    "true_revati": 17.90912635354607,
+    "true_pushya": 20.585636100018576,
+    "true_mula": 22.462061467202773
+   }
+  },
+  {
+   "jd_tt": 2396758.5,
+   "t_centuries_tt": -1.4999726214921287,
+   "ayanamsha_deg": {
+    "true_citra": 21.747388657728493,
+    "true_revati": 17.945577589117477,
+    "true_pushya": 20.63076784016316,
+    "true_mula": 22.485790910718322
+   }
+  },
+  {
+   "jd_tt": 2397671.6,
+   "t_centuries_tt": -1.474973305954823,
+   "ayanamsha_deg": {
+    "true_citra": 21.78451891513987,
+    "true_revati": 17.979076643260385,
+    "true_pushya": 20.655496797161007,
+    "true_mula": 22.53184542376181
+   }
+  },
+  {
+   "jd_tt": 2398584.7,
+   "t_centuries_tt": -1.449973990417517,
+   "ayanamsha_deg": {
+    "true_citra": 21.817120314659803,
+    "true_revati": 18.015540571168287,
+    "true_pushya": 20.70062286044123,
+    "true_mula": 22.55557298065395
+   }
+  },
+  {
+   "jd_tt": 2399497.8,
+   "t_centuries_tt": -1.4249746748802241,
+   "ayanamsha_deg": {
+    "true_citra": 21.85426333917343,
+    "true_revati": 18.04902832590949,
+    "true_pushya": 20.725356493900307,
+    "true_mula": 22.601633579978227
+   }
+  },
+  {
+   "jd_tt": 2400410.9,
+   "t_centuries_tt": -1.3999753593429183,
+   "ayanamsha_deg": {
+    "true_citra": 21.88685225814467,
+    "true_revati": 18.0855062255996,
+    "true_pushya": 20.770480573090197,
+    "true_mula": 22.62535464811475
+   }
+  },
+  {
+   "jd_tt": 2401324.0,
+   "t_centuries_tt": -1.3749760438056127,
+   "ayanamsha_deg": {
+    "true_citra": 21.924011193563757,
+    "true_revati": 18.118979709807263,
+    "true_pushya": 20.795217413320074,
+    "true_mula": 22.67142502981426
+   }
+  },
+  {
+   "jd_tt": 2402237.1,
+   "t_centuries_tt": -1.3499767282683068,
+   "ayanamsha_deg": {
+    "true_citra": 21.95658408310652,
+    "true_revati": 18.15547507266342,
+    "true_pushya": 20.84033925396031,
+    "true_mula": 22.695137214720148
+   }
+  },
+  {
+   "jd_tt": 2403150.2,
+   "t_centuries_tt": -1.324977412731001,
+   "ayanamsha_deg": {
+    "true_citra": 21.99376199362206,
+    "true_revati": 18.18893111631155,
+    "true_pushya": 20.865081694202104,
+    "true_mula": 22.74121742711634
+   }
+  },
+  {
+   "jd_tt": 2404063.3,
+   "t_centuries_tt": -1.299978097193708,
+   "ayanamsha_deg": {
+    "true_citra": 22.0263158194349,
+    "true_revati": 18.225447250490845,
+    "true_pushya": 20.910196558370473,
+    "true_mula": 22.764922882479027
+   }
+  },
+  {
+   "jd_tt": 2404976.4,
+   "t_centuries_tt": -1.2749787816564022,
+   "ayanamsha_deg": {
+    "true_citra": 22.063515008007215,
+    "true_revati": 18.258883220349162,
+    "true_pushya": 20.934949892957178,
+    "true_mula": 22.811009709594657
+   }
+  },
+  {
+   "jd_tt": 2405889.5,
+   "t_centuries_tt": -1.2499794661190966,
+   "ayanamsha_deg": {
+    "true_citra": 22.096051036644184,
+    "true_revati": 18.295419124231387,
+    "true_pushya": 20.980054471575116,
+    "true_mula": 22.834712452113763
+   }
+  },
+  {
+   "jd_tt": 2406802.6,
+   "t_centuries_tt": -1.2249801505817908,
+   "ayanamsha_deg": {
+    "true_citra": 22.133267290934555,
+    "true_revati": 18.328839038294518,
+    "true_pushya": 21.00482015840116,
+    "true_mula": 22.880801418732915
+   }
+  },
+  {
+   "jd_tt": 2407715.7,
+   "t_centuries_tt": -1.199980835044485,
+   "ayanamsha_deg": {
+    "true_citra": 22.165789350730364,
+    "true_revati": 18.365390982074814,
+    "true_pushya": 21.049914212266884,
+    "true_mula": 22.904504506836247
+   }
+  },
+  {
+   "jd_tt": 2408628.8,
+   "t_centuries_tt": -1.174981519507192,
+   "ayanamsha_deg": {
+    "true_citra": 22.20301952634344,
+    "true_revati": 18.398798064362325,
+    "true_pushya": 21.07469020248088,
+    "true_mula": 22.95059518650504
+   }
+  },
+  {
+   "jd_tt": 2409541.9,
+   "t_centuries_tt": -1.1499822039698862,
+   "ayanamsha_deg": {
+    "true_citra": 22.23553049269472,
+    "true_revati": 18.43536297022331,
+    "true_pushya": 21.119777421866402,
+    "true_mula": 22.974297321624704
+   }
+  },
+  {
+   "jd_tt": 2410455.0,
+   "t_centuries_tt": -1.1249828884325803,
+   "ayanamsha_deg": {
+    "true_citra": 22.27277277305356,
+    "true_revati": 18.46875926979976,
+    "true_pushya": 21.14455992901324,
+    "true_mula": 23.02039188662576
+   }
+  },
+  {
+   "jd_tt": 2411368.1,
+   "t_centuries_tt": -1.0999835728952747,
+   "ayanamsha_deg": {
+    "true_citra": 22.30527213497112,
+    "true_revati": 18.50533736518065,
+    "true_pushya": 21.189644117984272,
+    "true_mula": 23.044089154457822
+   }
+  },
+  {
+   "jd_tt": 2412281.2,
+   "t_centuries_tt": -1.0749842573579689,
+   "ayanamsha_deg": {
+    "true_citra": 22.3425291196223,
+    "true_revati": 18.538720542246665,
+    "true_pushya": 21.214430296844483,
+    "true_mula": 23.090192176687083
+   }
+  },
+  {
+   "jd_tt": 2413194.3,
+   "t_centuries_tt": -1.049984941820676,
+   "ayanamsha_deg": {
+    "true_citra": 22.37501312212325,
+    "true_revati": 18.575315477463448,
+    "true_pushya": 21.259511789838115,
+    "true_mula": 23.113881482696172
+   }
+  },
+  {
+   "jd_tt": 2414107.4,
+   "t_centuries_tt": -1.02498562628337,
+   "ayanamsha_deg": {
+    "true_citra": 22.412289506547694,
+    "true_revati": 18.608680832887842,
+    "true_pushya": 21.284303088664203,
+    "true_mula": 23.15999509420402
+   }
+  },
+  {
+   "jd_tt": 2415020.5,
+   "t_centuries_tt": -0.9999863107460644,
+   "ayanamsha_deg": {
+    "true_citra": 22.444754616777146,
+    "true_revati": 18.645296223867035,
+    "true_pushya": 21.329379683438333,
+    "true_mula": 23.18367586796819
+   }
+  },
+  {
+   "jd_tt": 2415933.6,
+   "t_centuries_tt": -0.9749869952087585,
+   "ayanamsha_deg": {
+    "true_citra": 22.482051405340513,
+    "true_revati": 18.678642523320207,
+    "true_pushya": 21.354179617972846,
+    "true_mula": 23.229797549179352
+   }
+  },
+  {
+   "jd_tt": 2416846.7,
+   "t_centuries_tt": -0.9499876796714528,
+   "ayanamsha_deg": {
+    "true_citra": 22.514497872748137,
+    "true_revati": 18.71527846075918,
+    "true_pushya": 21.399246626046505,
+    "true_mula": 23.253474331030134
+   }
+  },
+  {
+   "jd_tt": 2417759.8,
+   "t_centuries_tt": -0.9249883641341597,
+   "ayanamsha_deg": {
+    "true_citra": 22.551813533105786,
+    "true_revati": 18.74860693247956,
+    "true_pushya": 21.42405898479278,
+    "true_mula": 23.2995994235294
+   }
+  },
+  {
+   "jd_tt": 2418672.9,
+   "t_centuries_tt": -0.899989048596854,
+   "ayanamsha_deg": {
+    "true_citra": 22.584245177843428,
+    "true_revati": 18.785259764376633,
+    "true_pushya": 21.46911520558568,
+    "true_mula": 23.323276162254672
+   }
+  },
+  {
+   "jd_tt": 2419586.0,
+   "t_centuries_tt": -0.8749897330595483,
+   "ayanamsha_deg": {
+    "true_citra": 22.621574988453744,
+    "true_revati": 18.818575084834777,
+    "true_pushya": 21.49393920667643,
+    "true_mula": 23.36940189293358
+   }
+  },
+  {
+   "jd_tt": 2420499.1,
+   "t_centuries_tt": -0.8499904175222425,
+   "ayanamsha_deg": {
+    "true_citra": 22.65399556354552,
+    "true_revati": 18.855240954828332,
+    "true_pushya": 21.538987202892287,
+    "true_mula": 23.393078988856303
+   }
+  },
+  {
+   "jd_tt": 2421412.2,
+   "t_centuries_tt": -0.8249911019849367,
+   "ayanamsha_deg": {
+    "true_citra": 22.691337579057176,
+    "true_revati": 18.88854532919038,
+    "true_pushya": 21.563818638532425,
+    "true_mula": 23.439207825878725
+   }
+  },
+  {
+   "jd_tt": 2422325.3,
+   "t_centuries_tt": -0.7999917864476437,
+   "ayanamsha_deg": {
+    "true_citra": 22.723747164101184,
+    "true_revati": 18.92522385623272,
+    "true_pushya": 21.608862649683488,
+    "true_mula": 23.462881397883848
+   }
+  },
+  {
+   "jd_tt": 2423238.4,
+   "t_centuries_tt": -0.774992470910338,
+   "ayanamsha_deg": {
+    "true_citra": 22.761102836770363,
+    "true_revati": 18.95851609267197,
+    "true_pushya": 21.633698316990788,
+    "true_mula": 23.509017394565888
+   }
+  },
+  {
+   "jd_tt": 2424151.5,
+   "t_centuries_tt": -0.7499931553730321,
+   "ayanamsha_deg": {
+    "true_citra": 22.793498171377024,
+    "true_revati": 18.995210351102173,
+    "true_pushya": 21.678739967667624,
+    "true_mula": 23.532683515458416
+   }
+  },
+  {
+   "jd_tt": 2425064.6,
+   "t_centuries_tt": -0.7249938398357264,
+   "ayanamsha_deg": {
+    "true_citra": 22.83087118851168,
+    "true_revati": 19.028486841021845,
+    "true_pushya": 21.70357987732909,
+    "true_mula": 23.57882939805097
+   }
+  },
+  {
+   "jd_tt": 2425977.7,
+   "t_centuries_tt": -0.6999945242984207,
+   "ayanamsha_deg": {
+    "true_citra": 22.86324876720556,
+    "true_revati": 19.065200430172297,
+    "true_pushya": 21.748616797426592,
+    "true_mula": 23.602487670267635
+   }
+  },
+  {
+   "jd_tt": 2426890.8,
+   "t_centuries_tt": -0.6749952087611276,
+   "ayanamsha_deg": {
+    "true_citra": 22.900643022366495,
+    "true_revati": 19.09845703759953,
+    "true_pushya": 21.773465489862616,
+    "true_mula": 23.648642100626944
+   }
+  },
+  {
+   "jd_tt": 2427803.9,
+   "t_centuries_tt": -0.6499958932238219,
+   "ayanamsha_deg": {
+    "true_citra": 22.933001029658072,
+    "true_revati": 19.13519203278605,
+    "true_pushya": 21.818493520629204,
+    "true_mula": 23.672295047079217
+   }
+  },
+  {
+   "jd_tt": 2428717.0,
+   "t_centuries_tt": -0.6249965776865161,
+   "ayanamsha_deg": {
+    "true_citra": 22.970414921346645,
+    "true_revati": 19.16843011350295,
+    "true_pushya": 21.843353953836555,
+    "true_mula": 23.718454091772742
+   }
+  },
+  {
+   "jd_tt": 2429630.1,
+   "t_centuries_tt": -0.5999972621492103,
+   "ayanamsha_deg": {
+    "true_citra": 23.002756350900512,
+    "true_revati": 19.205183732646844,
+    "true_pushya": 21.888371025096163,
+    "true_mula": 23.7421058539594
+   }
+  },
+  {
+   "jd_tt": 2430543.2,
+   "t_centuries_tt": -0.5749979466119045,
+   "ayanamsha_deg": {
+    "true_citra": 23.040186272552006,
+    "true_revati": 19.23840680889583,
+    "true_pushya": 21.913243303970987,
+    "true_mula": 23.788266742420944
+   }
+  },
+  {
+   "jd_tt": 2431456.3,
+   "t_centuries_tt": -0.5499986310746116,
+   "ayanamsha_deg": {
+    "true_citra": 23.072515825251344,
+    "true_revati": 19.27517429672548,
+    "true_pushya": 21.958251584156287,
+    "true_mula": 23.811918788744777
+   }
+  },
+  {
+   "jd_tt": 2432369.4,
+   "t_centuries_tt": -0.5249993155373057,
+   "ayanamsha_deg": {
+    "true_citra": 23.109957664543316,
+    "true_revati": 19.308386599132064,
+    "true_pushya": 21.983132823690894,
+    "true_mula": 23.858081152848115
+   }
+  },
+  {
+   "jd_tt": 2433282.5,
+   "t_centuries_tt": -0.5,
+   "ayanamsha_deg": {
+    "true_citra": 23.142276702554597,
+    "true_revati": 19.345166377776593,
+    "true_pushya": 22.028135732263166,
+    "true_mula": 23.88173131614502
+   }
+  },
+  {
+   "jd_tt": 2434195.6,
+   "t_centuries_tt": -0.4750006844626942,
+   "ayanamsha_deg": {
+    "true_citra": 23.179731519502326,
+    "true_revati": 19.378367161469157,
+    "true_pushya": 22.05302184996887,
+    "true_mula": 23.927899735875712
+   }
+  },
+  {
+   "jd_tt": 2435108.7,
+   "t_centuries_tt": -0.45000136892538845,
+   "ayanamsha_deg": {
+    "true_citra": 23.212037892562535,
+    "true_revati": 19.415161117980347,
+    "true_pushya": 22.0980224239226,
+    "true_mula": 23.95154359956524
+   }
+  },
+  {
+   "jd_tt": 2436021.8,
+   "t_centuries_tt": -0.42500205338809544,
+   "ayanamsha_deg": {
+    "true_citra": 23.24950908032301,
+    "true_revati": 19.448347124314694,
+    "true_pushya": 22.122912551534114,
+    "true_mula": 23.99772139609263
+   }
+  },
+  {
+   "jd_tt": 2436934.9,
+   "t_centuries_tt": -0.40000273785078966,
+   "ayanamsha_deg": {
+    "true_citra": 23.28179859379526,
+    "true_revati": 19.485159448254194,
+    "true_pushya": 22.16790961453097,
+    "true_mula": 24.021356944335025
+   }
+  },
+  {
+   "jd_tt": 2437848.0,
+   "t_centuries_tt": -0.37500342231348394,
+   "ayanamsha_deg": {
+    "true_citra": 23.319289355884706,
+    "true_revati": 19.518327354345104,
+    "true_pushya": 22.192806381337988,
+    "true_mula": 24.067544051528728
+   }
+  },
+  {
+   "jd_tt": 2438761.1,
+   "t_centuries_tt": -0.35000410677617816,
+   "ayanamsha_deg": {
+    "true_citra": 23.351559624615163,
+    "true_revati": 19.55516070225974,
+    "true_pushya": 22.237795416616137,
+    "true_mula": 24.091173712777334
+   }
+  },
+  {
+   "jd_tt": 2439674.2,
+   "t_centuries_tt": -0.3250047912388724,
+   "ayanamsha_deg": {
+    "true_citra": 23.389071215876896,
+    "true_revati": 19.588308909037778,
+    "true_pushya": 22.26270400669881,
+    "true_mula": 24.13736624062733
+   }
+  },
+  {
+   "jd_tt": 2440587.3,
+   "t_centuries_tt": -0.30000547570157937,
+   "ayanamsha_deg": {
+    "true_citra": 23.421324044051943,
+    "true_revati": 19.625161737040003,
+    "true_pushya": 22.307681922287287,
+    "true_mula": 24.160994227544677
+   }
+  },
+  {
+   "jd_tt": 2441500.4,
+   "t_centuries_tt": -0.2750061601642736,
+   "ayanamsha_deg": {
+    "true_citra": 23.458852147359266,
+    "true_revati": 19.658294387041906,
+    "true_pushya": 22.332603487162743,
+    "true_mula": 24.207187906553543
+   }
+  },
+  {
+   "jd_tt": 2442413.5,
+   "t_centuries_tt": -0.2500068446269678,
+   "ayanamsha_deg": {
+    "true_citra": 23.491091537115324,
+    "true_revati": 19.6951627484695,
+    "true_pushya": 22.377570696265877,
+    "true_mula": 24.230816801645233
+   }
+  },
+  {
+   "jd_tt": 2443326.6,
+   "t_centuries_tt": -0.22500752908966207,
+   "ayanamsha_deg": {
+    "true_citra": 23.528633401807753,
+    "true_revati": 19.728282734778134,
+    "true_pushya": 22.402502425547056,
+    "true_mula": 24.277012204187997
+   }
+  },
+  {
+   "jd_tt": 2444239.7,
+   "t_centuries_tt": -0.2000082135523563,
+   "ayanamsha_deg": {
+    "true_citra": 23.560862044980723,
+    "true_revati": 19.765163661409872,
+    "true_pushya": 22.44746360513389,
+    "true_mula": 24.300639655588498
+   }
+  },
+  {
+   "jd_tt": 2445152.8,
+   "t_centuries_tt": -0.17500889801506328,
+   "ayanamsha_deg": {
+    "true_citra": 23.598416017310285,
+    "true_revati": 19.798272911273273,
+    "true_pushya": 22.472401182691954,
+    "true_mula": 24.346839567776613
+   }
+  },
+  {
+   "jd_tt": 2446065.9,
+   "t_centuries_tt": -0.1500095824777575,
+   "ayanamsha_deg": {
+    "true_citra": 23.630632630226273,
+    "true_revati": 19.835167429554076,
+    "true_pushya": 22.517359540432693,
+    "true_mula": 24.37046164222147
+   }
+  },
+  {
+   "jd_tt": 2446979.0,
+   "t_centuries_tt": -0.12501026694045175,
+   "ayanamsha_deg": {
+    "true_citra": 23.668201735241524,
+    "true_revati": 19.868263143535216,
+    "true_pushya": 22.542300721948834,
+    "true_mula": 24.416670393431673
+   }
+  },
+  {
+   "jd_tt": 2447892.1,
+   "t_centuries_tt": -0.10001095140314598,
+   "ayanamsha_deg": {
+    "true_citra": 23.70040279521251,
+    "true_revati": 19.90517472644177,
+    "true_pushya": 22.58725589444697,
+    "true_mula": 24.44028481698257
+   }
+  },
+  {
+   "jd_tt": 2448805.2,
+   "t_centuries_tt": -0.07501163586584021,
+   "ayanamsha_deg": {
+    "true_citra": 23.737991461689347,
+    "true_revati": 19.93825237697922,
+    "true_pushya": 22.61220337596913,
+    "true_mula": 24.486503181141018
+   }
+  },
+  {
+   "jd_tt": 2449718.3,
+   "t_centuries_tt": -0.050012320328547195,
+   "ayanamsha_deg": {
+    "true_citra": 23.770173794644904,
+    "true_revati": 19.97518434452445,
+    "true_pushya": 22.657152388274255,
+    "true_mula": 24.510110368076937
+   }
+  },
+  {
+   "jd_tt": 2450631.4,
+   "t_centuries_tt": -0.02501300479124143,
+   "ayanamsha_deg": {
+    "true_citra": 23.807782554015205,
+    "true_revati": 20.008243155958098,
+    "true_pushya": 22.682109744373633,
+    "true_mula": 24.55633541909731
+   }
+  },
+  {
+   "jd_tt": 2451544.5,
+   "t_centuries_tt": -1.3689253935660506e-05,
+   "ayanamsha_deg": {
+    "true_citra": 23.839946530836556,
+    "true_revati": 20.045195475382798,
+    "true_pushya": 22.72704796984408,
+    "true_mula": 24.579939943797115
+   }
+  },
+  {
+   "jd_tt": 2452457.6,
+   "t_centuries_tt": 0.024985626283370106,
+   "ayanamsha_deg": {
+    "true_citra": 23.87757359454318,
+    "true_revati": 20.078236979035864,
+    "true_pushya": 22.752018265694375,
+    "true_mula": 24.62616750683975
+   }
+  },
+  {
+   "jd_tt": 2453370.7,
+   "t_centuries_tt": 0.04998494182067587,
+   "ayanamsha_deg": {
+    "true_citra": 23.90972349609615,
+    "true_revati": 20.11520546708664,
+    "true_pushya": 22.796945623139948,
+    "true_mula": 24.64977261748561
+   }
+  },
+  {
+   "jd_tt": 2454283.8,
+   "t_centuries_tt": 0.07498425735796889,
+   "ayanamsha_deg": {
+    "true_citra": 23.947363829370687,
+    "true_revati": 20.148234691452046,
+    "true_pushya": 22.821927444657376,
+    "true_mula": 24.696000275402525
+   }
+  },
+  {
+   "jd_tt": 2455196.9,
+   "t_centuries_tt": 0.09998357289527465,
+   "ayanamsha_deg": {
+    "true_citra": 23.979502845282752,
+    "true_revati": 20.185216043003663,
+    "true_pushya": 22.866846493363596,
+    "true_mula": 24.719605957761246
+   }
+  },
+  {
+   "jd_tt": 2456110.0,
+   "t_centuries_tt": 0.12498288843258043,
+   "ayanamsha_deg": {
+    "true_citra": 24.0171555356593,
+    "true_revati": 20.218234160516204,
+    "true_pushya": 22.89183593312822,
+    "true_mula": 24.76583666379514
+   }
+  },
+  {
+   "jd_tt": 2457023.1,
+   "t_centuries_tt": 0.14998220396988618,
+   "ayanamsha_deg": {
+    "true_citra": 24.049283098572403,
+    "true_revati": 20.25522862194532,
+    "true_pushya": 22.936751000450357,
+    "true_mula": 24.789438476080193
+   }
+  },
+  {
+   "jd_tt": 2457936.2,
+   "t_centuries_tt": 0.17498151950719196,
+   "ayanamsha_deg": {
+    "true_citra": 24.08695034775087,
+    "true_revati": 20.28823370767776,
+    "true_pushya": 22.961744847504576,
+    "true_mula": 24.835676847539162
+   }
+  },
+  {
+   "jd_tt": 2458849.3,
+   "t_centuries_tt": 0.19998083504448497,
+   "ayanamsha_deg": {
+    "true_citra": 24.119063062397032,
+    "true_revati": 20.325244486457052,
+    "true_pushya": 23.00665754532858,
+    "true_mula": 24.859270773702235
+   }
+  },
+  {
+   "jd_tt": 2459762.4,
+   "t_centuries_tt": 0.22498015058179074,
+   "ayanamsha_deg": {
+    "true_citra": 24.156748203878493,
+    "true_revati": 20.358233267246476,
+    "true_pushya": 23.031655957558115,
+    "true_mula": 24.905519137468616
+   }
+  },
+  {
+   "jd_tt": 2460675.5,
+   "t_centuries_tt": 0.24997946611909652,
+   "ayanamsha_deg": {
+    "true_citra": 24.18884274626913,
+    "true_revati": 20.39526384479052,
+    "true_pushya": 23.076563080209297,
+    "true_mula": 24.929105691700613
+   }
+  },
+  {
+   "jd_tt": 2461588.6,
+   "t_centuries_tt": 0.27497878165640227,
+   "ayanamsha_deg": {
+    "true_citra": 24.22654916379861,
+    "true_revati": 20.428232645174262,
+    "true_pushya": 23.101571139225058,
+    "true_mula": 24.97536182914189
+   }
+  },
+  {
+   "jd_tt": 2462501.7,
+   "t_centuries_tt": 0.29997809719370805,
+   "ayanamsha_deg": {
+    "true_citra": 24.25862475187273,
+    "true_revati": 20.46528408645071,
+    "true_pushya": 23.146468509705613,
+    "true_mula": 24.998944317165922
+   }
+  },
+  {
+   "jd_tt": 2463414.8,
+   "t_centuries_tt": 0.32497741273100106,
+   "ayanamsha_deg": {
+    "true_citra": 24.296349825397755,
+    "true_revati": 20.498235266124993,
+    "true_pushya": 23.171489075261434,
+    "true_mula": 25.045203629611194
+   }
+  },
+  {
+   "jd_tt": 2464327.9,
+   "t_centuries_tt": 0.34997672826830684,
+   "ayanamsha_deg": {
+    "true_citra": 24.328410053915945,
+    "true_revati": 20.535304163596436,
+    "true_pushya": 23.21637514084466,
+    "true_mula": 25.06878615913365
+   }
+  },
+  {
+   "jd_tt": 2465241.0,
+   "t_centuries_tt": 0.3749760438056126,
+   "ayanamsha_deg": {
+    "true_citra": 24.36615014134148,
+    "true_revati": 20.568241326597786,
+    "true_pushya": 23.24140765879008,
+    "true_mula": 25.11504646112013
+   }
+  },
+  {
+   "jd_tt": 2466154.1,
+   "t_centuries_tt": 0.39997535934291834,
+   "ayanamsha_deg": {
+    "true_citra": 24.398198916650244,
+    "true_revati": 20.605323681539573,
+    "true_pushya": 23.286284885876427,
+    "true_mula": 25.1386296347888
+   }
+  },
+  {
+   "jd_tt": 2467067.2,
+   "t_centuries_tt": 0.4249746748802241,
+   "ayanamsha_deg": {
+    "true_citra": 24.435950656714425,
+    "true_revati": 20.63825036226399,
+    "true_pushya": 23.311325933216636,
+    "true_mula": 25.184891617287235
+   }
+  },
+  {
+   "jd_tt": 2467980.3,
+   "t_centuries_tt": 0.4499739904175171,
+   "ayanamsha_deg": {
+    "true_citra": 24.46798901545327,
+    "true_revati": 20.67534488029935,
+    "true_pushya": 23.35619822942121,
+    "true_mula": 25.208472571114157
+   }
+  },
+  {
+   "jd_tt": 2468893.4,
+   "t_centuries_tt": 0.4749733059548229,
+   "ayanamsha_deg": {
+    "true_citra": 24.50575376272198,
+    "true_revati": 20.708260013773838,
+    "true_pushya": 23.381244165743652,
+    "true_mula": 25.25474062171179
+   }
+  },
+  {
+   "jd_tt": 2469806.5,
+   "t_centuries_tt": 0.4999726214921287,
+   "ayanamsha_deg": {
+    "true_citra": 24.537778761024015,
+    "true_revati": 20.74536944794761,
+    "true_pushya": 23.42611331851228,
+    "true_mula": 25.278315511843914
+   }
+  },
+  {
+   "jd_tt": 2470719.6,
+   "t_centuries_tt": 0.5249719370294345,
+   "ayanamsha_deg": {
+    "true_citra": 24.575560686485062,
+    "true_revati": 20.77826893026571,
+    "true_pushya": 23.451164447198067,
+    "true_mula": 25.324592438797822
+   }
+  },
+  {
+   "jd_tt": 2471632.7,
+   "t_centuries_tt": 0.5499712525667402,
+   "ayanamsha_deg": {
+    "true_citra": 24.6075681113538,
+    "true_revati": 20.815397502706332,
+    "true_pushya": 23.496029077555022,
+    "true_mula": 25.34815942477013
+   }
+  },
+  {
+   "jd_tt": 2472545.8,
+   "t_centuries_tt": 0.5749705681040332,
+   "ayanamsha_deg": {
+    "true_citra": 24.64537037389246,
+    "true_revati": 20.848278055319838,
+    "true_pushya": 23.52108801911558,
+    "true_mula": 25.394445136490674
+   }
+  },
+  {
+   "jd_tt": 2473458.9,
+   "t_centuries_tt": 0.599969883641339,
+   "ayanamsha_deg": {
+    "true_citra": 24.67735853232162,
+    "true_revati": 20.88542773048141,
+    "true_pushya": 23.565943816113077,
+    "true_mula": 25.418006969200178
+   }
+  },
+  {
+   "jd_tt": 2474372.0,
+   "t_centuries_tt": 0.6249691991786448,
+   "ayanamsha_deg": {
+    "true_citra": 24.715181183809733,
+    "true_revati": 20.91828897471288,
+    "true_pushya": 23.591015154945495,
+    "true_mula": 25.464297241416034
+   }
+  },
+  {
+   "jd_tt": 2475285.1,
+   "t_centuries_tt": 0.6499685147159505,
+   "ayanamsha_deg": {
+    "true_citra": 24.747152521952444,
+    "true_revati": 20.955457550376195,
+    "true_pushya": 23.635859442510508,
+    "true_mula": 25.487858222581394
+   }
+  },
+  {
+   "jd_tt": 2476198.2,
+   "t_centuries_tt": 0.6749678302532564,
+   "ayanamsha_deg": {
+    "true_citra": 24.784990896313133,
+    "true_revati": 20.988304024797287,
+    "true_pushya": 23.66094357095389,
+    "true_mula": 25.534149232740617
+   }
+  },
+  {
+   "jd_tt": 2477111.3,
+   "t_centuries_tt": 0.6999671457905493,
+   "ayanamsha_deg": {
+    "true_citra": 24.816949966660616,
+    "true_revati": 21.025486963726507,
+    "true_pushya": 23.70577748712404,
+    "true_mula": 25.557711679778947
+   }
+  },
+  {
+   "jd_tt": 2478024.4,
+   "t_centuries_tt": 0.724966461327855,
+   "ayanamsha_deg": {
+    "true_citra": 24.85480122908558,
+    "true_revati": 21.05832164108847,
+    "true_pushya": 23.730871626291616,
+    "true_mula": 25.604003906788932
+   }
+  },
+  {
+   "jd_tt": 2478937.5,
+   "t_centuries_tt": 0.7499657768651609,
+   "ayanamsha_deg": {
+    "true_citra": 24.886749839404928,
+    "true_revati": 21.095516845065447,
+    "true_pushya": 23.775699787916807,
+    "true_mula": 25.62756486886525
+   }
+  },
+  {
+   "jd_tt": 2479850.6,
+   "t_centuries_tt": 0.7749650924024666,
+   "ayanamsha_deg": {
+    "true_citra": 24.924613290438344,
+    "true_revati": 21.128340732917877,
+    "true_pushya": 23.8007994187829,
+    "true_mula": 25.673861995734683
+   }
+  },
+  {
+   "jd_tt": 2480763.7,
+   "t_centuries_tt": 0.7999644079397724,
+   "ayanamsha_deg": {
+    "true_citra": 24.95654937800205,
+    "true_revati": 21.16555001319972,
+    "true_pushya": 23.845624722754366,
+    "true_mula": 25.69741725062545
+   }
+  },
+  {
+   "jd_tt": 2481676.8,
+   "t_centuries_tt": 0.8249637234770654,
+   "ayanamsha_deg": {
+    "true_citra": 24.994428342477704,
+    "true_revati": 21.19835997869859,
+    "true_pushya": 23.87072816273627,
+    "true_mula": 25.743723308457902
+   }
+  },
+  {
+   "jd_tt": 2482589.9,
+   "t_centuries_tt": 0.8499630390143712,
+   "ayanamsha_deg": {
+    "true_citra": 25.026348727653726,
+    "true_revati": 21.235586512647103,
+    "true_pushya": 23.915549681728123,
+    "true_mula": 25.76727135901632
+   }
+  },
+  {
+   "jd_tt": 2483503.0,
+   "t_centuries_tt": 0.8749623545516769,
+   "ayanamsha_deg": {
+    "true_citra": 25.064247247589265,
+    "true_revati": 21.268378331763813,
+    "true_pushya": 23.94066067727522,
+    "true_mula": 25.813585858546446
+   }
+  },
+  {
+   "jd_tt": 2484416.1,
+   "t_centuries_tt": 0.8999616700889826,
+   "ayanamsha_deg": {
+    "true_citra": 25.0961485600331,
+    "true_revati": 21.305625714789755,
+    "true_pushya": 23.985474263549406,
+    "true_mula": 25.837128064202318
+   }
+  },
+  {
+   "jd_tt": 2485329.2,
+   "t_centuries_tt": 0.9249609856262885,
+   "ayanamsha_deg": {
+    "true_citra": 25.13406720406823,
+    "true_revati": 21.338398559318932,
+    "true_pushya": 24.01059661703573,
+    "true_mula": 25.883447893827622
+   }
+  },
+  {
+   "jd_tt": 2486242.3,
+   "t_centuries_tt": 0.9499603011635814,
+   "ayanamsha_deg": {
+    "true_citra": 25.16595068968482,
+    "true_revati": 21.375665829216473,
+    "true_pushya": 24.055398666770856,
+    "true_mula": 25.90698852823442
+   }
+  },
+  {
+   "jd_tt": 2487155.4,
+   "t_centuries_tt": 0.9749596167008873,
+   "ayanamsha_deg": {
+    "true_citra": 25.20388716625081,
+    "true_revati": 21.408421789336217,
+    "true_pushya": 24.08053451439892,
+    "true_mula": 25.953310003228296
+   }
+  },
+  {
+   "jd_tt": 2488068.5,
+   "t_centuries_tt": 0.999958932238193,
+   "ayanamsha_deg": {
+    "true_citra": 25.235757177821114,
+    "true_revati": 21.445704636487562,
+    "true_pushya": 24.12532573007664,
+    "true_mula": 25.976851639095685
+   }
+  },
+  {
+   "jd_tt": 2488981.6,
+   "t_centuries_tt": 1.0249582477754988,
+   "ayanamsha_deg": {
+    "true_citra": 25.273706413976356,
+    "true_revati": 21.478448849369784,
+    "true_pushya": 24.15047265880733,
+    "true_mula": 26.023173242977407
+   }
+  },
+  {
+   "jd_tt": 2489894.7,
+   "t_centuries_tt": 1.0499575633128047,
+   "ayanamsha_deg": {
+    "true_citra": 25.305565764210854,
+    "true_revati": 21.515744305313547,
+    "true_pushya": 24.195256050930908,
+    "true_mula": 26.04671516739586
+   }
+  },
+  {
+   "jd_tt": 2490807.8,
+   "t_centuries_tt": 1.0749568788500976,
+   "ayanamsha_deg": {
+    "true_citra": 25.34352751090134,
+    "true_revati": 21.548477300611466,
+    "true_pushya": 24.220410059431572,
+    "true_mula": 26.09304043273744
+   }
+  },
+  {
+   "jd_tt": 2491720.9,
+   "t_centuries_tt": 1.0999561943874034,
+   "ayanamsha_deg": {
+    "true_citra": 25.375375445504602,
+    "true_revati": 21.585785808644914,
+    "true_pushya": 24.26518976381729,
+    "true_mula": 26.116578242829462
+   }
+  },
+  {
+   "jd_tt": 2492634.0,
+   "t_centuries_tt": 1.124955509924709,
+   "ayanamsha_deg": {
+    "true_citra": 25.413351882017253,
+    "true_revati": 21.61850562784963,
+    "true_pushya": 24.2903484107903,
+    "true_mula": 26.16291105396283
+   }
+  },
+  {
+   "jd_tt": 2493547.1,
+   "t_centuries_tt": 1.1499548254620149,
+   "ayanamsha_deg": {
+    "true_citra": 25.445184372685674,
+    "true_revati": 21.655831082561917,
+    "true_pushya": 24.335125096464424,
+    "true_mula": 26.18644114187731
+   }
+  },
+  {
+   "jd_tt": 2494460.2,
+   "t_centuries_tt": 1.1749541409993207,
+   "ayanamsha_deg": {
+    "true_citra": 25.483179262710166,
+    "true_revati": 21.688533998375476,
+    "true_pushya": 24.360289001886457,
+    "true_mula": 26.232783715262087
+   }
+  },
+  {
+   "jd_tt": 2495373.3,
+   "t_centuries_tt": 1.1999534565366137,
+   "ayanamsha_deg": {
+    "true_citra": 25.514993311751226,
+    "true_revati": 21.725879571058044,
+    "true_pushya": 24.405059334769845,
+    "true_mula": 26.256306956273193
+   }
+  },
+  {
+   "jd_tt": 2496286.4,
+   "t_centuries_tt": 1.2249527720739195,
+   "ayanamsha_deg": {
+    "true_citra": 25.553009038038255,
+    "true_revati": 21.758562884205674,
+    "true_pushya": 24.43023363802351,
+    "true_mula": 26.30265627919522
+   }
+  },
+  {
+   "jd_tt": 2497199.5,
+   "t_centuries_tt": 1.2499520876112251,
+   "ayanamsha_deg": {
+    "true_citra": 25.584804993209644,
+    "true_revati": 21.79592853164337,
+    "true_pushya": 24.47499346417112,
+    "true_mula": 26.326176793744935
+   }
+  },
+  {
+   "jd_tt": 2498112.6,
+   "t_centuries_tt": 1.274951403148531,
+   "ayanamsha_deg": {
+    "true_citra": 25.622838241168267,
+    "true_revati": 21.828595278519003,
+    "true_pushya": 24.50018107110452,
+    "true_mula": 26.372527708547693
+   }
+  },
+  {
+   "jd_tt": 2499025.7,
+   "t_centuries_tt": 1.2999507186858368,
+   "ayanamsha_deg": {
+    "true_citra": 25.654619580770657,
+    "true_revati": 21.865977722990408,
+    "true_pushya": 24.544928611739522,
+    "true_mula": 26.39604972986143
+   }
+  },
+  {
+   "jd_tt": 2499938.8,
+   "t_centuries_tt": 1.3249500342231297,
+   "ayanamsha_deg": {
+    "true_citra": 25.69266738272634,
+    "true_revati": 21.898630868408702,
+    "true_pushya": 24.570128676280802,
+    "true_mula": 26.442400821010494
+   }
+  },
+  {
+   "jd_tt": 2500851.9,
+   "t_centuries_tt": 1.3499493497604356,
+   "ayanamsha_deg": {
+    "true_citra": 25.72443778084704,
+    "true_revati": 21.93602624154437,
+    "true_pushya": 24.61486776139523,
+    "true_mula": 26.465923511751214
+   }
+  },
+  {
+   "jd_tt": 2501765.0,
+   "t_centuries_tt": 1.3749486652977412,
+   "ayanamsha_deg": {
+    "true_citra": 25.762497123655493,
+    "true_revati": 21.9686690381061,
+    "true_pushya": 24.64007603193511,
+    "true_mula": 26.51227649929467
+   }
+  },
+  {
+   "jd_tt": 2502678.1,
+   "t_centuries_tt": 1.399947980835047,
+   "ayanamsha_deg": {
+    "true_citra": 25.79425676797274,
+    "true_revati": 22.006076888876578,
+    "true_pushya": 24.684810397272827,
+    "true_mula": 26.535796525759224
+   }
+  },
+  {
+   "jd_tt": 2503591.2,
+   "t_centuries_tt": 1.4249472963723528,
+   "ayanamsha_deg": {
+    "true_citra": 25.832329853066113,
+    "true_revati": 22.03870741826671,
+    "true_pushya": 24.71002357261952,
+    "true_mula": 26.582156110244398
+   }
+  },
+  {
+   "jd_tt": 2504504.3,
+   "t_centuries_tt": 1.4499466119096458,
+   "ayanamsha_deg": {
+    "true_citra": 25.8640753363035,
+    "true_revati": 22.076130995514518,
+    "true_pushya": 24.754754416367263,
+    "true_mula": 26.605669832210026
+   }
+  },
+  {
+   "jd_tt": 2505417.4,
+   "t_centuries_tt": 1.4749459274469516,
+   "ayanamsha_deg": {
+    "true_citra": 25.902166453472887,
+    "true_revati": 22.108744992215577,
+    "true_pushya": 24.77997343322008,
+    "true_mula": 26.652038321442035
+   }
+  },
+  {
+   "jd_tt": 2506330.5,
+   "t_centuries_tt": 1.4999452429842575,
+   "ayanamsha_deg": {
+    "true_citra": 25.933894195897352,
+    "true_revati": 22.14618793058571,
+    "true_pushya": 24.824698922918515,
+    "true_mula": 26.675544789706976
+   }
+  },
+  {
+   "jd_tt": 2507243.6,
+   "t_centuries_tt": 1.524944558521563,
+   "ayanamsha_deg": {
+    "true_citra": 25.972005467271657,
+    "true_revati": 22.17878310349812,
+    "true_pushya": 24.849926780315684,
+    "true_mula": 26.72192097029648
+   }
+  },
+  {
+   "jd_tt": 2508156.7,
+   "t_centuries_tt": 1.549943874058869,
+   "ayanamsha_deg": {
+    "true_citra": 26.00371399401061,
+    "true_revati": 22.216247171188513,
+    "true_pushya": 24.894642362664655,
+    "true_mula": 26.745423324310764
+   }
+  },
+  {
+   "jd_tt": 2509069.8,
+   "t_centuries_tt": 1.5749431895961619,
+   "ayanamsha_deg": {
+    "true_citra": 26.041845159095658,
+    "true_revati": 22.248823487331265,
+    "true_pushya": 24.91988309131051,
+    "true_mula": 26.79180325528091
+   }
+  },
+  {
+   "jd_tt": 2509982.9,
+   "t_centuries_tt": 1.5999425051334677,
+   "ayanamsha_deg": {
+    "true_citra": 26.07353771367491,
+    "true_revati": 22.286305624644058,
+    "true_pushya": 24.964587165940657,
+    "true_mula": 26.81530538736297
+   }
+  },
+  {
+   "jd_tt": 2510896.0,
+   "t_centuries_tt": 1.6249418206707735,
+   "ayanamsha_deg": {
+    "true_citra": 26.111683391483922,
+    "true_revati": 22.318868377046783,
+    "true_pushya": 24.989840397234644,
+    "true_mula": 26.861685424495874
+   }
+  },
+  {
+   "jd_tt": 2511809.1,
+   "t_centuries_tt": 1.6499411362080791,
+   "ayanamsha_deg": {
+    "true_citra": 26.143364780705014,
+    "true_revati": 22.356363779197864,
+    "true_pushya": 25.034534358664814,
+    "true_mula": 26.88518960146814
+   }
+  },
+  {
+   "jd_tt": 2512722.2,
+   "t_centuries_tt": 1.674940451745385,
+   "ayanamsha_deg": {
+    "true_citra": 26.181522537956283,
+    "true_revati": 22.388915533524653,
+    "true_pushya": 25.059797508819344,
+    "true_mula": 26.931570339009852
+   }
+  },
+  {
+   "jd_tt": 2513635.3,
+   "t_centuries_tt": 1.699939767282678,
+   "ayanamsha_deg": {
+    "true_citra": 26.213193596222965,
+    "true_revati": 22.426423085545878,
+    "true_pushya": 25.104485546527314,
+    "true_mula": 26.955073286241714
+   }
+  },
+  {
+   "jd_tt": 2514548.4,
+   "t_centuries_tt": 1.7249390828199838,
+   "ayanamsha_deg": {
+    "true_citra": 26.251363925671228,
+    "true_revati": 22.458963659692586,
+    "true_pushya": 25.129754411741175,
+    "true_mula": 27.001458997707914
+   }
+  },
+  {
+   "jd_tt": 2515461.5,
+   "t_centuries_tt": 1.7499383983572896,
+   "ayanamsha_deg": {
+    "true_citra": 26.2830219761683,
+    "true_revati": 22.49648577686372,
+    "true_pushya": 25.17443938791169,
+    "true_mula": 27.02495606996922
+   }
+  },
+  {
+   "jd_tt": 2516374.6,
+   "t_centuries_tt": 1.7749377138945952,
+   "ayanamsha_deg": {
+    "true_citra": 26.321208629144337,
+    "true_revati": 22.529011577878407,
+    "true_pushya": 25.19971287862944,
+    "true_mula": 27.071350551668615
+   }
+  },
+  {
+   "jd_tt": 2517287.7,
+   "t_centuries_tt": 1.799937029431901,
+   "ayanamsha_deg": {
+    "true_citra": 26.35285012117197,
+    "true_revati": 22.56655185377292,
+    "true_pushya": 25.24439312386258,
+    "true_mula": 27.09484066616534
+   }
+  },
+  {
+   "jd_tt": 2518200.8,
+   "t_centuries_tt": 1.824936344969194,
+   "ayanamsha_deg": {
+    "true_citra": 26.39105689013718,
+    "true_revati": 22.59905889109922,
+    "true_pushya": 25.269675139759784,
+    "true_mula": 27.141243102108092
+   }
+  },
+  {
+   "jd_tt": 2519113.9,
+   "t_centuries_tt": 1.8499356605064998,
+   "ayanamsha_deg": {
+    "true_citra": 26.42267929044968,
+    "true_revati": 22.636620112296214,
+    "true_pushya": 25.314346355159984,
+    "true_mula": 27.16472837931576
+   }
+  },
+  {
+   "jd_tt": 2520027.0,
+   "t_centuries_tt": 1.8749349760438057,
+   "ayanamsha_deg": {
+    "true_citra": 26.460905969553295,
+    "true_revati": 22.669108309411513,
+    "true_pushya": 25.33964079020609,
+    "true_mula": 27.211134998016917
+   }
+  },
+  {
+   "jd_tt": 2520940.1,
+   "t_centuries_tt": 1.8999342915811115,
+   "ayanamsha_deg": {
+    "true_citra": 26.492511376555143,
+    "true_revati": 22.70668865320806,
+    "true_pushya": 25.384299734684504,
+    "true_mula": 27.23462000748441
+   }
+  },
+  {
+   "jd_tt": 2521853.2,
+   "t_centuries_tt": 1.924933607118417,
+   "ayanamsha_deg": {
+    "true_citra": 26.530754992636105,
+    "true_revati": 22.73916082765669,
+    "true_pushya": 25.409607879623252,
+    "true_mula": 27.281027402914958
+   }
+  },
+  {
+   "jd_tt": 2522766.3,
+   "t_centuries_tt": 1.94993292265571,
+   "ayanamsha_deg": {
+    "true_citra": 26.56234728774953,
+    "true_revati": 22.776756385859642,
+    "true_pushya": 25.454256095905976,
+    "true_mula": 27.304513587687552
+   }
+  },
+  {
+   "jd_tt": 2523679.4,
+   "t_centuries_tt": 1.9749322381930159,
+   "ayanamsha_deg": {
+    "true_citra": 26.600603199971403,
+    "true_revati": 22.809217320328003,
+    "true_pushya": 25.47957458057158,
+    "true_mula": 27.350921454598733
    }
   }
  ]

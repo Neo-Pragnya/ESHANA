@@ -255,7 +255,7 @@ sequenceDiagram
 | 🧪 **Research (experimental)** | each score is written up first (factors, weights, worked examples); one window-ranking model, labelled experimental |
 
 <details>
-<summary><b>🌌 The ten ayanāṃśas</b></summary>
+<summary><b>🌌 The fourteen ayanāṃśas</b></summary>
 
 | id | | id | |
 |---|---|---|---|
@@ -264,9 +264,12 @@ sequenceDiagram
 | `krishnamurti` | KP (the default for KP horary) | `sassanian` | Sassanian |
 | `fagan_bradley` | the Western sidereal standard | `deluce` | De Luce |
 | `yukteshwar` | Sri Yukteshwar | `djwhal_khul` | Djwhal Khul |
+| `true_citra` | Spica held at 180° | `true_pushya` | δ Cancri held at 106° |
+| `true_revati` | ζ Piscium held at 359°50′ | `true_mula` | λ Scorpii held at 240° |
 
-Each is defined by its epoch and rate (`info` → `ayanamsha_definitions`) and checked against an independent reference
-from 1800 to 2100: worst error 0.05″.
+Each mean model is defined by its epoch and rate (`info` → `ayanamsha_definitions`) and checked against an
+independent reference from 1800 to 2100: worst error 0.05″. The four true models follow their star (Hipparcos
+position and proper motion, with aberration and light deflection): within 0.62″ of the reference over 1800–2200.
 
 </details>
 
@@ -499,7 +502,7 @@ Fields of each: [docs/reference/request.md](docs/reference/request.md).
 | `eshana human-design` | Human Design: design instant, gates, lines, channels, type, authority, profile |
 | `eshana numerology` | Name and birth-date numerology |
 | `eshana compare` | Same input under two configurations, with a diff of what changed |
-| `eshana graph` | Symbolic graph of a chart: json, mermaid or graphml |
+| `eshana graph` | Symbolic graph of a chart: json, mermaid, graphml, svg, drawio or chitkala |
 | `eshana panchanga` | Panchanga and day divisions (sunrise, tithi, nakshatra, yoga, karana, hora, choghadiya, rahu kalam) |
 | `eshana ashtakavarga-transits` | Transit Ashtakavarga: the natal BAV/SAV cells each graha reads, as segments between ingresses |
 | `eshana muhurta` | Muhurta windows: factor timelines over a range composed under a profile and constraints |
@@ -534,7 +537,7 @@ Every command prints one JSON envelope; `--compact` for one line. Errors print a
 
 | Family | Method ids |
 |---|---|
-| `ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` |
+| `ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul`, `true_citra`, `true_revati`, `true_pushya`, `true_mula` |
 | `house_system` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` |
 | `node_model` | `mean`, `true` |
 | `divisional_chart` | `d1`, `d2`, `d3`, `d4`, `d5`, `d6`, `d7`, `d8`, `d9`, `d10`, `d12`, `d16`, `d20`, `d24`, `d27`, `d30`, `d40`, `d45`, `d60` |

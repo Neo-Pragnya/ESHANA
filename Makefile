@@ -1,5 +1,5 @@
 .PHONY: gallery help install fmt fmt-check lint test py-test verify build build-release wheel acceptance acceptance-wheel \
-        scan deny audit golden accuracy demo docs-check docs-site tracking tracking-check clean \
+        scan deny audit fuzz perf sbom golden accuracy demo docs-check docs-site tracking tracking-check clean \
         accuracy-suite accuracy-report reference diagrams reports dist dist-linux publish publish-test
 
 VERSION := $(shell sed -n 's/^version = "\(.*\)"/\1/p' crates/eshana-python/pyproject.toml | head -1)
@@ -99,11 +99,19 @@ gallery: reports
 
 # ── release (docs/guides/publishing.md) ───────────────────────────────────────────────────────────────────────
 # Files are versioned, so publish uploads only this version's files from dist/.
+# The JavaScript package (bindings/js): the WebAssembly engine next to its loader, then its tests (with CLI parity).
+js: build-release wasm
+	cp target/wasm32-unknown-unknown/release/eshana_wasm.wasm bindings/js/eshana_engine.wasm
+	cd bindings/js && ESHANA_BIN=$(CURDIR)/target/release/eshana node test.mjs
+
 dist: build-release wasm
 	python3 scripts/readme_sections.py
 	python3 scripts/pypi_readme.py
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin sdist --out ../../dist
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
+# the SBOM for what is in dist/ (SEC-03); the attest workflow writes the published one after upload
+sbom:
+	python3 scripts/sbom.py --out dist/eshana-$(VERSION).cdx.json --dist dist
 dist-linux: wasm
 	rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --zig \
@@ -165,6 +173,15 @@ preview-serve: preview
 # ── supply chain ─────────────────────────────────────────────────────────────────────────────────────────────
 deny:
 	cargo deny check
+# Benchmarks with a regression gate (PERF-01): a release build, budgets everywhere, this machine's baseline when recorded
+perf: build-release
+	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv --release
+	.venv/bin/python scripts/bench.py --bin target/release/eshana $(PERF_ARGS)
+# Fuzz the input and time parsers (QA-06): nightly + cargo-fuzz; FUZZ_SECONDS per target, seeds in fuzz/seeds
+FUZZ_SECONDS ?= 60
+fuzz:
+	cd fuzz && for t in time_parsers request_json chart_fields; do mkdir -p corpus/$$t && \
+	  cargo +nightly fuzz run $$t corpus/$$t seeds/$$t -- -max_total_time=$(FUZZ_SECONDS) -timeout=30 -rss_limit_mb=4096 || exit 1; done
 audit:
 	cargo audit
 scan: wheel

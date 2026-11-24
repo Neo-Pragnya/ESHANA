@@ -171,7 +171,11 @@ pub fn registry() -> Vec<(&'static str, Vec<Method>)> {
             m(
                 a.id(),
                 st,
-                "sidereal offset; `info.ayanamsha_definitions` gives its epoch, frame and source",
+                if a.id().starts_with("true_") {
+                    "follows its anchor star (Hipparcos); `info.ayanamsha_definitions` gives the star and frame"
+                } else {
+                    "sidereal offset; `info.ayanamsha_definitions` gives its epoch, frame and source"
+                },
             )
         })
         .collect();

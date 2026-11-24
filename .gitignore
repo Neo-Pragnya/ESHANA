@@ -31,3 +31,7 @@ website/public/gallery/
 
 # built by `make wasm`
 crates/eshana-python/python/eshana/data/eshana_engine.wasm
+fuzz/target/
+fuzz/corpus/
+fuzz/artifacts/
+fuzz/coverage/

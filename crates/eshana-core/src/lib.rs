@@ -336,11 +336,19 @@ pub enum Ayanamsha {
     Deluce,
     /// Djwhal Khul.
     DjwhalKhul,
+    /// True Citrā: Spica's apparent position held at 180° (AYA-02).
+    TrueCitra,
+    /// True Revatī: ζ Piscium held at 359°50′.
+    TrueRevati,
+    /// True Puṣya: δ Cancri held at 106°.
+    TruePushya,
+    /// True Mūla: λ Scorpii held at 240°.
+    TrueMula,
 }
 
 impl Ayanamsha {
     /// Every supported model.
-    pub const ALL: [Ayanamsha; 10] = [
+    pub const ALL: [Ayanamsha; 14] = [
         Ayanamsha::Lahiri,
         Ayanamsha::Raman,
         Ayanamsha::Krishnamurti,
@@ -351,6 +359,10 @@ impl Ayanamsha {
         Ayanamsha::Sassanian,
         Ayanamsha::Deluce,
         Ayanamsha::DjwhalKhul,
+        Ayanamsha::TrueCitra,
+        Ayanamsha::TrueRevati,
+        Ayanamsha::TruePushya,
+        Ayanamsha::TrueMula,
     ];
 
     /// Stable id.
@@ -367,6 +379,10 @@ impl Ayanamsha {
             Ayanamsha::Sassanian => "sassanian",
             Ayanamsha::Deluce => "deluce",
             Ayanamsha::DjwhalKhul => "djwhal_khul",
+            Ayanamsha::TrueCitra => "true_citra",
+            Ayanamsha::TrueRevati => "true_revati",
+            Ayanamsha::TruePushya => "true_pushya",
+            Ayanamsha::TrueMula => "true_mula",
         }
     }
 
@@ -376,6 +392,10 @@ impl Ayanamsha {
     /// [`EshanaError::Input`] for an unknown model.
     pub fn parse(s: &str) -> Result<Ayanamsha> {
         let s = s.trim().to_ascii_lowercase().replace(['-', ' '], "_");
+        let s = match s.as_str() {
+            "true_chitra" | "true_chitrapaksha" | "true_citrapaksha" => "true_citra".to_string(),
+            _ => s,
+        };
         Ayanamsha::ALL
             .into_iter()
             .find(|a| a.id() == s)

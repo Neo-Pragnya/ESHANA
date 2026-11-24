@@ -109,11 +109,15 @@ pub fn build(env: &Value) -> Value {
             let id = d["id"].as_str().unwrap_or("?");
             let rule = d["rule_version"].as_str().unwrap_or("");
             let ep = d["epistemic"].as_str().unwrap_or("tradition_rule");
+            // a name, a sign or an aspect; a bhāva by its number; otherwise the id alone
+            let house = d["value"]["house"].as_u64().map(|h| format!("house {h}"));
             let label = d["value"]["name"]
                 .as_str()
                 .or_else(|| d["value"]["rashi"].as_str())
                 .or_else(|| d["value"]["aspect"].as_str())
-                .unwrap_or(id);
+                .map(str::to_string)
+                .or(house)
+                .unwrap_or_else(|| id.to_string());
             g.node(
                 &format!("attr:{id}"),
                 "derived_attribute",
@@ -212,6 +216,110 @@ fn esc_mermaid(s: &str) -> String {
         .replace(['[', ']', '(', ')', '{', '}', '|', '<', '>'], " ")
 }
 
+/// A deterministic layout: one column per node type (in order of first appearance), nodes stacked in each column.
+/// Returns (x, y) per node index, and the canvas width and height.
+fn layout(nodes: &[Value]) -> (Vec<(f64, f64)>, f64, f64) {
+    let (col_w, row_h, w, h0) = (280.0, 46.0, 240.0, 60.0);
+    let mut types: Vec<String> = vec![];
+    let mut rows: Vec<usize> = vec![];
+    let mut pos = vec![];
+    for n in nodes {
+        let t = n["type"].as_str().unwrap_or("").to_string();
+        let c = types.iter().position(|x| *x == t).unwrap_or_else(|| {
+            types.push(t);
+            rows.push(0);
+            types.len() - 1
+        });
+        pos.push((20.0 + c as f64 * col_w, h0 + rows[c] as f64 * row_h));
+        rows[c] += 1;
+    }
+    let width = 40.0 + types.len() as f64 * col_w - (col_w - w);
+    let height = h0 + rows.iter().copied().max().unwrap_or(1) as f64 * row_h + 20.0;
+    (pos, width, height)
+}
+
+/// A label that fits a 240-px box at 12 px (about 36 characters), with an ellipsis; the full text is in the tooltip.
+fn short(label: &str) -> String {
+    if label.chars().count() <= 36 {
+        label.to_string()
+    } else {
+        label.chars().take(35).collect::<String>() + "…"
+    }
+}
+
+/// Fill colour and border of a node by its epistemic layer (as in the Mermaid export).
+fn colours(epistemic: &str) -> (&'static str, &'static str) {
+    match epistemic {
+        "tradition_rule" => ("#fff1d6", "#b07a12"),
+        "speculative_interpretation" => ("#f6dcdc", "#aa3333"),
+        _ => ("#dff3e3", "#2f7d4a"),
+    }
+}
+
+/// The graph as a CHITKALA living-graph document (GRA-03): its fixture schema (`metadata`, `universes`, `nodes`,
+/// `edges`, `sources`; see CHITKALA's `Ideation/sample-graph.json`). Each node type is a universe placed on a ring;
+/// calculated nodes are tagged `verified`, tradition rules `traditional`, the rest `context`; every edge is in the
+/// `astrology` lane, approved when calculated and `proposed` when it is a traditional correspondence. Positions are
+/// deterministic, so the same chart always draws the same way.
+fn chitkala(g: &Value) -> Value {
+    let nodes = g["nodes"].as_array().cloned().unwrap_or_default();
+    let mut types: Vec<String> = vec![];
+    for n in &nodes {
+        let t = n["type"].as_str().unwrap_or("").to_string();
+        if !types.contains(&t) {
+            types.push(t);
+        }
+    }
+    let centre = |k: usize| {
+        let a = k as f64 / types.len().max(1) as f64 * std::f64::consts::TAU;
+        [
+            (300.0 * a.cos()).round(),
+            (220.0 * a.sin()).round(),
+            (40.0 * (2.0 * a).sin()).round(),
+        ]
+    };
+    let universes: Vec<Value> = types
+        .iter()
+        .enumerate()
+        .map(|(k, t)| {
+            json!({"id": t, "label": t.replace('_', " "), "symbol": "✦",
+        "desc": format!("ESHANA {} nodes", t.replace('_', " ")), "center": centre(k)})
+        })
+        .collect();
+    let mut count: Vec<usize> = vec![0; types.len()];
+    let out_nodes: Vec<Value> = nodes.iter().map(|n| {
+        let t = n["type"].as_str().unwrap_or("");
+        let k = types.iter().position(|x| x == t).unwrap_or(0);
+        let i = count[k];
+        count[k] += 1;
+        let c = centre(k);
+        let (s, q) = ((i as f64 * 2.399).sin(), (i as f64 * 2.399).cos()); // the golden angle spreads them evenly
+        let r = 18.0 + 9.0 * (i as f64).sqrt();
+        let tag = match n["epistemic"].as_str().unwrap_or("") {
+            "calculated" => "verified",
+            "tradition_rule" => "traditional",
+            _ => "context",
+        };
+        json!({"id": n["id"], "label": n["label"], "cluster": t, "summary": format!("{} ({})", n["label"].as_str().unwrap_or(""), n["epistemic"].as_str().unwrap_or("")),
+               "tag": tag, "x": (c[0] + r * s).round(), "y": (c[1] + r * q).round(), "z": c[2]})
+    }).collect();
+    let edges: Vec<Value> = g["edges"].as_array().into_iter().flatten().enumerate().map(|(i, e)| {
+        let traditional = e["relation_class"] == "traditional_correspondence";
+        json!({"id": format!("edge{i}"), "from": e["from"], "to": e["to"], "label": e["kind"],
+               "status": if traditional { "proposed" } else { "approved" }, "epistemic_lane": "astrology",
+               "review_status": if traditional { "candidate" } else { "engine_computed" },
+               "claim_id": format!("claim:eshana:edge{i}"), "evidence_source_ids": ["source:eshana"],
+               "evidence_grade": if traditional { "tradition_rule" } else { "computed" }, "rule_version": e["rule_version"]})
+    }).collect();
+    json!({
+        "metadata": {"name": "ESHANA chart graph", "demoOnly": false, "schemaStatus": "chitkala_fixture_schema",
+                     "epistemicNotice": "Calculated positions and named tradition rules; no edge is a causal or predictive claim",
+                     "proposedEdgesNotEvidence": true, "sourceAcknowledgements": ["ESHANA engine"]},
+        "universes": universes, "nodes": out_nodes, "edges": edges,
+        "sources": [{"id": "source:eshana", "title": "ESHANA symbolic graph", "uri": "https://neo-pragnya.github.io/ESHANA/", "role": "computed chart and named rules"}],
+    })
+}
+
 /// Export a chart envelope's graph in a given format.
 ///
 /// # Errors
@@ -266,8 +374,76 @@ pub fn export(env: &Value, format: &str) -> Result<Value> {
                 json!({"schema_version": SCHEMA_VERSION, "kind": "symbolic_graph_export", "format": "graphml", "content": s}),
             )
         }
+        "svg" => {
+            let nodes = g["nodes"].as_array().cloned().unwrap_or_default();
+            let (pos, width, height) = layout(&nodes);
+            let idx = |id: &str| nodes.iter().position(|n| n["id"] == id);
+            let mut s = format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width:.0} {height:.0}\" width=\"{width:.0}\" height=\"{height:.0}\" role=\"img\" aria-label=\"ESHANA symbolic graph\">\n<title>ESHANA symbolic graph</title>\n<rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n<g fill=\"none\" stroke-width=\"1.2\">\n");
+            for e in g["edges"].as_array().into_iter().flatten() {
+                let (Some(a), Some(b)) = (
+                    idx(e["from"].as_str().unwrap_or("")),
+                    idx(e["to"].as_str().unwrap_or("")),
+                ) else {
+                    continue;
+                };
+                let ((x1, y1), (x2, y2)) = ((pos[a].0 + 240.0, pos[a].1 + 15.0), (pos[b].0, pos[b].1 + 15.0));
+                let dash = if e["relation_class"] == "traditional_correspondence" {
+                    " stroke-dasharray=\"5 4\""
+                } else {
+                    ""
+                };
+                s.push_str(&format!("  <path d=\"M{x1:.0} {y1:.0} C{:.0} {y1:.0} {:.0} {y2:.0} {x2:.0} {y2:.0}\" stroke=\"#8a8fa8\"{dash}><title>{}</title></path>\n",
+                    (x1 + x2) / 2.0, (x1 + x2) / 2.0, esc_xml(e["kind"].as_str().unwrap_or(""))));
+            }
+            s.push_str("</g>\n<g font-family=\"system-ui, sans-serif\" font-size=\"12\">\n");
+            for (i, n) in nodes.iter().enumerate() {
+                let (fill, stroke) = colours(n["epistemic"].as_str().unwrap_or(""));
+                let (x, y) = pos[i];
+                s.push_str(&format!("  <g><rect x=\"{x:.0}\" y=\"{y:.0}\" width=\"240\" height=\"30\" rx=\"6\" fill=\"{fill}\" stroke=\"{stroke}\"/><text x=\"{:.0}\" y=\"{:.0}\" fill=\"#1d1f2a\">{}</text><title>{} ({})</title></g>\n",
+                    x + 8.0, y + 19.0, esc_xml(&short(n["label"].as_str().unwrap_or(""))), esc_xml(n["label"].as_str().unwrap_or("")), esc_xml(n["type"].as_str().unwrap_or(""))));
+            }
+            s.push_str("</g>\n</svg>\n");
+            Ok(
+                json!({"schema_version": SCHEMA_VERSION, "kind": "symbolic_graph_export", "format": "svg", "content": s}),
+            )
+        }
+        "drawio" => {
+            let nodes = g["nodes"].as_array().cloned().unwrap_or_default();
+            let (pos, _, _) = layout(&nodes);
+            let idx = |id: &str| nodes.iter().position(|n| n["id"] == id);
+            let mut s = String::from("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mxfile host=\"ESHANA\">\n  <diagram name=\"ESHANA symbolic graph\" id=\"eshana\">\n    <mxGraphModel grid=\"1\" gridSize=\"10\">\n      <root>\n        <mxCell id=\"0\"/>\n        <mxCell id=\"1\" parent=\"0\"/>\n");
+            for (i, n) in nodes.iter().enumerate() {
+                let (fill, stroke) = colours(n["epistemic"].as_str().unwrap_or(""));
+                let (x, y) = pos[i];
+                s.push_str(&format!("        <mxCell id=\"n{i}\" value=\"{}\" tooltip=\"{} ({})\" style=\"rounded=1;whiteSpace=wrap;fillColor={fill};strokeColor={stroke};\" vertex=\"1\" parent=\"1\">\n          <mxGeometry x=\"{x:.0}\" y=\"{y:.0}\" width=\"240\" height=\"30\" as=\"geometry\"/>\n        </mxCell>\n",
+                    esc_xml(n["label"].as_str().unwrap_or("")), esc_xml(n["id"].as_str().unwrap_or("")), esc_xml(n["type"].as_str().unwrap_or(""))));
+            }
+            for (k, e) in g["edges"].as_array().into_iter().flatten().enumerate() {
+                let (Some(a), Some(b)) = (
+                    idx(e["from"].as_str().unwrap_or("")),
+                    idx(e["to"].as_str().unwrap_or("")),
+                ) else {
+                    continue;
+                };
+                let dash = if e["relation_class"] == "traditional_correspondence" {
+                    "dashed=1;"
+                } else {
+                    ""
+                };
+                s.push_str(&format!("        <mxCell id=\"e{k}\" value=\"{}\" style=\"endArrow=block;{dash}\" edge=\"1\" parent=\"1\" source=\"n{a}\" target=\"n{b}\">\n          <mxGeometry relative=\"1\" as=\"geometry\"/>\n        </mxCell>\n",
+                    esc_xml(e["kind"].as_str().unwrap_or(""))));
+            }
+            s.push_str("      </root>\n    </mxGraphModel>\n  </diagram>\n</mxfile>\n");
+            Ok(
+                json!({"schema_version": SCHEMA_VERSION, "kind": "symbolic_graph_export", "format": "drawio", "content": s}),
+            )
+        }
+        "chitkala" => Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "symbolic_graph_export", "format": "chitkala",
+                                "content": serde_json::to_string_pretty(&chitkala(&g)).expect("json")}),
+        ),
         o => Err(EshanaError::Input(format!(
-            "unknown graph format '{o}' (json, mermaid, graphml)"
+            "unknown graph format '{o}' (json, mermaid, graphml, svg, drawio, chitkala)"
         ))),
     }
 }

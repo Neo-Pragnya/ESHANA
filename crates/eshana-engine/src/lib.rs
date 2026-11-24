@@ -32,6 +32,7 @@ pub mod progress;
 pub mod research;
 pub mod rising;
 pub mod search;
+pub mod stars;
 pub mod synthetic;
 pub mod vargas_ext;
 pub mod vedic;

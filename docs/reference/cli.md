@@ -33,7 +33,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `--spk PATH\|NAME` | JPL SPK kernel (or `ESHANA_SPK`); a catalogue name such as `de440` is looked up in the kernel folder | none |
 | `--topocentric` | positions as seen from the place (parallax) | geocentric |
 | `--zodiac` | `tropical`, `sidereal` | tropical (sidereal for `chart vedic`) |
-| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
+| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul`, `true_citra`, `true_revati`, `true_pushya`, `true_mula` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
 | `--houses` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` | `whole_sign` (recorded) |
 | `--node` | `mean`, `true` | `mean` (recorded); `true` for `human-design` |
 | `--bodies a,b,c` | body ids | ten planets + the node |
@@ -55,7 +55,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana human-design` | design instant, activations, BodyGraph |
 | `eshana numerology --name N --dob D [--school S] [--no-master] [--y-vowel] [--life-path-method M] [--year Y]` | name and date numbers |
 | `eshana compare vedic\|western ... --a KEY=VAL --b KEY=VAL` | the same input under two configurations (keys: `provider`, `zodiac`, `ayanamsha`, `house_system`, `node_model`) |
-| `eshana graph vedic\|western ... --format json\|mermaid\|graphml` | a typed symbolic graph; mermaid and graphml print raw text |
+| `eshana graph vedic\|western ... --format json\|mermaid\|graphml\|svg\|drawio\|chitkala` | a typed symbolic graph; mermaid, graphml, svg and drawio print raw text |
 | `eshana panchanga ... [--natal-moon DEG] [--sunrise C]` | pañcāṅga, rise and set, horā, choghaḍiyā, Rāhu kālam, special lagnas; Tārā and Candra bala with a natal Moon |
 | `eshana matching --a D,T,TZ,LAT,LON --b ... [--ayanamsha A]` | aṣṭakūṭa compatibility with Manglik flags |
 | `eshana ephemeris --start T --step-days N --count N [--bodies ...]` | a longitude table (transits, progressions) |

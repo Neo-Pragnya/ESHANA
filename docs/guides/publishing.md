@@ -59,6 +59,23 @@ uv run --no-project --with eshana==<version> -- eshana-report --date 2000-01-01 
 
 Then record the release in `planning/backlog.json` (`BIND-06` → `released`) and regenerate `TRACKING.md`.
 
+### Attestations, SBOM and the GitHub release
+
+Once the files are on PyPI, run the **attest** workflow (`gh workflow run attest.yml -f version=<version>`, or
+Actions → attest → *Run workflow*; the workflow must already be on `main`). It downloads exactly the files PyPI
+serves, checks them against PyPI's SHA-256, writes a CycloneDX SBOM ([scripts/sbom.py](../../scripts/sbom.py): every
+Rust crate compiled into the wheel, with licences) and `SHA256SUMS`, signs build-provenance and SBOM attestations with
+GitHub's Sigstore-backed service, and creates the GitHub release `v<version>` with the changelog section and all of
+those files attached. Anyone can then check a download:
+
+```bash
+gh attestation verify eshana-<version>-<tags>.whl --repo Neo-Pragnya/ESHANA
+```
+
+The wheels are built on the maintainer's machine, so the provenance says which workflow and commit observed those
+digests, not that GitHub built them; tag-built wheels (section 6) would make it build provenance in full.
+`make sbom` writes the same SBOM for a local `dist/` before upload.
+
 ## 5. Update the website
 
 The docs site (GitHub Pages) is built by `.github/workflows/docs-site.yml` from `main`. A release is not finished until

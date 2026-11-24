@@ -1,0 +1,41 @@
+# Fuzz targets for the input and time parsers (QA-06). Not a workspace member: cargo-fuzz needs a nightly toolchain.
+#   make fuzz                    # every target for FUZZ_SECONDS each (default 60), from the checked-in seeds
+#   cargo +nightly fuzz run time_parsers -- -max_total_time=600
+[package]
+name = "eshana-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+eshana-time = { path = "../crates/eshana-time" }
+eshana-engine = { path = "../crates/eshana-engine" }
+serde_json = "1"
+
+[[bin]]
+name = "time_parsers"
+path = "fuzz_targets/time_parsers.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "request_json"
+path = "fuzz_targets/request_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "chart_fields"
+path = "fuzz_targets/chart_fields.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]

@@ -25,6 +25,11 @@ If a result surprises you, the answer is in this page or in the result's `proven
   carried by IAU 2006 general precession (5028.796195″ per century plus a quadratic term). Lahiri's anchor,
   23.857092°, follows from the Calendar Reform Committee value of 23°15′00.658″ at 1956-03-21. Measured deviation from
   the Swiss Ephemeris over 1950–2040 is under 0.0006° (2″).
+- **True (star-anchored) ayanāṃśas**: `true_citra` (Spica at 180°), `true_revati` (ζ Psc at 359°50′), `true_pushya`
+  (δ Cnc at 106°) and `true_mula` (λ Sco at 240°). The star's Hipparcos position and proper motion (new reduction,
+  J1991.25) are carried to the date, precessed to the mean equinox of date and given annual aberration and the Sun's
+  light deflection, so the apparent star sits exactly on its anchor; nutation is left out on both sides, as for the
+  mean models. Within 0.62″ of the Swiss Ephemeris true modes at 160 instants over 1800–2200.
 - **Sign boundaries** are half-open: `[0°, 30°)` is Aries/Meṣa; exactly 30° is Taurus/Vṛṣabha.
 
 ## Time
