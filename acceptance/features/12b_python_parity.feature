@@ -40,3 +40,19 @@ Feature: The Python facade and the CLI agree
     When I run "python typed_error.py"
     Then it succeeds
     And the output contains "ESH-RANGE"
+
+  Scenario: The MCP server lists its tools and computes a chart over stdio
+    When I run "eshana-mcp" with input:
+      """
+      {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "acceptance", "version": "1"}}}
+      {"jsonrpc": "2.0", "method": "notifications/initialized"}
+      {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}
+      {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "create_vedic_chart", "arguments": {"date": "1990-05-15", "time": "14:30", "timezone": "Asia/Kolkata", "latitude": 28.6139, "longitude": 77.209}}}
+      {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "create_vedic_chart", "arguments": {"date": "1990-05-15", "time": "14:30", "timezone": "Mars/Olympus"}}}
+      """
+    Then it succeeds
+    And the output contains ""serverInfo": {"name": "eshana""
+    And the output contains ""name": "find_eclipses""
+    And the output contains "vedic.moon.nakshatra"
+    And the output contains ""isError": true"
+    And the output contains "ESH-"

@@ -29,9 +29,12 @@ struct Moment {
     /// UTC instant, e.g. 2000-01-01T12:00:00Z
     #[arg(long)]
     utc: Option<String>,
-    /// Local date YYYY-MM-DD
-    #[arg(long)]
+    /// Local date YYYY-MM-DD (a signed year such as -0043-03-15 is 44 BCE)
+    #[arg(long, allow_hyphen_values = true)]
     date: Option<String>,
+    /// Calendar of --date: gregorian (proleptic ISO 8601, the default), julian, or auto (Julian before 1582-10-15)
+    #[arg(long)]
+    calendar: Option<String>,
     /// Local time HH:MM[:SS]; omit for an unknown birth time
     #[arg(long)]
     time: Option<String>,
@@ -53,6 +56,9 @@ struct Moment {
     /// Degrees east
     #[arg(long, allow_hyphen_values = true)]
     lon: Option<f64>,
+    /// Metres above sea level (for topocentric positions and rise/set)
+    #[arg(long, allow_hyphen_values = true)]
+    altitude_m: Option<f64>,
 }
 
 #[derive(Args, Clone, Default)]
@@ -66,15 +72,19 @@ struct Settings {
     /// tropical or sidereal
     #[arg(long)]
     zodiac: Option<String>,
-    /// lahiri, raman, krishnamurti, fagan_bradley, yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
+    /// lahiri, raman, krishnamurti, fagan_bradley, yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul, true_citra, true_revati, true_pushya, true_mula. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
     #[arg(long)]
     ayanamsha: Option<String>,
-    /// whole_sign (default), equal, placidus
+    /// whole_sign (default), equal, placidus, porphyry, sripati, koch, regiomontanus, campanus, alcabitius,
+    /// topocentric, morinus, meridian
     #[arg(long)]
     houses: Option<String>,
     /// mean or true
     #[arg(long)]
     node: Option<String>,
+    /// Positions as seen from the place (parallax applied; needs --lat/--lon)
+    #[arg(long)]
+    topocentric: bool,
 }
 
 #[derive(Args, Clone, Default)]
@@ -122,6 +132,9 @@ struct ChartOpts {
     /// Further vargas by method id, e.g. d81_navanavamsha,d144_dvadasha_dvadashamsha (see `eshana methods`)
     #[arg(long, value_delimiter = ',')]
     varga_methods: Vec<String>,
+    /// A user yoga pack (the yogas.yaml format), checked like the built-in one; repeatable (vedic)
+    #[arg(long = "rule-pack")]
+    rule_packs: Vec<String>,
 }
 
 #[derive(Args, Clone, Default)]
@@ -239,13 +252,13 @@ enum Cmd {
         #[arg(long = "b", value_name = "KEY=VALUE")]
         b: Vec<String>,
     },
-    /// Symbolic graph of a chart: json, mermaid or graphml
+    /// Symbolic graph of a chart: json, mermaid, graphml, svg, drawio or chitkala
     Graph {
         /// vedic or western
         system: String,
         #[command(flatten)]
         o: ChartOpts,
-        /// json (default), mermaid, graphml
+        /// json (default), mermaid, graphml, svg, drawio, chitkala
         #[arg(long, default_value = "json")]
         format: String,
     },
@@ -431,6 +444,185 @@ enum Cmd {
     },
     /// Print the JSON Schema of the result envelope
     Schema,
+    /// Rise, upper transit and set of bodies, and twilight, for local days at a place
+    RiseSet {
+        /// First local date YYYY-MM-DD
+        #[arg(long)]
+        date: String,
+        /// IANA time zone of the local days
+        #[arg(long = "tz")]
+        timezone: Option<String>,
+        /// Fixed UTC offset in minutes east (instead of --tz)
+        #[arg(long, allow_hyphen_values = true)]
+        offset_minutes: Option<i32>,
+        /// Degrees north
+        #[arg(long, allow_hyphen_values = true)]
+        lat: f64,
+        /// Degrees east
+        #[arg(long, allow_hyphen_values = true)]
+        lon: f64,
+        /// Metres above sea level
+        #[arg(long)]
+        altitude_m: Option<f64>,
+        /// Number of days, 1 to 366 (default 1)
+        #[arg(long)]
+        days: Option<u32>,
+        /// Comma-separated bodies (default sun,moon)
+        #[arg(long, value_delimiter = ',')]
+        bodies: Option<Vec<String>>,
+        /// upper_limb_refracted (default), centre_refracted, centre_unrefracted
+        #[arg(long)]
+        sunrise: Option<String>,
+        /// Leave out civil, nautical and astronomical twilight
+        #[arg(long)]
+        no_twilight: bool,
+        #[command(flatten)]
+        set: Settings,
+    },
+    /// Solar, lunar or any body's returns to its natal longitude in a range, with a chart at each
+    Returns {
+        #[command(flatten)]
+        natal: ChartOpts,
+        /// sun (default), moon or another body
+        #[arg(long = "return-body")]
+        return_body: Option<String>,
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO
+        #[arg(long)]
+        end: String,
+        /// Relocated return: degrees north of the place the chart is cast for
+        #[arg(long, allow_hyphen_values = true)]
+        at_lat: Option<f64>,
+        /// Relocated return: degrees east
+        #[arg(long, allow_hyphen_values = true)]
+        at_lon: Option<f64>,
+        /// Only the instants, without a chart at each
+        #[arg(long)]
+        no_charts: bool,
+    },
+    /// Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals
+    Gochara {
+        #[command(flatten)]
+        natal: ChartOpts,
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO (at most 30 years)
+        #[arg(long)]
+        end: String,
+        /// Comma-separated grahas (default the nine)
+        #[arg(long, value_delimiter = ',')]
+        transit_bodies: Option<Vec<String>>,
+    },
+    /// Synastry of two births: inter-aspects, house overlays, a midpoint composite and a Davison chart
+    Synastry {
+        /// First birth: date,time,zone,lat,lon
+        #[arg(long)]
+        a: String,
+        /// Second birth: date,time,zone,lat,lon
+        #[arg(long)]
+        b: String,
+        /// Orb multiplier for the inter-aspects (default 1.0)
+        #[arg(long)]
+        orb_scale: Option<f64>,
+        /// Leave out the composite chart
+        #[arg(long)]
+        no_composite: bool,
+        /// Leave out the Davison chart
+        #[arg(long)]
+        no_davison: bool,
+        /// tropical (default) or sidereal; sidereal needs --ayanamsha
+        #[arg(long)]
+        zodiac: Option<String>,
+        /// Ayanamsha when sidereal
+        #[arg(long)]
+        ayanamsha: Option<String>,
+    },
+    /// Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude
+    Eclipses {
+        /// Range start, UTC ISO
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC ISO (at most 200 years)
+        #[arg(long)]
+        end: String,
+        /// solar, lunar (default both)
+        #[arg(long, value_delimiter = ',')]
+        kinds: Option<Vec<String>>,
+        #[command(flatten)]
+        set: Settings,
+    },
+    /// JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME`
+    Kernel {
+        /// list, verify or path
+        action: String,
+        /// A kernel file or a catalogue name such as de440 (verify, path)
+        target: Option<String>,
+    },
+}
+
+/// `eshana kernel …`: the catalogue, a checksum check, or where a catalogue name is looked up. Offline: nothing is
+/// downloaded (see scripts/fetch_kernel.py in the repository for a checked download).
+fn kernel_cmd(action: &str, target: Option<&str>, compact: bool) -> ExitCode {
+    use eshana_ephemeris::kernels;
+    let show = |v: Value| {
+        println!(
+            "{}",
+            if compact {
+                v.to_string()
+            } else {
+                serde_json::to_string_pretty(&v).expect("json")
+            }
+        );
+    };
+    match (action, target) {
+        ("list", _) => {
+            let dir = kernels::kernel_dir();
+            let rows: Vec<Value> = kernels::KERNELS
+                .iter()
+                .map(|k| {
+                    let mut v = serde_json::to_value(k).expect("json");
+                    v["present"] = json!(dir.join(k.file).exists());
+                    v
+                })
+                .collect();
+            show(
+                json!({"kind": "kernels", "kernel_dir": dir, "source": kernels::NAIF_PLANETS, "kernels": rows}),
+            );
+            ExitCode::SUCCESS
+        }
+        ("path", Some(name)) => match kernels::find(name) {
+            Some(k) => {
+                println!("{}", kernels::kernel_dir().join(k.file).display());
+                ExitCode::SUCCESS
+            }
+            None => {
+                eprintln!("unknown kernel '{name}'; run `eshana kernel list`");
+                ExitCode::from(2)
+            }
+        },
+        ("verify", Some(t)) => match kernels::verify(t) {
+            Ok(v) => {
+                let ok = v.status == "verified";
+                show(json!({"kind": "kernel_verification", "verification": v}));
+                if ok {
+                    ExitCode::SUCCESS
+                } else {
+                    ExitCode::from(2)
+                }
+            }
+            Err(e) => {
+                eprintln!("{}: {e}", e.code());
+                ExitCode::from(2)
+            }
+        },
+        _ => {
+            eprintln!("usage: eshana kernel list | verify PATH|NAME | path NAME");
+            ExitCode::from(2)
+        }
+    }
 }
 
 fn kv(items: &[String]) -> Value {
@@ -445,23 +637,26 @@ fn kv(items: &[String]) -> Value {
 
 fn when_json(m: &Moment) -> Value {
     json!({"utc": m.utc, "date": m.date, "time": m.time, "timezone": m.timezone,
-           "utc_offset_minutes": m.offset_minutes, "fold": m.fold, "uncertainty_minutes": m.uncertainty_minutes})
+           "utc_offset_minutes": m.offset_minutes, "fold": m.fold, "uncertainty_minutes": m.uncertainty_minutes,
+           "calendar": m.calendar})
 }
 
 fn chart_json(o: &ChartOpts, system: Option<&str>, assume: bool) -> Value {
     let place = match (o.when.lat, o.when.lon) {
-        (Some(la), Some(lo)) => json!({"latitude": la, "longitude": lo}),
+        (Some(la), Some(lo)) => json!({"latitude": la, "longitude": lo, "altitude_m": o.when.altitude_m}),
         _ => Value::Null,
     };
     json!({
         "when": when_json(&o.when), "place": place, "system": system,
         "config": {"provider": o.set.provider, "zodiac": o.set.zodiac, "ayanamsha": o.set.ayanamsha,
-                   "house_system": o.set.houses, "node_model": o.set.node},
+                   "house_system": o.set.houses, "node_model": o.set.node,
+                   "topocentric": if o.set.topocentric { json!(true) } else { Value::Null }},
         "spk_path": o.set.spk, "bodies": o.bodies, "divisions": o.divisions, "dasha": o.dasha,
         "year_convention": o.year_convention, "aspects": o.aspects, "orb_scale": o.orb_scale,
         "assume_defaults": assume, "features": o.features, "dasha_levels": o.dasha_levels,
         "dasha_systems": o.dasha_systems, "reference_utc": o.reference_utc, "sunrise": o.sunrise,
         "kp_cusp_occupancy": o.kp_occupancy, "varga_methods": o.varga_methods,
+        "user_rule_packs": o.rule_packs.iter().map(|p| std::fs::read_to_string(p).unwrap_or_else(|e| format!("# cannot read {p}: {e}"))).collect::<Vec<_>>(),
     })
 }
 
@@ -538,6 +733,74 @@ fn main() -> ExitCode {
             json!({"op": "panchanga", "chart": c, "natal_moon_deg": natal_moon})
         }
         Cmd::KpTable => json!({"op": "kp_table"}),
+        Cmd::Synastry {
+            a,
+            b,
+            orb_scale,
+            no_composite,
+            no_davison,
+            zodiac,
+            ayanamsha,
+        } => {
+            let side = |spec: &str| {
+                let mut v = person_json(spec, ayanamsha.as_deref().unwrap_or("lahiri"));
+                v["system"] = json!(if zodiac.as_deref() == Some("sidereal") {
+                    "vedic"
+                } else {
+                    "western"
+                });
+                v["config"] = json!({"zodiac": zodiac.clone().unwrap_or_else(|| "tropical".into()), "ayanamsha": ayanamsha});
+                v
+            };
+            json!({"op": "synastry", "a": side(a), "b": side(b), "orb_scale": orb_scale, "composite": !no_composite, "davison": !no_davison})
+        }
+        Cmd::Returns {
+            natal,
+            return_body,
+            start,
+            end,
+            at_lat,
+            at_lon,
+            no_charts,
+        } => json!({
+            "op": "returns", "natal": chart_json(natal, Some(if natal.set.zodiac.as_deref() == Some("sidereal") { "vedic" } else { "western" }), false),
+            "body": return_body, "start_utc": start, "end_utc": end, "charts": !no_charts,
+            "place": match (at_lat, at_lon) { (Some(a), Some(b)) => json!({"latitude": a, "longitude": b}), _ => Value::Null },
+        }),
+        Cmd::Gochara {
+            natal,
+            start,
+            end,
+            transit_bodies,
+        } => json!({
+            "op": "gochara", "natal": chart_json(natal, Some("vedic"), false), "start_utc": start, "end_utc": end,
+            "bodies": transit_bodies,
+        }),
+        Cmd::Eclipses {
+            start,
+            end,
+            kinds,
+            set,
+        } => json!({
+            "op": "eclipses", "start_utc": start, "end_utc": end, "kinds": kinds, "config": settings_json(set), "spk_path": set.spk,
+        }),
+        Cmd::RiseSet {
+            date,
+            timezone,
+            offset_minutes,
+            lat,
+            lon,
+            altitude_m,
+            days,
+            bodies,
+            sunrise,
+            no_twilight,
+            set,
+        } => json!({
+            "op": "rise_set", "date": date, "timezone": timezone, "utc_offset_minutes": offset_minutes,
+            "place": {"latitude": lat, "longitude": lon, "altitude_m": altitude_m}, "days": days, "bodies": bodies,
+            "sunrise": sunrise, "twilight": !no_twilight, "config": settings_json(set), "spk_path": set.spk,
+        }),
         Cmd::Progress {
             at,
             angles,
@@ -675,6 +938,7 @@ fn main() -> ExitCode {
             println!("{}", include_str!("../../../schemas/envelope.schema.json"));
             return ExitCode::SUCCESS;
         }
+        Cmd::Kernel { action, target } => return kernel_cmd(action, target.as_deref(), cli.compact),
     };
     let out = engine.execute_json(&strip_nulls(request).to_string());
     let v: Value = serde_json::from_str(&out).expect("engine returns JSON");

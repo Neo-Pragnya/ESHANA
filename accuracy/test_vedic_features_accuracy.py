@@ -176,7 +176,10 @@ def test_ashtakavarga_rederived_from_the_pack(provider, spk, row):
 
 def koota_scores(ma: float, mb: float) -> float:
     m = yaml.safe_load((PACKS / "matching.yaml").read_text())
-    core = yaml.safe_load((PACKS / "vedic-core.yaml").read_text())
+    # vedic.core and the packs split from it (0.5.0) read as one table, as the engine merges them
+    core = {}
+    for f in ("vedic-core.yaml", "vedic-dignity.yaml", "vedic-relationships.yaml", "vedic-drishti.yaml", "vedic-strength.yaml"):
+        core.update({k: v for k, v in yaml.safe_load((PACKS / f).read_text()).items() if k not in ("id", "version", "conventions")})
     na, nb, ra, rb = lib.nakshatra(ma), lib.nakshatra(mb), lib.sign(ma), lib.sign(mb)
     score = 0.0
     score += 1 if m["varna_rank"][ra] >= m["varna_rank"][rb] else 0

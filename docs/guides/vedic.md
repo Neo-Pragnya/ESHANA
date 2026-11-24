@@ -14,7 +14,7 @@ eshana chart vedic --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385
 
 | Choice | Options | Notes |
 |---|---|---|
-| Ayanāṃśa | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley` | recorded as `ayanamsha-<id>@0.1`; the CLI defaults to Lahiri **and records it** |
+| Ayanāṃśa | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, six more mean models and four true (star-anchored) ones such as `true_citra` (see [conventions](../concepts/calculation-conventions.md)) | recorded as `ayanamsha-<id>@0.1`; the CLI defaults to Lahiri **and records it** |
 | Node | `mean`, `true` | the true node is osculating; both are reported with the south node opposite |
 | Houses | `whole_sign` (traditional), `equal`, `placidus` | Vedic bhāva is whole-sign from the lagna in `vedic.*.bhava`; the `houses` block follows your choice |
 | Daśā year | `365.25`, `365.2425`, `360`, `365.25636` | changes the dates; recorded in the result |

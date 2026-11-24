@@ -20,5 +20,6 @@ description: "The twelve ADRs from the master plan, their current status and wha
 | [011](011-open-source-distribution.md) | Open-source distribution as libraries | Accepted (2026-11-20) |
 | [012](012-yaml-rule-packs.md) | Data-driven rule packs are YAML | Accepted (2026-11-21) |
 | [013](013-local-engine-adapter.md) | The studio's engine adapter is the engine compiled to WebAssembly | Accepted (2026-11-23) |
+| [014](014-javascript-binding.md) | One WebAssembly package for browsers and Node | Accepted (2026-11-24) |
 
 Format: context, decision, consequences, status. An ADR is amended by a new ADR, not edited in place, once accepted.

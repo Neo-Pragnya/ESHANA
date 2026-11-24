@@ -1,0 +1,75 @@
+{
+ "source": "Swiss Ephemeris solcross_ut / mooncross_ut (test-only oracle): the first return after each start",
+ "rows": [
+  {
+   "birth_utc": "1990-05-15T09:00:00Z",
+   "body": "sun",
+   "start": "2025-01-01T00:00:00Z",
+   "natal_lon": 54.275588,
+   "return_jd_ut": 2460810.3455744
+  },
+  {
+   "birth_utc": "1990-05-15T09:00:00Z",
+   "body": "sun",
+   "start": "2030-01-01T00:00:00Z",
+   "natal_lon": 54.275588,
+   "return_jd_ut": 2462636.5433707
+  },
+  {
+   "birth_utc": "1990-05-15T09:00:00Z",
+   "body": "sun",
+   "start": "2040-01-01T00:00:00Z",
+   "natal_lon": 54.275588,
+   "return_jd_ut": 2466288.9730608
+  },
+  {
+   "birth_utc": "1990-05-15T09:00:00Z",
+   "body": "moon",
+   "start": "2026-01-01T00:00:00Z",
+   "natal_lon": 295.6193459,
+   "return_jd_ut": 2461059.0783196
+  },
+  {
+   "birth_utc": "1990-05-15T09:00:00Z",
+   "body": "moon",
+   "start": "2026-06-01T00:00:00Z",
+   "natal_lon": 295.6193459,
+   "return_jd_ut": 2461195.7078529
+  },
+  {
+   "birth_utc": "1975-11-02T21:30:00Z",
+   "body": "sun",
+   "start": "2025-01-01T00:00:00Z",
+   "natal_lon": 219.8373943,
+   "return_jd_ut": 2460981.5154557
+  },
+  {
+   "birth_utc": "1975-11-02T21:30:00Z",
+   "body": "sun",
+   "start": "2030-01-01T00:00:00Z",
+   "natal_lon": 219.8373943,
+   "return_jd_ut": 2462807.7282057
+  },
+  {
+   "birth_utc": "1975-11-02T21:30:00Z",
+   "body": "sun",
+   "start": "2040-01-01T00:00:00Z",
+   "natal_lon": 219.8373943,
+   "return_jd_ut": 2466460.1617036
+  },
+  {
+   "birth_utc": "1975-11-02T21:30:00Z",
+   "body": "moon",
+   "start": "2026-01-01T00:00:00Z",
+   "natal_lon": 210.8543944,
+   "return_jd_ut": 2461052.0264717
+  },
+  {
+   "birth_utc": "1975-11-02T21:30:00Z",
+   "body": "moon",
+   "start": "2026-06-01T00:00:00Z",
+   "natal_lon": 210.8543944,
+   "return_jd_ut": 2461215.8502925
+  }
+ ]
+}

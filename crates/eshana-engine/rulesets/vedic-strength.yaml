@@ -1,0 +1,24 @@
+# Rule pack: vedic.strength@0.1 (split from vedic.core 0.3; values unchanged). Values follow Brihat Parashara Hora Shastra
+# (BPHS) as commonly taught; where schools differ the convention is named.
+id: vedic.strength
+version: "0.1"
+
+# Dig bala: the angle at which each graha has full directional strength.
+dig_bala_strong_point:
+  jupiter: ascendant
+  mercury: ascendant
+  sun: midheaven
+  mars: midheaven
+  saturn: descendant
+  moon: imum_coeli
+  venus: imum_coeli
+
+# Naisargika bala in virupas (BPHS).
+naisargika_bala:
+  sun: 60.0
+  moon: 51.43
+  venus: 42.86
+  jupiter: 34.29
+  mercury: 25.71
+  mars: 17.14
+  saturn: 8.57

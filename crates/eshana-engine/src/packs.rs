@@ -7,8 +7,30 @@ use std::collections::BTreeMap;
 use std::sync::OnceLock;
 
 /// Raw YAML of every built-in pack, by file name. Exposed so tools can print or diff them.
-pub const SOURCES: [(&str, &str); 6] = [
+pub const SOURCES: [(&str, &str); 13] = [
+    (
+        "western-dignities.yaml",
+        include_str!("../rulesets/western-dignities.yaml"),
+    ),
+    ("gematria.yaml", include_str!("../rulesets/gematria.yaml")),
+    ("lal-kitab.yaml", include_str!("../rulesets/lal-kitab.yaml")),
     ("vedic-core.yaml", include_str!("../rulesets/vedic-core.yaml")),
+    (
+        "vedic-dignity.yaml",
+        include_str!("../rulesets/vedic-dignity.yaml"),
+    ),
+    (
+        "vedic-relationships.yaml",
+        include_str!("../rulesets/vedic-relationships.yaml"),
+    ),
+    (
+        "vedic-drishti.yaml",
+        include_str!("../rulesets/vedic-drishti.yaml"),
+    ),
+    (
+        "vedic-strength.yaml",
+        include_str!("../rulesets/vedic-strength.yaml"),
+    ),
     ("ashtakavarga.yaml", include_str!("../rulesets/ashtakavarga.yaml")),
     ("panchanga.yaml", include_str!("../rulesets/panchanga.yaml")),
     ("matching.yaml", include_str!("../rulesets/matching.yaml")),
@@ -464,10 +486,62 @@ pub struct Yogas {
 }
 
 // ── access ───────────────────────────────────────────────────────────────────────────────────────────────────────
-/// `vedic-core.yaml`, parsed once.
+/// The Vedic packs split from `vedic.core` (VED-05), each with its own id and version.
+pub const VEDIC_SPLIT: [&str; 4] = [
+    "vedic-dignity.yaml",
+    "vedic-relationships.yaml",
+    "vedic-drishti.yaml",
+    "vedic-strength.yaml",
+];
+
+/// `id@version` of one of the split packs, by file name.
+///
+/// # Panics
+/// When the file is not a built-in pack (a build defect).
+pub fn split_rule(file: &str) -> String {
+    #[derive(Deserialize)]
+    struct Head {
+        id: String,
+        version: String,
+    }
+    let h: Head = parse(file);
+    rule_id(&h.id, &h.version)
+}
+
+/// `vedic-core.yaml` with the four split packs merged in (their tables keep their keys; their `conventions` join the
+/// core's), parsed once.
 pub fn core() -> &'static VedicCore {
     static P: OnceLock<VedicCore> = OnceLock::new();
-    P.get_or_init(|| parse("vedic-core.yaml"))
+    P.get_or_init(|| {
+        let read = |name: &str| -> serde_norway::Mapping {
+            let src = SOURCES
+                .iter()
+                .find(|(n, _)| *n == name)
+                .map(|(_, s)| *s)
+                .expect("pack listed");
+            serde_norway::from_str(src).unwrap_or_else(|e| panic!("rule pack {name} is invalid: {e}"))
+        };
+        let mut merged = read("vedic-core.yaml");
+        for f in VEDIC_SPLIT {
+            for (k, v) in read(f) {
+                match k.as_str() {
+                    Some("id" | "version") => {}
+                    Some("conventions") => {
+                        if let (Some(serde_norway::Value::Mapping(c)), serde_norway::Value::Mapping(more)) =
+                            (merged.get_mut("conventions"), v)
+                        {
+                            c.extend(more);
+                        }
+                    }
+                    _ => {
+                        merged.insert(k, v);
+                    }
+                }
+            }
+        }
+        serde_norway::from_value(serde_norway::Value::Mapping(merged))
+            .unwrap_or_else(|e| panic!("vedic core packs are invalid: {e}"))
+    })
 }
 /// `ashtakavarga.yaml`, parsed once.
 pub fn ashtakavarga() -> &'static Ashtakavarga {
@@ -493,6 +567,41 @@ pub fn bala() -> &'static Bala {
 pub fn yogas() -> &'static Yogas {
     static P: OnceLock<Yogas> = OnceLock::new();
     P.get_or_init(|| parse("yogas.yaml"))
+}
+
+/// A user's yoga pack (RULE-02): the `yogas.yaml` format, parsed with the same condition grammar, then checked: at
+/// most 64 KiB and 200 definitions, an id of lowercase letters, digits, `.`, `_` or `-` that does not claim the
+/// built-in `vedic.` namespace, a version, and unique definition ids.
+///
+/// # Errors
+/// `ESH-RULES` naming the problem (including the parser's message for a condition it does not know).
+pub fn user_yogas(src: &str) -> Result<Yogas> {
+    let bad = |m: String| EshanaError::Rules(format!("user rule pack: {m}"));
+    if src.len() > 64 * 1024 {
+        return Err(bad(format!("{} bytes; the limit is 64 KiB", src.len())));
+    }
+    let y: Yogas = serde_norway::from_str(src).map_err(|e| bad(e.to_string()))?;
+    let id_ok = !y.id.is_empty()
+        && y.id
+            .chars()
+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '.' | '_' | '-'));
+    if !id_ok || y.id.starts_with("vedic.") {
+        return Err(bad(format!("id '{}' must be lowercase letters, digits, '.', '_' or '-', and not in the built-in vedic. namespace", y.id)));
+    }
+    if y.version.trim().is_empty() {
+        return Err(bad("a version is required".into()));
+    }
+    let n = y.yogas.len() + y.doshas.len();
+    if n == 0 || n > 200 {
+        return Err(bad(format!("{n} definitions; give 1 to 200")));
+    }
+    let mut seen = std::collections::BTreeSet::new();
+    for d in y.yogas.iter().chain(&y.doshas) {
+        if !seen.insert(d.id.as_str()) {
+            return Err(bad(format!("definition id '{}' appears twice", d.id)));
+        }
+    }
+    Ok(y)
 }
 
 /// Check every built-in pack: it parses and its fixed facts hold (sizes, totals, symmetric matrices).

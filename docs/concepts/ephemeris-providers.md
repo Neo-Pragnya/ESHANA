@@ -10,7 +10,7 @@ A provider turns a TT Julian day and a body into an apparent geocentric longitud
 
 | Provider | Data | Accuracy (measured vs JPL DE440s) | Range | Licence footprint |
 |---|---|---|---|---|
-| `analytic` (default) | JPL's published Keplerian elements (Standish, Table 1) and the Meeus ch. 47 lunar series, in the source | Sun 16″, Moon 10″, Mercury–Mars ≤ 32″, Uranus–Pluto ≤ 103″, **Jupiter 342″, Saturn 1026″** (worst case, 1950–2060) | 1800–2100 | none: no data files |
+| `analytic` (default) | VSOP87B (IMCCE) for the Sun and Mercury–Neptune, the Meeus ch. 47 lunar series, JPL's Keplerian elements (Standish) for Pluto, in the source | Sun 0.3″, planets ≤ 2.7″, Moon ≤ 8″, Pluto 49″ (worst case, 1950–2060) | 1800–2100 | none: no data files |
 | `spk` | a JPL SPK kernel you supply (`de440s.bsp`) | **≤ 0.7″ for every body** against an independent pipeline | the kernel's span (1849–2150 for de440s) | none bundled; NASA/JPL data is public domain, you download it |
 
 Full tables, the method and the time-scale caveat: [Accuracy](../reference/accuracy.md).

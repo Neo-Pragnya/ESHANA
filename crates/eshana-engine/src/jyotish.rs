@@ -832,7 +832,12 @@ fn evaluate(c: &VChart, cond: &Cond, bind: Option<&str>, used: &mut BTreeSet<Str
 /// could not be evaluated (for example a lagna-based yoga without a birth time).
 #[must_use]
 pub fn yogas(c: &VChart) -> Value {
-    let pack = packs::yogas();
+    yogas_with(c, packs::yogas())
+}
+
+/// [`yogas`] for any pack in the yogas format: the built-in one or a user's (RULE-02).
+#[must_use]
+pub fn yogas_with(c: &VChart, pack: &packs::Yogas) -> Value {
     let run = |defs: &[packs::YogaDef]| -> Vec<Value> {
         defs.iter()
             .map(|d| {

@@ -319,3 +319,52 @@ pub fn sade_sati(
               "windows": windows, "saturn_ingresses": ing}),
     )
 }
+
+/// Intervals in `[jd_a, jd_b)` when a graha is combust: within the vedic-core pack's orb of the Sun, using the smaller
+/// retrograde orb for Mercury and Venus while they are retrograde. Found by half-day steps (a tenth of a day for the
+/// Moon) and bisection to about a second; an interval open at either end is clipped and says so.
+///
+/// # Errors
+/// Provider errors.
+pub fn combustion(
+    p: &dyn EphemerisProvider,
+    body: Body,
+    jd_a: f64,
+    jd_b: f64,
+    ayan: Option<Ayanamsha>,
+) -> Result<Vec<Value>> {
+    let id = body.id();
+    let state = |jd: f64| -> Result<bool> {
+        let (l, s) = (lon_at(p, body, jd, ayan)?, lon_at(p, Body::Sun, jd, ayan)?);
+        let retro = speed_at(p, body, jd, ayan)? < 0.0;
+        Ok(crate::jyotish::combust(id, l, s, retro).unwrap_or(false))
+    };
+    if crate::jyotish::combust(id, 0.0, 0.0, false).is_none() {
+        return Ok(vec![]); // no orb in the pack (the Sun itself, the nodes, the outer planets)
+    }
+    let step = if body == Body::Moon { 0.1 } else { 0.5 };
+    let mut out = vec![];
+    let (mut a, mut sa) = (jd_a, state(jd_a)?);
+    let mut open = sa.then_some((jd_a, true));
+    while a < jd_b {
+        let b = (a + step).min(jd_b);
+        let sb = state(b)?;
+        if sb != sa {
+            let mut f = |jd: f64| -> Result<f64> { Ok(if state(jd)? == sa { 1.0 } else { -1.0 }) };
+            let t = search::bisect(&mut f, a, b, 0.0, Some(24))?;
+            if sb {
+                open = Some((t, false));
+            } else if let Some((start, clipped)) = open.take() {
+                out.push(json!({"start_utc": Instant::from_jd_utc(start).utc, "end_utc": Instant::from_jd_utc(t).utc,
+                    "start_jd_ut": start, "end_jd_ut": t, "days": t - start, "clipped_start": clipped, "clipped_end": false}));
+            }
+        }
+        a = b;
+        sa = sb;
+    }
+    if let Some((start, clipped)) = open {
+        out.push(json!({"start_utc": Instant::from_jd_utc(start).utc, "end_utc": Instant::from_jd_utc(jd_b).utc,
+            "start_jd_ut": start, "end_jd_ut": jd_b, "days": jd_b - start, "clipped_start": clipped, "clipped_end": true}));
+    }
+    Ok(out)
+}

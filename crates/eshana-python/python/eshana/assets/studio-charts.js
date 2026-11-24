@@ -704,12 +704,22 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
   const P = (x, y) => [x0 + x * S0, y0 + y * S0];
   const A = P(0, 0), B = P(1, 0), C = P(1, 1), Dd = P(0, 1), T = P(.5, 0), R = P(1, .5), Bm = P(.5, 1), L = P(0, .5), O = P(.5, .5), P1 = P(.25, .25), P2 = P(.75, .25), P3 = P(.75, .75), P4 = P(.25, .75);
   const HS = [[T, P2, O, P1], [A, T, P1], [A, P1, L], [L, P1, O, P4], [L, P4, Dd], [Dd, P4, Bm], [Bm, P4, O, P3], [Bm, P3, C], [C, P3, R], [R, P3, O, P2], [R, P2, B], [B, P2, T]];
+  // East Indian (REP-06): the signs stay put, Meṣa in the top centre and on anticlockwise; the four corner squares are
+  // cut by their outer-to-inner diagonal into two signs each, and the centre is empty
+  const k = 1 / 3, q = 2 / 3;
+  const EAST = [[P(k, 0), P(q, 0), P(q, k), P(k, k)], [P(0, 0), P(k, 0), P(k, k)], [P(0, 0), P(k, k), P(0, k)], [P(0, k), P(k, k), P(k, q), P(0, q)],
+    [P(0, q), P(k, q), P(0, 1)], [P(0, 1), P(k, q), P(k, 1)], [P(k, q), P(q, q), P(q, 1), P(k, 1)], [P(q, 1), P(q, q), P(1, 1)],
+    [P(1, 1), P(q, q), P(1, q)], [P(q, k), P(1, k), P(1, q), P(q, q)], [P(1, k), P(q, k), P(1, 0)], [P(1, 0), P(q, k), P(q, 0)]];
+  const east = opts.layout === 'east';
+  const cellsOf = east ? EAST.map((poly, sg) => ({ poly, sign: sg, house: (sg - lag + 12) % 12 + 1 }))
+    : HS.map((poly, hIdx) => ({ poly, sign: (lag + hIdx) % 12, house: hIdx + 1 }));
   const pl = placements(d), ar = d === 1 || d === 9 ? arudhaMarks(d) : {};
   svg._centre = [x0 + S0 / 2, y0 + S0 / 2];
   s('rect', { x: x0, y: y0, width: S0, height: S0, class: 'cellbg' }, svg);
-  HS.forEach((poly, hIdx) => {
-    const sign = (lag + hIdx) % 12, cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, big = poly.length === 4;
-    const g = s('g', { class: 'cell', 'data-sign': sign, 'data-house': hIdx + 1 }, svg);
+  cellsOf.forEach(({ poly, sign, house }) => {
+    const hIdx = house - 1;
+    const cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, big = poly.length === 4;
+    const g = s('g', { class: 'cell', 'data-sign': sign, 'data-house': house }, svg);
     (svg._cells = svg._cells || {})[sign] = { cx, cy, w: big ? S0 * .36 : S0 * .24, h: big ? S0 * .36 : S0 * .18 };
     s('polygon', { points: poly.map(p => p.join(',')).join(' '), class: hIdx === 0 ? 'cellbg lagna' : 'cellbg', 'stroke-width': 1.3 }, g);
     // one stack, top to bottom: ārūḍha padas, sign number, grahas, rāśi drishti (◇), graha drishti. It is measured first,
@@ -754,7 +764,8 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     }
     if (!L) { L = layout(.6); top = Math.max(minY + 4, Math.min(cy - L.h / 2, maxY - 4 - L.h)); }
     g.dataset.fit = L.k + (L.mw !== maxW ? ' wide' : '') + (fits(L, top) ? '' : ' unfitted');
-    const n = s('text', { x: midOf(L, top, L.at.numB), y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
+    // North Indian boxes are houses and carry the sign number; East Indian boxes are signs and carry the house number
+    const n = s('text', { x: midOf(L, top, L.at.numB), y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = east ? house : sign + 1;
     if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 600, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
       const tt = s('title', {}, t); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
     list.forEach((gid, k) => grahaLine(g, gid, midOf(L, top, L.at.gB[k]) - L.at.gW / 2, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
@@ -768,8 +779,12 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
 /* South Indian cell size (user units); fonts stay fixed, so a bigger cell leaves more room for grahas and marks */
 const SOUTH_W = 160;
 function chartSVG(kind, d, opts = {}) {
-  const svg = s('svg', { viewBox: kind === 'north' ? '-4 -4 528 528' : `-4 -4 ${4 * SOUTH_W + 8} ${(4 * SOUTH_W * .86 + 11).toFixed(0)}`, role: 'img', 'aria-label': `D${d} ${kind === 'north' ? 'North' : 'South'} Indian chart`, class: 'chart ' + kind });
-  if (kind === 'north') { northGrid(svg, d, 0, 0, 520, opts); const t = s('text', { x: 260, y: 516, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''} · North Indian`; }
+  const svg = s('svg', { viewBox: kind === 'north' || kind === 'east' ? '-4 -4 528 528' : `-4 -4 ${4 * SOUTH_W + 8} ${(4 * SOUTH_W * .86 + 11).toFixed(0)}`, role: 'img', 'aria-label': `D${d} ${kind === 'north' ? 'North' : kind === 'east' ? 'East' : 'South'} Indian chart`, class: 'chart ' + kind });
+  if (kind === 'north' || kind === 'east') {
+    northGrid(svg, d, 0, 0, 520, kind === 'east' ? { ...opts, layout: 'east' } : opts);
+    const t = s('text', { x: 260, y: kind === 'east' ? 266 : 516, 'text-anchor': 'middle', 'font-size': kind === 'east' ? 14 : 11, 'font-weight': kind === 'east' ? 800 : 400, fill: kind === 'east' ? 'var(--ink)' : 'var(--muted)' }, svg);
+    t.textContent = `D${d} · ${DIV_NAME[d] || ''} · ${kind === 'east' ? 'East' : 'North'} Indian`;
+  }
   else southGrid(svg, d, 0, 0, SOUTH_W, opts);
   if (!opts.compact && !opts.noMarks) chartLayers(svg, d);
   if (!opts.compact) animateChart(svg);

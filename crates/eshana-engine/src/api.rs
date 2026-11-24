@@ -10,7 +10,7 @@ use eshana_core::{
     SCHEMA_VERSION,
 };
 use eshana_ephemeris::{frames, provider_by_id, EphemerisProvider, ProviderOptions};
-use eshana_time::{FoldPolicy, Instant};
+use eshana_time::{Calendar, FoldPolicy, Instant};
 use serde::Deserialize;
 use serde_json::{json, Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -37,6 +37,9 @@ pub struct When {
     pub fold: Option<String>,
     /// Birth-time uncertainty (± minutes) for an approximate time.
     pub uncertainty_minutes: Option<f64>,
+    /// Calendar of `date`: `gregorian` (proleptic, ISO 8601; the default), `julian`, or `auto` (Julian before
+    /// 1582-10-15). Years are astronomical: `-0043` is 44 BCE.
+    pub calendar: Option<String>,
 }
 
 /// A place on Earth.
@@ -65,6 +68,9 @@ pub struct ConfigIn {
     pub house_system: Option<String>,
     /// `mean` or `true`.
     pub node_model: Option<String>,
+    /// Positions as seen from the place (parallax applied; up to ~1° for the Moon) instead of from the Earth's
+    /// centre. Needs `place`. Default false.
+    pub topocentric: Option<bool>,
 }
 
 /// A chart-style request.
@@ -123,10 +129,14 @@ pub struct ChartRequest {
     /// Further divisional charts by method id (`varga_method` family, e.g. `d81_navanavamsha`), Vedic only.
     #[serde(default)]
     pub varga_methods: Vec<String>,
+    /// User rule packs in the `yogas.yaml` format (RULE-02), Vedic only: each is checked like the built-in pack and
+    /// reported under its own id as `user.yogas.<id>`.
+    #[serde(default)]
+    pub user_rule_packs: Vec<String>,
 }
 
 /// Every operation (`op`) a request may name. A unit test keeps this list and the [`Request`] enum in step.
-pub const OPERATIONS: [&str; 24] = [
+pub const OPERATIONS: [&str; 29] = [
     "positions",
     "chart",
     "human_design",
@@ -148,13 +158,19 @@ pub const OPERATIONS: [&str; 24] = [
     "progressions",
     "kp_table",
     "kp_horary",
+    "rise_set",
+    "returns",
+    "gochara",
+    "eclipses",
+    "synastry",
     "synthetic_chart",
     "research_window_score",
     "info",
 ];
 
 /// Every Vedic feature name accepted in `features`.
-pub const FEATURES: [&str; 21] = [
+pub const FEATURES: [&str; 22] = [
+    "lal_kitab",
     "panchanga",
     "strength",
     "relationships",
@@ -211,6 +227,33 @@ pub struct IngressRequest {
     #[serde(default)]
     pub config: ConfigIn,
     /// SPK kernel path.
+    pub spk_path: Option<String>,
+}
+
+/// Rise, transit and set of bodies over local days at a place (AST-08).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RiseSetRequest {
+    /// The observer (latitude, longitude, altitude).
+    pub place: Place,
+    /// First local date, `YYYY-MM-DD`.
+    pub date: String,
+    /// IANA zone for the local days.
+    pub timezone: Option<String>,
+    /// Fixed offset in minutes east, when no zone is known.
+    pub utc_offset_minutes: Option<i32>,
+    /// Number of days (1–366). Default 1.
+    pub days: Option<u32>,
+    /// Body ids. Default sun and moon.
+    pub bodies: Option<Vec<String>>,
+    /// `upper_limb_refracted` (default), `centre_refracted` or `centre_unrefracted`.
+    pub sunrise: Option<String>,
+    /// Include civil, nautical and astronomical twilight. Default true.
+    pub twilight: Option<bool>,
+    /// Settings (provider).
+    #[serde(default)]
+    pub config: ConfigIn,
+    /// SPK kernel path or catalogue name.
     pub spk_path: Option<String>,
 }
 
@@ -442,6 +485,61 @@ pub enum Request {
     },
     /// Environment, providers and error catalogue.
     Info,
+    /// Rise, upper transit and set of bodies, and twilight, for local days at a place.
+    RiseSet(RiseSetRequest),
+    /// Two charts compared: inter-aspects and house overlays (synastry), a midpoint composite and a Davison chart.
+    Synastry {
+        /// First person.
+        a: ChartRequest,
+        /// Second person.
+        b: ChartRequest,
+        /// Orb multiplier for the inter-aspects (default 1.0).
+        orb_scale: Option<f64>,
+        /// Include the composite (midpoint) chart (default true).
+        composite: Option<bool>,
+        /// Include the Davison chart (midpoint in time and space; default true).
+        davison: Option<bool>,
+    },
+    /// Solar and lunar eclipses in a range, with type, time of greatest eclipse and magnitude.
+    Eclipses {
+        /// Range start, UTC ISO.
+        start_utc: String,
+        /// Range end, UTC ISO (at most 200 years).
+        end_utc: String,
+        /// `solar`, `lunar` (default both).
+        kinds: Option<Vec<String>>,
+        /// Settings (provider).
+        #[serde(default)]
+        config: ConfigIn,
+        /// SPK kernel path or catalogue name.
+        spk_path: Option<String>,
+    },
+    /// Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals.
+    Gochara {
+        /// The birth (sidereal settings).
+        natal: ChartRequest,
+        /// Range start, UTC ISO.
+        start_utc: String,
+        /// Range end, UTC ISO (at most 30 years).
+        end_utc: String,
+        /// Graha ids (default the nine grahas).
+        bodies: Option<Vec<String>>,
+    },
+    /// Every return of a body to its natal longitude in a range (solar and lunar returns), with a chart at each.
+    Returns {
+        /// The birth; its settings pick the zodiac (tropical, or sidereal with an ayanāṃśa).
+        natal: ChartRequest,
+        /// `sun` (default), `moon` or another body.
+        body: Option<String>,
+        /// Range start, UTC ISO.
+        start_utc: String,
+        /// Range end, UTC ISO.
+        end_utc: String,
+        /// Where the return chart is cast (a relocated return); default the birth place.
+        place: Option<Place>,
+        /// Include a chart at each return (default true).
+        charts: Option<bool>,
+    },
 }
 
 /// The engine. Holds provider instances so a kernel is read once per process.
@@ -463,11 +561,53 @@ fn parse_system(s: Option<&str>) -> Result<&'static str> {
     }
 }
 
+/// Solar arc directions (WES-05): every natal point moved by the solar arc (progressed minus natal Sun), in the natal
+/// chart's own zodiac, and the directed-to-natal Ptolemaic aspects within 1°. The angles follow when the birth chart
+/// has them.
+fn solar_arc_directions(birth: &Value, arc: f64) -> Value {
+    let mut points: Vec<(String, f64)> = birth["positions"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|p| Some((p["id"].as_str()?.to_string(), p["longitude_deg"].as_f64()?)))
+        .collect();
+    for (id, key) in [("ascendant", "ascendant"), ("midheaven", "midheaven")] {
+        if let Some(l) = birth["houses"][key]["longitude_deg"].as_f64() {
+            points.push((id.into(), l));
+        }
+    }
+    let directed: Vec<Value> = points
+        .iter()
+        .map(|(id, l)| json!({"id": id, "natal_deg": l, "directed_deg": norm360(l + arc)}))
+        .collect();
+    let mut aspects = vec![];
+    for (did, dl) in &points {
+        for (nid, nl) in &points {
+            let sep = angular_diff(norm360(dl + arc), *nl).abs();
+            for (name, ang) in [
+                ("conjunction", 0.0),
+                ("sextile", 60.0),
+                ("square", 90.0),
+                ("trine", 120.0),
+                ("opposition", 180.0),
+            ] {
+                let orb = (sep - ang).abs();
+                if orb <= 1.0 {
+                    aspects.push(json!({"directed": did, "natal": nid, "aspect": name, "orb_deg": orb}));
+                }
+            }
+        }
+    }
+    json!({"arc_deg": arc, "rule": "directed = natal + (progressed Sun − natal Sun); aspects directed-to-natal within 1°", "points": directed, "aspects": aspects})
+}
+
 /// Resolved moment plus the window of uncertainty around it.
 struct Moment {
     center: Instant,
     half_width_days: f64,
     quality: &'static str,
+    /// How the date was read (calendar conversions, the pre-1582 reading), for the assumptions.
+    notes: Vec<String>,
 }
 
 fn resolve_when(w: &When) -> Result<Moment> {
@@ -478,20 +618,45 @@ fn resolve_when(w: &When) -> Result<Moment> {
                 "give either utc or date/time, not both".into(),
             ));
         }
+        if w.calendar.is_some() {
+            return Err(EshanaError::Input(
+                "calendar applies to a local date; a utc instant is always proleptic Gregorian (ISO 8601)"
+                    .into(),
+            ));
+        }
         return Ok(Moment {
             center: Instant::parse_utc(u)?,
             half_width_days: 0.0,
             quality: "exact",
+            notes: vec![],
         });
     }
     let date = w
         .date
         .as_deref()
         .ok_or_else(|| EshanaError::Input("when needs utc, or date (and time)".into()))?;
+    let cal = match w.calendar.as_deref() {
+        Some(c) => Calendar::parse(c)?,
+        None => Calendar::Gregorian,
+    };
+    let mut notes = vec![];
+    // no silent historical reading: a date before the Gregorian reform without a calendar says how it was read
+    let (g, conv) = eshana_time::parse_date_in(date, cal)?;
+    if w.calendar.is_none() && (i32::from(g.year()), g.month(), g.day()) < (1582, 10, 15) {
+        notes.push(format!(
+            "{date} read as proleptic Gregorian (ISO 8601); give calendar = julian or auto for a date written in the Julian calendar"
+        ));
+    }
+    if let Some(c) = conv {
+        notes.push(format!(
+            "calendar {}: {c}",
+            w.calendar.as_deref().unwrap_or("gregorian")
+        ));
+    }
     let civil = |time: &str| -> Result<Instant> {
         match (&w.timezone, w.utc_offset_minutes) {
-            (Some(z), _) => Instant::from_local_str(date, time, z, fold),
-            (None, Some(o)) => Instant::from_offset_str(date, time, o),
+            (Some(z), _) => Instant::from_local_str_in(date, time, z, fold, cal).map(|x| x.0),
+            (None, Some(o)) => Instant::from_offset_str_in(date, time, o, cal).map(|x| x.0),
             (None, None) => Err(EshanaError::Input(
                 "local time needs timezone (IANA name) or utc_offset_minutes; ESHANA will not assume one"
                     .into(),
@@ -505,17 +670,20 @@ fn resolve_when(w: &When) -> Result<Moment> {
                 center: Instant::from_jd_utc(start.jd_ut + 0.5),
                 half_width_days: 0.5,
                 quality: "date_only",
+                notes,
             })
         }
         (Some(t), Some(u)) if u > 0.0 => Ok(Moment {
             center: civil(t)?,
             half_width_days: u / 1440.0,
             quality: "approximate",
+            notes,
         }),
         (Some(t), _) => Ok(Moment {
             center: civil(t)?,
             half_width_days: 0.0,
             quality: "exact",
+            notes,
         }),
     }
 }
@@ -669,6 +837,80 @@ impl Engine {
             Request::Matching { a, b } => self.matching_op(a, b),
             Request::Ephemeris(r) => self.ephemeris_op(r),
             Request::Ingresses(r) => self.ingress_op(r),
+            Request::RiseSet(r) => self.rise_set_op(r),
+            Request::Synastry {
+                a,
+                b,
+                orb_scale,
+                composite,
+                davison,
+            } => self.synastry_op(
+                a,
+                b,
+                orb_scale.unwrap_or(1.0),
+                composite.unwrap_or(true),
+                davison.unwrap_or(true),
+            ),
+            Request::Eclipses {
+                start_utc,
+                end_utc,
+                kinds,
+                config,
+                spk_path,
+            } => {
+                let mut assumptions = vec![];
+                let cfg = build_config(config, None, false, &mut assumptions)?;
+                let provider = self.provider(&cfg.provider, spk_path.as_deref())?;
+                let (a, b) = (Instant::parse_utc(start_utc)?, Instant::parse_utc(end_utc)?);
+                if b.jd_ut <= a.jd_ut || b.jd_ut - a.jd_ut > 200.0 * 366.0 {
+                    return Err(EshanaError::RangeInvalid(
+                        "end must be after start and within 200 years".into(),
+                    ));
+                }
+                let k: Vec<String> = kinds
+                    .clone()
+                    .unwrap_or_else(|| vec!["solar".into(), "lunar".into()]);
+                if let Some(bad) = k.iter().find(|x| *x != "solar" && *x != "lunar") {
+                    return Err(EshanaError::Input(format!(
+                        "unknown eclipse kind '{bad}' (solar, lunar)"
+                    )));
+                }
+                let list = crate::eclipses::eclipses(
+                    provider.as_ref(),
+                    a.jd_ut,
+                    b.jd_ut,
+                    k.iter().any(|x| x == "solar"),
+                    k.iter().any(|x| x == "lunar"),
+                )?;
+                Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "eclipses",
+                    "input": {"start_utc": a.utc, "end_utc": b.utc, "kinds": k},
+                    "calculation": {"provider": cfg.provider, "method": "geometric: minimum Sun–Moon (or Moon–shadow) distance near each syzygy; shadow radii 1.02 × (π☾ + π☉ ± s☉)"},
+                    "eclipses": list,
+                    "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "provider_data": provider.info().data,
+                        "assumptions": ["times are of greatest eclipse, geocentric", "solar types use a spherical Earth for γ (central when γ < 1)"]},
+                    "interpretations": []}))
+            }
+            Request::Gochara {
+                natal,
+                start_utc,
+                end_utc,
+                bodies,
+            } => self.gochara_op(natal, start_utc, end_utc, bodies.as_deref()),
+            Request::Returns {
+                natal,
+                body,
+                start_utc,
+                end_utc,
+                place,
+                charts,
+            } => self.returns_op(
+                natal,
+                body.as_deref(),
+                start_utc,
+                end_utc,
+                place.as_ref(),
+                charts.unwrap_or(true),
+            ),
             Request::Stations(r) => self.stations_op(r),
             Request::Crossings(r) => self.crossings_op(r),
             Request::Rulesets => Ok(json!({
@@ -760,9 +1002,10 @@ impl Engine {
     #[allow(clippy::too_many_lines)]
     fn chart(&self, r: &ChartRequest, system: Option<&str>, kind: &str) -> Result<Value> {
         let mut assumptions: Vec<String> = vec![];
-        if !r.features.is_empty() && system != Some("vedic") {
+        let western_features = system == Some("western") && r.features.iter().all(|f| f == "dignities");
+        if !r.features.is_empty() && system != Some("vedic") && !western_features {
             return Err(EshanaError::Config(
-                "features are Vedic: use them with system=vedic".into(),
+                "features are Vedic: use them with system=vedic (a western chart takes only features=[\"dignities\"])".into(),
             ));
         }
         let cfg = build_config(&r.config, system, r.assume_defaults, &mut assumptions)?;
@@ -775,6 +1018,7 @@ impl Engine {
         let sidereal = cfg.zodiac == ZodiacSystem::Sidereal;
 
         assumptions.push("UTC is used as UT1 (differs by under 0.9 s)".into());
+        assumptions.extend(mo.notes.iter().cloned());
         if inst.zone.is_some() {
             assumptions.push(format!(
                 "civil time resolved with IANA tzdb {}",
@@ -809,8 +1053,26 @@ impl Engine {
             let dec = (b.sin() * eps_true.cos() + b.cos() * eps_true.sin() * l.sin()).asin();
             (norm360(eshana_core::deg(ra)), eshana_core::deg(dec))
         };
+        let topo = r.config.topocentric.unwrap_or(false);
+        if topo && r.place.is_none() {
+            return Err(EshanaError::Input("topocentric positions need place".into()));
+        }
+        if topo {
+            assumptions.push("positions are topocentric: parallax for the place's latitude and altitude applied (Meeus ch. 40); speeds stay geocentric".into());
+        }
         for b in &wanted {
-            let p = provider.position(inst.jd_tt, *b)?;
+            let mut p = provider.position(inst.jd_tt, *b)?;
+            if let (true, Some(pl), Some(dist)) = (topo, r.place.as_ref(), p.distance_au) {
+                let obs = crate::rising::Observer {
+                    lat: pl.latitude,
+                    lon: pl.longitude,
+                    height_m: pl.altitude_m.unwrap_or(0.0),
+                };
+                let (l, bt) =
+                    crate::rising::topocentric(p.longitude_deg, p.latitude_deg, dist, inst.jd_ut, obs);
+                p.longitude_deg = l;
+                p.latitude_deg = bt;
+            }
             let lon = zodiac_lon(p.longitude_deg, &cfg, t);
             let mut o = Map::new();
             o.insert("id".into(), json!(b.id()));
@@ -986,6 +1248,27 @@ impl Engine {
                         "houses",
                     ));
                 }
+                if r.features.iter().any(|f| f == "dignities") {
+                    let lons: BTreeMap<String, f64> =
+                        pos_by_body.iter().map(|(k, v)| (k.clone(), v.0)).collect();
+                    // sect: the Sun above the horizon (between the Descendant and the Ascendant through the MC)
+                    let day = match (asc_lon, lons.get("sun")) {
+                        (Some(a), Some(s)) if hw == 0.0 => Some(norm360(s - a) >= 180.0),
+                        _ => None,
+                    };
+                    if day.is_none() {
+                        assumptions.push("essential dignities: the sect (day or night) needs the exact birth time and place; triplicity is shown but not scored".into());
+                    }
+                    rulesets.push(crate::western_dignities::rule_id());
+                    derived.push(attr(
+                        "western.dignities",
+                        "western.essential_dignities",
+                        &crate::western_dignities::rule_id(),
+                        Epistemic::TraditionRule,
+                        crate::western_dignities::dignities(&lons, day)?,
+                        &["positions".to_string(), "houses".to_string()],
+                    ));
+                }
                 if r.aspects {
                     let scale = r.orb_scale.unwrap_or(1.0);
                     let ids: Vec<&String> = pos_by_body.keys().filter(|k| !k.contains("node")).collect();
@@ -1153,7 +1436,7 @@ impl Engine {
                     ));
                 }
                 let feats = expand_features(&r.features)?;
-                if !feats.is_empty() {
+                if !feats.is_empty() || !r.user_rule_packs.is_empty() {
                     self.vedic_features(
                         &feats,
                         &cfg,
@@ -1205,10 +1488,13 @@ impl Engine {
                 "birth_time_quality": mo.quality,
                 "time_window_minutes": if hw > 0.0 { json!(hw * 2.0 * 1440.0) } else { Value::Null },
                 "place": place_json,
+                // the date as written and its calendar, when a calendar was named (TIME-03)
+                "calendar": r.when.calendar.as_deref().map(|c| json!({"name": c, "date_as_written": r.when.date})),
             },
             "calculation": {
                 "system": system,
                 "frame": FRAME_APPARENT_ECLIPTIC_OF_DATE,
+                "positions_reference": if r.config.topocentric.unwrap_or(false) { "topocentric" } else { "geocentric" },
                 "provider": cfg.provider,
                 "zodiac": cfg.zodiac,
                 "ayanamsha": cfg.ayanamsha,
@@ -1264,10 +1550,20 @@ impl Engine {
         let mut omitted: Vec<String> = vec![];
         let mut need = |what: &str, why: &str| omitted.push(format!("{what} omitted: {why}"));
         rulesets.push(core_rule.clone());
+        let dignity_rule = packs::split_rule("vedic-dignity.yaml");
+        let relationships_rule = packs::split_rule("vedic-relationships.yaml");
+        let drishti_rule = packs::split_rule("vedic-drishti.yaml");
+        let strength_rule = packs::split_rule("vedic-strength.yaml");
+        rulesets.extend([
+            dignity_rule.clone(),
+            relationships_rule.clone(),
+            drishti_rule.clone(),
+            strength_rule.clone(),
+        ]);
         if feats.contains("strength") {
             push(
                 "vedic.strength",
-                &core_rule,
+                &strength_rule,
                 jyotish::strength(&vc),
                 &["positions", "houses"],
             );
@@ -1275,7 +1571,7 @@ impl Engine {
         if feats.contains("relationships") {
             push(
                 "vedic.relationships",
-                &core_rule,
+                &relationships_rule,
                 jyotish::panchadha_maitri(&vc),
                 &["positions"],
             );
@@ -1283,19 +1579,19 @@ impl Engine {
         if feats.contains("drishti") {
             push(
                 "vedic.drishti.graha",
-                &core_rule,
+                &drishti_rule,
                 jyotish::graha_drishti(&vc),
                 &["positions"],
             );
             push(
                 "vedic.drishti.additional",
-                &core_rule,
+                &drishti_rule,
                 jyotish::additional_drishti(&vc),
                 &["positions"],
             );
             push(
                 "vedic.drishti.rashi",
-                &core_rule,
+                &drishti_rule,
                 json!({"rule": "movable signs aspect fixed signs except the adjacent one; fixed aspect movable except the adjacent one; dual aspect dual",
                 "aspects": jyotish::rashi_drishti(&vc)}),
                 &["positions"],
@@ -1314,7 +1610,7 @@ impl Engine {
             if !vargas.is_empty() {
                 push(
                     "vedic.drishti.vargas",
-                    &core_rule,
+                    &drishti_rule,
                     json!({"rule": "graha, rashi and additional drishti by the same rules as the rasi chart, between the signs each graha occupies in the varga", "vargas": vargas}),
                     &["positions"],
                 );
@@ -1436,6 +1732,28 @@ impl Engine {
                 "vedic.yogas",
                 &rule,
                 jyotish::yogas(&vc),
+                &["positions", "houses"],
+            );
+        }
+        if feats.contains("lal_kitab") {
+            let rule = crate::lal_kitab::rule_id();
+            rulesets.push(rule.clone());
+            match crate::lal_kitab::chart(&vc) {
+                Ok(v) => push("vedic.lal_kitab", &rule, v, &["positions", "houses"]),
+                Err(e) => need("lal_kitab", &e.to_string()),
+            }
+        }
+        for src in &r.user_rule_packs {
+            let pk = packs::user_yogas(src)?;
+            let rule = packs::rule_id(&pk.id, &pk.version);
+            rulesets.push(rule.clone());
+            let mut v = jyotish::yogas_with(&vc, &pk);
+            v["source"] =
+                json!("user rule pack: checked by the same grammar as vedic.yogas, not reviewed by ESHANA");
+            push(
+                &format!("user.yogas.{}", pk.id),
+                &rule,
+                v,
                 &["positions", "houses"],
             );
         }
@@ -2254,6 +2572,7 @@ impl Engine {
                 "zodiac": prog_env["calculation"]["zodiac"], "ayanamsha": prog_env["calculation"]["ayanamsha"],
                 "config_hash": prog_env["calculation"]["config_hash"]},
             "solar_arc_deg": sun_arc,
+            "solar_arc_directions": solar_arc_directions(&birth_env, sun_arc),
             "positions": prog_env["positions"], "angles": angles, "interpretations": [],
             "provenance": prog_env["provenance"]}))
     }
@@ -2426,6 +2745,364 @@ impl Engine {
         )
     }
 
+    fn synastry_op(
+        &self,
+        a: &ChartRequest,
+        b: &ChartRequest,
+        scale: f64,
+        composite: bool,
+        davison: bool,
+    ) -> Result<Value> {
+        let system = a
+            .system
+            .clone()
+            .or_else(|| b.system.clone())
+            .unwrap_or_else(|| "western".into());
+        let (ea, eb) = (
+            self.chart(a, Some(&system), "computed_chart")?,
+            self.chart(b, Some(&system), "computed_chart")?,
+        );
+        let bodies = |e: &Value| -> Vec<(String, f64, f64)> {
+            e["positions"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|p| !p["id"].as_str().unwrap_or("").contains("node"))
+                .filter_map(|p| {
+                    Some((
+                        p["id"].as_str()?.to_string(),
+                        p["longitude_deg"].as_f64()?,
+                        p["speed_deg_per_day"].as_f64().unwrap_or(0.0),
+                    ))
+                })
+                .collect()
+        };
+        let (pa, pb) = (bodies(&ea), bodies(&eb));
+        let mut inter = vec![];
+        for (ia, la, _) in &pa {
+            for (ib, lb, _) in &pb {
+                if let Some(asp) = astro::aspect_between(*la, 0.0, *lb, 0.0, scale) {
+                    inter.push(json!({"a": ia, "b": ib, "aspect": asp.name, "exact_angle": asp.angle, "separation_deg": asp.separation, "orb_deg": asp.orb}));
+                }
+            }
+        }
+        let cusps = |e: &Value| -> Option<[f64; 12]> {
+            let v = e["houses"]["cusps_deg"].as_array()?;
+            let mut c = [0.0; 12];
+            for (i, x) in v.iter().take(12).enumerate() {
+                c[i] = x.as_f64()?;
+            }
+            Some(c)
+        };
+        let overlay = |who: &[(String, f64, f64)], into: Option<[f64; 12]>| -> Value {
+            match into {
+                Some(c) => json!(who
+                    .iter()
+                    .map(|(id, l, _)| json!({"body": id, "house": astro::house_of(*l, &c)}))
+                    .collect::<Vec<_>>()),
+                None => Value::Null,
+            }
+        };
+        let mid = |x: f64, y: f64| norm360(x + angular_diff(y, x) / 2.0); // the nearer midpoint
+        let mut out = json!({"schema_version": SCHEMA_VERSION, "kind": "synastry",
+            "calculation": {"system": system, "orb_scale": scale, "zodiac": ea["calculation"]["zodiac"], "ayanamsha": ea["calculation"]["ayanamsha"],
+                            "aspects": "Ptolemaic (conjunction, sextile, square, trine, opposition) between every body of A and every body of B"},
+            "inter_aspects": inter,
+            "house_overlays": {"a_in_b": overlay(&pa, cusps(&eb)), "b_in_a": overlay(&pb, cusps(&ea))},
+            "a": {"positions": ea["positions"], "houses": ea["houses"]}, "b": {"positions": eb["positions"], "houses": eb["houses"]},
+            "interpretations": [],
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "a": ea["provenance"], "b": eb["provenance"]}});
+        if composite {
+            let pos: Vec<Value> = pa.iter().filter_map(|(id, la, _)| {
+                let lb = pb.iter().find(|x| &x.0 == id)?.1;
+                Some(json!({"id": id, "longitude_deg": mid(*la, lb), "sign": astro::sign_index(mid(*la, lb))}))
+            }).collect();
+            let houses = match (cusps(&ea), cusps(&eb)) {
+                (Some(ca), Some(cb)) => {
+                    json!({"method": "cusp_midpoints", "cusps_deg": (0..12).map(|i| mid(ca[i], cb[i])).collect::<Vec<_>>()})
+                }
+                _ => Value::Null,
+            };
+            out["composite"] = json!({"method": "midpoints (the nearer of the two arcs)", "positions": pos, "houses": houses});
+        }
+        if davison {
+            let (ma, mb) = (resolve_when(&a.when)?, resolve_when(&b.when)?);
+            let mut d = a.clone();
+            d.when = When {
+                utc: Some(Instant::from_jd_utc((ma.center.jd_ut + mb.center.jd_ut) / 2.0).utc),
+                ..When::default()
+            };
+            d.place = match (&a.place, &b.place) {
+                (Some(x), Some(y)) => Some(Place {
+                    latitude: (x.latitude + y.latitude) / 2.0,
+                    longitude: norm360(x.longitude + angular_diff(y.longitude, x.longitude) / 2.0 + 180.0)
+                        - 180.0,
+                    altitude_m: None,
+                }),
+                _ => None,
+            };
+            d.features = vec![];
+            let de = self.chart(&d, Some(&system), "computed_chart")?;
+            out["davison"] = json!({"method": "midpoint in time (UT) and space (latitude, the nearer longitude)",
+                                    "instant_utc": de["input"]["instant_utc"], "place": de["input"]["place"],
+                                    "positions": de["positions"], "houses": de["houses"]});
+        }
+        Ok(out)
+    }
+
+    fn gochara_op(
+        &self,
+        natal: &ChartRequest,
+        start_utc: &str,
+        end_utc: &str,
+        bodies: Option<&[String]>,
+    ) -> Result<Value> {
+        let mut assumptions = vec![];
+        let cfg = build_config(
+            &natal.config,
+            Some("vedic"),
+            natal.assume_defaults,
+            &mut assumptions,
+        )?;
+        let ayan = cfg
+            .ayanamsha
+            .ok_or_else(|| EshanaError::Config("gochara is sidereal: give an ayanamsha".into()))?;
+        let provider = self.provider(&cfg.provider, natal.spk_path.as_deref())?;
+        let mo = resolve_when(&natal.when)?;
+        let (a, b) = (Instant::parse_utc(start_utc)?, Instant::parse_utc(end_utc)?);
+        if b.jd_ut <= a.jd_ut || b.jd_ut - a.jd_ut > 30.0 * 366.0 {
+            return Err(EshanaError::RangeInvalid(
+                "end must be after start and within 30 years".into(),
+            ));
+        }
+        let p = provider.as_ref();
+        let moon_sign = astro::sign_index(crate::events::lon_at(p, Body::Moon, mo.center.jd_ut, Some(ayan))?);
+        // the lagna counts only with an exact time and a place
+        let lagna_sign = match (&natal.place, mo.half_width_days > 0.0) {
+            (Some(pl), false) => {
+                let t = mo.center.t_tt();
+                let lst = astro::local_apparent_sidereal_deg(mo.center.gmst_deg(), pl.longitude, t);
+                Some(astro::sign_index(astro::to_sidereal(
+                    astro::asc_mc(lst, pl.latitude, t).0,
+                    ayan,
+                    t,
+                )))
+            }
+            _ => None,
+        };
+        let list: Vec<Body> = match bodies {
+            Some(b) => b.iter().map(|x| Body::parse(x)).collect::<Result<_>>()?,
+            None => vec![
+                Body::Sun,
+                Body::Moon,
+                Body::Mars,
+                Body::Mercury,
+                Body::Jupiter,
+                Body::Venus,
+                Body::Saturn,
+                cfg.node_model.body(),
+            ],
+        };
+        let mut out = vec![];
+        for body in list {
+            let ing = crate::events::ingresses(p, body, a.jd_ut, b.jd_ut, Some(ayan))?;
+            let mut sign = astro::sign_index(crate::events::lon_at(p, body, a.jd_ut, Some(ayan))?);
+            let mut start = a.jd_ut;
+            let mut segs = vec![];
+            let seg = |sign: usize, s: f64, e: f64| {
+                json!({"sign": sign, "start_utc": Instant::from_jd_utc(s).utc, "end_utc": Instant::from_jd_utc(e).utc,
+                "house_from_moon": (sign + 12 - moon_sign) % 12 + 1, "house_from_lagna": lagna_sign.map(|l| (sign + 12 - l) % 12 + 1)})
+            };
+            for i in &ing {
+                let jd = i["jd_ut"].as_f64().unwrap_or(start);
+                segs.push(seg(sign, start, jd));
+                sign = i["to_sign"].as_u64().unwrap_or(0) as usize;
+                start = jd;
+            }
+            segs.push(seg(sign, start, b.jd_ut));
+            let retro = if body.is_node() {
+                json!([])
+            } else {
+                crate::events::stations(p, body, a.jd_ut, b.jd_ut, Some(ayan), 1.0 / 86_400.0)?
+                    ["retrograde_intervals"]
+                    .clone()
+            };
+            let combust = crate::events::combustion(p, body, a.jd_ut, b.jd_ut, Some(ayan))?;
+            out.push(json!({"body": body.id(), "segments": segs, "retrograde_intervals": retro, "combustion_intervals": combust}));
+        }
+        assumptions.push(
+            "houses from the natal Moon (and lagna, when the birth time is exact) by whole sign".into(),
+        );
+        assumptions.push("combustion: the vedic-core pack's orbs from the Sun (Mercury and Venus smaller while retrograde)".into());
+        assumptions.push("gochara vedha (obstruction) is not applied".into());
+        Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "gochara",
+            "input": {"birth_utc": mo.center.utc, "start_utc": a.utc, "end_utc": b.utc},
+            "calculation": {"zodiac": cfg.zodiac, "ayanamsha": cfg.ayanamsha, "provider": cfg.provider, "natal_moon_sign": moon_sign,
+                            "natal_lagna_sign": lagna_sign, "rule": crate::packs::rule_id(&crate::packs::core().id, &crate::packs::core().version),
+                            "config_hash": crate::methods::config_hash(&cfg)},
+            "transits": out,
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "provider_data": provider.info().data, "assumptions": assumptions},
+            "interpretations": []}))
+    }
+
+    fn returns_op(
+        &self,
+        natal: &ChartRequest,
+        body: Option<&str>,
+        start_utc: &str,
+        end_utc: &str,
+        place: Option<&Place>,
+        charts: bool,
+    ) -> Result<Value> {
+        let body = Body::parse(body.unwrap_or("sun"))?;
+        if body.is_node() {
+            return Err(EshanaError::Input("a return is of a body, not a node".into()));
+        }
+        let mut assumptions = vec![];
+        let system = natal.system.as_deref();
+        let cfg = build_config(&natal.config, system, natal.assume_defaults, &mut assumptions)?;
+        let provider = self.provider(&cfg.provider, natal.spk_path.as_deref())?;
+        let mo = resolve_when(&natal.when)?;
+        if mo.half_width_days > 0.0 {
+            return Err(EshanaError::TimeUncertain(
+                "a return needs the exact birth time: the natal longitude moves with it".into(),
+            ));
+        }
+        let (a, b) = (Instant::parse_utc(start_utc)?, Instant::parse_utc(end_utc)?);
+        let limit_years = if body == Body::Moon { 10.0 } else { 120.0 };
+        if b.jd_ut <= a.jd_ut || b.jd_ut - a.jd_ut > limit_years * 366.0 {
+            return Err(EshanaError::RangeInvalid(format!(
+                "end must be after start and within {limit_years} years for {}",
+                body.id()
+            )));
+        }
+        let ayan = if cfg.zodiac == ZodiacSystem::Sidereal {
+            cfg.ayanamsha
+        } else {
+            None
+        };
+        let natal_lon = crate::events::lon_at(provider.as_ref(), body, mo.center.jd_ut, ayan)?;
+        let found = crate::events::crossings(
+            provider.as_ref(),
+            body,
+            natal_lon,
+            &[0.0],
+            a.jd_ut,
+            b.jd_ut,
+            ayan,
+            1e-6,
+            0.0,
+            2000,
+        )?;
+        let mut returns = vec![];
+        for ev in found["events"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|e| e["kind"] == "crossing")
+        {
+            let jd = ev["jd_ut"].as_f64().unwrap_or(0.0);
+            let mut row = json!({"utc": ev["utc"], "jd_ut": jd, "direction": ev["direction"], "residual_deg": ev["residual_deg"]});
+            if charts {
+                let mut r = natal.clone();
+                r.when = When {
+                    utc: Some(Instant::from_jd_utc(jd).utc),
+                    ..When::default()
+                };
+                if let Some(pl) = place {
+                    r.place = Some(pl.clone());
+                }
+                r.features = vec![];
+                r.dasha = false;
+                let env = self.chart(&r, system, "computed_chart")?;
+                row["chart"] = json!({"positions": env["positions"], "houses": env["houses"], "calculation": env["calculation"]});
+            }
+            returns.push(row);
+        }
+        assumptions.push(format!(
+            "a return is the instant the {} reaches its natal {} longitude {:.6}° again (a crossing of that point, solved to 0.1 s)",
+            body.id(),
+            if ayan.is_some() { "sidereal" } else { "tropical" },
+            natal_lon
+        ));
+        if place.is_some() {
+            assumptions.push(
+                "relocated return: the charts are cast for the given place, not the birth place".into(),
+            );
+        }
+        Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "returns", "body": body.id(),
+            "input": {"birth_utc": mo.center.utc, "start_utc": a.utc, "end_utc": b.utc},
+            "calculation": {"zodiac": cfg.zodiac, "ayanamsha": cfg.ayanamsha, "provider": cfg.provider,
+                            "natal_longitude_deg": natal_lon, "config_hash": crate::methods::config_hash(&cfg)},
+            "returns": returns,
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "provider_data": provider.info().data, "assumptions": assumptions},
+            "interpretations": []}),
+        )
+    }
+
+    fn rise_set_op(&self, r: &RiseSetRequest) -> Result<Value> {
+        let mut assumptions = vec![];
+        let cfg = build_config(&r.config, None, false, &mut assumptions)?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let days = r.days.unwrap_or(1);
+        if !(1..=366).contains(&days) {
+            return Err(EshanaError::Input("days must be 1 to 366".into()));
+        }
+        let conv = crate::panchanga::Rising::parse(r.sunrise.as_deref())?;
+        let bodies: Vec<Body> = match &r.bodies {
+            Some(b) => b.iter().map(|x| Body::parse(x)).collect::<Result<_>>()?,
+            None => vec![Body::Sun, Body::Moon],
+        };
+        if let Some(b) = bodies.iter().find(|b| b.is_node()) {
+            return Err(EshanaError::Input(format!(
+                "{} is a point, not a body that rises",
+                b.id()
+            )));
+        }
+        let obs = crate::rising::Observer {
+            lat: r.place.latitude,
+            lon: r.place.longitude,
+            height_m: r.place.altitude_m.unwrap_or(0.0),
+        };
+        let start = eshana_time::parse_date(&r.date)?;
+        let mut out = vec![];
+        for k in 0..days {
+            let jd = eshana_time::jd_from_gregorian(
+                i32::from(start.year()),
+                start.month() as u32,
+                f64::from(start.day()),
+            ) + f64::from(k);
+            let (y, m, d, _) = eshana_time::gregorian_from_jd(jd);
+            let date = eshana_time::iso_date(y, m, d);
+            let midnight = match (&r.timezone, r.utc_offset_minutes) {
+                (Some(z), _) => Instant::from_local_str(&date, "00:00", z, FoldPolicy::Earliest)?,
+                (None, Some(o)) => Instant::from_offset_str(&date, "00:00", o)?,
+                (None, None) => {
+                    return Err(EshanaError::Input(
+                        "rise_set needs timezone (IANA name) or utc_offset_minutes for the local days".into(),
+                    ))
+                }
+            };
+            let off = f64::from(midnight.civil_offset_s.unwrap_or(0));
+            let mut day = json!({"date": date, "bodies": bodies.iter().map(|b| crate::rising::body_day(provider.as_ref(), *b, midnight.jd_ut, obs, conv, off)).collect::<Result<Vec<_>>>()?});
+            if r.twilight.unwrap_or(true) {
+                day["twilight"] = crate::rising::twilight(provider.as_ref(), midnight.jd_ut, obs, off)?;
+            }
+            out.push(day);
+        }
+        assumptions.push(format!("rise and set: {} (refraction 34′ at the horizon, no temperature or pressure model; the Moon's parallax and semidiameter included)", conv.id()));
+        assumptions.push("twilight: the Sun's centre, geometric, at −6°, −12° and −18°".into());
+        assumptions.push("transit is the upper culmination (hour angle 0)".into());
+        Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "rise_set",
+                  "input": {"place": {"latitude_deg": obs.lat, "longitude_deg": obs.lon, "altitude_m": obs.height_m}, "date": r.date, "days": days,
+                            "timezone": r.timezone, "utc_offset_minutes": r.utc_offset_minutes},
+                  "calculation": {"provider": cfg.provider, "sunrise": conv.id(), "config_hash": crate::methods::config_hash(&cfg)},
+                  "days": out,
+                  "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "provider": cfg.provider, "provider_data": provider.info().data, "assumptions": assumptions},
+                  "interpretations": []}))
+    }
+
     fn ingress_op(&self, r: &IngressRequest) -> Result<Value> {
         let mut assumptions = vec![];
         let cfg = build_config(&r.config, None, false, &mut assumptions)?;
@@ -2572,6 +3249,7 @@ impl Engine {
                     .clone()
                     .or_else(|| base.config.house_system.clone()),
                 node_model: ov.node_model.clone().or_else(|| base.config.node_model.clone()),
+                topocentric: ov.topocentric.or(base.config.topocentric),
             }
         };
         let (mut ra, mut rb) = (base.clone(), base.clone());
@@ -2647,6 +3325,19 @@ impl Engine {
 pub const WESTERN_RULESET: &str = "western.basic@0.1";
 
 fn numerology_run(r: &NumerologyRequest) -> Result<Value> {
+    if let Some(sch) = r.school.as_deref().filter(|x| crate::gematria::handles(x)) {
+        let name = r
+            .name
+            .as_deref()
+            .ok_or_else(|| EshanaError::Input(format!("{sch} reads a name: give name")))?;
+        let g = crate::gematria::analyze(name, sch)?;
+        return Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "numerology", "input": {"name": name, "school": sch},
+            "gematria": g, "interpretations": [],
+            "provenance": {"engine_version": env!("CARGO_PKG_VERSION"), "rulesets": [g["rule"]],
+                "assumptions": ["the name is read in its own script; nothing is transliterated"]}}),
+        );
+    }
     let school = numerology::School::parse(r.school.as_deref().unwrap_or("pythagorean"))?;
     let keep = r.keep_master_numbers.unwrap_or(true);
     let y = match r.y_policy.as_deref().unwrap_or("consonant") {

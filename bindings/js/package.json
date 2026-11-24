@@ -1,0 +1,17 @@
+{
+  "name": "eshana",
+  "version": "0.5.0",
+  "description": "ESHANA astronomical and astrological calculation engine for JavaScript: the Rust engine as WebAssembly, for browsers and Node. One JSON entry point; every rule named; no interpretation invented.",
+  "type": "module",
+  "main": "index.mjs",
+  "types": "index.d.ts",
+  "exports": { ".": { "types": "./index.d.ts", "default": "./index.mjs" }, "./eshana_engine.wasm": "./eshana_engine.wasm" },
+  "files": ["index.mjs", "index.d.ts", "eshana_engine.wasm", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node test.mjs" },
+  "license": "Apache-2.0",
+  "homepage": "https://neo-pragnya.github.io/ESHANA/",
+  "repository": { "type": "git", "url": "https://github.com/Neo-Pragnya/ESHANA.git", "directory": "bindings/js" },
+  "bugs": { "url": "https://github.com/Neo-Pragnya/ESHANA/issues" },
+  "keywords": ["astronomy", "ephemeris", "jyotish", "vedic-astrology", "astrology", "wasm", "webassembly", "panchanga"]
+}

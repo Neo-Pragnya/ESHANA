@@ -28,6 +28,26 @@ Feature: Symbolic graph
     Then it succeeds
     And the output contains "well-formed"
 
+  Scenario: SVG and draw.io exports are well-formed drawings
+    Given the file "wellformed.py" with content:
+      """
+      import sys
+      import xml.dom.minidom as m
+      doc = m.parse(sys.argv[1])
+      print("root", doc.documentElement.tagName, "boxes", len(doc.getElementsByTagName("rect")) + len(doc.getElementsByTagName("mxCell")))
+      """
+    When I run "eshana graph vedic --utc 2000-01-01T12:00:00Z --format svg > g.svg && python wellformed.py g.svg && eshana graph vedic --utc 2000-01-01T12:00:00Z --format drawio > g.drawio && python wellformed.py g.drawio"
+    Then it succeeds
+    And the output contains "root svg"
+    And the output contains "root mxfile"
+
+  Scenario: The Chitkala export carries the nodes, edges and sources
+    When I run "eshana graph vedic --utc 2000-01-01T12:00:00Z --format chitkala"
+    Then it succeeds
+    And the JSON output at "nodes" has at least 10 items
+    And the JSON output at "edges" has at least 10 items
+    And the output contains "universes"
+
   Scenario: An unknown format is refused
     When I run "eshana graph vedic --utc 2000-01-01T12:00:00Z --format visio"
     Then the exit code is 2

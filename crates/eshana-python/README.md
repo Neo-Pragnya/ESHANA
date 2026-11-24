@@ -110,7 +110,7 @@ belong to one school, and readings someone wrote. ESHANA pulls them apart so eac
   "derived_attributes": [{ "id": "vedic.moon.nakshatra", "epistemic": "tradition_rule", "value": { "name": "Punarvasu", "pada": 3 } }],
   "interpretations": [],
   "calculation": { "ayanamsha": "lahiri", "house_system": "whole_sign", "config_hash": "fnv1a64:…" },
-  "provenance": { "engine_version": "0.4.4", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
+  "provenance": { "engine_version": "0.5.0", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
 }
 ```
 
@@ -232,7 +232,7 @@ web form on your machine, waits, and stops as soon as one valid chart is written
 | 🧪 **Research (experimental)** | each score is written up first (factors, weights, worked examples); one window-ranking model, labelled experimental |
 
 <details>
-<summary><b>🌌 The ten ayanāṃśas</b></summary>
+<summary><b>🌌 The fourteen ayanāṃśas</b></summary>
 
 | id | | id | |
 |---|---|---|---|
@@ -241,9 +241,12 @@ web form on your machine, waits, and stops as soon as one valid chart is written
 | `krishnamurti` | KP (the default for KP horary) | `sassanian` | Sassanian |
 | `fagan_bradley` | the Western sidereal standard | `deluce` | De Luce |
 | `yukteshwar` | Sri Yukteshwar | `djwhal_khul` | Djwhal Khul |
+| `true_citra` | Spica held at 180° | `true_pushya` | δ Cancri held at 106° |
+| `true_revati` | ζ Piscium held at 359°50′ | `true_mula` | λ Scorpii held at 240° |
 
-Each is defined by its epoch and rate (`info` → `ayanamsha_definitions`) and checked against an independent reference
-from 1800 to 2100: worst error 0.05″.
+Each mean model is defined by its epoch and rate (`info` → `ayanamsha_definitions`) and checked against an
+independent reference from 1800 to 2100: worst error 0.05″. The four true models follow their star (Hipparcos
+position and proper motion, with aberration and light deflection): within 0.62″ of the reference over 1800–2200.
 
 </details>
 
@@ -382,16 +385,17 @@ Not promised: measured against independent references and written down.
 | What | Against | Result |
 |---|---|---|
 | 🌍 Positions, `spk` provider | an independent JPL DE440s pipeline | **0.3″** |
-| 🌍 Positions, `analytic` provider (40 charts) | Swiss Ephemeris (offline oracle) | Moon 6″ worst, Sun 18″; outer planets arc-minute class |
+| 🌍 Positions, `analytic` provider (40 charts) | Swiss Ephemeris (offline oracle) | Sun 0.4″, planets ≤ 1.4″ (Neptune 4.5″), Moon 6″ worst |
 | 🧭 Ascendant and cusps | Swiss Ephemeris | **3.2″** worst |
 | 🎯 KP horary cusps | Swiss Ephemeris `houses_armc` | **0.07″** |
 | 📐 Ten ayanāṃśas, 1800–2100 | Swiss Ephemeris | **0.05″** worst (De Luce) |
 | ⏱️ Stations and crossings | Swiss Ephemeris event search | within the stated solver tolerance |
 | 📚 Published charts | printed reference values | see the accuracy report |
 
-> **⚠️ Warning**  
-> The `analytic` provider is arc-minute class for Jupiter and Saturn. When that matters, use the `spk` provider with
-> a JPL kernel (`--provider spk --spk de440s.bsp`).
+> **💡 Tip**  
+> The `analytic` provider (VSOP87 since 0.5.0) is arc-second class for the Sun and planets with no data files. For
+> sub-arc-second work, historical dates, asteroids or Chiron, use the `spk` provider with a JPL kernel
+> (`eshana kernel list`, `--provider spk --spk de440`).
 
 The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, never linked. Details:
 [accuracy report](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/accuracy/birth-chart-accuracy.md) · [provider accuracy](https://github.com/Neo-Pragnya/ESHANA/blob/main/benchmarks/golden/accuracy.md) ·
@@ -403,7 +407,7 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 
 <!-- REFERENCE:START -->
 <details>
-<summary><b>⚙️ All 24 operations</b> (the <code>op</code> of a request)</summary>
+<summary><b>⚙️ All 29 operations</b> (the <code>op</code> of a request)</summary>
 
 | | `op` | What it answers |
 |---|---|---|
@@ -428,6 +432,11 @@ The Swiss Ephemeris is used **only** as an offline test oracle: never bundled, n
 | 📆 | `progressions` | secondary progressions with fractional age and named angle methods |
 | 🔢 | `kp_table` | the KP 1–249 horary number table |
 | 🎯 | `kp_horary` | a KP horary chart: the number fixes the Ascendant |
+| 🌄 | `rise_set` | rise, upper transit and set of any body, and twilight, for local days at a place |
+| 🔁 | `returns` | solar, lunar or any body's returns to its natal longitude, with a chart at each (relocatable) |
+| 🚶 | `gochara` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| 🌑 | `eclipses` | solar and lunar eclipses: type, time of greatest eclipse, magnitude, γ |
+| 💑 | `synastry` | two charts compared: inter-aspects, house overlays, midpoint composite, Davison chart |
 | 🧪 | `synthetic_chart` | positions you place by hand, labelled synthetic (the playground) |
 | 📊 | `research_window_score` | the experimental window score, with coverage and sensitivity |
 | ℹ️ | `info` | versions, operations, method families and ayanāṃśa definitions |
@@ -436,7 +445,7 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 </details>
 
 <details>
-<summary><b>🧰 All 25 CLI commands</b></summary>
+<summary><b>🧰 All 31 CLI commands</b></summary>
 
 | Command | What it does |
 |---|---|
@@ -445,7 +454,7 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 | `eshana human-design` | Human Design: design instant, gates, lines, channels, type, authority, profile |
 | `eshana numerology` | Name and birth-date numerology |
 | `eshana compare` | Same input under two configurations, with a diff of what changed |
-| `eshana graph` | Symbolic graph of a chart: json, mermaid or graphml |
+| `eshana graph` | Symbolic graph of a chart: json, mermaid, graphml, svg, drawio or chitkala |
 | `eshana panchanga` | Panchanga and day divisions (sunrise, tithi, nakshatra, yoga, karana, hora, choghadiya, rahu kalam) |
 | `eshana ashtakavarga-transits` | Transit Ashtakavarga: the natal BAV/SAV cells each graha reads, as segments between ingresses |
 | `eshana muhurta` | Muhurta windows: factor timelines over a range composed under a profile and constraints |
@@ -465,6 +474,12 @@ Fields of each: [docs/reference/request.md](https://github.com/Neo-Pragnya/ESHAN
 | `eshana doctor` | Show the environment, providers, rule packs and error codes |
 | `eshana explain` | Explain a stable error code, e.g. ESH-LATITUDE |
 | `eshana schema` | Print the JSON Schema of the result envelope |
+| `eshana rise-set` | Rise, upper transit and set of bodies, and twilight, for local days at a place |
+| `eshana returns` | Solar, lunar or any body's returns to its natal longitude in a range, with a chart at each |
+| `eshana gochara` | Gochara: transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana synastry` | Synastry of two births: inter-aspects, house overlays, a midpoint composite and a Davison chart |
+| `eshana eclipses` | Solar and lunar eclipses in a range: type, time of greatest eclipse, magnitude |
+| `eshana kernel` | JPL kernels: `list` the ones ESHANA knows, `verify PATH|NAME` against NAIF's checksum, `path NAME` |
 
 Every command prints one JSON envelope; `--compact` for one line. Errors print an error envelope and exit 2.
 </details>
@@ -474,17 +489,17 @@ Every command prints one JSON envelope; `--compact` for one line. Errors print a
 
 | Family | Method ids |
 |---|---|
-| `ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` |
-| `house_system` | `whole_sign`, `equal`, `placidus` |
+| `ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul`, `true_citra`, `true_revati`, `true_pushya`, `true_mula` |
+| `house_system` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` |
 | `node_model` | `mean`, `true` |
 | `divisional_chart` | `d1`, `d2`, `d3`, `d4`, `d5`, `d6`, `d7`, `d8`, `d9`, `d10`, `d12`, `d16`, `d20`, `d24`, `d27`, `d30`, `d40`, `d45`, `d60` |
 | `year_convention` | `julian`, `gregorian`, `savana`, `sidereal` |
 | `sunrise` | `upper_limb_refracted`, `centre_refracted`, `centre_unrefracted` |
 | `event_search` | `ingresses`, `stations`, `crossings` |
-| `numerology_school` | `pythagorean`, `chaldean` |
+| `numerology_school` | `pythagorean`, `chaldean`, `hebrew_gematria`, `abjad` |
 | `kp_cusp_occupancy` | `cusp_start`, `cusp_midpoint` |
 | `muhurta_profile` | `daily_avoidances`, `general_auspicious`, `abhijit`, `brahma_muhurta`, `personal_general`, `pair_general`, `travel` |
-| `varga_method` | `d2_parivritti`, `d3_parivritti`, `d81_navanavamsha`, `d108_ashtottaramsha_cyclic`, `d144_dvadasha_dvadashamsha` |
+| `varga_method` | `d2_parivritti`, `d3_parivritti`, `d81_navanavamsha`, `d108_ashtottaramsha_cyclic`, `d144_dvadasha_dvadashamsha`, `d30_parivritti`, `d60_parivritti`, `d150_parivritti` |
 | `progression_angles` | `solar_arc_longitude`, `naibod_ra`, `quotidian` |
 | `research_model` | `research.window_score@0.1` |
 
@@ -630,7 +645,7 @@ everywhere else. The studio's `--live` mode is that module, embedded. See [ADR-0
   ([ADR-011](https://github.com/Neo-Pragnya/ESHANA/blob/main/docs/adr/011-open-source-distribution.md)).
 - 🧪 **Experimental pieces are labelled.** Muhūrta purpose presets and the research window score wait for a
   practitioner's review. The conditional daśās wait for published worked examples.
-- 🔭 **Know the provider.** `analytic` is arc-minute class for Jupiter and Saturn; use `spk` with a JPL kernel when
+- 🔭 **Know the provider.** `analytic` is arc-second class (VSOP87; Pluto under an arc-minute); use `spk` with a JPL kernel when
   that matters.
 - 🧭 Next steps: [docs/next-steps.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/docs/next-steps.md) · changes: [CHANGELOG.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/CHANGELOG.md) ·
   design record: [ESHANA_Project_Vision_and_Master_Plan.md](https://github.com/Neo-Pragnya/ESHANA/blob/main/ESHANA_Project_Vision_and_Master_Plan.md).

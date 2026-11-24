@@ -200,10 +200,18 @@
       "id": "TIME-03",
       "area": "core",
       "title": "Julian/Gregorian cut-over and BCE dates",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "note": "Proleptic Gregorian only in 0.1; providers' ranges avoid 1582.",
-      "source": "master plan 6.1"
+      "source": "master plan 6.1",
+      "acceptance": "Julian, Gregorian and auto (1582 cut-over) calendars and BCE years; conversions recorded; the skipped days refused; results match an independent oracle.",
+      "evidence": "eshana-time: Calendar (gregorian/julian/auto), jd_from_julian/julian_from_jd, proleptic gregorian_from_jd (fixes the pre-1582 round-trip bug), parse_date_in with signed years; when.calendar in requests, --calendar in the CLI, calendar= in Python; input.calendar and an assumption record the conversion. Tests: julian_calendar_matches_meeus (Meeus 7.b), proleptic_gregorian_roundtrips_before_1582, calendars_read_dates; accuracy/test_historical_calendar.py (7 dates 1555-1790 with DE440: JD exact, planets within 3″ of the oracle, the Moon within its ΔT-model allowance); acceptance 18_time_and_sky.",
+      "evidence_paths": [
+        "crates/eshana-time/src/lib.rs",
+        "crates/eshana-engine/src/api.rs",
+        "accuracy/test_historical_calendar.py",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "TIME-04",
@@ -220,9 +228,14 @@
       "id": "TIME-05",
       "area": "core",
       "title": "Forecast delta-T beyond 2027 validated against IERS predictions",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Currently Espenak-Meeus continuation; differs from Skyfield by up to 28 s in 2060."
+      "note": "Currently Espenak-Meeus continuation; differs from Skyfield by up to 28 s in 2060.",
+      "acceptance": "ΔT sane across millennia and the post-2027 forecast tied to IERS Bulletin A.",
+      "evidence": "delta_t_polynomial: full Espenak–Meeus set −500..2150 plus the long-term parabola (the year 100 no longer explodes); delta_t_forecast: IERS Bulletin A Vol. XXXIX No. 047 trend (UT1−UTC −0.10 s at 2027.0, −0.179 s/yr) blended into Espenak–Meeus by 2050. Tests delta_t_follows_espenak_meeus_across_millennia (NASA canon values) and forecast_follows_bulletin_a_then_the_long_term_curve.",
+      "evidence_paths": [
+        "crates/eshana-time/src/lib.rs"
+      ]
     },
     {
       "id": "PROV-01",
@@ -260,9 +273,14 @@
       "id": "PROV-04",
       "area": "core",
       "title": "SPK type 3 (Chebyshev with velocity) and other segment types",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Only type 2 is read; planetary DE kernels use it."
+      "note": "Only type 2 is read; planetary DE kernels use it.",
+      "acceptance": "Type-3 SPK segments read; large kernels usable without loading them into memory.",
+      "evidence": "spk.rs: segment type 3 (velocity coefficients) beside type 2; kernels over 256 MB read on demand one record at a time (Store::File); identity hashes head+tail MiB for large files. Test reads_type_2_and_type_3_segments (synthetic in-memory kernels); golden tests unchanged with de440s.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/spk.rs"
+      ]
     },
     {
       "id": "PROV-05",
@@ -279,9 +297,16 @@
       "id": "PROV-06",
       "area": "core",
       "title": "Distribute or auto-fetch a kernel with checksum verification",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "Deliberately manual in 0.1 (local-first, no network). Needs a design."
+      "note": "Deliberately manual in 0.1 (local-first, no network). Needs a design.",
+      "acceptance": "A kernel can be fetched and checked against the publisher's checksum; the engine stays offline.",
+      "evidence": "kernels.rs catalogue (de440s, de440, de441 parts 1-2, de442s, de442 with NAIF sizes and MD5 from aa_checksums.txt), an RFC 1321 MD5 (tested with the RFC vectors), resolve() for catalogue names in the kernel folder; eshana kernel list/verify/path; scripts/fetch_kernel.py (resumable, kept only when size and MD5 match). Verified end to end: local de440s and downloaded de440 both match NAIF.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/kernels.rs",
+        "crates/eshana-cli/src/main.rs",
+        "scripts/fetch_kernel.py"
+      ]
     },
     {
       "id": "AST-01",
@@ -310,9 +335,17 @@
       "id": "AST-03",
       "area": "astro",
       "title": "More house systems (Koch, Regiomontanus, Campanus, Porphyry)",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.4"
+      "source": "master plan 4.4",
+      "acceptance": "Koch, Regiomontanus, Campanus and more, each checked against an independent oracle.",
+      "evidence": "house_cusps: Koch, Regiomontanus, Campanus, Alcabitius, Topocentric (Polich–Page), Morinus, Meridian beside Placidus, Porphyry, Śrīpati, equal, whole sign; listed in eshana methods. Test house_systems_match_the_oracle: 9 systems × 84 latitude/sidereal-time pairs (−50° to 64°) within 0.01°.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/astro.rs",
+        "crates/eshana-core/src/lib.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "benchmarks/golden/houses_oracle.json"
+      ]
     },
     {
       "id": "AST-04",
@@ -340,26 +373,49 @@
       "id": "AST-06",
       "area": "astro",
       "title": "Event search: transits, ingresses, stations, returns, eclipses",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "source": "master plan 8.2",
       "note": "Stations, retrograde intervals and point/aspect crossings ship (EVT-01, EVT-02). Eclipses and returns as a search remain.",
-      "evidence": "Partly delivered: EVT-01 (crossings and aspects), EVT-02 (stations and retrograde intervals) and ingresses are verified operations. Returns and eclipses are still open."
+      "evidence": "Transits/ingresses/stations/crossings: EVT-01, EVT-02. Returns: op returns (eshana returns), test returns_match_the_oracle (10 solar and lunar returns 2025-2040 within 60 s / 30 s). Eclipses: eclipses.rs (geometric, shadow radii 1.02 × (π☾ + π☉ ± s☉), hybrid from the topocentric diameter ratio), test eclipses_match_the_oracle: all 182 eclipses 2000-2040 same type, within 2 min (one faint penumbral extra that NASA lists).",
+      "acceptance": "Event search covers transits, ingresses, stations, returns and eclipses, checked against an independent oracle.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/eclipses.rs",
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "benchmarks/golden/eclipses_oracle.json",
+        "benchmarks/golden/returns_oracle.json"
+      ]
     },
     {
       "id": "AST-07",
       "area": "astro",
       "title": "Chiron, asteroids and other optional bodies",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Chiron and asteroids as optional bodies from kernels, checked against JPL Horizons.",
+      "evidence": "Body::Ceres/Pallas/Juno/Vesta/Chiron (opt in, never default); several kernels at once (--spk de440,sb441-n16); SPK type 21 (SPKE21 algorithm); both asteroid id styles; sb441-n16 in the kernel catalogue; scripts/fetch_kernel.py horizons:N. accuracy/test_optional_bodies.py: 5 bodies × 4 dates within 1″ of Horizons; refusal with a hint when no kernel carries the body.",
+      "evidence_paths": [
+        "crates/eshana-ephemeris/src/spk.rs",
+        "crates/eshana-core/src/lib.rs",
+        "accuracy/test_optional_bodies.py",
+        "accuracy/reference/horizons_optional_bodies.json"
+      ]
     },
     {
       "id": "AST-08",
       "area": "astro",
       "title": "Rise, set and topocentric positions",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.1"
+      "source": "master plan 4.1",
+      "acceptance": "Rise, set, transit and twilight for any body; topocentric positions; checked against an independent oracle.",
+      "evidence": "rising.rs and op rise_set / eshana rise-set / ChartEngine.rise_set: rise, upper transit, set per local day (1-366 days), polar days flagged, civil/nautical/astronomical twilight; config.topocentric (Meeus ch. 40 parallax, IERS ellipsoid, altitude). Tests rise_and_set_match_the_oracle (Sun, Moon, Venus at Delhi, London, Sydney, Tromsø on three dates: within 30 s, worst 18 s) and topocentric_shift_matches_the_oracle (within 2″, Moon shifts up to 58′); acceptance 18_time_and_sky.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/rising.rs",
+        "crates/eshana-engine/tests/oracle.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "VED-01",
@@ -388,10 +444,15 @@
       "id": "VED-03",
       "area": "vedic",
       "title": "D30 and D60 with a documented school choice",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "note": "Returns ESH-RULES today rather than guessing.",
-      "source": "master plan 4.3"
+      "source": "master plan 4.3",
+      "acceptance": "D30 and D60 with a documented school choice.",
+      "evidence": "Defaults stay Parāśari (unequal 5-5-8-7-5 triṃśāṃśa; D60 from the sign); cyclic alternatives d30_parivritti and d60_parivritti in the varga_method family, each named and opt-in (test cyclic_d30_d60_d150); documented in docs/reference/request.md.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vargas_ext.rs"
+      ]
     },
     {
       "id": "VED-04",
@@ -408,18 +469,32 @@
       "id": "VED-05",
       "area": "vedic",
       "title": "Graha drishti, dignities, relationships, strengths as separate packs",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 4.3"
+      "source": "master plan 4.3",
+      "acceptance": "Drishti, dignities, relationships and strengths as separate packs.",
+      "evidence": "vedic-core.yaml split into vedic-dignity, vedic-relationships, vedic-drishti and vedic-strength (values identical: checked by a key-by-key comparison with the 0.3 pack); merged at load time; attributes cite their pack; vedic.core 0.4. All Rust tests pass unchanged.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/vedic-dignity.yaml",
+        "crates/eshana-engine/rulesets/vedic-drishti.yaml",
+        "crates/eshana-engine/src/packs.rs"
+      ]
     },
     {
       "id": "VED-06",
       "area": "vedic",
       "title": "Transits, gochara, retrograde windows, combustion",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
       "depends_on": [
         "AST-06"
+      ],
+      "acceptance": "Gochara, retrograde windows and combustion over a range.",
+      "evidence": "op gochara / eshana gochara: sign segments with house from natal Moon and lagna, retrograde intervals (stations solver), combustion intervals (events::combustion, vedic-core orbs, smaller retrograde orbs for Mercury and Venus). Test gochara_combustion_is_bounded_by_the_pack_orb (interval edges at the orb within 0.01°, houses from the Moon); acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/events.rs",
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/behaviour.rs"
       ]
     },
     {
@@ -456,26 +531,45 @@
       "id": "WES-02",
       "area": "western",
       "title": "Synastry and composite charts",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.4"
+      "source": "master plan 4.4",
+      "acceptance": "Synastry and composite charts.",
+      "evidence": "synastry op / eshana synastry / ChartEngine.synastry: inter-aspects (Ptolemaic), house overlays both ways, midpoint composite with cusp midpoints, Davison chart (midpoint instant and place); acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "WES-03",
       "area": "western",
       "title": "Progressions, solar and lunar returns",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
       "depends_on": [
         "AST-06"
+      ],
+      "acceptance": "Progressions and solar and lunar returns.",
+      "evidence": "Secondary progressions: APP-03 / progressions op. Returns: op returns with charts and relocation; returns_match_the_oracle; acceptance 18_time_and_sky (solar return each year).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs",
+        "crates/eshana-engine/tests/oracle.rs"
       ]
     },
     {
       "id": "WES-04",
       "area": "western",
       "title": "Dignities as a separate rule pack",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Western dignities as a separate rule pack.",
+      "evidence": "western-dignities.yaml (western.dignities@0.1): domicile, exaltation, Dorothean triplicity by sect, Egyptian terms, Chaldean faces, detriment/fall, scores, peregrine, mutual receptions; features: [\"dignities\"] on western charts. Tests egyptian_terms_have_the_classical_totals (79/82/76/66/57) and known_dignities; acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/western-dignities.yaml",
+        "crates/eshana-engine/src/western_dignities.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "HD-01",
@@ -567,15 +661,28 @@
       "id": "NUM-03",
       "area": "num",
       "title": "Cycles, pinnacles, karmic debts",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Cycles, pinnacles and karmic debts.",
+      "evidence": "numerology_ext.rs: karmic debts 13/14/16/19, karmic lessons, pinnacles and challenges, life cycles, personal years (tests worked_pythagorean_numbers, personal_year_cycle; studio journey numerology page).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/numerology_ext.rs",
+        "crates/eshana-engine/src/numerology.rs"
+      ]
     },
     {
       "id": "NUM-04",
       "area": "num",
       "title": "Other alphabets (Hebrew gematria, abjad) as named packs",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "acceptance": "Hebrew gematria and abjad as named packs.",
+      "evidence": "gematria.yaml (numerology.gematria@0.1): hebrew_gematria (mispar hechrechi) and abjad (eastern order); the name must be in its script (Latin refused). Test known_values: שלום 376, חי 18, بسم 102, the basmala 786; acceptance scenario.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/gematria.yaml",
+        "crates/eshana-engine/src/gematria.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "GRA-01",
@@ -603,17 +710,29 @@
       "id": "GRA-03",
       "area": "graph",
       "title": "Chitkala consumer: render the graph interactively",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 5.4, 10 Demo D"
+      "source": "master plan 5.4, 10 Demo D",
+      "evidence": "eshana graph --format chitkala emits Chitkala's import schema (metadata, universes, nodes, edges, sources), read by Chitkala's interactive 2D/3D viewer. Test graph_exports_svg_drawio_and_chitkala; acceptance scenario in 10_graph.feature.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/graph.rs",
+        "crates/eshana-engine/tests/behaviour.rs",
+        "acceptance/features/10_graph.feature"
+      ]
     },
     {
       "id": "GRA-04",
       "area": "graph",
       "title": "SVG and draw.io exports",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.7"
+      "source": "master plan 4.7",
+      "evidence": "--format svg (self-contained, columns by node type, epistemic colours, tooltips) and drawio (mxfile for diagrams.net); both parsed as well-formed XML by the acceptance suite.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/graph.rs",
+        "acceptance/features/10_graph.feature",
+        "docs/guides/graph.md"
+      ]
     },
     {
       "id": "BIND-01",
@@ -641,25 +760,44 @@
       "id": "BIND-03",
       "area": "bind",
       "title": "Node.js bindings (NAPI-RS)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 8.2"
+      "source": "master plan 8.2",
+      "evidence": "bindings/js: the eshana package for Node 18+ (WebAssembly, no native addon: ADR-014 records why NAPI-RS was not used), with TypeScript types; make js runs test.mjs, which checks parity with the native CLI.",
+      "evidence_paths": [
+        "bindings/js/index.mjs",
+        "bindings/js/index.d.ts",
+        "bindings/js/test.mjs",
+        "docs/adr/014-javascript-binding.md"
+      ]
     },
     {
       "id": "BIND-04",
       "area": "bind",
       "title": "Browser WASM bindings",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 8.2"
+      "source": "master plan 8.2",
+      "evidence": "The same package loads in browsers (fetch beside the module, or a URL/Response/bytes/Module); checked in headless Chrome, Moon 60.5236 equal to the CLI. The module has no imports.",
+      "evidence_paths": [
+        "bindings/js/index.mjs",
+        "docs/guides/javascript.md"
+      ]
     },
     {
       "id": "BIND-05",
       "area": "bind",
       "title": "MCP server: compute_positions, create_vedic_chart, compare_charts, compute_human_design, compute_numerology, explain_derivation",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 5.4"
+      "source": "master plan 5.4",
+      "evidence": "eshana-mcp: MCP over stdio with compute_positions, create_vedic_chart, create_western_chart, compare_charts, compute_human_design, compute_numerology, panchanga, find_eclipses, rise_and_set, explain_derivation and eshana_request; refusals carry ESH-* codes. Tests test_mcp.py; acceptance scenario in 12b_python_parity.feature.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/mcp.py",
+        "crates/eshana-python/tests/test_mcp.py",
+        "acceptance/features/12b_python_parity.feature",
+        "docs/guides/mcp.md"
+      ]
     },
     {
       "id": "BIND-06",
@@ -667,7 +805,7 @@
       "title": "Publish eshana to PyPI",
       "status": "released",
       "track": "primary",
-      "evidence": "eshana 0.1.0 on PyPI 2026-11-21 (macOS arm64 abi3 wheel + sdist); TestPyPI first; fresh `uv run --with eshana==0.1.0` imports and renders a report. Linux/Windows wheels follow via release.yml. 0.4.0 published 2026-11-24 (capability expansion): macOS arm64 abi3 wheel and sdist, TestPyPI first, then PyPI; installed from PyPI in a fresh environment and ran eshana-report. Gates: make verify, acceptance-wheel PROMOTE (122), cargo deny and audit clean, dist scan with no blocking findings (vulnerability check degraded: grype and osv-scanner not installed). 0.4.1 published 2026-11-24 (README, site and a dark-theme control fix): TestPyPI then PyPI, installed from PyPI in a fresh environment; gates as for 0.4.0, plus 62/62 journeys per file, 5/5 new-chart journeys and WebAssembly parity. 0.4.2 published 2026-11-24 (README for GitHub with generated reference sections; PyPI description aligned): verify, acceptance PROMOTE, dist scan with no blocking findings, TestPyPI then PyPI, fresh install runs. 0.4.3 published 2026-11-24 (PyPI Changelog and Issues links; first Linux wheels, x86_64 and aarch64 manylinux2014, built with zig): verify, accuracy suite, acceptance PROMOTE, cargo deny and audit, dist scan with no blocking findings (Linux wheels checked for content; the dependency audit ran on the macOS wheel because Linux wheels can't be installed on macOS), both Linux wheels run in Docker, TestPyPI then PyPI, installed from PyPI on Linux aarch64 (prebuilt wheel, no compile) and macOS. 0.4.4 published 2026-11-24 (chart layers on Charts and Vargas, varga drishti, hover-animation filters, Aspects multi-select, Maitri filters, calendars in the examples): verify, accuracy suite, docs-check, acceptance PROMOTE, cargo deny and audit, dist scan with no blocking findings, both Linux wheels run in Docker before upload, TestPyPI then PyPI, installed from PyPI on macOS arm64 and Linux aarch64 and x86_64."
+      "evidence": "eshana 0.1.0 on PyPI 2026-11-21 (macOS arm64 abi3 wheel + sdist); TestPyPI first; fresh `uv run --with eshana==0.1.0` imports and renders a report. Linux/Windows wheels follow via release.yml. 0.4.0 published 2026-11-24 (capability expansion): macOS arm64 abi3 wheel and sdist, TestPyPI first, then PyPI; installed from PyPI in a fresh environment and ran eshana-report. Gates: make verify, acceptance-wheel PROMOTE (122), cargo deny and audit clean, dist scan with no blocking findings (vulnerability check degraded: grype and osv-scanner not installed). 0.4.1 published 2026-11-24 (README, site and a dark-theme control fix): TestPyPI then PyPI, installed from PyPI in a fresh environment; gates as for 0.4.0, plus 62/62 journeys per file, 5/5 new-chart journeys and WebAssembly parity. 0.4.2 published 2026-11-24 (README for GitHub with generated reference sections; PyPI description aligned): verify, acceptance PROMOTE, dist scan with no blocking findings, TestPyPI then PyPI, fresh install runs. 0.4.3 published 2026-11-24 (PyPI Changelog and Issues links; first Linux wheels, x86_64 and aarch64 manylinux2014, built with zig): verify, accuracy suite, acceptance PROMOTE, cargo deny and audit, dist scan with no blocking findings (Linux wheels checked for content; the dependency audit ran on the macOS wheel because Linux wheels can't be installed on macOS), both Linux wheels run in Docker, TestPyPI then PyPI, installed from PyPI on Linux aarch64 (prebuilt wheel, no compile) and macOS. 0.4.4 published 2026-11-24 (chart layers on Charts and Vargas, varga drishti, hover-animation filters, Aspects multi-select, Maitri filters, calendars in the examples): verify, accuracy suite, docs-check, acceptance PROMOTE, cargo deny and audit, dist scan with no blocking findings, both Linux wheels run in Docker before upload, TestPyPI then PyPI, installed from PyPI on macOS arm64 and Linux aarch64 and x86_64. 0.5.0 published 2026-11-24 (all five roadmap waves): macOS arm64 and Linux x86_64/aarch64 abi3 wheels and the sdist. Gates: make verify, acceptance PROMOTE (142, on the wheel), 70/70 studio journeys per file, 5/5 new-chart journeys, 9/9 site journeys, WebAssembly and JS parity, cargo deny and audit, make perf within baseline, dist scan PASS with every check (gitleaks, pip-audit, grype, osv-scanner). TestPyPI then PyPI; installed from each in a fresh environment on macOS and in linux/amd64 and linux/arm64 containers, with a smoke run (chart, true_citra, eclipses, eshana-mcp)."
     },
     {
       "id": "BIND-07",
@@ -756,9 +894,15 @@
       "id": "QA-06",
       "area": "qa",
       "title": "Fuzzing of input and time parsers (cargo-fuzz)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "note": "proptest 'never panics on text' covers the first level."
+      "evidence": "fuzz/: cargo-fuzz targets time_parsers (every time parser, calendars, fold policies, date round-trip), request_json (Engine::execute_json on arbitrary text must answer JSON) and chart_fields (a chart request with fuzzed date/time/zone/calendar/coordinates/ayanamsha/features). 60-90 s each locally (3.6M, 163k and 25k runs), no crash; make fuzz; weekly 5-minute run in security.yml.",
+      "evidence_paths": [
+        "fuzz/fuzz_targets/time_parsers.rs",
+        "fuzz/fuzz_targets/request_json.rs",
+        "fuzz/fuzz_targets/chart_fields.rs",
+        ".github/workflows/security.yml"
+      ]
     },
     {
       "id": "ACC-03",
@@ -773,16 +917,28 @@
       "id": "PERF-01",
       "area": "qa",
       "title": "Benchmarks: cold start, single chart, batch 100/1000; regression threshold",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "source": "master plan 6.2, 11"
+      "source": "master plan 6.2, 11",
+      "evidence": "scripts/bench.py (make perf): cold start, one full chart (all features, 16 vargas, dasha), batches of 100 and 1,000 charts; fixed budgets everywhere plus a per-machine baseline with a 1.5x threshold (benchmarks/perf/baseline.json, M3 Ultra: 5 ms, 206 ms, 74 ms, 753 ms). Budgets run in the CI perf job.",
+      "evidence_paths": [
+        "scripts/bench.py",
+        "benchmarks/perf/baseline.json",
+        ".github/workflows/ci.yml"
+      ]
     },
     {
       "id": "QA-07",
       "area": "qa",
       "title": "Browser journeys for the website (real Chrome)",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "evidence": "acceptance/site/journeys.mjs (make site-journeys): nine journeys in real Chrome against the built site: hero animation, particle headline and gimbal, ambient sky, gallery images and report links, sigils, docs pages, theme memory, reduced motion, phone width. All pass locally on 2026-11-24 against the 0.5.0 build; run in CI by acceptance.yml.",
+      "evidence_paths": [
+        "acceptance/site/journeys.mjs",
+        ".github/workflows/acceptance.yml",
+        "Makefile"
+      ]
     },
     {
       "id": "DOC-01",
@@ -812,8 +968,14 @@
       "id": "DOC-04",
       "area": "docs",
       "title": "Cookbook: notebooks and agent recipes",
-      "status": "proposed",
-      "track": "secondary"
+      "status": "verified",
+      "track": "secondary",
+      "evidence": "examples/notebooks: first chart, comparing methods, sky events, agent recipes (MCP tools in-process, explain_derivation); test_notebooks.py runs every code cell; docs/guides/cookbook.md with recipes and agent recipes.",
+      "evidence_paths": [
+        "examples/notebooks/01-first-chart.ipynb",
+        "crates/eshana-python/tests/test_notebooks.py",
+        "docs/guides/cookbook.md"
+      ]
     },
     {
       "id": "DOC-05",
@@ -852,9 +1014,15 @@
       "id": "SEC-03",
       "area": "sec",
       "title": "Signed releases, SBOM, provenance attestations",
-      "status": "proposed",
+      "status": "implemented",
       "track": "primary",
-      "source": "master plan 7"
+      "source": "master plan 7",
+      "evidence": "scripts/sbom.py writes a CycloneDX 1.5 SBOM of the 57 crates in the wheel (make sbom); .github/workflows/attest.yml downloads the files PyPI serves, checks PyPI's SHA-256, attests provenance and the SBOM (Sigstore) and creates the GitHub release with SHA256SUMS. Verified when the first attest run completes.",
+      "evidence_paths": [
+        "scripts/sbom.py",
+        ".github/workflows/attest.yml",
+        "docs/guides/publishing.md"
+      ]
     },
     {
       "id": "SEC-04",
@@ -1089,16 +1257,26 @@
       "id": "REP-06",
       "area": "docs",
       "title": "East Indian chart style",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "East Indian style on Charts and Vargas and --chart-style east: signs fixed with Mesha top centre, anticlockwise, corner squares cut diagonally, boxes numbered by house; screenshot-checked, no unfitted text.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-charts.js",
+        "crates/eshana-python/python/eshana/assets/studio-pages.js",
+        "docs/guides/html-report.md"
+      ]
     },
     {
       "id": "REP-07",
       "area": "docs",
       "title": "Chart playground (drag planets, vargas follow)",
-      "status": "proposed",
+      "status": "verified",
       "track": "primary",
-      "evidence": "Partly delivered: APP-05 (synthetic positions) and APP-06 (accessible playground with keyboard edits and undo) are verified. Dragging a graha on the chart is still open."
+      "evidence": "Playground wheel: drag a graha (Ketu follows Rahu); the engine recomputes on release and Ctrl/Cmd+Z undoes. Browser journey 'dragging a graha round the wheel' drags the Sun half-way round and checks the sign, the list and undo; keyboard edits (APP-06) unchanged.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-live.js",
+        "acceptance/studio/journeys.mjs"
+      ]
     },
     {
       "id": "REP-08",
@@ -1112,15 +1290,26 @@
       "id": "AYA-02",
       "area": "astro",
       "title": "Star-based and further ayanamshas (Yukteshwar, true Chitrapaksha, Revati, Pushya)",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "evidence": "true_citra, true_revati, true_pushya, true_mula (eshana-engine/src/stars.rs): Hipparcos new reduction positions and proper motions (HIP 65474, 5737, 42911, 85927, ESA archive table public.hipparcos_newreduction, fetched 2026-11-24), carried to the date with precession, annual aberration and solar light deflection. tests/ayanamsha_oracle.rs: within 0.62″ of the Swiss Ephemeris true modes at 160 instants 1800–2200 (benchmarks/golden/ayanamsha_oracle.json true_epochs). Yukteshwar was already in METH-01.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/stars.rs",
+        "crates/eshana-engine/tests/ayanamsha_oracle.rs",
+        "benchmarks/golden/ayanamsha_oracle.json"
+      ]
     },
     {
       "id": "VED-09",
       "area": "vedic",
       "title": "D150 and non-Parashara vargas",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "D150 and non-Parāśari vargas.",
+      "evidence": "varga_method family: d2/d3/d30/d60/d150 parivṛtti (cyclic), d81 navanavāṃśa, d108 cyclic, d144 dvādaśa-dvādaśāṃśa; D150 is the cyclic 0°12′ nāḍyāṃśa (the Candra Kalā Nāḍī mapping is not implemented and says so). Tests in vargas_ext.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vargas_ext.rs"
+      ]
     },
     {
       "id": "VED-10",
@@ -1168,8 +1357,14 @@
       "id": "MAT-02",
       "area": "vedic",
       "title": "Rajju and vedha doshas, matching calendar",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "Rajju and vedha with the matching calendar.",
+      "evidence": "matching_ext.rs: Rajju, Vedha and the supplementary factors beside the 36-point aṣṭakūṭa (tests rajju_groups_have_their_members, vedha_is_symmetric_and_covers_every_nakshatra); pair_calendar op (test pair_calendar_explains_both_people_and_the_event_for_each_window; acceptance 16_matching).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/matching_ext.rs",
+        "crates/eshana-engine/tests/calendar.rs"
+      ]
     },
     {
       "id": "MUH-01",
@@ -1191,22 +1386,40 @@
       "id": "LK-01",
       "area": "vedic",
       "title": "Lal Kitab",
-      "status": "proposed",
-      "track": "primary"
+      "status": "implemented",
+      "track": "primary",
+      "acceptance": "Lal Kitab chart and rules.",
+      "evidence": "lal-kitab.yaml (vedic.lal_kitab@0.1, status draft): the Lal Kitab chart (houses fixed to signs, grahas by whole-sign house from the lagna) and pakka ghar (test houses_count_from_the_lagna_and_signs_are_fixed). The pakka ghar table awaits owner review (OWNER-INPUTS 5c); aspects, sleeping houses, varshphal and remedies are not implemented without a reviewed source.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/lal-kitab.yaml",
+        "crates/eshana-engine/src/lal_kitab.rs"
+      ]
     },
     {
       "id": "WES-05",
       "area": "western",
       "title": "Solar arc progressions and returns",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "Solar arc directions and returns.",
+      "evidence": "progressions result carries solar_arc_directions (every natal point + arc, directed-to-natal aspects within 1°); returns via op returns (WES-03).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/api.rs"
+      ]
     },
     {
       "id": "RULE-02",
       "area": "core",
       "title": "Load user rule packs at run time with the same validator",
-      "status": "proposed",
-      "track": "primary"
+      "status": "verified",
+      "track": "primary",
+      "acceptance": "User rule packs at run time with the same validator.",
+      "evidence": "packs::user_yogas: the yogas.yaml grammar plus limits (64 KiB, 200 definitions, unique ids, version, no vedic. namespace); user_rule_packs / --rule-pack; reported as user.yogas.<id> with <id>@<version>. Acceptance: a pack claiming vedic. is refused.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/packs.rs",
+        "crates/eshana-engine/src/jyotish.rs",
+        "acceptance/features/18_time_and_sky.feature"
+      ]
     },
     {
       "id": "VED-14",
@@ -2866,6 +3079,25 @@
         "crates/eshana-python/python/eshana/assets/studio-charts.js",
         "crates/eshana-python/python/eshana/assets/studio-pages.js",
         "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
+      "id": "PROV-07",
+      "area": "core",
+      "title": "Analytic provider on VSOP87: arc-second Sun and planets without data files",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "roadmap wave 2",
+      "source": "found while validating returns (2026-11-24)",
+      "depends_on": [],
+      "acceptance": "Sun and Mercury–Neptune from VSOP87B within a few arc-seconds of JPL DE440s; tolerances tightened; tables generated reproducibly from the IMCCE files.",
+      "evidence": "scripts/vsop87_tables.py (3,704 terms, truncation 1e-7, source SHA-256 recorded, --check) → crates/eshana-ephemeris/src/vsop87.rs; analytic provider 0.2.0: worst error vs DE440s Sun 0.3″, planets ≤ 2.7″ (was Saturn 1026″, Sun 16″); accuracy suite tolerances tightened (Sun 1.5″, planets 1.5–8″), 748 pass; a strict xfail (Jupiter across a D40 boundary) now passes and was removed.",
+      "evidence_paths": [
+        "scripts/vsop87_tables.py",
+        "crates/eshana-ephemeris/src/vsop87.rs",
+        "crates/eshana-ephemeris/src/analytic.rs",
+        "accuracy/tolerances.json",
+        "benchmarks/golden/accuracy.md"
       ]
     }
   ]

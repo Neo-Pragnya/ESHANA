@@ -1,0 +1,11 @@
+{
+  "machines": {
+    "Darwin-arm64-Apple M3 Ultra-32": {
+      "batch_100": 73.78,
+      "batch_1000": 753.17,
+      "chart": 206.13,
+      "cold_start": 5.03
+    }
+  },
+  "note": "Medians in ms from scripts/bench.py; one entry per machine fingerprint. Refresh with --update."
+}

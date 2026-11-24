@@ -10,8 +10,8 @@
 //! provider's accuracy statement. Use the `spk` provider when you need more.
 
 use crate::frames::{
-    apparent_of_date, general_precession_deg, lon_lat, mean_obliquity_deg, nutation_deg,
-    precess_ecliptic_from_j2000, AU_KM, C_AU_PER_DAY,
+    apparent_of_date, lon_lat, mean_obliquity_deg, nutation_deg, precess_ecliptic_from_j2000, AU_KM,
+    C_AU_PER_DAY,
 };
 use crate::{EphemerisProvider, ProviderInfo};
 use eshana_core::{deg, norm360, rad, Body, EshanaError, Result};
@@ -42,14 +42,6 @@ const VENUS: Elements = Elements {
     l: [181.979_099_50, 58_517.815_387_29],
     w: [131.602_467_18, 0.002_683_29],
     n: [76.679_842_55, -0.277_694_18],
-};
-const EMB: Elements = Elements {
-    a: [1.000_002_61, 0.000_005_62],
-    e: [0.016_711_23, -0.000_043_92],
-    i: [-0.000_015_31, -0.012_946_68],
-    l: [100.464_571_66, 35_999.372_449_81],
-    w: [102.937_681_93, 0.323_273_64],
-    n: [0.0, 0.0],
 };
 const MARS: Elements = Elements {
     a: [1.523_710_34, 0.000_018_47],
@@ -263,22 +255,40 @@ pub fn osculating_node(jd_tt: f64, moon_at: &dyn Fn(f64) -> Result<(f64, f64, f6
     Ok(norm360(deg(hx.atan2(-hy))))
 }
 
-/// Earth's heliocentric position and velocity (AU, AU/day), ecliptic J2000, corrected from the Earth–Moon
-/// barycentre to the Earth's centre with the analytic Moon.
+/// Heliocentric rectangular position (AU) from a VSOP87B series, dynamical ecliptic and equinox J2000.
+fn vsop(planet: &crate::vsop87::Planet, jd_tt: f64) -> [f64; 3] {
+    let tau = (jd_tt - JD_J2000) / 365_250.0;
+    let mut lbr = [0.0; 3];
+    for (v, powers) in planet.iter().enumerate() {
+        let mut tk = 1.0;
+        for series in powers {
+            let sum: f64 = series.iter().map(|(a, b, c)| a * (b + c * tau).cos()).sum();
+            lbr[v] += sum * tk;
+            tk *= tau;
+        }
+    }
+    let (l, b, r) = (lbr[0], lbr[1], lbr[2]);
+    [r * b.cos() * l.cos(), r * b.cos() * l.sin(), r * b.sin()]
+}
+
+/// The VSOP87 series of a planet (Pluto has none: it keeps its Keplerian elements).
+fn vsop_of(body: Body) -> Option<&'static crate::vsop87::Planet> {
+    use crate::vsop87 as v;
+    Some(match body {
+        Body::Mercury => &v::MERCURY,
+        Body::Venus => &v::VENUS,
+        Body::Mars => &v::MARS,
+        Body::Jupiter => &v::JUPITER,
+        Body::Saturn => &v::SATURN,
+        Body::Uranus => &v::URANUS,
+        Body::Neptune => &v::NEPTUNE,
+        _ => return None,
+    })
+}
+
+/// Earth's heliocentric position and velocity (AU, AU/day), ecliptic J2000, from VSOP87B (the Earth's centre).
 fn earth_state(jd_tt: f64) -> ([f64; 3], [f64; 3]) {
-    let pos = |jd: f64| -> [f64; 3] {
-        let t = (jd - JD_J2000) / 36_525.0;
-        let emb = heliocentric(&EMB, t);
-        let (lon, lat, dist_km) = moon(t);
-        // The Moon series is of date; bring its longitude back to J2000 for this correction (error is negligible
-        // against the 4,670 km lever arm).
-        let lon_j2000 = lon - general_precession_deg(t) - nutation_deg(t).0;
-        let r = dist_km / AU_KM;
-        let (lo, la) = (rad(lon_j2000), rad(lat));
-        let mv = [r * la.cos() * lo.cos(), r * la.cos() * lo.sin(), r * la.sin()];
-        let k = 0.012_150_58; // Moon / (Earth + Moon) mass ratio
-        [emb[0] - k * mv[0], emb[1] - k * mv[1], emb[2] - k * mv[2]]
-    };
+    let pos = |jd: f64| -> [f64; 3] { vsop(&crate::vsop87::EARTH, jd) };
     let h = 0.05;
     let (a, b) = (pos(jd_tt - h), pos(jd_tt + h));
     (
@@ -303,7 +313,7 @@ impl AnalyticProvider {
     }
 
     /// Provider version, bumped when any series or constant changes.
-    pub const VERSION: &'static str = "0.1.0";
+    pub const VERSION: &'static str = "0.2.0";
 }
 
 impl EphemerisProvider for AnalyticProvider {
@@ -311,19 +321,20 @@ impl EphemerisProvider for AnalyticProvider {
         ProviderInfo {
             id: "analytic".into(),
             version: Self::VERSION.into(),
-            data: "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar \
-                   series; no data files"
+            data: "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian \
+                   elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files"
                 .into(),
-            accuracy: "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s \
-                       (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work."
+            accuracy: "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto \
+                       arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md."
                 .into(),
             jd_min: 2_378_496.5, // 1800-01-01
             jd_max: 2_469_807.5, // 2050-01-01 (Standish validity); later dates are accepted up to 2100 with larger error
         }
     }
 
-    fn supports(&self, _body: Body) -> bool {
-        true
+    fn supports(&self, body: Body) -> bool {
+        // the optional bodies (asteroids, Chiron) need a kernel
+        !Body::OPTIONAL.contains(&body)
     }
 
     fn apparent(&self, jd_tt: f64, body: Body) -> Result<(f64, f64, Option<f64>)> {
@@ -363,7 +374,10 @@ impl EphemerisProvider for AnalyticProvider {
                 let mut g = [0.0; 3];
                 for _ in 0..4 {
                     let tp = (jd_tt - tau - JD_J2000) / 36_525.0;
-                    let h = heliocentric(el, tp);
+                    let h = match vsop_of(planet) {
+                        Some(series) => vsop(series, jd_tt - tau),
+                        None => heliocentric(el, tp),
+                    };
                     g = [h[0] - e[0], h[1] - e[1], h[2] - e[2]];
                     tau = crate::frames::norm(g) / C_AU_PER_DAY;
                 }

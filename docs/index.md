@@ -32,7 +32,7 @@ Read [The epistemic model](concepts/epistemic-model.md) first; everything else f
 - **Time**: IANA civil time with historical offsets; DST folds and gaps are errors with distinct codes; leap seconds,
   ΔT, TT, Julian day and sidereal time.
 - **Positions**: ten bodies and the lunar node, apparent geocentric, with speed and retrograde state. Two providers:
-  `analytic` (no data files, arc-minute class) and `spk` (reads a JPL kernel you supply, arc-second class).
+  `analytic` (no data files, arc-second class since 0.5.0) and `spk` (reads a JPL kernel you supply, arc-second class).
 - **Vedic**: rāśi, nakshatra and pada, whole-sign bhāva, D1/D3/D4/D7/D9/D10/D12, Vimśottarī daśā with a named year
   convention, four ayanāṃśas.
 - **Western**: tropical zodiac, whole-sign, equal and Placidus houses (refused where undefined), Ptolemaic aspects with
@@ -46,7 +46,8 @@ Read [The epistemic model](concepts/epistemic-model.md) first; everything else f
 
 ## Where to go next
 
-- New here? [Getting started](guides/getting-started.md), then the [Python guide](guides/python.md).
+- New here? [Getting started](guides/getting-started.md), then the [Python guide](guides/python.md) and the
+  [cookbook](guides/cookbook.md). From JavaScript: [JavaScript guide](guides/javascript.md); from an assistant: [MCP](guides/mcp.md).
 - Want a chart to read or share? [HTML chart reports](guides/html-report.md). All the options: [ways to use ESHANA](guides/ways-to-use.md).
 - How do we know it is right? [Birth-chart accuracy suite](guides/accuracy-suite.md).
 - The big picture in diagrams: [architecture](architecture/diagrams.md). What comes next: [next steps](next-steps.md).

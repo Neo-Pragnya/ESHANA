@@ -17,21 +17,24 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | Flag | Meaning |
 |---|---|
 | `--utc 2000-01-01T12:00:00Z` | a UTC instant, or an RFC 3339 string with an offset |
-| `--date YYYY-MM-DD` `--time HH:MM[:SS]` `--tz Zone` | local civil time in an IANA zone. Omit `--time` for an unknown birth time |
+| `--date YYYY-MM-DD` `--time HH:MM[:SS]` `--tz Zone` | local civil time in an IANA zone. Omit `--time` for an unknown birth time. A signed year (`-0043-03-15`) is BCE |
+| `--calendar gregorian\|julian\|auto` | how `--date` is written (default proleptic Gregorian; `auto` switches at 1582-10-15) |
 | `--offset-minutes N` | fixed UTC offset east, when no zone is known (instead of `--tz`) |
 | `--fold reject\|earliest\|latest` | what to do with a repeated local time (default `reject`) |
 | `--uncertainty-minutes N` | birth-time uncertainty, ± minutes |
 | `--lat DEG --lon DEG` | place; needed for houses and the Ascendant |
+| `--altitude-m M` | height above sea level, for `--topocentric` |
 
 ## Settings (shared)
 
 | Flag | Values | Default |
 |---|---|---|
 | `--provider` | `analytic`, `spk` | `analytic` |
-| `--spk PATH` | JPL SPK kernel (or `ESHANA_SPK`) | none |
+| `--spk PATH\|NAME` | JPL SPK kernel (or `ESHANA_SPK`); a catalogue name such as `de440` is looked up in the kernel folder | none |
+| `--topocentric` | positions as seen from the place (parallax) | geocentric |
 | `--zodiac` | `tropical`, `sidereal` | tropical (sidereal for `chart vedic`) |
-| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
-| `--houses` | `whole_sign`, `equal`, `placidus` | `whole_sign` (recorded) |
+| `--ayanamsha` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul`, `true_citra`, `true_revati`, `true_pushya`, `true_mula` | **required** with sidereal; only `chart vedic` defaults to `lahiri` and records it |
+| `--houses` | `whole_sign`, `equal`, `placidus`, `porphyry`, `sripati`, `koch`, `regiomontanus`, `campanus`, `alcabitius`, `topocentric`, `morinus`, `meridian` | `whole_sign` (recorded) |
 | `--node` | `mean`, `true` | `mean` (recorded); `true` for `human-design` |
 | `--bodies a,b,c` | body ids | ten planets + the node |
 | `--divisions 1,9,10` | 1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60 | none |
@@ -39,6 +42,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `--dasha-levels N`, `--dasha-systems` | 1–5; `vimshottari`, `yogini` | 2; `vimshottari` |
 | `--features a,b` | `panchanga`, `strength`, `relationships`, `drishti`, `ashtakavarga`, `jaimini`, `kp`, `yogas`, `sade_sati`, `all` (Vedic only) | none |
 | `--reference-utc T` | instant for "current" daśā periods | none (nothing is "current") |
+| `--rule-pack FILE` | a user yoga pack (the `yogas.yaml` format), checked like the built-in one; repeatable | none |
 | `--sunrise` | `upper_limb_refracted`, `centre_refracted`, `centre_unrefracted` | `upper_limb_refracted` |
 | `--aspects`, `--orb-scale F` | | off, 1.0 |
 
@@ -51,7 +55,7 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana human-design` | design instant, activations, BodyGraph |
 | `eshana numerology --name N --dob D [--school S] [--no-master] [--y-vowel] [--life-path-method M] [--year Y]` | name and date numbers |
 | `eshana compare vedic\|western ... --a KEY=VAL --b KEY=VAL` | the same input under two configurations (keys: `provider`, `zodiac`, `ayanamsha`, `house_system`, `node_model`) |
-| `eshana graph vedic\|western ... --format json\|mermaid\|graphml` | a typed symbolic graph; mermaid and graphml print raw text |
+| `eshana graph vedic\|western ... --format json\|mermaid\|graphml\|svg\|drawio\|chitkala` | a typed symbolic graph; mermaid, graphml, svg and drawio print raw text |
 | `eshana panchanga ... [--natal-moon DEG] [--sunrise C]` | pañcāṅga, rise and set, horā, choghaḍiyā, Rāhu kālam, special lagnas; Tārā and Candra bala with a natal Moon |
 | `eshana matching --a D,T,TZ,LAT,LON --b ... [--ayanamsha A]` | aṣṭakūṭa compatibility with Manglik flags |
 | `eshana ephemeris --start T --step-days N --count N [--bodies ...]` | a longitude table (transits, progressions) |
@@ -66,6 +70,12 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana progress --at T [--angles METHOD] <birth options>` | secondary progressions: fractional age, positions at birth + age days, angles under a named method |
 | `eshana kp-table` | the KP 1–249 horary number table |
 | `eshana kp-horary --number N --utc T --lat φ --lon λ [--kp-occupancy ID]` | KP horary chart: the number fixes the Ascendant; the moment and place are those of judgement (ayanāṃśa defaults to krishnamurti, recorded) |
+| `eshana rise-set --date D --tz ZONE --lat φ --lon λ [--days N] [--bodies sun,moon,venus] [--sunrise C] [--no-twilight]` | rise, upper transit and set of each body, and civil, nautical and astronomical twilight, for local days |
+| `eshana returns --start T --end T [--return-body sun\|moon\|…] [--at-lat φ --at-lon λ] [--no-charts] <birth options>` | solar, lunar or any body's returns to the natal longitude, with a chart at each (relocated with --at-lat/--at-lon) |
+| `eshana gochara --start T --end T [--transit-bodies a,b] <birth options with --ayanamsha>` | transits counted from the natal Moon and lagna, with retrograde and combustion intervals |
+| `eshana synastry --a D,T,TZ,LAT,LON --b D,T,TZ,LAT,LON [--orb-scale F] [--no-composite] [--no-davison]` | inter-aspects, house overlays, a midpoint composite and a Davison chart |
+| `eshana eclipses --start T --end T [--kinds solar,lunar]` | solar and lunar eclipses: type, time of greatest eclipse, magnitude |
+| `eshana kernel list\|verify PATH\|path NAME` | the JPL kernels ESHANA knows; check a downloaded one against NAIF's MD5 |
 | `eshana methods` | every method family and id the engine implements |
 | `eshana request FILE\|-` | send a raw JSON request |
 | `eshana doctor` | versions, tz database, providers, rule packs, error codes |

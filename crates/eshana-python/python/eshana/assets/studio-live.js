@@ -96,7 +96,8 @@ page('compare', () => 'Compare', 'Time', (b) => {
 }, { blurb: 'natal, progressed and transit side by side' });
 
 /* ── Playground: place grahas by hand, see what follows (synthetic_chart) ─────────────────────────────────────────
-   Keyboard: ↑/↓ choose a graha, ←/→ move it 1°, Shift+←/→ 30°, Ctrl/⌘+Z undo. Notes are kept per graha. */
+   Keyboard: ↑/↓ choose a graha, ←/→ move it 1°, Shift+←/→ 30°, Ctrl/⌘+Z undo. Notes are kept per graha.
+   Pointer (REP-07): drag a graha round the wheel; it follows the pointer and the engine recomputes on release. */
 const PG = { lons: null, asc: null, sel: 0, undo: [], notes: {} };
 page('playground', () => 'Playground', 'Systems', (b) => {
   if (!LIVE.present) return put(b, missing('The playground', 'It recomputes as you move grahas, which needs the live engine: make the file with eshana-report --live.'));
@@ -122,6 +123,40 @@ page('playground', () => 'Playground', 'Systems', (b) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); move(g, (e.key === 'ArrowRight' ? 1 : -1) * (e.shiftKey ? 30 : 1)); }
   });
   const cur = ids[PG.sel];
+  // the wheel: Meṣa 0° at nine o'clock, longitudes run anticlockwise; grahas sit on three rings so they rarely overlap
+  const C = 150, at = (lon, r) => [C - r * Math.cos(lon * DEG), C + r * Math.sin(lon * DEG)];
+  const wheel = s('svg', { class: 'pg-wheel', viewBox: '0 0 300 300', role: 'img', width: '100%', style: 'max-width:340px;touch-action:none',
+    'aria-label': 'Wheel of the placed grahas: drag one to move it (the list beside it does the same from the keyboard)' });
+  s('circle', { cx: C, cy: C, r: 140, fill: 'none', stroke: 'var(--line)' }, wheel);
+  s('circle', { cx: C, cy: C, r: 112, fill: 'none', stroke: 'var(--line)' }, wheel);
+  for (let i = 0; i < 12; i++) {
+    const [x1, y1] = at(i * 30, 112), [x2, y2] = at(i * 30, 140), [tx, ty] = at(i * 30 + 15, 126);
+    s('line', { x1, y1, x2, y2, stroke: 'var(--line)' }, wheel);
+    const t = s('text', { x: tx, y: ty + 4, 'text-anchor': 'middle', 'font-size': 10, fill: 'var(--muted)' }, wheel); t.textContent = SIGN_SKT[i].slice(0, 3);
+  }
+  { const [x, y] = at(PG.asc, 140), a = s('line', { x1: C, y1: C, x2: x, y2: y, stroke: 'var(--accent)', 'stroke-dasharray': '4 3' }, wheel);
+    s('title', {}, a).textContent = 'Lagna ' + SIGN_SKT[signOf(PG.asc)] + ' ' + inSign(PG.asc); }
+  const lonAt = (e) => { const r = wheel.getBoundingClientRect(), k = 300 / r.width;
+    const x = (e.clientX - r.left) * k - C, y = (e.clientY - r.top) * k - C; return norm(Math.atan2(y, -x) / DEG); };
+  ids.forEach((g, i) => {
+    const r = 62 + (i % 3) * 20;
+    const m = s('g', { class: 'pg-mark' + (i === PG.sel ? ' sel' : ''), 'data-graha': g, tabindex: '-1', style: 'cursor:grab' }, wheel);
+    const dot = s('circle', { r: 11, fill: i === PG.sel ? 'var(--accent)' : 'var(--panel-solid)', stroke: 'var(--accent)' }, m);
+    const lab = s('text', { 'text-anchor': 'middle', 'font-size': 9, 'font-weight': 700, fill: i === PG.sel ? 'var(--bg)' : 'var(--ink)' }, m);
+    lab.textContent = ((G[g] || {}).en || g).slice(0, 2);
+    const tip = s('title', {}, m);
+    const place = (lon) => { const [x, y] = at(lon, r); dot.setAttribute('cx', x); dot.setAttribute('cy', y); lab.setAttribute('x', x); lab.setAttribute('y', y + 3);
+      tip.textContent = `${(G[g] || {}).en || g} ${SIGN_SKT[signOf(lon)]} ${inSign(lon)}`; };
+    place(PG.lons[g]);
+    if (g === 'ketu') return; // Ketu follows Rāhu
+    let live = null;
+    m.addEventListener('pointerdown', (e) => { e.preventDefault(); live = PG.lons[g]; PG.sel = i; m.setPointerCapture(e.pointerId); m.style.cursor = 'grabbing'; });
+    m.addEventListener('pointermove', (e) => { if (live == null) return; live = lonAt(e); place(live); });
+    const drop = () => { if (live == null) return; const to = Math.round(live * 10) / 10; live = null;
+      if (to === PG.lons[g]) return route();
+      move(g, to - PG.lons[g]); };
+    m.addEventListener('pointerup', drop); m.addEventListener('pointercancel', drop);
+  });
   const noteBox = h('textarea', { rows: 3, 'aria-label': `Note for ${(G[cur] || {}).en || cur}`, placeholder: 'Your note for this graha (kept in this page only)' }, PG.notes[cur] || '');
   noteBox.addEventListener('input', () => { PG.notes[cur] = noteBox.value; });
   const yogas = ((syn.derived.find(d => d.id === 'vedic.yogas') || {}).value || {}).yogas || [];
@@ -129,7 +164,7 @@ page('playground', () => 'Playground', 'Systems', (b) => {
   const na = Object.entries(syn.not_derivable || {}).map(([k, v]) => [k.replace('_', ' '), 'unavailable: ' + v.reason]);
   put(b, pageHead('planets', 'Playground', 'Positions placed by hand. Every value below is derived by the engine from them (labelled synthetic); nothing is read from an ephemeris.'),
     h('div', { class: 'grid2' },
-      card('Grahas', list, note('↑/↓ choose · ←/→ move 1° · Shift moves 30° · Ctrl/⌘+Z undo'), h('button', { class: 'btn', type: 'button', onclick: () => { PG.lons = null; PG.undo = []; route(); } }, 'Back to the birth positions')),
+      card('Grahas', wheel, list, note('Drag a graha round the wheel · ↑/↓ choose · ←/→ move 1° · Shift moves 30° · Ctrl/⌘+Z undo'), h('button', { class: 'btn', type: 'button', onclick: () => { PG.lons = null; PG.undo = []; route(); } }, 'Back to the birth positions')),
       card(`Note: ${(G[cur] || {}).en || cur}`, noteBox)),
     card('Yogas present', present.length ? h('ul', { class: 'list' }, present.map(n => h('li', {}, n))) : note('None.')),
     card('Not derivable from placed positions', facts(na)),

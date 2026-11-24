@@ -82,6 +82,27 @@ jobs:
           (cd crates/eshana-python && VIRTUAL_ENV="$PWD/../../.venv" ../../.venv/bin/maturin develop -q --uv)
           ESHANA_BIN="$PWD/target/release/eshana" .venv/bin/python -m pytest crates/eshana-python/tests -q
 
+  perf:
+    name: performance budgets (PERF-01)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081
+        with:
+          version: "latest"
+          enable-cache: false
+
+      - name: Release build, then the budgets (no baseline for a CI runner)
+        run: |
+          uv venv -q --python 3.12 .venv
+          uv pip install -q --python .venv/bin/python maturin
+          make perf PERF_ARGS="--quick --json perf.json"
+
   tracking:
     name: tracking and docs are fresh
     runs-on: ubuntu-latest

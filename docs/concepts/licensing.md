@@ -21,8 +21,11 @@ allow-list in CI; a copyleft or unknown licence fails the build. See `THIRD_PART
 
 - **IANA tz database**: public domain.
 - **JPL SPK kernels** (optional): NASA/JPL data, public domain, **not bundled**; the user downloads them.
-- **Standish Keplerian elements** (JPL, published tables) and **Meeus series** (formulae from a published book, implemented
-  independently): numerical constants and algorithms, no code copied.
+- **VSOP87B** (P. Bretagnon and G. Francou, Bureau des longitudes / IMCCE, 1988), the planetary theory's published
+  coefficients, truncated by `scripts/vsop87_tables.py` with each source file's SHA-256 recorded: scientific data,
+  freely distributed by IMCCE.
+- **Standish Keplerian elements** (JPL, published tables, for Pluto) and **Meeus series** (formulae from a published
+  book, implemented independently): numerical constants and algorithms, no code copied.
 - **Golden fixtures**: positions computed with Skyfield against DE440s; numbers from the Swiss Ephemeris used as an
   offline oracle. Facts (numbers) only; no code or data files from either ship in a package.
 

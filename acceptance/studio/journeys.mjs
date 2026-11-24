@@ -72,10 +72,10 @@ const mouse = (x, y, type = "mouseMoved") => send("Input.dispatchMouseEvent", { 
 const click = async (x, y) => { await mouse(x, y); await mouse(x, y, "mousePressed"); await mouse(x, y, "mouseReleased"); };
 
 const results = [];
-// JOURNEY_ONLY=<text> runs only the journeys whose name contains that text (handy while fixing one)
+// JOURNEY_ONLY=<text>[|<text>…] runs only the journeys whose name contains one of those texts (handy while fixing one)
 const ONLY = process.env.JOURNEY_ONLY || "";
 async function journey(name, fn) {
-  if (ONLY && !name.includes(ONLY)) return;
+  if (ONLY && !ONLY.split("|").some((o) => name.includes(o))) return;
   const started = Date.now(); problems = [];
   try {
     const detail = (await fn()) || "";
@@ -935,6 +935,31 @@ await journey("playground: keyboard moves a graha, the engine recomputes, Ctrl+Z
   return "Shift+→ moved 30°, Ctrl+Z restored, unavailable factors listed";
 });
 
+await journey("playground: dragging a graha round the wheel moves it to another sign (REP-07)", async () => {
+  const live = await evaluate(`!!document.getElementById('eshana-engine')`);
+  if (!live) return "report-only file: the playground says it needs the live engine";
+  await go("#/playground", 2500);
+  const pos = (g) => evaluate(`(() => { const c = document.querySelector('#playground .pg-wheel .pg-mark[data-graha="${g}"] circle').getBoundingClientRect();
+    const w = document.querySelector('#playground .pg-wheel').getBoundingClientRect(); return [c.left + c.width / 2, c.top + c.height / 2, w.left + w.width / 2, w.top + w.height / 2]; })()`);
+  const signText = () => evaluate(`document.querySelector('#playground .pg-wheel .pg-mark[data-graha="sun"] title').textContent`);
+  const before = await signText();
+  const [x, y, cx, cy] = await pos("sun");
+  // drag half-way round: the point opposite the centre
+  const drag = (type, px, py) => send("Input.dispatchMouseEvent", { type, x: px, y: py, button: "left", buttons: type === "mouseReleased" ? 0 : 1, clickCount: type === "mouseMoved" ? 0 : 1 });
+  await drag("mouseMoved", x, y); await drag("mousePressed", x, y);
+  for (let k = 1; k <= 8; k++) { const a = Math.PI * k / 8, dx = x - cx, dy = y - cy;
+    await drag("mouseMoved", cx + dx * Math.cos(a) - dy * Math.sin(a), cy + dx * Math.sin(a) + dy * Math.cos(a)); await sleep(40); }
+  await drag("mouseReleased", 2 * cx - x, 2 * cy - y); await sleep(900);
+  const after = await signText();
+  const sel = await evaluate(`document.querySelector('#playground .pg-list li.sel')?.textContent`);
+  expect(before.split(" ")[1] !== after.split(" ")[1], `the Sun did not change sign: ${before} → ${after}`);
+  expect(sel && sel.includes(after.split(" ")[1]), `the list does not show the dragged position: ${sel} vs ${after}`);
+  await evaluate(`document.querySelector('#playground .pg-list').focus(); 1`);
+  await send("Input.dispatchKeyEvent", { type: "keyDown", key: "z", code: "KeyZ", windowsVirtualKeyCode: 90, modifiers: 2 }); await sleep(600);
+  expect(await signText() === before, "Ctrl+Z did not undo the drag");
+  return `Sun dragged ${before} → ${after}; Ctrl+Z restored it`;
+});
+
 // ── journeys: dashas (add new journeys for this workstream above this line) ──
 
 await journey("the command palette jumps to a bhāva", async () => {
@@ -1395,10 +1420,21 @@ await journey("pañca pakṣī: five yāmas × five birds by day and by night, s
   return `${desk.cells} cells × 2 widths match the engine; ${desk.boxes} info boxes; current yāma ${desk.curYama + 1} marked; 8 days; ${tl.labels + ticks.labels} timeline labels apart (phone ${phone.cells} cells, no side scroll)`;
 });
 
+// wait until the studio has loaded and drawn a page (a reload of the 8 MB live file takes a few seconds; a fixed
+// sleep was not enough on a busy machine and left the next journeys on a half-loaded page)
+const ready = async (min = 300, max = 20000) => {
+  await sleep(min);
+  for (const t0 = Date.now(); Date.now() - t0 < max; await sleep(200)) {
+    const ok = await evaluate(`(() => { try { return typeof S !== 'undefined' && !!document.documentElement && document.readyState === 'complete' && !!document.querySelector('section.page:not([hidden]) .body') && !!window.eshanaExport; } catch (e) { return false; } })()`).catch(() => false);
+    if (ok) return sleep(300);
+  }
+  throw new Error("the studio did not finish loading");
+};
+
 await journey("interface language is a reader setting: English by default, Hindi from the drawer, kept after reload, values unchanged", async () => {
   await viewport(1440, 1000);
   await evaluate(`(() => { const s = JSON.parse(localStorage.getItem('eshana-studio-v3') || '{}'); delete s.lang; localStorage.setItem('eshana-studio-v3', JSON.stringify(s)); return 1; })()`);
-  await send("Page.reload"); await sleep(2500); await go("#/overview", 900);
+  await send("Page.reload"); await ready(); await go("#/overview", 900);
   const en = await evaluate(`({ lang: document.documentElement.lang, title: document.title, langs: Object.keys(JSON.parse(document.getElementById('eshana-data').textContent).locales || {}) })`);
   expect(en.lang === "en", "default language: " + en.lang);
   expect(en.langs.includes("en") && en.langs.includes("hi"), "catalogues in the file: " + en.langs);
@@ -1407,23 +1443,23 @@ await journey("interface language is a reader setting: English by default, Hindi
   const radios = await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].map(r => r.parentElement.textContent + ':' + r.checked)`);
   expect(radios.length === 2 && /English:true/.test(radios.join()), "language choices: " + radios);
   await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /हिन्दी/.test(r.parentElement.textContent)).click(), 1`);
-  await sleep(3000); await go("#/overview", 900);
+  await ready(1500); await go("#/overview", 900);
   const hi = await evaluate(`({ lang: document.documentElement.lang, draft: !!document.querySelector('.locale-draft'), settings: document.querySelector('#settings .t')?.textContent })`);
   expect(hi.lang === "hi", "after choosing Hindi: " + hi.lang);
   expect(!hi.draft, "a reviewed catalogue shows no draft note");
   const valuesAfter = await evaluate(`document.querySelector('section.page#overview .body')?.innerText.match(/\\d+°\\s?\\d+′/g)?.slice(0, 5).join('|') || ''`);
   expect(valuesAfter === valuesBefore, "values changed with the language: " + valuesBefore + " vs " + valuesAfter);
-  await send("Page.reload"); await sleep(2500);
+  await send("Page.reload"); await ready();
   const kept = await evaluate(`document.documentElement.lang`);
   expect(kept === "hi", "choice not kept after reload: " + kept);
   // the download buttons speak the chosen language too
   await go("#/charts", 1500);
-  const dl = await evaluate(`(() => { const b = document.querySelector('section.page:not([hidden]) .imgbar button.imgbtn'); return b ? b.title + ' | ' + b.getAttribute('aria-label') : null; })()`);
+  const dl = await evaluate(`(async () => { for (let i = 0; i < 20; i++) { window.eshanaExport.scan(); const b = document.querySelector('section.page:not([hidden]) .imgbar button.imgbtn'); if (b) return b.title + ' | ' + b.getAttribute('aria-label'); await new Promise(r => setTimeout(r, 150)); } return null; })()`);
   expect(dl && /डाउनलोड/.test(dl) && !/Download/.test(dl), "download labels in Hindi: " + dl);
   await shot("language-hi");
   await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
   await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /English/.test(r.parentElement.textContent)).click(), 1`);
-  await sleep(3000);
+  await ready(1500);
   const back = await evaluate(`document.documentElement.lang`);
   expect(back === "en", "back to English: " + back);
   return `toolbar 'settings' in Hindi: ${hi.settings}; ${valuesBefore ? "values identical" : "no degree values on the overview"}`;
@@ -1486,7 +1522,11 @@ await journey("every chart drawing can be downloaded as PNG and SVG, exactly as 
     const r = await evaluate(`(() => { const svgs = [...document.querySelectorAll('section.page:not([hidden]) svg[role=img]')].filter(s => s.getBoundingClientRect().width >= 160 && !/pcard-icon|hero-icon|bird/.test(s.getAttribute('class') || '') && !s.closest('.mini-chart'));
       return { svgs: svgs.length, bars: svgs.filter(s => s._imgbar && s._imgbar.isConnected && s._imgbar.querySelectorAll('button.imgbtn').length === 2).length }; })()`);
     if (r.svgs) counts[p] = r.svgs;
-    if (r.bars !== r.svgs) missing.push(`${p}: ${r.bars}/${r.svgs}`);
+    if (r.bars !== r.svgs) {
+      // say why: run the scan by hand and report what it throws
+      const why = await evaluate(`(() => { try { window.eshanaExport.scan(); return 'scan ok'; } catch (e) { return 'scan threw: ' + (e && e.stack || e); } })()`);
+      missing.push(`${p}: ${r.bars}/${r.svgs} (${String(why).slice(0, 300)})`);
+    }
   }
   expect(!missing.length, "charts without a download bar: " + missing.join(", "));
   await go("#/charts", 1500);

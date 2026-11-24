@@ -70,3 +70,27 @@ yoni matrix, kūṭa maxima summing to 36.
 Edit the YAML, bump its `version`, and add worked examples to the tests. A new tradition needs: tradition id, source and
 edition, the convention in prose, worked examples, boundary tests and a version. Loading your own packs at run time is
 planned (`RULE-02`).
+
+
+## Packs split from `vedic.core` (0.5.0)
+
+`vedic.core` 0.4 keeps the shared tables (sign lords, the graha list, special points, functional nature). Its other
+tables, unchanged in value, are now packs of their own, each cited by the attributes that use it:
+
+| Pack | Tables | Cited by |
+|---|---|---|
+| `vedic.dignity@0.1` | dignities, combustion orbs | `vedic.strength`, combustion in `gochara` |
+| `vedic.relationships@0.1` | natural friendship, temporary-friend houses | `vedic.relationships` |
+| `vedic.drishti@0.1` | graha drishti and its conventions | `vedic.drishti.*` |
+| `vedic.strength@0.1` | dig bala strong points, naisargika bala | `vedic.strength` |
+
+Other packs added in 0.5.0: `western.dignities@0.1` (essential dignities: domicile, exaltation, Dorothean triplicity,
+Egyptian terms, Chaldean faces), `numerology.gematria@0.1` (Hebrew mispar hechrechi, eastern abjad) and
+`vedic.lal_kitab@0.1` (**draft**: the Lal Kitab chart and pakka ghar, awaiting review).
+
+## User rule packs
+
+A chart request's `user_rule_packs` (or `--rule-pack FILE`) carries packs in the `yogas.yaml` format. Each is parsed
+with the same condition grammar as `vedic.yogas`, then checked: at most 64 KiB and 200 definitions, unique definition
+ids, a version, and an id outside the built-in `vedic.` namespace. Results are reported as `user.yogas.<id>` with the
+rule `<id>@<version>` and the note that ESHANA has not reviewed the pack.

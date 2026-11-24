@@ -7,7 +7,7 @@ description: "Ṣaḍbala, bhāva bala, viṃśopaka, sputa drishti in virūpas,
 
 These features add the tables a Parāśari practitioner expects next to the chart. Each one is a `tradition_rule`
 derived from the positions, under the rule packs `vedic.bala@0.3` ([`bala.yaml`](../../crates/eshana-engine/rulesets/bala.yaml))
-and `vedic.core@0.3`. Where schools differ, the rule pack names the convention it uses. The engine does not
+and `vedic.core@0.4` (with `vedic.dignity`, `vedic.strength` and `vedic.relationships`). Where schools differ, the rule pack names the convention it uses. The engine does not
 interpret any of them.
 
 ```bash

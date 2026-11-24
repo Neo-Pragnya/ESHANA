@@ -43,6 +43,51 @@ pub const HOUSE_SYSTEMS: &[Method] = &[
         "stable",
         "time-trisection of the diurnal and nocturnal semi-arcs; undefined near the poles",
     ),
+    m(
+        "porphyry",
+        "stable",
+        "each quadrant between the angles trisected in ecliptic longitude",
+    ),
+    m(
+        "sripati",
+        "stable",
+        "bhāva chalit: midpoints of the Porphyry cusps, which become bhāva madhyas",
+    ),
+    m(
+        "koch",
+        "stable",
+        "Ascendants at the times that trisect the MC degree's semi-diurnal arc; undefined near the poles",
+    ),
+    m(
+        "regiomontanus",
+        "stable",
+        "the equator in 30° parts, projected by circles through the horizon's north and south points",
+    ),
+    m(
+        "campanus",
+        "stable",
+        "the prime vertical in 30° parts, projected the same way",
+    ),
+    m(
+        "alcabitius",
+        "stable",
+        "the Ascendant degree's semi-arcs trisected in right ascension; undefined near the poles",
+    ),
+    m(
+        "topocentric",
+        "stable",
+        "Polich–Page: Regiomontanus-style circles with pole heights of 1/3 and 2/3 of tan φ",
+    ),
+    m(
+        "morinus",
+        "stable",
+        "the equator in 30° parts from the east point, projected along circles of ecliptic longitude",
+    ),
+    m(
+        "meridian",
+        "stable",
+        "axial rotation: the equator in 30° parts from the MC, projected along circles of declination",
+    ),
 ];
 
 /// Lunar node models.
@@ -97,6 +142,16 @@ pub const EVENT_SEARCHES: &[Method] = &[
 pub const NUMEROLOGY_SCHOOLS: &[Method] = &[
     m("pythagorean", "stable", "1–9 letter values in alphabet order"),
     m("chaldean", "stable", "1–8 letter values of the Chaldean table"),
+    m(
+        "hebrew_gematria",
+        "opt_in",
+        "mispar hechrechi: Hebrew letters 1–400 (the name in Hebrew script)",
+    ),
+    m(
+        "abjad",
+        "opt_in",
+        "eastern abjad order: Arabic letters 1–1000 (the name in Arabic script)",
+    ),
 ];
 
 /// Every family with the methods it holds. Families added by later operations register here too.
@@ -116,7 +171,11 @@ pub fn registry() -> Vec<(&'static str, Vec<Method>)> {
             m(
                 a.id(),
                 st,
-                "sidereal offset; `info.ayanamsha_definitions` gives its epoch, frame and source",
+                if a.id().starts_with("true_") {
+                    "follows its anchor star (Hipparcos); `info.ayanamsha_definitions` gives the star and frame"
+                } else {
+                    "sidereal offset; `info.ayanamsha_definitions` gives its epoch, frame and source"
+                },
             )
         })
         .collect();
@@ -269,7 +328,11 @@ mod tests {
 
     #[test]
     fn unknown_method_is_esh_method() {
-        assert_eq!(require("house_system", "koch").unwrap_err().code(), "ESH-METHOD");
+        assert_eq!(
+            require("house_system", "vehlow").unwrap_err().code(),
+            "ESH-METHOD"
+        );
+        assert_eq!(require("house_system", "koch").unwrap(), "koch");
         assert_eq!(require("nope", "x").unwrap_err().code(), "ESH-METHOD");
         assert_eq!(require("house_system", "placidus").unwrap(), "placidus");
     }

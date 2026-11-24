@@ -1,6 +1,6 @@
 ---
 title: "Symbolic graph"
-description: "Export a chart as a typed graph (JSON, Mermaid, GraphML) with relation classes that never claim causation."
+description: "Export a chart as a typed graph (JSON, Mermaid, GraphML, SVG, draw.io, Chitkala) with relation classes that never claim causation."
 ---
 
 # Symbolic graph
@@ -35,5 +35,8 @@ eshana graph vedic --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385
 - `json`: `{nodes, edges, relation_classes, note}`.
 - `mermaid`: a `flowchart LR` coloured by epistemic class; correspondences are dashed. Pipes straight into a renderer.
 - `graphml`: well-formed XML for Gephi, yEd and similar (checked by the acceptance suite).
-
-Interactive 2D/3D rendering is a separate concern: [Chitkala](https://github.com/Neo-Pragnya) can consume the JSON.
+- `svg`: a self-contained picture, one column per node type (inputs, positions, attributes, concepts, rules,
+  sources), boxes coloured by epistemic class, long labels shortened with the full text in a tooltip.
+- `drawio`: an `mxfile` that diagrams.net opens and edits, with the same layout and colours.
+- `chitkala`: the graph in Chitkala's import schema (metadata, universes, nodes, edges, sources), for interactive
+  2D and 3D exploration in [Chitkala](https://github.com/Neo-Pragnya).

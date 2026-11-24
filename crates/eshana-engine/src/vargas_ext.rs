@@ -41,6 +41,21 @@ pub const METHODS: &[Method] = &[
         status: "opt_in",
         note: "Parāśari dvādaśāṃśa applied to the dvādaśāṃśa position",
     },
+    Method {
+        id: "d30_parivritti",
+        status: "opt_in",
+        note: "triṃśāṃśa as thirty equal 1° parts per sign, cyclic from 0° Meṣa (the default D30 is the Parāśari unequal 5-5-8-7-5 scheme)",
+    },
+    Method {
+        id: "d60_parivritti",
+        status: "opt_in",
+        note: "ṣaṣṭyāṃśa as sixty cyclic 0°30′ parts from 0° Meṣa (the default D60 counts from the sign itself, Parāśari)",
+    },
+    Method {
+        id: "d150_parivritti",
+        status: "opt_in",
+        note: "nāḍyāṃśa as 150 cyclic 0°12′ parts from 0° Meṣa; the Candra Kalā Nāḍī mapping with its sign-type orders is not implemented",
+    },
 ];
 
 fn cyclic(lon: f64, n: u32) -> usize {
@@ -68,6 +83,9 @@ pub fn sign(id: &str, lon: f64) -> Result<usize> {
         "d81_navanavamsha" => Ok(cyclic(lon, 81)),
         "d108_ashtottaramsha_cyclic" => Ok(cyclic(lon, 108)),
         "d144_dvadasha_dvadashamsha" => divisional_sign(d12_longitude(lon)?, 12),
+        "d30_parivritti" => Ok(cyclic(lon, 30)),
+        "d60_parivritti" => Ok(cyclic(lon, 60)),
+        "d150_parivritti" => Ok(cyclic(lon, 150)),
         other => Err(EshanaError::MethodUnsupported(format!(
             "'{other}' is not a varga_method (one of: {})",
             METHODS.iter().map(|m| m.id).collect::<Vec<_>>().join(", ")
@@ -95,6 +113,15 @@ pub fn charts(ids: &[String], lons: &[(String, f64)]) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cyclic_d30_d60_d150() {
+        assert_eq!(sign("d30_parivritti", 0.5).unwrap(), 0); // the first 1° part of Meṣa
+        assert_eq!(sign("d30_parivritti", 31.5).unwrap(), 31 % 12); // the 32nd part
+        assert_eq!(sign("d60_parivritti", 30.25).unwrap(), 60 % 12); // 0°15′ Vṛṣabha: part 60
+        assert_eq!(sign("d150_parivritti", 0.19).unwrap(), 0); // 0°11′ Meṣa: part 0
+        assert_eq!(sign("d150_parivritti", 0.21).unwrap(), 1); // 0°12.6′: part 1
+    }
 
     #[test]
     fn cyclic_navamsha_is_the_parashari_navamsha() {

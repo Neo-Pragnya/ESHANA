@@ -15,8 +15,10 @@ numbers are identical whichever one you use.
 | look at one chart quickly | `eshana chart vedic …` (JSON) or `eshana-report … -o chart.html` | `cargo install --path crates/eshana-cli`; `pip install eshana` |
 | read or share a complete chart | [HTML report](html-report.md) | `pip install eshana` |
 | compute from code | Python: `ChartEngine`, `Context`, `Chart` | `pip install eshana` |
-| explore in a notebook | a `Chart` renders inline in Jupyter | `pip install eshana` |
+| explore in a notebook | a `Chart` renders inline in Jupyter; [cookbook notebooks](cookbook.md) | `pip install eshana` |
 | feed another system | JSON envelopes ([schema](../reference/envelope.md)) | either |
+| compute in a browser or Node | [JavaScript and WebAssembly](javascript.md) | `bindings/js` (`make js`) |
+| let an assistant compute charts | [MCP server](mcp.md): `eshana-mcp` | `pip install eshana` |
 | build it into a Rust program | `eshana-engine` crate | path or git dependency (crates.io later) |
 | see the maths behind a value | `eshana explain`, provenance in every envelope | either |
 | check the install | `eshana doctor` or `ChartEngine.info()` | either |
@@ -90,8 +92,12 @@ Every result is a versioned envelope ([envelope reference](../reference/envelope
 [`schemas/envelope.schema.json`](../../schemas/envelope.schema.json)). Store it, diff it, or render it later with
 `eshana-report --from-json`.
 
+## 7. JavaScript and assistants
+
+The engine as WebAssembly for browsers and Node ([JavaScript guide](javascript.md)), and as an MCP server that an
+assistant can call ([MCP guide](mcp.md)).
+
 ## Planned
 
-Node and WASM bindings (`BIND-03`, `BIND-04`), an MCP server so assistants can call the engine (`BIND-05`), event
-search for transits and returns (`AST-06`), and the optional Swiss Ephemeris adapter (`PROV-03`). See the
+A crates.io release of the Rust crates and the optional Swiss Ephemeris adapter (`PROV-03`). See the
 [roadmap](../roadmap.md) and [next steps](../next-steps.md).

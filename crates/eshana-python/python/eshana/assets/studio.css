@@ -794,7 +794,8 @@ input[type=date],input[type=number],input[type=text],input[type=search]:not(.pal
 .chart .sq-asp line{stroke-width:1.6;opacity:.8;pointer-events:stroke}
 .aflow .af-lbl.sq{font-size:12px}
 .chart.anim-in .gl{animation:gl-in .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 40ms)}
-@keyframes gl-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+/* opacity only: a slide would push the text over its neighbours while it moves */
+@keyframes gl-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.chart.anim-in .gl{animation:none}}
 
 /* the download buttons sit above a chart, outside the drawing (round wheels keep them in their empty corner) */

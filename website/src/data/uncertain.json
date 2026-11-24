@@ -6,6 +6,7 @@
   "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
   "house_system": "whole_sign",
   "node_model": "mean",
+  "positions_reference": "geocentric",
   "provider": "analytic",
   "system": "vedic",
   "zodiac": "sidereal"
@@ -20,8 +21,8 @@
    "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
-    "degree_in_sign": 9.228326138457156,
-    "dms": "9°13′42″",
+    "degree_in_sign": 9.2285499745985,
+    "dms": "9°13′43″",
     "index": 1,
     "name": "Vrishabha",
     "stable_within_uncertainty": true
@@ -88,8 +89,8 @@
    "rule_version": "vedic.parashari@0.3",
    "tradition_id": "vedic.parashari",
    "value": {
-    "degree_in_sign": 13.422794332553408,
-    "dms": "13°25′22″",
+    "degree_in_sign": 13.421380686856239,
+    "dms": "13°25′17″",
     "index": 1,
     "name": "Vrishabha",
     "stable_within_uncertainty": true
@@ -115,6 +116,7 @@
  "houses": null,
  "input": {
   "birth_time_quality": "date_only",
+  "calendar": null,
   "civil_offset_s": null,
   "civil_zone": null,
   "delta_t_s": 58.184,
@@ -129,26 +131,26 @@
  "positions": [
   {
    "body": "sun",
-   "declination_deg": 21.50940623721381,
-   "distance_au": 1.0135129548088317,
+   "declination_deg": 21.50922593334044,
+   "distance_au": 1.0135275714398844,
    "epistemic": "calculated",
    "id": "sun",
-   "latitude_deg": 0.00010368943118448071,
-   "longitude_deg": 43.42279433255341,
+   "latitude_deg": 0.00015859134066504153,
+   "longitude_deg": 43.42138068685624,
    "longitude_interval_deg": [
-    42.94292601610739,
-    43.90259826552126
+    42.94153254741356,
+    43.90116462838637
    ],
    "retrograde": false,
-   "right_ascension_deg": 65.36099708346825,
+   "right_ascension_deg": 65.35948887412285,
    "sign": {
-    "degree_in_sign": 13.422794332553408,
-    "dms": "13°25′22″",
+    "degree_in_sign": 13.421380686856239,
+    "dms": "13°25′17″",
     "index": 1,
     "name": "Vrishabha"
    },
-   "speed_deg_per_day": 0.9596995667564556,
-   "tropical_longitude_deg": 67.17824048845648
+   "speed_deg_per_day": 0.9596594231183531,
+   "tropical_longitude_deg": 67.17682684275931
   },
   {
    "body": "moon",
@@ -175,26 +177,26 @@
   },
   {
    "body": "mercury",
-   "declination_deg": 20.78684669548535,
-   "distance_au": 1.315682838485406,
+   "declination_deg": 20.787083362151467,
+   "distance_au": 1.3157019808270243,
    "epistemic": "calculated",
    "id": "mercury",
-   "latitude_deg": 0.031677030932864635,
-   "longitude_deg": 39.228326138457156,
+   "latitude_deg": 0.031874152482168946,
+   "longitude_deg": 39.2285499745985,
    "longitude_interval_deg": [
-    38.14648661054869,
-    40.31430491511651
+    38.14672305250747,
+    40.314515126398874
    ],
    "retrograde": false,
-   "right_ascension_deg": 60.93055242851876,
+   "right_ascension_deg": 60.93074658370435,
    "sign": {
-    "degree_in_sign": 9.228326138457156,
-    "dms": "9°13′42″",
+    "degree_in_sign": 9.2285499745985,
+    "dms": "9°13′43″",
     "index": 1,
     "name": "Vrishabha"
    },
-   "speed_deg_per_day": 2.1679958793399123,
-   "tropical_longitude_deg": 62.98377229436023
+   "speed_deg_per_day": 2.167969665476832,
+   "tropical_longitude_deg": 62.98399613050157
   }
  ],
  "provenance": {
@@ -206,11 +208,11 @@
    "birth time quality is date_only: positions are evaluated over a window of ±720.0 minutes and given as intervals",
    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
   ],
-  "engine_version": "0.4.4",
+  "engine_version": "0.5.0",
   "provider": "analytic",
-  "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
-  "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
-  "provider_version": "0.1.0",
+  "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
+  "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",
+  "provider_version": "0.2.0",
   "rulesets": [
    "ayanamsha-lahiri@0.1",
    "vedic.parashari@0.3"

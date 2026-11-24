@@ -35,7 +35,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from urllib.parse import parse_qs, urlsplit
 
 AYANAMSHAS = ("lahiri", "raman", "krishnamurti", "fagan_bradley", "yukteshwar", "jn_bhasin", "ushashashi", "sassanian",
-              "deluce", "djwhal_khul")
+              "deluce", "djwhal_khul", "true_citra", "true_revati", "true_pushya", "true_mula")
 HOUSES = ("whole_sign", "equal", "placidus")
 LOCALES = ("en", "hi")
 FOLDS = ("reject", "earliest", "latest")

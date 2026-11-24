@@ -266,6 +266,26 @@ mine, listed under `pending_review` in `hi.json`; correct any as `key: current â
 - [ ] Accept as written
 - [ ] Corrections:
 
+## 5c. Lal Kitab pakka ghar (LK-01, added 2026-11-24)
+
+The Lal Kitab chart is built (houses fixed to the signs, grahas by whole-sign house from the lagna). The pakka ghar
+table in `crates/eshana-engine/rulesets/lal-kitab.yaml` is the commonly taught one and is marked **draft**:
+
+| Graha | Pakka ghar |
+|---|---|
+| Sun | 1 |
+| Jupiter | 2, 5, 9, 11, 12 |
+| Mars | 3, 8 |
+| Moon | 4 |
+| Ketu | 6 |
+| Venus, Mercury | 7 |
+| Saturn | 8, 10 |
+| Rahu | 12 |
+
+- [ ] Accept as written
+- [ ] Corrections (edition and page):
+- [ ] Which further Lal Kitab rules to add (aspects, sleeping houses, varshphal), with the source you follow
+
 ## 6. Anything else
 
 Other priorities, changes to the order, things in the studio you want different, or a set of timed births for RES-03:

@@ -1,0 +1,125 @@
+{
+ "source": "JPL Horizons API, observer table, geocentric (500@399), quantity 31: apparent ecliptic longitude and latitude of date; fetched 2026-11-24",
+ "rows": [
+  {
+   "body": "ceres",
+   "utc": "1950-03-01T12:00:00Z",
+   "longitude_deg": 254.1368836,
+   "latitude_deg": 5.2532884
+  },
+  {
+   "body": "ceres",
+   "utc": "2000-01-01T12:00:00Z",
+   "longitude_deg": 184.4530625,
+   "latitude_deg": 11.8375968
+  },
+  {
+   "body": "ceres",
+   "utc": "2026-11-24T12:00:00Z",
+   "longitude_deg": 113.9265911,
+   "latitude_deg": 4.1202623
+  },
+  {
+   "body": "ceres",
+   "utc": "2045-06-15T12:00:00Z",
+   "longitude_deg": 102.3429183,
+   "latitude_deg": 3.7542735
+  },
+  {
+   "body": "pallas",
+   "utc": "1950-03-01T12:00:00Z",
+   "longitude_deg": 229.9834171,
+   "latitude_deg": 26.7282381
+  },
+  {
+   "body": "pallas",
+   "utc": "2000-01-01T12:00:00Z",
+   "longitude_deg": 134.043348,
+   "latitude_deg": -48.3508336
+  },
+  {
+   "body": "pallas",
+   "utc": "2026-11-24T12:00:00Z",
+   "longitude_deg": 3.4679687,
+   "latitude_deg": -24.9300474
+  },
+  {
+   "body": "pallas",
+   "utc": "2045-06-15T12:00:00Z",
+   "longitude_deg": 47.4175371,
+   "latitude_deg": -18.5803373
+  },
+  {
+   "body": "juno",
+   "utc": "1950-03-01T12:00:00Z",
+   "longitude_deg": 179.9385212,
+   "latitude_deg": 0.9297036
+  },
+  {
+   "body": "juno",
+   "utc": "2000-01-01T12:00:00Z",
+   "longitude_deg": 277.9960713,
+   "latitude_deg": 9.4510491
+  },
+  {
+   "body": "juno",
+   "utc": "2026-11-24T12:00:00Z",
+   "longitude_deg": 308.9831224,
+   "latitude_deg": 4.071939
+  },
+  {
+   "body": "juno",
+   "utc": "2045-06-15T12:00:00Z",
+   "longitude_deg": 103.1447932,
+   "latitude_deg": -7.692295
+  },
+  {
+   "body": "vesta",
+   "utc": "1950-03-01T12:00:00Z",
+   "longitude_deg": 340.4403696,
+   "latitude_deg": -4.1962872
+  },
+  {
+   "body": "vesta",
+   "utc": "2000-01-01T12:00:00Z",
+   "longitude_deg": 245.9719858,
+   "latitude_deg": 4.2520361
+  },
+  {
+   "body": "vesta",
+   "utc": "2026-11-24T12:00:00Z",
+   "longitude_deg": 12.7413455,
+   "latitude_deg": -9.8217868
+  },
+  {
+   "body": "vesta",
+   "utc": "2045-06-15T12:00:00Z",
+   "longitude_deg": 71.0914731,
+   "latitude_deg": -3.2259216
+  },
+  {
+   "body": "chiron",
+   "utc": "1950-03-01T12:00:00Z",
+   "longitude_deg": 260.9402932,
+   "latitude_deg": 4.9868665
+  },
+  {
+   "body": "chiron",
+   "utc": "2000-01-01T12:00:00Z",
+   "longitude_deg": 251.617609,
+   "latitude_deg": 4.0717061
+  },
+  {
+   "body": "chiron",
+   "utc": "2026-11-24T12:00:00Z",
+   "longitude_deg": 27.0931442,
+   "latitude_deg": 0.1035778
+  },
+  {
+   "body": "chiron",
+   "utc": "2045-06-15T12:00:00Z",
+   "longitude_deg": 163.7541467,
+   "latitude_deg": -4.3549269
+  }
+ ]
+}

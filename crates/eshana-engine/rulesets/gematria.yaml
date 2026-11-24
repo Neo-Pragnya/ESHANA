@@ -1,0 +1,18 @@
+# Letter-number traditions of other alphabets (NUM-04). A name is read in its own script; nothing is transliterated.
+# hebrew_gematria: mispar hechrechi (the standard values), final forms valued as their ordinary letters.
+# abjad: the eastern (Mashriqi) abjad order, alif 1 … ghayn 1000; hamza-carrying alif forms count as alif, ta marbuta as
+#   ha (5) and alif maqsura as ya (10), the common convention.
+id: numerology.gematria
+version: "0.1"
+schools:
+  hebrew_gematria:
+    script: Hebrew
+    letters: {"א": 1, "ב": 2, "ג": 3, "ד": 4, "ה": 5, "ו": 6, "ז": 7, "ח": 8, "ט": 9, "י": 10, "כ": 20, "ך": 20, "ל": 30,
+              "מ": 40, "ם": 40, "נ": 50, "ן": 50, "ס": 60, "ע": 70, "פ": 80, "ף": 80, "צ": 90, "ץ": 90, "ק": 100,
+              "ר": 200, "ש": 300, "ת": 400}
+  abjad:
+    script: Arabic
+    letters: {"ا": 1, "أ": 1, "إ": 1, "آ": 1, "ء": 1, "ب": 2, "ج": 3, "د": 4, "ه": 5, "ة": 5, "و": 6, "ؤ": 6, "ز": 7,
+              "ح": 8, "ط": 9, "ي": 10, "ى": 10, "ئ": 10, "ك": 20, "ل": 30, "م": 40, "ن": 50, "س": 60, "ع": 70, "ف": 80,
+              "ص": 90, "ق": 100, "ر": 200, "ش": 300, "ت": 400, "ث": 500, "خ": 600, "ذ": 700, "ض": 800, "ظ": 900,
+              "غ": 1000}

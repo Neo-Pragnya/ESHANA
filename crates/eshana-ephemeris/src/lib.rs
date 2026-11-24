@@ -7,7 +7,10 @@
 
 pub mod analytic;
 pub mod frames;
+pub mod kernels;
 pub mod spk;
+#[rustfmt::skip]
+mod vsop87;
 
 use eshana_core::{Body, EshanaError, Result};
 use serde::Serialize;
@@ -129,7 +132,13 @@ pub fn provider_by_id(id: &str, opts: &ProviderOptions) -> Result<Box<dyn Epheme
                             .into(),
                     )
                 })?;
-            Ok(Box::new(spk::SpkProvider::open(&path)?))
+            // a catalogue name (de440) is looked up in the kernel folder
+            // several kernels, comma-separated (a planetary one first); catalogue names are looked up in the folder
+            let paths = path
+                .split(',')
+                .map(|p| kernels::locate(p.trim()))
+                .collect::<Result<Vec<_>>>()?;
+            Ok(Box::new(spk::SpkProvider::open_many(&paths)?))
         }
         other => Err(EshanaError::Config(format!(
             "unknown provider '{other}'; known: {}",

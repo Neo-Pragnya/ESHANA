@@ -35,6 +35,8 @@ const chartLayerGroups = (re, opts = {}) => {
 };
 /* additional aspects shown under the two switches: graha drishti (and exchange marks) and rāśi drishti */
 const extraShown = d => d.drishti === 'rashi' ? !!S.layers.extra_rashi : !!S.layers.extra_aspects;
+/* the chosen chart style for one chart: north, east or south ('both' draws south first) */
+const chartKind = () => (S.chart === 'north' || S.chart === 'east' ? S.chart : 'south');
 const pageHead = (sig, title, sub) => h('header', { class: 'phead' }, h('span', { class: 'phead-sigil', html: sigil(sig, 'big') }), h('div', {}, h('h2', {}, title), sub ? h('p', { class: 'lead' }, sub) : null));
 const T = iso => Date.parse(iso);
 const missing = (what, why) => h('div', { class: 'card empty' }, h('p', {}, `${what} is not available for this chart.`), note(why));
@@ -55,8 +57,8 @@ page('overview', () => 'Overview', 'Chart', (b) => {
     YOGAS && stat('Yogas present', String(ypres.length), ypres.slice(0, 3).map(y => y.name.split(' (')[0]).join(', '), '#/yogas'),
     bg && stat('Human Design', `${bg.type}`, `${bg.authority} · ${bg.profile}`, '#/human-design'),
   ];
-  const mini = h('div', { class: 'figure' }); if (VED) mini.append(chartSVG(S.chart === 'north' ? 'north' : 'south', 1));
-  const mini9 = h('div', { class: 'figure' }); if (VED && DIVS.includes(9)) mini9.append(chartSVG(S.chart === 'north' ? 'north' : 'south', 9));
+  const mini = h('div', { class: 'figure' }); if (VED) mini.append(chartSVG(chartKind(), 1));
+  const mini9 = h('div', { class: 'figure' }); if (VED && DIVS.includes(9)) mini9.append(chartSVG(chartKind(), 9));
   const explore = Object.values(PAGES).filter(x => !x.hidden && x.id !== 'overview').map(x => h('a', { class: 'explore', href: '#/' + x.id }, h('span', { html: sigil(x.id) }), h('b', {}, x.title()), h('small', {}, x.blurb || '')));
   put(b, pageHead('overview', subj.name || 'Birth chart', [subj.local, subj.place_label].filter(Boolean).join(' · ')),
     h('div', { class: 'stats' }, tiles),
@@ -104,7 +106,7 @@ page('charts', () => 'Charts', 'Chart', (b) => {
   const re = () => route();
   const style = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.chart === v), onclick: () => { S.chart = v; save(); re(); } }, t);
   const icons = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.icons === v), onclick: () => { S.icons = v; save(); re(); } }, t);
-  const kind = S.chart === 'north' ? 'north' : 'south';
+  const kind = chartKind();
   // the D1 charts get full-width rows so grahas, padas and every aspect mark have room; the rest share a grid
   const wide = h('div', { class: 'wide-charts' });
   wide.append(card(kind === 'north' ? 'Rāśi · D1 (North Indian)' : 'Rāśi · D1', h('div', { class: 'figure wide' }, chartSVG(kind, 1))));
@@ -127,7 +129,7 @@ page('charts', () => 'Charts', 'Chart', (b) => {
   const transitOn = S.layers.transits && D.transits && D.transits.rows && D.transits.rows.length;
   if (transitOn) wide.append(card('Gochara: transits over the rāśi chart', transitSquare(), note('Inner boxes: the natal grahas. Outer band: where each graha is on the date shown. Move the slider or press play.')));
   put(b, pageHead('charts', 'Charts', 'Rāśi, navāṃśa, bhāva chalit and Sudarshana. Click a house for its page, a graha for its own.'),
-    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian'), style('both', 'Both')),
+    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian'), style('east', 'East Indian'), style('both', 'Both')),
       h('div', { class: 'grp' }, h('b', {}, 'Icons'), icons('sphere', 'Spheres'), icons('glyph', 'Glyphs'), icons('badge', 'Badges')), visGroup(),
       h('div', { class: 'grp' }, h('b', {}, 'Bhāva chalit'), ...[['none', 'Off'], ['square', 'Concentric squares'], ['circle', 'Circle']].map(([v, t]) => h('button', { class: 'tab', 'aria-selected': String((S.chalit || 'none') === v), onclick: () => { S.chalit = v; save(); re(); } }, t))),
       ...chartLayerGroups(re, { d1: true })),
@@ -138,8 +140,8 @@ page('charts', () => 'Charts', 'Chart', (b) => {
 /* ── vargas ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 page('vargas', () => 'Vargas', 'Chart', (b) => {
   if (!VED || DIVS.length < 2) return put(b, missing('Divisional charts', 'Ask for divisions.'));
-  const kind = S.chart === 'north' ? 'north' : 'south', re = () => route();
-  const style = (v, t) => h('button', { class: 'tab', 'aria-selected': String((S.chart === 'north' ? 'north' : 'south') === v), onclick: () => { S.chart = v; save(); re(); } }, t);
+  const kind = chartKind(), re = () => route();
+  const style = (v, t) => h('button', { class: 'tab', 'aria-selected': String(chartKind() === v), onclick: () => { S.chart = v; save(); re(); } }, t);
   const icons = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.icons === v), onclick: () => { S.icons = v; save(); re(); } }, t);
   const gallery = h('div', { class: 'gallery' }, DIVS.map(d => h('a', { class: 'card mini-chart' + (d === (DIVS.includes(S.varga) ? S.varga : 9) ? ' on' : ''), href: `#/vargas/${d}`, onclick: e => { e.preventDefault(); S.varga = d; save(); route(); } },
     h('h3', {}, `D${d} ${DIV_NAME[d] || ''}`, h('small', {}, DIV_AREA[d] || '')), h('div', { class: 'figure' }, chartSVG(kind, d, { compact: true, noTitle: true, noMarks: true })))));
@@ -151,7 +153,7 @@ page('vargas', () => 'Vargas', 'Chart', (b) => {
   const hasAsp = !!aspectSet(d);
   put(b, pageHead('vargas', 'Divisional charts', `${DIVS.length} vargas. Pick one to see it large with its aspects; the grid shows every body in every varga (highlight: same sign as D1).`),
     h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Varga'), pick),
-      h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian')),
+      h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian'), style('east', 'East Indian')),
       h('div', { class: 'grp' }, h('b', {}, 'Icons'), icons('sphere', 'Spheres'), icons('glyph', 'Glyphs'), icons('badge', 'Badges')), visGroup(),
       ...chartLayerGroups(re, { d1: d === 1 })),
     h('div', { class: 'wide-charts' }, card(`D${d} · ${DIV_NAME[d] || ''} (${DIV_AREA[d] || ''})`, h('div', { class: 'figure wide' }, chartSVG(kind, d)),
@@ -370,7 +372,7 @@ function asLagna(n) {
       h('span', {}, glink(L), ` in ${placedIn(L) ? nth(houseFrom(abs, placedIn(L))) + ' from it' : '—'}${st.dignity ? ', ' + st.dignity : ''}`),
       ben || mal ? h('span', { class: ben >= mal ? 'ok' : 'warn' }, ben >= mal ? 'supports' : 'strains') : '—'];
   });
-  const chart = chartSVG(S.chart === 'north' ? 'north' : 'south', 1, { lagSign: base });
+  const chart = chartSVG(chartKind(), 1, { lagSign: base });
   return [h('h3', { class: 'section-t' }, `Bhāva ${n} as the lagna`),
     h('div', {}, card(`The chart counted from bhāva ${n}`, h('div', { class: 'figure narrow' }, chart), note(`House numbers here count from bhāva ${n} (${SIGN_SKT[base]}): its 2nd shows what sustains it, its 12th what drains it, its 6th what opposes it, and so on.`)),
       card('What each house from it says', table(['From it', 'Bhāva', 'Says about bhāva ' + n, 'Occupants', 'Lord', ''], rows),
@@ -660,7 +662,7 @@ page('point', (id) => ((READ.points || {})[id] || {}).name || 'Point', 'Systems'
   if (p.id === 'arudha_padas' && val('vedic.jaimini.arudha_padas')) extra = table(['Pada', 'Of bhāva', 'Pada sign', 'Pada bhāva'], Object.entries(val('vedic.jaimini.arudha_padas')).sort((a, bb) => a[1].house - bb[1].house).map(([k2, v]) => [k2.replace('_', ' '), v.house, SIGN_SKT[v.pada_sign], v.pada_house]));
   if (p.id === 'functional_nature' && sp.lordships) extra = h('div', {}, table(['Graha', 'Owns', 'Placed in', 'Nature'], SEVEN.map(g => [glink(g), sp.lordships.grahas[g].houses_owned.join(', '), sp.lordships.grahas[g].placed_in_house, sp.lordships.grahas[g].functional_nature])), note(sp.lordships.rule));
   const signs = [...new Set(p.signs)].slice(0, 3);
-  const chart = chartSVG(S.chart === 'north' ? 'north' : 'south', 1);
+  const chart = chartSVG(chartKind(), 1);
   signs.forEach(sg => $$(`.cell[data-sign="${sg}"]`, chart).forEach(c => c.classList.add('yoga-src')));
   put(b, nav, pageHead('special', r.name || p.id, r.what || ''),
     h('div', { class: 'chips' }, h('span', { class: 'chip' }, 'In this chart: ', h('b', {}, p.value)), h('span', { class: 'chip' }, label('tradition_rule'), ' computed by the engine')),
@@ -731,7 +733,7 @@ page('yoga', (id) => (YOGA_ALL().find(y => y.id === id) || {}).name || 'Yoga', '
   const ref = READ.yogas[y.id] || {}, k = list.findIndex(x => x.id === y.id), gs = (y.grahas || []).filter(g => GR[g]);
   const nav = h('div', { class: 'pnav' }, k > 0 ? h('a', { class: 'btn', href: '#/yoga/' + list[k - 1].id }, '← ' + list[k - 1].name) : h('span', {}),
     h('a', { class: 'btn', href: '#/yogas' }, 'All yogas'), k >= 0 && k < list.length - 1 ? h('a', { class: 'btn', href: '#/yoga/' + list[k + 1].id }, list[k + 1].name + ' →') : h('span', {}));
-  const chart = chartSVG(S.chart === 'north' ? 'north' : 'south', 1);
+  const chart = chartSVG(chartKind(), 1);
   gs.forEach(g => $$(`.cell[data-sign="${signOf(GR[g].lon)}"]`, chart).forEach(c => c.classList.add('yoga-src')));
   const act = activation(gs);
   put(b, nav, pageHead('yogas', y.name, ref.summary || ''),

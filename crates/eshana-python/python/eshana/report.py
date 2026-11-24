@@ -833,7 +833,8 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--place", dest="place_label", help="place label shown in the report")
     p.add_argument("--title")
     p.add_argument("--ayanamsha", default="lahiri", choices=["lahiri", "raman", "krishnamurti", "fagan_bradley", "yukteshwar",
-                                                            "jn_bhasin", "ushashashi", "sassanian", "deluce", "djwhal_khul"])
+                                                            "jn_bhasin", "ushashashi", "sassanian", "deluce", "djwhal_khul",
+                                                            "true_citra", "true_revati", "true_pushya", "true_mula"])
     p.add_argument("--houses", default="whole_sign", choices=["whole_sign", "equal", "placidus"], help="Vedic houses")
     p.add_argument("--western-houses", default="placidus", choices=["whole_sign", "equal", "placidus"])
     p.add_argument("--node", default="mean", choices=["mean", "true"])
@@ -870,7 +871,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
     p.add_argument("--icons", choices=["sphere", "glyph", "badge"], help="default planet icon style")
     p.add_argument("--centre", choices=["south", "north", "lanes"], help="default centre of the Jyotish Chakra (Graha-Nakshatra Mandala)")
-    p.add_argument("--chart-style", choices=["south", "north", "both"], help="default chart style")
+    p.add_argument("--chart-style", choices=["south", "north", "east", "both"], help="default chart style")
     p.add_argument("--theme", default="auto", choices=["auto", "light", "dark"])
     return p
 
