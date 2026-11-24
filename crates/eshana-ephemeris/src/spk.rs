@@ -303,8 +303,8 @@ impl SpkProvider {
             wc[j] = delta / g[j - 1];
             tp = delta + g[j - 1];
         }
-        for j in 1..=kqmax1 {
-            w[j] = 1.0 / j as f64;
+        for (j, wj) in w.iter_mut().enumerate().take(kqmax1 + 1).skip(1) {
+            *wj = 1.0 / j as f64;
         }
         let mut jx = 0;
         let mut ks1 = ks.saturating_sub(1);
