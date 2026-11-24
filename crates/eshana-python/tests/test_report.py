@@ -136,6 +136,18 @@ def test_ephemeris_and_ingresses():
     assert len(i["ingresses"]) == 12
 
 
+def test_stations_and_crossings_match_the_raw_request():
+    from eshana import execute
+
+    s = ChartEngine().stations("mercury", "2024-01-01T00:00:00Z", "2025-01-01T00:00:00Z", zodiac="tropical")
+    raw = execute({"op": "stations", "body": "mercury", "start_utc": "2024-01-01T00:00:00Z",
+                   "end_utc": "2025-01-01T00:00:00Z", "config": {"zodiac": "tropical"}})
+    assert s == raw
+    assert [x["station"] for x in s["stations"][:2]] == ["direct", "retrograde"]
+    c = ChartEngine().crossings("saturn", 335.0, "2024-01-01T00:00:00Z", "2027-01-01T00:00:00Z", touch_orb_deg=0.0)
+    assert [e["direction"] for e in c["events"]] == ["direct", "retrograde", "direct"]
+
+
 def test_rulesets_are_yaml_and_listed():
     packs = {p["file"] for p in ChartEngine.rulesets()["packs"]}
     assert packs == {"vedic-core.yaml", "bala.yaml", "ashtakavarga.yaml", "panchanga.yaml", "matching.yaml", "yogas.yaml"}

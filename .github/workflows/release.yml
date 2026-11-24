@@ -32,6 +32,13 @@ jobs:
           version: "latest"
           enable-cache: false
 
+      - name: Build the browser engine (WebAssembly, shipped in every wheel for eshana-report --live)
+        shell: bash
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo build -q -p eshana-wasm --release --target wasm32-unknown-unknown
+          cp target/wasm32-unknown-unknown/release/eshana_wasm.wasm crates/eshana-python/python/eshana/data/eshana_engine.wasm
+
       - name: Build (Linux, manylinux2014 via zig, both architectures)
         if: runner.os == 'Linux'
         run: |

@@ -432,7 +432,7 @@ SECTION_TITLES = {
     "aspects": "Aspects",
     "strength": "Strength (ṣaḍbala, bhāva bala, viṃśopaka)",
     "ashtakavarga": "Aṣṭakavarga",
-    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla, Kālachakra; Sāḍe Sātī)",
+    "dasha": "Daśā periods (Vimśottarī daśā, Yoginī daśā, Aṣṭottarī, Ṣoḍaśottarī, Chara, Nārāyaṇa, Navāṃśa, Śūla, Kālachakra, seven conditional daśās; Sāḍe Sātī)",
     "panchanga": "Pañcāṅga",
     "special": "Lagnas and special points",
     "point": "Lagna or special point",
@@ -440,6 +440,8 @@ SECTION_TITLES = {
     "yogas": "Yogas and doshas",
     "yoga": "Yoga",
     "kp": "KP (Krishnamurti Paddhati)",
+    "horary": "KP horary",
+    "playground": "Playground (live engine)",
     "nadi": "Nadi direction matrix",
     "aux": "Auxiliary analysis (sahams, avakahaḍā, mṛtyu bhāga, ghāta, vedhasthāna, jīva/deha, śodhana)",
     "chakras": "Chakras (Sarvatobhadra, Kota, Saṅghaṭṭa)",
@@ -447,6 +449,8 @@ SECTION_TITLES = {
     "pakshi": "Pañca pakṣī",
     "energetics": "AstroEnergetics",
     "transits": "Transits",
+    "calendar": "Personal calendar",
+    "compare": "Compare: natal, progressed and transit",
     "progressions": "Progressions",
     "western": "Western chart (tropical)",
     "human-design": "Human Design",
@@ -456,11 +460,31 @@ SECTION_TITLES = {
 }
 SECTIONS = tuple(SECTION_TITLES)
 ASSETS = ("studio-core.js", "studio-charts.js", "studio-pages.js", "studio-dashas.js", "studio-maitri.js", "studio-analysis.js",
-          "studio-chakras.js", "studio-annual.js", "studio-boot.js")
+          "studio-live.js", "studio-chakras.js", "studio-annual.js", "studio-locale.js", "studio-export.js", "studio-boot.js")
 
 
 def _asset(name: str) -> str:
     return resources.files("eshana").joinpath(f"assets/{name}").read_text(encoding="utf-8")
+
+
+LOCALES = ("en", "hi")
+
+
+def _locale(code: str) -> Dict[str, Any]:
+    """The interface catalogue for a language code (data/locales/<code>.json)."""
+    if code not in LOCALES:
+        raise ValueError(f"unknown locale '{code}' (one of: {', '.join(LOCALES)})")
+    return json.loads(resources.files("eshana").joinpath(f"data/locales/{code}.json").read_text(encoding="utf-8"))
+
+
+def _engine_script() -> str:
+    """The engine as WebAssembly, base64 in an inert script element (ADR-013). Raises when this build has none."""
+    import base64
+    try:
+        wasm = resources.files("eshana").joinpath("data/eshana_engine.wasm").read_bytes()
+    except (OSError, FileNotFoundError) as e:  # pragma: no cover - present in every wheel built by `make wheel`
+        raise ValueError("this build of eshana has no browser engine (data/eshana_engine.wasm); run `make wasm`") from e
+    return f'\n<script type="application/octet-stream" id="eshana-engine">{base64.b64encode(wasm).decode("ascii")}</script>'
 
 
 def _reading_reference() -> Optional[Dict[str, Any]]:
@@ -484,7 +508,7 @@ def _kind(env: Dict[str, Any]) -> Optional[str]:
     system = (env.get("calculation") or {}).get("system")
     if kind == "computed_chart" and system in ("vedic", "western"):
         return system
-    if kind in ("human_design", "matching"):
+    if kind in ("human_design", "matching", "kp_horary", "personal_calendar"):
         return kind
     if env.get("derived_attributes") and str(env["derived_attributes"][0].get("id", "")).startswith("numerology"):
         return "numerology"
@@ -505,7 +529,7 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
                 theme: str = "auto", transits: Optional[Dict[str, Any]] = None,
                 progressions: Optional[Dict[str, Any]] = None, reference_utc: Optional[str] = None,
                 errors: Optional[Dict[str, str]] = None, defaults: Optional[Dict[str, Any]] = None,
-                revolutions: Optional[Dict[str, Any]] = None) -> str:
+                revolutions: Optional[Dict[str, Any]] = None, live: bool = False, locale: str = "en") -> str:
     """Render engine envelopes as ESHANA Studio: one self-contained, multi-page, animated HTML app.
 
     ``envelopes`` maps labels to envelopes; their kinds are recognised from the envelopes themselves. ``transits`` and
@@ -534,7 +558,8 @@ def render_html(envelopes: Dict[str, Dict[str, Any]], title: str = "ESHANA chart
         "envelopes": by_kind, "subject": subject or {}, "title": title, "theme": theme if theme in ("light", "dark") else None,
         "reference_utc": reference_utc, "transits": transits, "progressions": progressions, "revolutions": revolutions,
         "nakshatra_reference": _nak_reference(), "energetics": _energetics(), "reading": _reading_reference(), "errors": errors or None,
-        "defaults": defaults or {}, "pages": want, "generator": "eshana.report",
+        "defaults": defaults or {}, "pages": want, "generator": "eshana.report", "locale": _locale(locale),
+        "locales": {c: _locale(c) for c in LOCALES},
     }
     first = next(iter(by_kind.values()), {})
     version = (first.get("provenance") or {}).get("engine_version", "")
@@ -593,7 +618,7 @@ or tradition_rule; chart markers follow {MARKER_RULES}, Nadi links report.nadi@0
 </div>
 <div id="palette" hidden role="dialog" aria-label="Jump to"><div class="box"><input placeholder="Jump to a page, graha or bhāva…" aria-label="Search"><ul></ul></div></div>
 <aside class="drawer" id="drawer" aria-label="Show and style"></aside>
-<script type="application/json" id="eshana-data">{data_json}</script>
+<script type="application/json" id="eshana-data">{data_json}</script>{_engine_script() if live else ""}
 <script>{js}</script>
 </body>
 </html>
@@ -610,7 +635,11 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
                   features: Sequence[str] = ("all",), reference_utc: Optional[str] = None,
                   systems: Sequence[str] = ("vedic", "western", "human_design", "numerology"),
                   provider: str = "analytic", spk_path: Optional[str] = None, numerology_school: str = "pythagorean",
-                  sunrise: Optional[str] = None, partner: Any = None, gender: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
+                  sunrise: Optional[str] = None, partner: Any = None, gender: Optional[str] = None,
+                  kp_number: Optional[int] = None, kp_at: Optional[str] = None,
+                  kp_occupancy: Optional[str] = None, calendar_days: Optional[int] = None,
+                  calendar_profile: str = "personal_general", event_place: Optional[Dict[str, Any]] = None,
+                  event_tz: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
     """Run the engine for each requested system. A system that cannot be computed becomes an ``_errors`` entry."""
     from . import ChartEngine, EshanaError
 
@@ -646,6 +675,27 @@ def envelopes_for(ctx: Any, *, name: Optional[str] = None, ayanamsha: str = "lah
                                                  gender=gender))
     if partner is not None:
         run("matching", lambda: eng.matching(ctx, partner, ayanamsha=ayanamsha))
+    if calendar_days:
+        # The event place defaults to the birth place, but is passed apart: the engine never confuses the two.
+        place = event_place or ctx.place
+        start = (reference_utc or "")[:10]
+        if not place or not start:
+            errors["personal_calendar"] = "ESH-INPUT: the calendar needs an event place and a reference date"
+        else:
+            end = (_dt.date.fromisoformat(start) + _dt.timedelta(days=calendar_days)).isoformat()
+            run("personal_calendar", lambda: eng.personal_calendar(
+                ctx, place["latitude"], place["longitude"], f"{start}T00:00:00Z", f"{end}T00:00:00Z",
+                timezone=event_tz or ctx.when.get("timezone"), profile=calendar_profile, ayanamsha=ayanamsha))
+    if kp_number is not None:
+        # The horary moment is the judgement (kp_at, else the reference instant), never the birth.
+        from . import Context
+        at = kp_at or reference_utc
+        place = ctx.place or {}
+        if not at or not place:
+            errors["kp_horary"] = "ESH-INPUT: KP horary needs a moment of judgement and a place"
+        else:
+            jctx = Context.from_utc(at, place.get("latitude"), place.get("longitude"))
+            run("kp_horary", lambda: eng.kp_horary(kp_number, jctx, occupancy=kp_occupancy))
     if errors:
         out["_errors"] = {"kind": "report_errors", "errors": errors}
     return out
@@ -729,7 +779,7 @@ def birth_report(ctx: Any, *, name: Optional[str] = None, gender: Optional[str] 
                  reference_utc: Optional[str] = None, transit_days: Optional[int] = None,
                  transit_start: Optional[str] = None, transit_end: Optional[str] = None,
                  transit_step_days: float = 1.0, progression_years: int = 90,
-                 defaults: Optional[Dict[str, Any]] = None, **kw: Any) -> str:
+                 defaults: Optional[Dict[str, Any]] = None, live: bool = False, locale: str = "en", **kw: Any) -> str:
     """Compute every requested system for ``ctx`` (an :class:`eshana.Context`) and return the chart studio HTML.
 
     ``reference_utc`` is the instant used for "current" daśā periods and the transit table (default: now, recorded
@@ -760,11 +810,13 @@ def birth_report(ctx: Any, *, name: Optional[str] = None, gender: Optional[str] 
     return render_html(envs, title=title or (f"{name} · birth chart" if name else "Birth chart"),
                        subject={"name": name, "gender": gender, "place_label": place_label, "local": local}, sections=sections,
                        theme=theme, transits=transits, progressions=progressions, reference_utc=ref,
-                       errors=(errs or {}).get("errors"), defaults=defaults, revolutions=revolutions)
+                       errors=(errs or {}).get("errors"), defaults=defaults, revolutions=revolutions, live=live, locale=locale)
 
 
 def _parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="eshana-report", description="Write a self-contained, interactive HTML chart studio.")
+    p = argparse.ArgumentParser(prog="eshana-report", description="Write a self-contained, interactive HTML chart studio.",
+                                epilog="eshana-report new: open a form in the browser, wait for birth details, write the chart and stop "
+                                       "(eshana-report new --help).")
     p.add_argument("-o", "--output", default="-", help="output .html file (default: stdout)")
     p.add_argument("--from-json", nargs="+", metavar="FILE", help="render envelopes saved from the eshana CLI instead")
     p.add_argument("--date", help="local date YYYY-MM-DD")
@@ -780,7 +832,8 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--gender", choices=["male", "female"], help="gender (shown with the name; picks the Kua number)")
     p.add_argument("--place", dest="place_label", help="place label shown in the report")
     p.add_argument("--title")
-    p.add_argument("--ayanamsha", default="lahiri", choices=["lahiri", "raman", "krishnamurti", "fagan_bradley"])
+    p.add_argument("--ayanamsha", default="lahiri", choices=["lahiri", "raman", "krishnamurti", "fagan_bradley", "yukteshwar",
+                                                            "jn_bhasin", "ushashashi", "sassanian", "deluce", "djwhal_khul"])
     p.add_argument("--houses", default="whole_sign", choices=["whole_sign", "equal", "placidus"], help="Vedic houses")
     p.add_argument("--western-houses", default="placidus", choices=["whole_sign", "equal", "placidus"])
     p.add_argument("--node", default="mean", choices=["mean", "true"])
@@ -800,6 +853,18 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--systems", default="vedic,western,human_design,numerology")
     p.add_argument("--school", default="pythagorean", choices=["pythagorean", "chaldean"])
     p.add_argument("--partner", help="second person for matching: date,time,tz,lat,lon")
+    p.add_argument("--locale", default="en", choices=["en", "hi"], help="the file's default interface language (labels only; values are never translated). "
+                                                                       "Readers can switch it in the studio's settings")
+    p.add_argument("--live", action="store_true",
+                   help="embed the engine (WebAssembly, ~4 MB) so the compare workspace and the playground recompute offline")
+    p.add_argument("--calendar-days", type=int, help="add a personal calendar of N days from the reference date (max 62)")
+    p.add_argument("--calendar-profile", default="personal_general", help="muhurta profile id for the calendar")
+    p.add_argument("--event-lat", type=float, help="event place for the calendar (default: the birth place)")
+    p.add_argument("--event-lon", type=float)
+    p.add_argument("--event-tz", help="IANA zone of the event place (default: the birth zone)")
+    p.add_argument("--kp-number", type=int, help="KP horary number 1-249 (adds the KP horary page)")
+    p.add_argument("--kp-at", help="moment of judgement for KP horary, UTC (default: the reference instant)")
+    p.add_argument("--kp-occupancy", help="KP cusp occupancy method id (default cusp_start)")
     p.add_argument("--provider", default="analytic", choices=["analytic", "spk"])
     p.add_argument("--spk", help="JPL SPK kernel for --provider spk")
     p.add_argument("--sections", help=f"comma list from: {','.join(SECTIONS)}")
@@ -813,7 +878,11 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     from . import Context, EshanaError
 
-    a = _parser().parse_args(argv)
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["new"]:  # guided creation: a local form, then the chart (eshana.intake)
+        from .intake import main as new_main
+        return new_main(args[1:])
+    a = _parser().parse_args(args)
     sections = a.sections.split(",") if a.sections else None
     defaults = {k: v for k, v in {"icons": a.icons, "chart": a.chart_style, "centre": a.centre}.items() if v}
     try:
@@ -856,7 +925,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                                 dasha=not a.no_dasha, dasha_levels=a.dasha_levels,
                                 dasha_systems=[x for x in a.dasha_systems.split(",") if x], features=feats,
                                 systems=a.systems.split(","), provider=a.provider, spk_path=a.spk,
-                                numerology_school=a.school, sunrise=a.sunrise, partner=partner)
+                                numerology_school=a.school, sunrise=a.sunrise, partner=partner,
+                                kp_number=a.kp_number, kp_at=a.kp_at, kp_occupancy=a.kp_occupancy,
+                                calendar_days=a.calendar_days, calendar_profile=a.calendar_profile,
+                                event_place=({"latitude": a.event_lat, "longitude": a.event_lon}
+                                             if a.event_lat is not None and a.event_lon is not None else None),
+                                event_tz=a.event_tz, live=a.live, locale=a.locale)
     except (EshanaError, ValueError) as e:
         print(f"eshana-report: {e}", file=sys.stderr)
         return 2

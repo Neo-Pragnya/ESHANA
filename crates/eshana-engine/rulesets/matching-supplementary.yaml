@@ -1,0 +1,48 @@
+# Supplementary matching factors, reported beside (never inside) the 36-point Aṣṭakūṭa. Each factor has a rule id;
+# none changes the 36-point score. Nakṣatra indices are 0–26 from Aśvinī; sign indices 0–11 from Meṣa.
+# Partner `a` takes the role classical tables give the groom, `b` the bride; directional factors count from b to a.
+id: matching.supplementary
+version: "0.1"
+
+rajju:
+  # The 27 nakṣatras run up and down the body of a rope in blocks of nine: foot, waist, navel, neck, head, neck,
+  # navel, waist, foot. Both partners in the same rajju is the doṣa.
+  block: [pada, kati, nabhi, kantha, shiras, kantha, nabhi, kati, pada]
+
+vedha:
+  # Mutually obstructing nakṣatras, by 1-based number: twelve pairs, and the three "head" nakṣatras Mṛgaśirā (5),
+  # Citrā (14) and Dhaniṣṭhā (23) with each other.
+  pairs: [[1, 18], [2, 17], [3, 16], [4, 15], [6, 22], [7, 21], [8, 20], [9, 19], [10, 27], [11, 26], [12, 25], [13, 24],
+          [5, 14], [14, 23], [5, 23]]
+
+mahendra:
+  # Count from b's nakṣatra to a's (1 = same). Present when the count is one of these.
+  counts: [4, 7, 10, 13, 16, 19, 22, 25]
+
+stri_dirgha:
+  # Count from b's nakṣatra to a's. Present (favourable) when the count exceeds the threshold. Some texts use 9 as a
+  # middle grade; the threshold is part of the rule id.
+  threshold: 13
+
+manglik:
+  houses: [1, 2, 4, 7, 8, 12]
+  references: [lagna, moon, venus]
+  cancellations:
+    - id: own_or_exalted
+      rule: "Mars in its own sign (Meṣa, Vṛścika) or exalted (Makara)"
+      scope: all_references
+      mars_signs: [0, 7, 9]
+    - id: house_sign_exception
+      rule: "Mars in the 1st in Siṃha or Kumbha, the 2nd in Mithuna or Kanyā, the 4th in Meṣa or Vṛścika, the 7th in Makara or Karka, the 8th in Dhanu or Mīna, the 12th in Vṛṣabha or Tulā (a common modern list)"
+      scope: per_reference
+      by_house: {"1": [4, 10], "2": [2, 5], "4": [0, 7], "7": [9, 3], "8": [8, 11], "12": [1, 6]}
+    - id: jupiter_association
+      rule: "Mars with Jupiter in one sign, or in a sign Jupiter aspects (5th, 7th, 9th)"
+      scope: all_references
+    - id: both_partners
+      rule: "Both partners have the doṣa from the same reference point"
+      scope: pair
+
+cross_aspects:
+  # Parāśari sign aspects for cross-chart contacts: every graha aspects the 7th sign from it; these add more.
+  special: {mars: [4, 8], jupiter: [5, 9], saturn: [3, 10]}

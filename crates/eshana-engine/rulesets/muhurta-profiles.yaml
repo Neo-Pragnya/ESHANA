@@ -1,0 +1,89 @@
+# Muhūrta profiles: named constraint sets over the factor timelines of the `muhurta_windows` operation.
+#
+# A constraint names one factor and either `include` (the factor's value must be one of these) or `exclude` (must
+# not be). Values match a factor's index, name, lord or quality, or a boolean factor directly. Profiles list
+# constraint ids; a request may disable any of them by id, and add its own.
+#
+# Status: `stable` means the definition is a fixed calculation (a day division, a set of tithis). `experimental`
+# marks a purpose preset that is incomplete: it lists only the factors the engine can evaluate today, and a full
+# election needs more (the querent's own chart, the lunar month, the planets' strengths). Experimental presets say so
+# in every result that uses them.
+id: muhurta.profiles
+version: "0.1"
+
+factors:
+  tithi: "1–30 from Śukla Pratipadā; elongation of the Moon from the Sun in 12° steps"
+  nakshatra: "1–27 from Aśvinī; the Moon's sidereal longitude in 13°20′ steps"
+  yoga: "1–27 from Viṣkambha; the sum of the Sun's and the Moon's sidereal longitudes in 13°20′ steps"
+  karana: "1–60 half-tithis; names from the pañcāṅga pack"
+  moon_sign: "0–11 from Meṣa; the Moon's sidereal sign"
+  vara: "0–6 from Sunday; the weekday of the Vedic day (sunrise to sunrise)"
+  hora: "lord of the planetary hour; twelve unequal hours by day and twelve by night"
+  choghadiya: "name and quality of the choghaḍiyā; eight by day and eight by night"
+  rahu_kalam: "true inside the weekday's eighth of daylight given by the pañcāṅga pack"
+  yamagandam: "true inside the weekday's eighth of daylight given by the pañcāṅga pack"
+  gulika_kalam: "true inside the weekday's eighth of daylight given by the pañcāṅga pack"
+  abhijit: "true inside the eighth of the fifteen day muhūrtas (daylight / 15)"
+  tara_bala: "the tārā (1–9 cycle) of the transit nakṣatra counted from the natal Moon's; quality favourable or unfavourable (needs a birth chart)"
+  chandra_bala: "the house of the transit Moon from the natal Moon's sign; quality favourable or unfavourable (needs a birth chart)"
+  tara_bala_b: "tārā bala from the second person's natal Moon (pair calendars)"
+  chandra_bala_b: "candra bala from the second person's natal Moon (pair calendars)"
+  brahma_muhurta: "true inside the fourteenth of the fifteen night muhūrtas, the one ending one muhūrta before sunrise"
+
+constraints:
+  no_rahu_kalam: { factor: rahu_kalam, exclude: [true], note: "avoid Rāhu kālam" }
+  no_yamagandam: { factor: yamagandam, exclude: [true], note: "avoid Yamagaṇḍam" }
+  no_gulika_kalam: { factor: gulika_kalam, exclude: [true], note: "avoid Gulika kālam" }
+  no_rikta_tithi: { factor: tithi, exclude: [4, 9, 14, 19, 24, 29], note: "avoid the rikta (empty) tithis: Caturthī, Navamī, Caturdaśī of both pakṣas" }
+  no_amavasya: { factor: tithi, exclude: [30], note: "avoid Amāvāsyā" }
+  no_panchaka: { factor: moon_sign, exclude: [10, 11], note: "avoid Pañcaka: the Moon in Kumbha or Mīna (Dhaniṣṭhā second half to Revatī)" }
+  no_vishti_karana: { factor: karana, exclude: ["Vishti"], note: "avoid Viṣṭi (Bhadrā) karaṇa" }
+  abhijit_only: { factor: abhijit, include: [true], note: "only within Abhijit muhūrta" }
+  brahma_muhurta_only: { factor: brahma_muhurta, include: [true], note: "only within Brahma muhūrta" }
+  good_choghadiya: { factor: choghadiya, include: ["auspicious"], note: "only choghaḍiyās whose quality is auspicious (Lābh, Amṛt, Śubh)" }
+  good_tara: { factor: tara_bala, include: ["favourable"], note: "only a favourable tārā from the natal Moon" }
+  good_chandra_bala: { factor: chandra_bala, include: ["favourable"], note: "only a favourable house of the transit Moon from the natal Moon" }
+  good_tara_b: { factor: tara_bala_b, include: ["favourable"], note: "only a favourable tārā from the second person's natal Moon" }
+  good_chandra_bala_b: { factor: chandra_bala_b, include: ["favourable"], note: "only a favourable candra bala from the second person's natal Moon" }
+  not_on_wednesday: { factor: vara, exclude: [3], note: "Abhijit is not used on Wednesday in most texts" }
+
+profiles:
+  - id: daily_avoidances
+    version: "0.1"
+    status: stable
+    title: "The daily inauspicious divisions"
+    constraints: [no_rahu_kalam, no_yamagandam, no_gulika_kalam]
+  - id: general_auspicious
+    version: "0.1"
+    status: experimental
+    title: "General starting point: daily avoidances, rikta tithis, Amāvāsyā, Pañcaka and Viṣṭi removed"
+    constraints: [no_rahu_kalam, no_yamagandam, no_gulika_kalam, no_rikta_tithi, no_amavasya, no_panchaka, no_vishti_karana]
+    missing: ["śūnya tithis by lunar month", "mṛtyu and other vāra–nakṣatra yogas", "tārā and candra bala of the person", "lagna śuddhi"]
+  - id: abhijit
+    version: "0.1"
+    status: stable
+    title: "Abhijit muhūrta, not on Wednesday"
+    constraints: [abhijit_only, not_on_wednesday]
+  - id: brahma_muhurta
+    version: "0.1"
+    status: stable
+    title: "Brahma muhūrta"
+    constraints: [brahma_muhurta_only]
+  - id: personal_general
+    version: "0.1"
+    status: experimental
+    title: "Personal starting point: the general avoidances plus favourable tārā and candra bala from the natal Moon"
+    constraints: [no_rahu_kalam, no_yamagandam, no_gulika_kalam, no_rikta_tithi, no_amavasya, no_panchaka, no_vishti_karana, good_tara, good_chandra_bala]
+    missing: ["śūnya tithis by lunar month", "mṛtyu and other vāra–nakṣatra yogas", "lagna śuddhi", "the person's daśā"]
+  - id: pair_general
+    version: "0.1"
+    status: experimental
+    title: "Pair starting point: the general avoidances plus favourable tārā and candra bala for both people"
+    constraints: [no_rahu_kalam, no_yamagandam, no_gulika_kalam, no_rikta_tithi, no_amavasya, no_panchaka, no_vishti_karana, good_tara, good_chandra_bala, good_tara_b, good_chandra_bala_b]
+    missing: ["śūnya tithis by lunar month", "vāra–nakṣatra yogas", "lagna śuddhi", "both people's daśās"]
+  - id: travel
+    version: "0.1"
+    status: experimental
+    title: "Travel: general avoidances plus a good choghaḍiyā"
+    constraints: [no_rahu_kalam, no_yamagandam, no_gulika_kalam, no_rikta_tithi, no_amavasya, good_choghadiya]
+    missing: ["direction (diśā śūla) by weekday", "the traveller's tārā and candra bala"]

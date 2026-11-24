@@ -5,10 +5,16 @@
   "description": "Every successful ESHANA result, or an error envelope with a stable ESH-* code. schema_version is the contract version; it changes independently of the engine version.",
   "type": "object",
   "required": ["schema_version", "kind"],
+  "$defs": {
+    "unavailable": { "description": "A value that could not be computed; never a zero or an empty list standing in for it.", "type": "object", "required": ["status", "reason", "missing"], "properties": { "status": { "const": "unavailable" }, "reason": { "type": "string" }, "missing": { "type": "array", "items": { "type": "string" } } } },
+    "interval": { "description": "Half-open UTC interval [start, end); end is null when still open at the end of the searched range.", "type": "object", "required": ["start_utc", "end_utc", "bounds"], "properties": { "start_utc": { "type": "string" }, "end_utc": { "type": ["string", "null"] }, "bounds": { "const": "[start, end)" } } },
+    "method": { "description": "A method id from the registry (the methods operation) with its family.", "type": "object", "required": ["family", "id"], "properties": { "family": { "type": "string" }, "id": { "type": "string" }, "version": { "type": "string" } } },
+    "config_hash": { "description": "64-bit FNV-1a of the normalised calculation settings (keys sorted).", "type": "string", "pattern": "^fnv1a64:[0-9a-f]{16}$" }
+  },
   "properties": {
     "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
     "kind": {
-      "enum": ["positions", "computed_chart", "human_design", "numerology_analysis", "method_comparison", "symbolic_graph", "symbolic_graph_export", "info", "error", "panchanga", "matching", "ephemeris", "ingresses", "rulesets"]
+      "enum": ["positions", "computed_chart", "human_design", "numerology_analysis", "method_comparison", "symbolic_graph", "symbolic_graph_export", "info", "error", "panchanga", "matching", "ephemeris", "ingresses", "stations", "crossings", "methods", "kp_table", "kp_horary", "ashtakavarga_transits", "muhurta_windows", "personal_calendar", "pair_calendar", "progressions", "synthetic_chart", "rulesets"]
     },
     "error": {
       "type": "object",
@@ -38,6 +44,7 @@
       }
     },
     "interpretations": { "type": "array" },
+    "families": { "type": "array", "items": { "type": "object", "required": ["family", "methods"] } },
     "warnings": { "type": "array", "items": { "type": "object", "required": ["code", "message"] } },
     "provenance": {
       "type": "object",

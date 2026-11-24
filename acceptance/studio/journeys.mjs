@@ -830,10 +830,10 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   return `${on.data} additional aspects (${on.kinds}); ${on.marks} marks; table and planet page`;
 });
 
-await journey("daśā systems: tabs for nine systems, sign-based ones zoom with rāśi labels and a running chain", async () => {
+await journey("daśā systems: tabs for sixteen systems (seven conditional), sign-based ones zoom with rāśi labels and a running chain", async () => {
   await go("#/dasha", 1500);
   const tabsTxt = await evaluate(`[...document.querySelectorAll("#dasha .dz-tabs .tab")].map(t => t.textContent)`);
-  expect(tabsTxt.length === 9 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra"), "tabs: " + tabsTxt.join("|"));
+  expect(tabsTxt.length === 16 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra") && tabsTxt.includes("Ṣaṭtriṃśat-sama"), "tabs: " + tabsTxt.join("|"));
   await evaluate(`document.querySelector("#dasha .dz-chain .btn").click()`); await sleep(600); // back to the running chain
   expect(await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`) === 5, "Vimśottarī lost its five levels");
   await go("#/dasha/chara", 1500);
@@ -847,7 +847,8 @@ await journey("daśā systems: tabs for nine systems, sign-based ones zoom with 
   const after = await evaluate(`({ chain: document.querySelector("#dasha .dz-chain").innerText, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, bracket: document.querySelectorAll("#dasha .dz-bracket").length })`);
   expect(after.chain !== before && after.rows === 2 && after.bracket === 1, "clicking a Chara mahādaśā did not open it: " + JSON.stringify(after));
   // every system renders and its antardaśās tile the mahādaśā above
-  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra"], seen = [];
+  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra",
+    "dvadashottari", "panchottari", "shatabdika", "chaturashiti_sama", "dvisaptati_sama", "shashtihayani", "shattrimshat_sama"], seen = [];
   for (const id of sys) {
     await go("#/dasha/" + id, 900);
     const x = await evaluate(`(() => { const v = val("vedic.dasha.${id}"); const m = v.mahadashas.find(m => (m.antardashas || []).length);
@@ -860,7 +861,76 @@ await journey("daśā systems: tabs for nine systems, sign-based ones zoom with 
   await go("#/dasha/ashtottari", 900);
   const third = await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`);
   expect(third === 3, "Aṣṭottarī third level missing: " + third);
-  return `9 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+  return `16 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+});
+
+await journey("personal calendar: arrow keys move between days and Enter opens the day detail", async () => {
+  const has = await evaluate(`!!JSON.parse(document.getElementById('eshana-data').textContent).envelopes.personal_calendar`);
+  if (!has) return "no calendar in this file";
+  await go("#/calendar", 1200);
+  const n = await evaluate(`document.querySelectorAll('#calendar .cal-day').length`);
+  expect(n >= 28, "days: " + n);
+  await evaluate(`document.querySelector('#calendar .cal-day').focus(); 1`);
+  const key = (k, code, vk) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk });
+  await key("ArrowRight", "ArrowRight", 39); await sleep(200);
+  await key("ArrowDown", "ArrowDown", 40); await sleep(200);
+  await key("Enter", "Enter", 13); await sleep(300);
+  const st = await evaluate(`(() => { const b = [...document.querySelectorAll('#calendar .cal-day')]; const i = b.findIndex(x => x.getAttribute('aria-pressed') === 'true');
+    return { i, focus: document.activeElement === b[8], tab: b.filter(x => x.tabIndex === 0).length, h: document.querySelector('#calendar .cal-detail h3')?.textContent,
+             want: JSON.parse(document.getElementById('eshana-data').textContent).envelopes.personal_calendar.days[8].date }; })()`);
+  expect(st.i === 8 && st.focus && st.tab === 1 && st.h === st.want, JSON.stringify(st));
+  return `${n} days; → ↓ Enter opens ${st.h}`;
+});
+
+await journey("KP horary page shows the number apart from the moment of judgement", async () => {
+  const has = await evaluate(`!!JSON.parse(document.getElementById('eshana-data').textContent).envelopes.kp_horary`);
+  if (!has) return "no horary in this file";
+  await go("#/horary", 1000);
+  const t = await evaluate(`document.querySelector('section.page#horary').innerText`);
+  expect(/Number/.test(t) && /Judgement \(UTC\)/.test(t) && /Horary cusps/.test(t), t.slice(0, 300));
+  return "number, judgement and cusps";
+});
+
+await journey("compare workspace: one date drives every panel, and a changed date never leaves a stale panel", async () => {
+  await go("#/compare", 2500);
+  const live = await evaluate(`!!document.getElementById('eshana-engine')`);
+  const read = () => evaluate(`[...document.querySelectorAll('#compare .cmp-panel')].map(p => ({ id: p.dataset.panel, stamp: p.dataset.stamp, rows: p.querySelectorAll('tbody tr').length, na: !!p.querySelector('.na') }))`);
+  let p = await read();
+  expect(p.length === 3, "panels: " + JSON.stringify(p));
+  for (const d of ["2031-02-14", "2027-07-01"]) {
+    await evaluate(`(() => { const i = document.querySelector('#compare input[type=date]'); i.value = '${d}'; i.dispatchEvent(new Event('change')); })()`);
+    await sleep(900);
+    p = await read();
+    const pr = p.find(x => x.id === "progressed"), tr = p.find(x => x.id === "transit");
+    expect(pr.stamp === d && tr.stamp === d, `stamps after choosing ${d}: ${JSON.stringify(p)}`);
+    if (live) expect(pr.rows >= 9 && tr.rows >= 9 && !pr.na && !tr.na, `live panels empty for ${d}: ${JSON.stringify(p)}`);
+    else expect(pr.na, "report-only progressed panel should say it is unavailable");
+  }
+  await viewport(390, 844); await sleep(600);
+  const fits = await evaluate(`document.documentElement.scrollWidth <= innerWidth + 1`);
+  await viewport(1440, 1000); await sleep(300);
+  expect(fits, "compare page scrolls sideways on a phone");
+  return live ? "live engine; stamps follow the date; phone width fits" : "report-only; stamps follow the date";
+});
+
+await journey("playground: keyboard moves a graha, the engine recomputes, Ctrl+Z undoes, notes stay", async () => {
+  const live = await evaluate(`!!document.getElementById('eshana-engine')`);
+  if (!live) return "report-only file: the playground says it needs the live engine";
+  await go("#/playground", 2500);
+  await evaluate(`document.querySelector('#playground .pg-list').focus(); 1`);
+  const key = (k, code, vk, modifiers = 0) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk, modifiers });
+  const sel = () => evaluate(`document.querySelector('#playground .pg-list li.sel')?.textContent`);
+  const before = await sel();
+  await key("ArrowRight", "ArrowRight", 39, 8); await sleep(500); // Shift: 30°
+  const moved = await sel();
+  expect(moved !== before, "Shift+→ did not move the graha: " + before);
+  await evaluate(`document.querySelector('#playground .pg-list').focus(); 1`);
+  await key("z", "KeyZ", 90, 2); await sleep(500); // Ctrl+Z
+  const undone = await sel();
+  expect(undone === before, `undo did not restore: ${before} → ${moved} → ${undone}`);
+  const na = await evaluate(`/unavailable/.test(document.querySelector('#playground').innerText)`);
+  expect(na, "time-dependent factors should be listed as unavailable");
+  return "Shift+→ moved 30°, Ctrl+Z restored, unavailable factors listed";
 });
 
 // ── journeys: dashas (add new journeys for this workstream above this line) ──
@@ -1321,6 +1391,140 @@ await journey("pañca pakṣī: five yāmas × five birds by day and by night, s
   await setMode(mode0);
   await viewport(390, 844, true);
   return `${desk.cells} cells × 2 widths match the engine; ${desk.boxes} info boxes; current yāma ${desk.curYama + 1} marked; 8 days; ${tl.labels + ticks.labels} timeline labels apart (phone ${phone.cells} cells, no side scroll)`;
+});
+
+await journey("interface language is a reader setting: English by default, Hindi from the drawer, kept after reload, values unchanged", async () => {
+  await viewport(1440, 1000);
+  await evaluate(`(() => { const s = JSON.parse(localStorage.getItem('eshana-studio-v3') || '{}'); delete s.lang; localStorage.setItem('eshana-studio-v3', JSON.stringify(s)); return 1; })()`);
+  await send("Page.reload"); await sleep(2500); await go("#/overview", 900);
+  const en = await evaluate(`({ lang: document.documentElement.lang, title: document.title, langs: Object.keys(JSON.parse(document.getElementById('eshana-data').textContent).locales || {}) })`);
+  expect(en.lang === "en", "default language: " + en.lang);
+  expect(en.langs.includes("en") && en.langs.includes("hi"), "catalogues in the file: " + en.langs);
+  const valuesBefore = await evaluate(`document.querySelector('section.page#overview .body')?.innerText.match(/\\d+°\\s?\\d+′/g)?.slice(0, 5).join('|') || ''`);
+  await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
+  const radios = await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].map(r => r.parentElement.textContent + ':' + r.checked)`);
+  expect(radios.length === 2 && /English:true/.test(radios.join()), "language choices: " + radios);
+  await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /हिन्दी/.test(r.parentElement.textContent)).click(), 1`);
+  await sleep(3000); await go("#/overview", 900);
+  const hi = await evaluate(`({ lang: document.documentElement.lang, draft: !!document.querySelector('.locale-draft'), settings: document.querySelector('#settings .t')?.textContent })`);
+  expect(hi.lang === "hi", "after choosing Hindi: " + hi.lang);
+  expect(!hi.draft, "a reviewed catalogue shows no draft note");
+  const valuesAfter = await evaluate(`document.querySelector('section.page#overview .body')?.innerText.match(/\\d+°\\s?\\d+′/g)?.slice(0, 5).join('|') || ''`);
+  expect(valuesAfter === valuesBefore, "values changed with the language: " + valuesBefore + " vs " + valuesAfter);
+  await send("Page.reload"); await sleep(2500);
+  const kept = await evaluate(`document.documentElement.lang`);
+  expect(kept === "hi", "choice not kept after reload: " + kept);
+  await shot("language-hi");
+  await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
+  await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /English/.test(r.parentElement.textContent)).click(), 1`);
+  await sleep(3000);
+  const back = await evaluate(`document.documentElement.lang`);
+  expect(back === "en", "back to English: " + back);
+  return `toolbar 'settings' in Hindi: ${hi.settings}; ${valuesBefore ? "values identical" : "no degree values on the overview"}`;
+});
+
+// ── visual rules for chart text: grahas are the primary text; flags are superscripts; nothing spills out of a cell ──
+const CELL_AUDIT = `(() => { const bad = [], seen = { cells: 0, grahas: 0 };
+  const box = (e) => e.getBoundingClientRect();
+  const overlap = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+  for (const cell of document.querySelectorAll('section.page:not([hidden]) svg g.cell')) {
+    const gr = [...cell.querySelectorAll('text.gtxt')]; if (!gr.length) continue; seen.cells++; seen.grahas += gr.length;
+    const gfs = Math.min(...gr.map(t => parseFloat(t.getAttribute('font-size'))));
+    const sec = [...cell.querySelectorAll('text.arudha, text.aspmark')].map(t => parseFloat(t.getAttribute('font-size')));
+    const where = (cell.closest('svg').getAttribute('class') || '') + ' sign ' + cell.dataset.sign + ' fit ' + (cell.dataset.fit || '');
+    if (sec.length && gfs < Math.max(...sec) * 1.2) bad.push(where + ': graha ' + gfs.toFixed(1) + ' vs marks ' + Math.max(...sec).toFixed(1));
+    if (/unfitted/.test(cell.dataset.fit || '')) bad.push(where + ': did not fit');
+    const rect = cell.querySelector('rect.cellbg');
+    if (rect) { const R = box(rect); for (const t of gr) { const b = box(t); if (b.left < R.left - 1 || b.right > R.right + 1 || b.top < R.top - 1 || b.bottom > R.bottom + 1) bad.push(where + ': ' + t.textContent.slice(0, 12) + ' spills out of the cell'); } }
+    const marks = [...cell.querySelectorAll('text.arudha, text.aspmark')];
+    for (let i = 0; i < gr.length; i++) { for (let j = i + 1; j < gr.length; j++) if (overlap(box(gr[i]), box(gr[j]))) bad.push(where + ': ' + gr[i].textContent.slice(0, 6) + ' overlaps ' + gr[j].textContent.slice(0, 6));
+      for (const m of marks) if (overlap(box(gr[i]), box(m))) bad.push(where + ': ' + gr[i].textContent.slice(0, 6) + ' overlaps marks ' + m.textContent.slice(0, 10)); }
+  }
+  // flags (ᴿ, ᵛ, ◎ …) are raised superscripts in every graha label, never plain text after a space
+  for (const t of document.querySelectorAll('section.page:not([hidden]) text.gtxt')) {
+    const own = [...t.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+    if (/\\s/.test(own.trim()) || /[RCV↑↓△◎]$/.test(own.trim()) && own.trim().length > 2) bad.push('flag as plain text: "' + t.textContent.slice(0, 20) + '"');
+    for (const f of t.querySelectorAll('tspan.gflag')) if (!(parseFloat(f.getAttribute('dy')) < 0)) bad.push('flag not raised: ' + t.textContent.slice(0, 12));
+  }
+  return { bad: [...new Set(bad)], ...seen }; })()`;
+const setView = (js) => evaluate(`(() => { ${js}; save(); route(); return 1; })()`);
+
+await journey("chart text: grahas are the largest text in every cell, flags are superscripts, nothing overlaps or spills (South, North, chakra centres, vargas)", async () => {
+  await viewport(1440, 1000);
+  const cs0 = await evaluate(`JSON.stringify({ chart: S.chart, centre: S.centre })`);
+  const report = [];
+  let cells = 0, grahas = 0;
+  for (const [label, js, page] of [["south charts", "S.chart = 'south'", "#/charts"], ["north charts", "S.chart = 'north'", "#/charts"],
+    ["chakra, South centre", "S.centre = 'south'", "#/chakra"], ["chakra, North centre", "S.centre = 'north'", "#/chakra"],
+    ["vargas", "S.chart = 'south'", "#/vargas"], ["overview", "S.chart = 'south'", "#/overview"]]) {
+    await setView(js); await go(page, 1500);
+    const r = await evaluate(CELL_AUDIT); cells += r.cells; grahas += r.grahas;
+    if (r.bad.length) report.push(label + ": " + r.bad.slice(0, 4).join("; "));
+  }
+  // the Nadi quadrants in the chakra centre: superscript flags too
+  await setView("S.centre = 'south'"); await go("#/chakra", 1500);
+  const nadi = await evaluate(`[...document.querySelectorAll('section.page:not([hidden]) g.nadi-g text.gtxt')].filter(t => /\\s[RCV↑↓△◎]+$/.test([...t.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join(''))).map(t => t.textContent)`);
+  if (nadi.length) report.push("nadi quadrants: flags as plain text: " + nadi.join(", "));
+  await shot("chart-text-chakra");
+  const c = JSON.parse(cs0); await setView(`S.chart = ${JSON.stringify(c.chart)}; S.centre = ${JSON.stringify(c.centre)}`);
+  expect(!report.length, report.join(" | "));
+  expect(cells > 20, "too few cells checked: " + cells);
+  return `${cells} cells, ${grahas} graha labels`;
+});
+
+await journey("every chart drawing can be downloaded as PNG and SVG, exactly as shown (layers, theme), with a caption-sized PNG", async () => {
+  await viewport(1440, 1000);
+  const missing = [], counts = {};
+  for (const p of model.pages.filter((p) => !["planet", "house", "yoga", "point"].includes(p))) {
+    await go("#/" + p, 900);
+    const r = await evaluate(`(() => { const svgs = [...document.querySelectorAll('section.page:not([hidden]) svg[role=img]')].filter(s => s.getBoundingClientRect().width >= 160 && !/pcard-icon|hero-icon|bird/.test(s.getAttribute('class') || ''));
+      return { svgs: svgs.length, bars: svgs.filter(s => s._imgbar && s._imgbar.isConnected && s._imgbar.querySelectorAll('button.imgbtn').length === 2).length }; })()`);
+    if (r.svgs) counts[p] = r.svgs;
+    if (r.bars !== r.svgs) missing.push(`${p}: ${r.bars}/${r.svgs}`);
+  }
+  expect(!missing.length, "charts without a download bar: " + missing.join(", "));
+  await go("#/charts", 1500);
+  const exp = await evaluate(`(async () => { const svg = document.querySelector('section.page:not([hidden]) svg.chart');
+    const withA = window.eshanaExport.svgText(svg); const b = await window.eshanaExport.png(svg); const bmp = await createImageBitmap(b);
+    return { type: b.type, w: bmp.width, h: bmp.height, vars: (withA.match(/var\\(--/g) || []).length, arudha: (withA.match(/class="arudha"/g) || []).length,
+      name: window.eshanaExport.name(svg, 'png'), standalone: /^<\\?xml[\\s\\S]*<svg[^>]+xmlns="http:\\/\\/www.w3.org\\/2000\\/svg"/.test(withA) }; })()`);
+  expect(exp.type === "image/png" && exp.w >= 1600 && exp.h > 800, "png: " + JSON.stringify(exp));
+  expect(exp.vars === 0 && exp.standalone, "svg export not standalone: " + JSON.stringify(exp));
+  expect(/\.png$/.test(exp.name) && exp.name.length < 80, "file name: " + exp.name);
+  // the export follows the current state: switch the ārūḍha layer off and the file has none
+  const off = await evaluate(`(async () => { S.layers.arudha = false; save(); route(); await new Promise(r => setTimeout(r, 900));
+    const svg = document.querySelector('section.page:not([hidden]) svg.chart'); const n = (window.eshanaExport.svgText(svg).match(/class="arudha"/g) || []).length;
+    S.layers.arudha = true; save(); route(); return n; })()`);
+  expect(exp.arudha > 0 && off === 0, `ārūḍha in export: on ${exp.arudha}, off ${off}`);
+  // the button itself starts a download (the browser fires a click on a blob link with the file name)
+  const dl = await evaluate(`(async () => { await new Promise(r => setTimeout(r, 900)); let name = null; const orig = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { if (this.download) name = this.download; };
+    document.querySelector('section.page:not([hidden]) .imgbar button[data-kind="svg"]').click();
+    for (let i = 0; i < 40 && !name; i++) await new Promise(r => setTimeout(r, 100)); HTMLAnchorElement.prototype.click = orig; return name; })()`);
+  expect(dl && dl.endsWith(".svg"), "the SVG button did not start a download: " + dl);
+  await shot("download-bar");
+  return `${Object.values(counts).reduce((a, b) => a + b, 0)} drawings on ${Object.keys(counts).length} pages; PNG ${exp.w}×${exp.h}; ${exp.name}`;
+});
+
+await journey("form controls are readable in both themes (date pickers, selects and number fields on every page)", async () => {
+  await viewport(1440, 1000);
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  const bad = [];
+  for (const mode of ["dark", "light"]) {
+    await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode)}); 1`);
+    for (const p of model.pages.filter((p) => !["planet", "house", "yoga", "point"].includes(p))) {
+      await go("#/" + p, 500);
+      const r = await evaluate(`(() => { const rgb = (c) => (c.match(/[\\d.]+/g) || []).map(Number);
+        const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+        const solid = (el) => { for (let e = el; e; e = e.parentElement) { const c = rgb(getComputedStyle(e).backgroundColor); if (c.length === 3 || (c.length === 4 && c[3] > .9)) return c.slice(0, 3); } return ${JSON.stringify(mode)} === 'dark' ? [7, 10, 28] : [246, 241, 231]; };
+        return [...document.querySelectorAll('section.page:not([hidden]) input[type=date], section.page:not([hidden]) input[type=number], section.page:not([hidden]) select')]
+          .filter(e => e.getBoundingClientRect().width > 0).map(e => { const a = lum(rgb(getComputedStyle(e).color)), b = lum(solid(e)); return { id: e.id || e.getAttribute('aria-label') || e.tagName, ratio: (Math.max(a, b) + .05) / (Math.min(a, b) + .05) }; })
+          .filter(x => x.ratio < 4.5).map(x => x.id + ' ' + x.ratio.toFixed(1)); })()`);
+      for (const x of r) bad.push(`${mode} ${p}: ${x}`);
+    }
+  }
+  await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode0)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode0)}); 1`);
+  expect(!bad.length, "low-contrast controls: " + bad.slice(0, 6).join("; "));
 });
 
 // ── journeys: annual (add new journeys for this workstream above this line) ──

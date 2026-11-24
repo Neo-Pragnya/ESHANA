@@ -60,6 +60,11 @@
       "id": "sec",
       "title": "Security and supply chain",
       "summary": "Licence allow-list, advisories, dist scan, CI and release provenance."
+    },
+    {
+      "id": "app",
+      "title": "Studio and local application",
+      "summary": "Profiles, the compare workspace, localisation and the playground: application state outside the engine."
     }
   ],
   "tasks": [
@@ -337,7 +342,8 @@
       "title": "Event search: transits, ingresses, stations, returns, eclipses",
       "status": "proposed",
       "track": "primary",
-      "source": "master plan 8.2"
+      "source": "master plan 8.2",
+      "note": "Stations, retrograde intervals and point/aspect crossings ship (EVT-01, EVT-02). Eclipses and returns as a search remain."
     },
     {
       "id": "AST-07",
@@ -419,9 +425,11 @@
       "id": "VED-07",
       "area": "vedic",
       "title": "Jaimini and Tajika as named adapters",
-      "status": "proposed",
+      "status": "verified",
       "track": "secondary",
-      "source": "master plan 4.3"
+      "source": "master plan 4.3",
+      "evidence": "Jaimini: VED-25 (karakas, karakāṃśa, ārūḍha) and vedic.dasha.chara; Tajika: VAR-01 / CHK-11 (vedic.varshaphala, accuracy/test_annual_reference.py).",
+      "note": "Closed by BASE-01: both ship as named rule packs. Further Tajika yogas are not planned."
     },
     {
       "id": "VED-08",
@@ -658,7 +666,7 @@
       "title": "Publish eshana to PyPI",
       "status": "released",
       "track": "primary",
-      "evidence": "eshana 0.1.0 on PyPI 2026-11-21 (macOS arm64 abi3 wheel + sdist); TestPyPI first; fresh `uv run --with eshana==0.1.0` imports and renders a report. Linux/Windows wheels follow via release.yml."
+      "evidence": "eshana 0.1.0 on PyPI 2026-11-21 (macOS arm64 abi3 wheel + sdist); TestPyPI first; fresh `uv run --with eshana==0.1.0` imports and renders a report. Linux/Windows wheels follow via release.yml. 0.4.0 published 2026-11-24 (capability expansion): macOS arm64 abi3 wheel and sdist, TestPyPI first, then PyPI; installed from PyPI in a fresh environment and ran eshana-report. Gates: make verify, acceptance-wheel PROMOTE (122), cargo deny and audit clean, dist scan with no blocking findings (vulnerability check degraded: grype and osv-scanner not installed). 0.4.1 published 2026-11-24 (README, site and a dark-theme control fix): TestPyPI then PyPI, installed from PyPI in a fresh environment; gates as for 0.4.0, plus 62/62 journeys per file, 5/5 new-chart journeys and WebAssembly parity. 0.4.2 published 2026-11-24 (README for GitHub with generated reference sections; PyPI description aligned): verify, acceptance PROMOTE, dist scan with no blocking findings, TestPyPI then PyPI, fresh install runs."
     },
     {
       "id": "BIND-07",
@@ -1113,8 +1121,10 @@
       "id": "VED-10",
       "area": "vedic",
       "title": "Chara, Narayana and other conditional dashas",
-      "status": "proposed",
-      "track": "primary"
+      "status": "implemented",
+      "track": "primary",
+      "note": "Chara and Nārāyaṇa ship and are verified under FB-27 (accuracy/test_dashas_reference.py); Yoginī ships; Kālachakra timing is xfail (FB-29). The remaining conditional daśās are tracked as DASH-01.",
+      "evidence": "vedic.dasha.chara, vedic.dasha.narayana; accuracy/test_dashas_reference.py (FB-27)."
     },
     {
       "id": "VED-11",
@@ -2068,6 +2078,668 @@
       "milestone": "0.4 · review round 8",
       "source": "owner review round 8",
       "evidence": "journey 'round 8 charts' △"
+    },
+    {
+      "id": "BASE-01",
+      "area": "qa",
+      "title": "Reconcile stale capability states with code and the wheel",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion A · baseline and contracts",
+      "source": "capability expansion plan 2026-11-23",
+      "acceptance": "VED-07 and VED-10 match what ships; every capability listed in docs/ matches the installed wheel's capabilities().",
+      "note": "The prose capability table (capabilities.md) is reviewed by hand; the check covers every machine-listable surface.",
+      "evidence": "VED-07 → verified and VED-10 → implemented to match what ships (conditional daśās split out as DASH-01). Automated check scripts/check_capabilities.py (make capabilities-check; crates/eshana-python/tests/test_docs_capabilities.py): request.md operations, errors.md codes, cli.md commands and the acceptance CLI surface match the installed wheel in both directions, and docs/reference/methods.md is generated from the wheel's method registry. info.operations is kept in step with the Request enum by a Rust test.",
+      "evidence_paths": [
+        "scripts/check_capabilities.py",
+        "docs/reference/methods.md"
+      ]
+    },
+    {
+      "id": "BASE-02",
+      "area": "core",
+      "title": "Operation envelope additions: method registry, interval values, unavailable reasons, configuration hash",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion A · baseline and contracts",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "BASE-01"
+      ],
+      "acceptance": "Schema and docs describe method ids, typed unavailable status and a normalised configuration hash; new stable error codes for unsupported method, invalid range and work limit, each with an acceptance scenario.",
+      "evidence": "methods.rs registry + op methods (CLI, Python, raw JSON); ESH-METHOD, ESH-RANGE-INVALID, ESH-LIMIT in eshana-core with acceptance scenarios (12_errors: limit, empty range; 18_kp_horary: unknown occupancy → ESH-METHOD); schema $defs unavailable/interval/method/config_hash; calculation.config_hash on charts and event searches; docs envelope.md, errors.md.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/methods.rs",
+        "docs/reference/envelope.md",
+        "docs/reference/errors.md",
+        "acceptance/features/12_errors.feature"
+      ]
+    },
+    {
+      "id": "BASE-03",
+      "area": "vedic",
+      "title": "Ṣaḍbala per-component reconciliation sheet (sthāna, dig, kāla, cheṣṭā, naisargika, dṛk)",
+      "status": "proposed",
+      "track": "primary",
+      "milestone": "expansion A · baseline and contracts",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "VED-14",
+      "depends_on": [
+        "BASE-01"
+      ],
+      "acceptance": "Per-graha, per-component deltas against the reference chart recorded with the convention behind each; kāla and cheṣṭā differences explained or named as convention variants; no total fixed by offsetting errors.",
+      "evidence_paths": [
+        "scripts/shadbala_sheet.py",
+        "docs/reference/shadbala-reconciliation.md"
+      ],
+      "note": "Started 2026-11-23: scripts/shadbala_sheet.py writes docs/reference/shadbala-reconciliation.md with ESHANA's six components (and the kāla parts and lords) for the reference chart, the printed totals and their deltas (−66 to +41 virūpas), and the convention behind every component. Blocked: the reference printout has totals only, so per-component deltas need the reference's component table (owner-supplied) or approval to use an open-source program as an offline oracle. No component was tuned to close a total. 2026-11-23: owner approved PyJHora as a test-only offline oracle; the install was refused again by the agent's permission check, so it needs a permission rule added by the owner (planning/OWNER-INPUTS.md §2)."
+    },
+    {
+      "id": "DASH-01",
+      "area": "vedic",
+      "title": "Remaining conditional daśās: Dvādaśottarī, Pañcottarī, Śatābdikā, Caturaśīti-sama, Dvisaptati-sama, Ṣaṣṭihāyanī, Ṣaṭtriṃśat-sama",
+      "status": "implemented",
+      "track": "primary",
+      "milestone": "expansion H · methods and quality",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "VED-10",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Each with its applicability condition reported (not silently applied), year table invariants, and an independent worked example.",
+      "evidence": "Seven conditional daśās in dashas-extended.yaml (tables as data) and dashas_ext.rs: Dvādaśottarī 112, Pañcottarī 105, Śatābdikā 100, Caturaśīti-sama 84, Dvisaptati-sama 72, Ṣaṣṭihāyanī 60 (28-nakṣatra groups), Ṣaṭtriṃśat-sama 36; each reports applicability.applies (null when the chart cannot tell) and is never applied silently. tests/conditional_dashas.rs: starting lords match the count worked by hand over ten births, a Dvādaśottarī example from Aśvinī starts with Ketu with the balance worked by hand, mahādaśās contiguous. Studio: 16 daśā tabs, journey passes.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/dashas-extended.yaml",
+        "crates/eshana-engine/tests/conditional_dashas.rs"
+      ],
+      "note": "Not verified: each system still needs an independent published worked example (a chart with its printed periods) checked to the day. 2026-11-23: owner keeps this as implemented until experts review it."
+    },
+    {
+      "id": "EVT-01",
+      "area": "astro",
+      "title": "Shared adaptive event solver (crossings, tangencies, angle wrap, chunk edges)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion B · events and dated bindus",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "AST-06",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Bracket-and-refine root finder over unwrapped longitudes; fixtures for 359.99→0.01 wrap, retrograde re-entry, tangent touches and roots on chunk edges; ingress search reuses it with unchanged results.",
+      "evidence": "crates/eshana-engine/src/search.rs (find_roots, bisect) with unit tests for angle wrap, hidden double crossings, tangent touches and range-edge ownership; ingresses use the shared bisection (unchanged results, acceptance ephemeris-events).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/search.rs",
+        "crates/eshana-engine/tests/events_oracle.rs"
+      ]
+    },
+    {
+      "id": "EVT-02",
+      "area": "astro",
+      "title": "Stations and retrograde intervals",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion B · events and dated bindus",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "AST-06",
+      "depends_on": [
+        "EVT-01"
+      ],
+      "acceptance": "Station instants as roots of longitudinal speed with direction before/after; retrograde intervals with clipped start/end flags; stations checked against an independent ephemeris.",
+      "evidence": "op stations/crossings (CLI, Python, raw JSON); tests/events_oracle.rs vs benchmarks/golden/events_oracle.json (Swiss Ephemeris oracle, 2024-2026, Mercury-Saturn, tropical and Lahiri): all stations found with direction; spk station longitude ≤ 0.35″, crossings ≤ 0.2″; acceptance 17_ephemeris_events.",
+      "evidence_paths": [
+        "benchmarks/golden/events_oracle.json",
+        "benchmarks/make_event_oracle.py",
+        "docs/reference/accuracy.md"
+      ]
+    },
+    {
+      "id": "EVT-03",
+      "area": "vedic",
+      "title": "Dated Aṣṭakavarga: transit BAV/SAV as a step function over a date range",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion B · events and dated bindus",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "VED-12",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Each sample names the transit sign and the natal BAV/SAV cell read; values change exactly at ingress instants; no BAV invented for the nodes; hand-recomputed cells as reference.",
+      "evidence": "op ashtakavarga_transits (eshana ashtakavarga-transits, ChartEngine.ashtakavarga_transits): [start, end) segments per graha naming the BAV and SAV cells read. tests/dated_ashtakavarga.rs: Saturn cells equal a hand computation from the classical contribution houses (independent of the YAML pack); segment boundaries are exactly the ingresses op's instants; nodes and a natal chart without an Ascendant are typed unavailable; >50 years → ESH-LIMIT. Parity CLI = Python = raw JSON (test_kp.py); acceptance 17_ephemeris_events.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/dated.rs",
+        "crates/eshana-engine/tests/dated_ashtakavarga.rs"
+      ]
+    },
+    {
+      "id": "MUH-02",
+      "area": "vedic",
+      "title": "Interval factor composition: partition at every boundary, evaluate, merge equal neighbours",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion C · muhurta and calendar",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MUH-01",
+      "depends_on": [
+        "EVT-01"
+      ],
+      "acceptance": "[start, end) intervals; boundary partitions and merging preserve factor identity; empty result says which constraints removed candidates.",
+      "evidence": "muhurta.rs: factor timelines (tithi, nakshatra, yoga, karana, moon_sign, vara, hora, choghadiya, rahu/yama/gulika, abhijit, brahma muhurta) cut at every boundary, evaluated once per piece, neighbours merged only when values and verdicts are equal. tests/muhurta.rs: pieces tile [start, end) with no unmerged neighbours; tithi cuts equal the pañcāṅga end times; disabling one constraint adds exactly the pieces that failed only it; an impossible request lists the constraints that emptied it (empty_because); polar night is unavailable, never passing. Acceptance 19_muhurta.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/muhurta.rs",
+        "crates/eshana-engine/tests/muhurta.rs",
+        "acceptance/features/19_muhurta.feature"
+      ]
+    },
+    {
+      "id": "MUH-03",
+      "area": "vedic",
+      "title": "Reviewed muhūrta rule profiles (Pañcaka, Mṛtyu/Śūnya tithi, Abhijit, Brahma muhūrta, purpose presets)",
+      "status": "implemented",
+      "track": "primary",
+      "milestone": "expansion C · muhurta and calendar",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MUH-01",
+      "depends_on": [
+        "MUH-02"
+      ],
+      "acceptance": "Profiles are versioned data with explicit include/exclude sets; toggling one constraint changes only its intervals; incomplete presets are labelled experimental.",
+      "evidence": "rulesets/muhurta-profiles.yaml (muhurta.profiles@0.1): named constraints with include/exclude sets and profiles daily_avoidances, abhijit, brahma_muhurta (stable definitions) and general_auspicious, personal_general, travel (experimental, each with a missing list and a warning in results); registry family muhurta_profile; unknown profile → ESH-METHOD; toggle test in tests/muhurta.rs.",
+      "evidence_paths": [
+        "crates/eshana-engine/rulesets/muhurta-profiles.yaml"
+      ],
+      "note": "Not verified: the acceptance asks for reviewed profiles. Needs a review of the constraint sets by a practitioner, and śūnya tithis by lunar month and vāra–nakṣatra yogas before the purpose presets leave experimental. 2026-11-23: owner keeps this as implemented until experts review it."
+    },
+    {
+      "id": "MUH-04",
+      "area": "app",
+      "title": "Personal calendar views and export (JSON, CSV, ICS)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion C · muhurta and calendar",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MUH-01",
+      "depends_on": [
+        "EVT-03",
+        "MUH-03"
+      ],
+      "acceptance": "Birth place and event place kept apart; DST, half-hour zone and polar-day cases; unavailable shown as unavailable, never zero; keyboard-accessible day detail.",
+      "evidence": "op personal_calendar (eshana calendar, ChartEngine.personal_calendar): birth and event places recorded apart; tārā and candra bala from the natal Moon; day summaries in the event zone with sunrise and Jupiter/Saturn transit bindus; JSON, CSV and ICS (CRLF, folded at 75 octets, deterministic UIDs). tests/calendar.rs: London DST days and offsets, polar sunrise unavailable, personal factors unavailable without a birth, ICS/CSV well formed and byte-stable; eshana-time zone_offset_seconds test for DST and +05:45; studio 'calendar' page with a journey driving it by keyboard (arrows move, Enter opens the day); parity in test_muhurta.py; acceptance 19_muhurta.",
+      "evidence_paths": [
+        "crates/eshana-engine/tests/calendar.rs",
+        "acceptance/studio/journeys.mjs",
+        "crates/eshana-python/tests/test_muhurta.py"
+      ]
+    },
+    {
+      "id": "KP-03",
+      "area": "vedic",
+      "title": "KP 1–249 horary number table",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion D · KP horary",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "KP-02",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "All 249 entries (sign, star, sub boundaries) generated from the Vimśottarī sub division and checked: they tile 0–360° with no gap, every sign boundary splits a sub exactly where the published table does, and spot values match a published table.",
+      "evidence": "kp.rs builds the table in integer arc-seconds; unit tests: 249 entries tile 0-360° with no gap, exactly six subs split by sign boundaries (30°, 90°, 150°, 210°, 270°, 330°), spot values (1: Aries Ketu/Ketu to 0°46′40″; 249: Pisces 27°53′20″ Mercury/Saturn; the Kṛttikā Rāhu sub cut at 30°); test_kp.py rebuilds all 249 independently with exact fractions and matches every entry.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/kp.rs",
+        "crates/eshana-python/tests/test_kp.py"
+      ]
+    },
+    {
+      "id": "KP-04",
+      "area": "vedic",
+      "title": "KP horary cusp geometry from the number",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion D · KP horary",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "KP-02",
+      "depends_on": [
+        "KP-03"
+      ],
+      "acceptance": "Ascendant fixed to the start of the chosen number's arc, other cusps from the horary moment and place; checked against a distributable worked example.",
+      "evidence": "op kp_horary: Ascendant pinned to the number's start; cusps are Placidus at the local sidereal time where that degree rises. tests/kp_oracle.rs vs benchmarks/golden/kp_horary_oracle.json (Swiss Ephemeris houses_armc with its own bisection, 6 cases, latitudes -33.9° to 60°): sidereal time within 1e-4°, every cusp within 0.07″. Checked against an independent computation, not a published worked example (none distributable found).",
+      "evidence_paths": [
+        "benchmarks/make_kp_oracle.py",
+        "benchmarks/golden/kp_horary_oracle.json",
+        "crates/eshana-engine/tests/kp_oracle.rs"
+      ]
+    },
+    {
+      "id": "KP-05",
+      "area": "vedic",
+      "title": "Selectable KP cusp-occupancy convention",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion D · KP horary",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "KP-02",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "The current convention remains the default and unchanged; an alternative is named and opt-in; fixtures at a planet just before a cusp.",
+      "evidence": "kp_cusp_occupancy family: cusp_start (default, unchanged lords and houses; result names occupancy_method) and cusp_midpoint (opt_in). Unit fixture: a planet 1° before a cusp is in the previous house under cusp_start and in the cusp's house under cusp_midpoint; unknown id → ESH-METHOD (unit, integration and acceptance).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/kp.rs",
+        "crates/eshana-engine/tests/kp_oracle.rs"
+      ]
+    },
+    {
+      "id": "KP-06",
+      "area": "bind",
+      "title": "KP horary through the CLI, Python and the studio report",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion D · KP horary",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "KP-02",
+      "depends_on": [
+        "KP-04",
+        "KP-05"
+      ],
+      "acceptance": "Casting moment and horary number kept distinct; CLI, Python and raw JSON give equal envelopes; acceptance scenario.",
+      "evidence": "eshana kp-table / kp-horary, ChartEngine.kp_table / kp_horary, raw JSON: test_kp.py asserts equal envelopes from all three; studio page 'horary' (eshana-report --kp-number N --kp-at UTC) with the number and the moment of judgement shown apart; acceptance 18_kp_horary (5 scenarios).",
+      "evidence_paths": [
+        "acceptance/features/18_kp_horary.feature",
+        "crates/eshana-python/tests/test_kp.py"
+      ]
+    },
+    {
+      "id": "MAT-03",
+      "area": "vedic",
+      "title": "Supplementary matching registry beside the 36-point Aṣṭakūṭa",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion E · extended matching",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MAT-02",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Existing 36-point output unchanged byte-for-byte; supplementary factors live in their own section with rule ids.",
+      "evidence": "matching gains a 'supplementary' section (rule matching.supplementary@0.1, its own YAML pack); tests/matching_supplementary.rs compares ashtakoota and manglik byte-for-byte against tests/golden/matching_36.json captured before the change (three pairs).",
+      "evidence_paths": [
+        "crates/eshana-engine/src/matching_ext.rs",
+        "crates/eshana-engine/rulesets/matching-supplementary.yaml",
+        "crates/eshana-engine/tests/golden/matching_36.json"
+      ]
+    },
+    {
+      "id": "MAT-04",
+      "area": "vedic",
+      "title": "Rajju, Vedha, Mahendra and Strī-dīrgha",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion E · extended matching",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MAT-02",
+      "depends_on": [
+        "MAT-03"
+      ],
+      "acceptance": "Full nakṣatra table coverage, directional rules tested in both orders, table invariants (each Rajju group has its members, Vedha pairs are symmetric).",
+      "evidence": "Rajju (block of nine over all 27), Vedha (12 classical pairs + the three head nakṣatras), Mahendra and Strī-dīrgha (count from b to a, threshold in the rule id). Unit tests: rajju groups 6/6/6/6/3 with the head nakṣatras as śiras; vedha symmetric, every nakṣatra has a partner, Āśleṣā–Mūla yes and Āśleṣā–Maghā no; directional factors tested in both orders, symmetric ones equal in both.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/matching_ext.rs"
+      ]
+    },
+    {
+      "id": "MAT-05",
+      "area": "vedic",
+      "title": "Maṅgala doṣa with cancellation trace",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion E · extended matching",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MAT-02",
+      "depends_on": [
+        "MAT-03"
+      ],
+      "acceptance": "Raw finding and each cancellation kept with its rule and scope; the reference points (Lagna, Moon, Venus) named.",
+      "evidence": "manglik_trace per partner: raw finding from Lagna, Moon and Venus (house of Mars from each), each cancellation (own_or_exalted, house_sign_exception, jupiter_association) with rule text, rule id and scope; pair-scope cancellation when both have it from the same point; a missing Lagna is unavailable, not 'no doṣa'. Unit and integration tests.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/matching_ext.rs"
+      ],
+      "note": "The house_sign_exception list is a common modern list (named as such in the pack); a practitioner review would decide whether to version alternatives."
+    },
+    {
+      "id": "MAT-06",
+      "area": "vedic",
+      "title": "Pair Aṣṭakavarga and cross-chart factors",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion E · extended matching",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MAT-02",
+      "depends_on": [
+        "MAT-03",
+        "EVT-03"
+      ],
+      "acceptance": "Directional lookups (A's planets in B's BAV and the reverse) and cross-chart aspect identity tested.",
+      "evidence": "pair_ashtakavarga a_in_b / b_in_a: each partner's seven grahas read in the other's BAV of the same graha and SAV; cross_aspects a_onto_b / b_onto_a with Parāśari sign aspects. tests/matching_supplementary.rs checks every cell against the other chart's own Aṣṭakavarga in both directions and that 7th-house contacts appear both ways.",
+      "evidence_paths": [
+        "crates/eshana-engine/tests/matching_supplementary.rs"
+      ]
+    },
+    {
+      "id": "MAT-07",
+      "area": "vedic",
+      "title": "Pair calendar",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion E · extended matching",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "MAT-02",
+      "depends_on": [
+        "MUH-04",
+        "MAT-04",
+        "MAT-05"
+      ],
+      "acceptance": "Both profiles and the event constraints are explained for each window.",
+      "evidence": "op pair_calendar (eshana pair-calendar, ChartEngine.pair_calendar): tārā and candra bala for both Moons plus the event constraints (profile pair_general, experimental); every window carries 'explained' with a, b and event factors; tests/calendar.rs and test_muhurta.py (parity); acceptance 16_matching.",
+      "evidence_paths": [
+        "crates/eshana-engine/tests/calendar.rs"
+      ]
+    },
+    {
+      "id": "APP-01",
+      "area": "app",
+      "title": "Choose the local application's engine adapter",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion F · profiles and compare",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Offline recomputation route specified, and what a report-only build cannot do.",
+      "evidence": "ADR-013 (docs/adr/013-local-engine-adapter.md) compares report-only, a local server, a JS re-implementation and WebAssembly, chooses the engine compiled to WebAssembly (crates/eshana-wasm, three-function ABI, no imports), and lists what a report-only file cannot do. Built (make wasm, 3.0 MB) and embedded by eshana-report --live; acceptance/studio/wasm_parity.mjs: every operation family equal to the native CLI (structure exact, floats within 1e-9). Owner accepted ADR-013 as written on 2026-11-23 (opt-in --live; report-only files stay the default).",
+      "evidence_paths": [
+        "docs/adr/013-local-engine-adapter.md",
+        "crates/eshana-wasm/src/lib.rs",
+        "acceptance/studio/wasm_parity.mjs"
+      ],
+      "note": "ADR-013 is Proposed: needs the owner's acceptance before this is verified."
+    },
+    {
+      "id": "APP-02",
+      "area": "app",
+      "title": "Revisioned local profile library",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion F · profiles and compare",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "APP-01"
+      ],
+      "acceptance": "Import/export round-trips; a profile replays the same coordinates, zone and birth UTC, including historic offsets.",
+      "evidence": "eshana.profiles.ProfileLibrary: one JSON file (eshana.profiles@1), every save appends a revision, export/import round-trips losslessly (import never overwrites: keep_both or append). test_profiles.py: replay reproduces the stored birth UTC and offset for Delhi 1990, Indian war time 1943 (UTC+6:30), British double summer time 1941 (UTC+2) and an 1879 fixed-offset record.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/profiles.py",
+        "crates/eshana-python/tests/test_profiles.py"
+      ]
+    },
+    {
+      "id": "APP-03",
+      "area": "app",
+      "title": "Compare workspace: natal, progression and transit side by side",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion F · profiles and compare",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "APP-01"
+      ],
+      "acceptance": "Panels share one context and never show a stale result after a settings change; narrow and wide layouts.",
+      "evidence": "Studio 'compare' page (studio-live.js): natal, progressed and transit panels under one context; each change bumps a sequence and late answers are dropped. Journey: choosing two dates updates every panel's stamp, live panels filled, report-only progressed panel says unavailable, phone width (390 px) without sideways scroll; passes on live and report-only files.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-live.js",
+        "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
+      "id": "APP-04",
+      "area": "app",
+      "title": "Locale catalogues and a first reviewed language",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "REP-08",
+      "depends_on": [
+        "APP-03"
+      ],
+      "acceptance": "Labels, dates, errors and print reviewed; numerical output identical across locales.",
+      "evidence": "Catalogues data/locales/{en,hi}.json (eshana.locale@1: pages, groups, toolbar, not-computed notice; status reference/draft); studio-locale.js relabels only; eshana-report --locale. test_locale.py: embedded results identical in en and hi; every page covered. Hindi studio renders all 32 pages without errors. Owner approved the Hindi catalogue as written on 2026-11-23 (status reviewed, reviewed_by set). The language is now a reader setting: every file embeds every catalogue, Settings → Interface language switches it, the choice is kept in the browser, English by default (--locale only sets a file's default). Journey \"interface language is a reader setting\" checks the default, the switch, the reload and that values are unchanged; test_locale.py checks every file carries every catalogue.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/data/locales/hi.json",
+        "crates/eshana-python/tests/test_locale.py",
+        "crates/eshana-python/python/eshana/assets/studio-locale.js"
+      ],
+      "note": "Not verified: the Hindi catalogue is a draft (status draft, shown in the page). Needs a reviewer for labels, error text and print before it counts as the first reviewed language."
+    },
+    {
+      "id": "APP-05",
+      "area": "core",
+      "title": "Engine operation for synthetic positions (derive from user-placed planets)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "REP-07",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Provenance marks positions as synthetic; derived results list their input dependencies; no ephemeris call.",
+      "evidence": "op synthetic_chart (ChartEngine.synthetic_chart): no provider is touched; provenance positions_source=synthetic; each derived factor lists derived_from; time-dependent factors in not_derivable as unavailable. tests/synthetic.rs: a real chart's positions placed by hand give exactly the real chart's Aṣṭakavarga, relationships, yogas, graha and rāśi drishti.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/synthetic.rs",
+        "crates/eshana-engine/tests/synthetic.rs"
+      ]
+    },
+    {
+      "id": "APP-06",
+      "area": "app",
+      "title": "Accessible chart playground with annotations",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "REP-07",
+      "depends_on": [
+        "APP-05"
+      ],
+      "acceptance": "Keyboard edits and undo; factors that cannot be derived are shown as unavailable.",
+      "evidence": "Studio 'playground' page (live files): listbox with arrow-key selection, ←/→ 1°, Shift 30°, Ctrl/⌘+Z undo, a note per graha; every value from synthetic_chart; not-derivable factors shown as unavailable. Journey drives it by keyboard (move 30°, undo restores, unavailable listed); a report-only file says it needs the live engine.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-live.js",
+        "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
+      "id": "APP-07",
+      "area": "app",
+      "title": "Guided chart creation: `eshana-report new` (local form, wait, write, stop)",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "owner request 2026-11-23",
+      "depends_on": [
+        "APP-02"
+      ],
+      "acceptance": "One command opens a local form, waits for birth details, refuses invalid input with the engine's code while keeping what was typed, writes one chart without overwriting, shows it, then stops and prints the path; timeout and Ctrl-C write nothing; only this machine can reach the form.",
+      "evidence": "eshana.intake (eshana-report new): ThreadingHTTPServer on 127.0.0.1 in a background thread, main thread waits on an event with --timeout; random URL token, Host and Origin checked, CSP default-src 'none', 32 KiB body limit. test_intake.py (7): form → chart → server gone; missing date and a DST-gap time (ESH-TIME-NONEXISTENT) return to the form with the values kept and nothing written; wrong token 404, foreign Host/Origin 403, non-form body 415; existing file kept (-2 suffix) and a profile revision saved; unknown time with a fixed offset; timeout writes nothing. Browser journey acceptance/studio/new_chart.mjs (5, real Chrome and the real command): labels on every field, browser zone pre-filled, focused alert, engine code shown, studio shown, exit 0 with the path printed and the server no longer answering.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/intake.py",
+        "crates/eshana-python/tests/test_intake.py",
+        "acceptance/studio/new_chart.mjs",
+        "docs/guides/html-report.md"
+      ]
+    },
+    {
+      "id": "APP-08",
+      "area": "app",
+      "title": "Download any chart drawing as an image (PNG and SVG), as currently shown",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "owner request 2026-11-23",
+      "depends_on": [],
+      "acceptance": "Every chart drawing offers PNG and SVG downloads; the file reflects the current layers, filters, theme and language; the SVG stands alone; the PNG is print-sized with a caption.",
+      "evidence": "studio-export.js: a bar over every svg[role=img] ≥ 160 px (38 drawings on 14 pages in both reference files); styles and CSS variables resolved into the copy, outside url(#id) definitions copied in; PNG ≥ 1600 px on the page background with name, chart, birth data and engine version. Journey 'every chart drawing can be downloaded…': a bar on every drawing on every page, PNG 1908×1756 image/png, SVG with no var(--) and a namespace, the ārūḍha layer switched off disappears from the export, and the button starts a download with the file name.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-export.js",
+        "acceptance/studio/journeys.mjs",
+        "docs/guides/html-report.md"
+      ]
+    },
+    {
+      "id": "REP-20",
+      "area": "app",
+      "title": "Chart text hierarchy: grahas primary, ārūḍha and aspect marks secondary, flags as superscripts, crowded signs managed",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion G · localisation and playground",
+      "source": "owner request 2026-11-23",
+      "depends_on": [],
+      "acceptance": "In every chart cell the graha text is the largest and bold; marks are smaller; flags are superscripts everywhere; nothing overlaps or leaves its cell; a visual test guards it.",
+      "evidence": "southCellLayout searches sizes, then two columns, then smaller sizes, then no degrees; secondary text = 0.64 × graha size (cap 9.5); North Indian marks follow the same ratio; Nadi quadrant flags are raised tspans and crowded quadrants use two columns when larger. Journey 'chart text: grahas are the largest…' audits South and North charts, both chakra centres, every varga and the overview on both reference files (graha size ≥ 1.2 × marks, no overlaps, inside the cell, no unfitted cell, no plain-text flags); the existing overlap and contrast journeys still pass (61/61 per file).",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/assets/studio-charts.js",
+        "acceptance/studio/journeys.mjs"
+      ]
+    },
+    {
+      "id": "METH-01",
+      "area": "astro",
+      "title": "Further ayanāṃśas with epoch, frame and multi-epoch reference values",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion H · methods and quality",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "AYA-02",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Each definition states its epoch and frame; values at several epochs agree with an independent computation.",
+      "evidence": "Six more models in eshana-core (yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul; opt_in in the registry); astro::ayanamsha_definition gives epoch, frame and source for all ten (info.ayanamsha_definitions). tests/ayanamsha_oracle.rs vs benchmarks/golden/ayanamsha_oracle.json (Swiss Ephemeris mean ayanāṃśa, FLG_NONUT, eight epochs 1800–2100): worst 0.05″ (De Luce), most under 0.003″; tolerance 0.1″.",
+      "evidence_paths": [
+        "benchmarks/make_ayanamsha_oracle.py",
+        "benchmarks/golden/ayanamsha_oracle.json",
+        "crates/eshana-engine/tests/ayanamsha_oracle.rs"
+      ]
+    },
+    {
+      "id": "METH-02",
+      "area": "vedic",
+      "title": "Further vargas with explicit method ids",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion H · methods and quality",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "VED-09",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Every boundary tested; schools named, never mixed silently.",
+      "evidence": "vargas_ext.rs, family varga_method: d2_parivritti, d3_parivritti, d81_navanavamsha, d108_ashtottaramsha_cyclic (cyclic from 0° Meṣa) and d144_dvadasha_dvadashamsha (Parāśari D12 of D12); chart field varga_methods → vedic.varga_methods naming each method and school. Unit tests check both sides of every part boundary of every method (12·N boundaries; all 1 728 D144 parts against the closed form), the cyclic D9 equals the Parāśari D9 everywhere, and an id without a school is ESH-METHOD. Acceptance 04_vedic.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/vargas_ext.rs"
+      ]
+    },
+    {
+      "id": "METH-03",
+      "area": "western",
+      "title": "Secondary progressions as an engine operation",
+      "status": "verified",
+      "track": "primary",
+      "milestone": "expansion H · methods and quality",
+      "source": "capability expansion plan 2026-11-23",
+      "parent": "WES-05",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Fractional age and the angle method explicit; no placeholder angles.",
+      "evidence": "op progressions (eshana progress, ChartEngine.progressions): age_years = (at − birth) / year_days (365.24219 default, stated); positions at birth + age days; angles only under a named progression_angles method (solar_arc_longitude, naibod_ra, quotidian), otherwise typed unavailable (also without place or exact time). tests/progressions.rs: age 30.0 → +30 days exactly; progressed Sun equals a positions request at that instant; solar-arc MC = natal MC + arc; Naibod RAMC = natal + 0.985647°/yr; quotidian RAMC equals an ordinary chart's sidereal time; unknown method ESH-METHOD; before birth ESH-RANGE-INVALID. Acceptance 17_ephemeris_events.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/progress.rs",
+        "crates/eshana-engine/tests/progressions.rs"
+      ]
+    },
+    {
+      "id": "RES-01",
+      "area": "vedic",
+      "title": "Specify specialist scoring models before building any score",
+      "status": "verified",
+      "track": "secondary",
+      "milestone": "expansion R · research models",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "BASE-01"
+      ],
+      "acceptance": "Factors, weights, worked examples and redistribution basis written down; nothing shipped without them.",
+      "evidence": "docs/design/research-models.md: the rule (no score before its specification), and research.window_score@0.1 with factors, weights summing to 1, two worked examples computed by hand (62.5 with all factors; 68.18 with no birth chart, coverage 0.55), proportional redistribution with a 0.5 coverage floor. The worked examples are the model's unit tests (research.rs). The only score shipped (RES-02) is the one specified.",
+      "evidence_paths": [
+        "docs/design/research-models.md"
+      ]
+    },
+    {
+      "id": "RES-02",
+      "area": "vedic",
+      "title": "Prototype independently named research models",
+      "status": "verified",
+      "track": "secondary",
+      "milestone": "expansion R · research models",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "RES-01"
+      ],
+      "acceptance": "Contribution, sensitivity and missing-input tests pass; labelled experimental.",
+      "evidence": "op research_window_score (ChartEngine.research_window_score), independent model id research.window_score@0.1, status experimental, epistemic research_hypothesis, registry family research_model. research.rs tests: contributions sum to the score, sensitivity equals the change when one factor flips, missing inputs redistribute and are listed, coverage < 0.5 is unavailable, both worked examples reproduced. test_muhurta.py ranks a real calendar's windows.",
+      "evidence_paths": [
+        "crates/eshana-engine/src/research.rs"
+      ]
+    },
+    {
+      "id": "RES-03",
+      "area": "vedic",
+      "title": "Birth-time evidence evaluator design",
+      "status": "implemented",
+      "track": "secondary",
+      "milestone": "expansion R · research models",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "EVT-01"
+      ],
+      "acceptance": "Candidate interval and evidence scoring defined; the recorded birth time is never overwritten.",
+      "evidence": "Design in docs/design/research-models.md: candidate intervals cut where the Ascendant sign, D9 Ascendant or daśā sub-period at each event changes; evidence kinds; three named techniques with value rules; normalised scoring with stated weights; sensitivity by leaving each technique out; the recorded birth time is never overwritten (a choice is saved as a new profile revision).",
+      "evidence_paths": [
+        "docs/design/research-models.md"
+      ],
+      "note": "Design only, by intent: building it waits for a held-out set of births timed by record to validate against."
+    },
+    {
+      "id": "RES-04",
+      "area": "docs",
+      "title": "Attributed content and naming adapters",
+      "status": "verified",
+      "track": "secondary",
+      "milestone": "expansion R · research models",
+      "source": "capability expansion plan 2026-11-23",
+      "depends_on": [
+        "BASE-02"
+      ],
+      "acceptance": "Text linked to immutable factor ids; the engine's interpretations stay empty.",
+      "evidence": "eshana.content: content packs (eshana.content@1) keyed by factor ids the engine produces (yoga rule ids from the yogas pack, attribute ids, point ids mapped to their source attributes), attribution required (source and license), attach() returns content beside an unchanged envelope whose interpretations stay empty; Naming adapters (IAST, English, Devanāgarī) one-to-one for signs. test_content.py: the bundled reading notes validate as an attributed pack; unknown ids and missing attribution refused; envelope untouched.",
+      "evidence_paths": [
+        "crates/eshana-python/python/eshana/content.py",
+        "crates/eshana-python/tests/test_content.py"
+      ]
     }
   ]
 }

@@ -63,6 +63,11 @@ const DASHA_SYSTEMS = [
   { id: "navamsha", tab: "Navāṃśa", depth: 2, kids: p => engineKids(p), source: "mahādaśās and antardaśās from the engine" },
   { id: "shoola", tab: "Śūla", depth: 2, kids: p => engineKids(p), source: "mahādaśās and antardaśās from the engine" },
   { id: "kalachakra", tab: "Kālachakra", depth: 2, kids: p => engineKids(p), source: "mahādaśās and antardaśās from the engine" },
+  /* conditional nakṣatra daśās: each says whether its condition holds for this chart (shown above the timeline) */
+  ...[["dvadashottari", "Dvādaśottarī"], ["panchottari", "Pañcottarī"], ["shatabdika", "Śatābdikā"], ["chaturashiti_sama", "Caturaśīti-sama"],
+      ["dvisaptati_sama", "Dvisaptati-sama"], ["shashtihayani", "Ṣaṣṭihāyanī"], ["shattrimshat_sama", "Ṣaṭtriṃśat-sama"]]
+    .map(([id, tab]) => ({ id, tab, depth: 2, conditional: true, kids: p => engineKids(p),
+      source: "mahādaśās and antardaśās from the engine; a conditional daśā: see whether its condition holds for this chart" })),
 ];
 const dashaValue = sys => val("vedic.dasha." + sys.id);
 const isSign = p => p && p.sign != null;

@@ -29,10 +29,11 @@ CHARTS = [
       "--name", "Sri Ramana Maharishi", "--gender", "male", "--place", "Madurai, India", "--node", "true", "--sunrise", "centre_unrefracted",
       "--reference", REF]),
     ("studio-example.html", "Example Person · 15 May 1990 14:30, New Delhi (with a partner)",
-     "The example used throughout the docs, with a partner for compatibility.",
+     "The example used throughout the docs, with a partner for compatibility, the embedded engine (Compare and "
+     "Playground recompute offline), a 31-day personal calendar and a KP horary page for number 100.",
      ["--date", "1990-05-15", "--time", "14:30", "--tz", "Asia/Kolkata", "--lat", "28.6139", "--lon", "77.2090",
       "--name", "Example Person", "--place", "New Delhi, India", "--reference", REF,
-      "--partner", "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777"]),
+      "--partner", "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777", "--live", "--calendar-days", "31", "--kp-number", "100"]),
     ("studio-unknown-time.html", "Unknown birth time · 15 May 1990, New Delhi",
      "What the studio does when the time is not known: values that need it are listed as not computed.",
      ["--date", "1990-05-15", "--tz", "Asia/Kolkata", "--lat", "28.6139", "--lon", "77.2090", "--reference", REF]),
@@ -71,6 +72,21 @@ main{{max-width:980px;margin:0 auto;padding:40px 16px}}h1{{font-size:30px;margin
 <h1>ESHANA · local preview</h1>
 <p>Built {built} from the working tree. Nothing here is published. Rebuild with <code>make preview</code>.</p>
 <h2>Chart studio (open directly)</h2><div class="grid">{items}</div>
+<h2>Try these</h2>
+<ul style="color:var(--muted)">
+<li><b>Interface language</b>: in any chart, open <i>Show and style</i> (top right) and pick <i>Interface language</i>.
+English is the default; your choice is kept in this browser.</li>
+<li><b>Download a chart as an image</b>: every chart has <i>⤓ PNG</i> and <i>⤓ SVG</i> buttons in its top-right corner;
+the file shows the chart as it is on screen (layers, filters, theme, language).</li>
+<li><b>Chart text</b>: in <code>studio-ramana-maharishi.html</code> (a crowded chart), open <i>Charts</i> and <i>Jyotish
+Chakra</i>: grahas stay the largest bold text; ārūḍha padas and aspect marks are smaller; flags such as Mo<sup>V</sup> are
+superscripts, also in the Nadi quadrants.</li>
+<li><b>Offline recompute</b>: in <code>studio-example.html</code>, open <i>Compare</i> and <i>Playground</i> (arrow keys
+move a graha, Ctrl/⌘+Z undoes).</li>
+<li><b>Calendar and KP horary</b>: the <i>Pañcāṅga calendar</i> and <i>KP horary</i> pages in <code>studio-example.html</code>.</li>
+<li><b>A new chart from a form</b>: in a terminal, run <code>.venv/bin/eshana-report new -o preview/</code>. A form
+opens; submit birth details and the chart is written to <code>preview/</code>, shown, and the command stops.</li>
+</ul>
 <h2>Website</h2>
 <p>The site needs a local server: run <code>make preview-serve</code>, then open
 <a href="http://127.0.0.1:8765/site/" style="color:var(--gold)">http://127.0.0.1:8765/site/</a>.</p>

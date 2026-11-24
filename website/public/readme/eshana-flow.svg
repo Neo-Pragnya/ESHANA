@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1899 716" width="1899" height="716" font-family="Amazon Ember, Inter, Arial, Helvetica, sans-serif" class="archviz-svg" data-uid="eshana-flow" role="img" aria-label="How ESHANA answers a question">
+<title>How ESHANA answers a question</title>
+<defs>
+<marker id="eshana-flow-ma" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#545B64"/></marker>
+<marker id="eshana-flow-mn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E7157B"/></marker>
+<marker id="eshana-flow-mh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#FF9900"/></marker>
+<filter id="eshana-flow-glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FF9900" flood-opacity=".9"/></filter>
+<filter id="eshana-flow-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0F1B2D" flood-opacity=".12"/></filter>
+</defs>
+<style>
+.eshana-flow text{fill:#232F3E}
+.eshana-flow .fl .ln{fill:none;stroke:#545B64;stroke-width:1.7}
+.eshana-flow .fl.dsh .ln{stroke-dasharray:5 4}
+.eshana-flow .fl .ant{fill:none;stroke:#FF9900;stroke-width:3;stroke-dasharray:7 11;opacity:0}
+.eshana-flow .bdg circle{fill:#232F3E}
+.eshana-flow .bdg text{fill:#fff;font-weight:700;font-size:12px}
+.eshana-flow .future{opacity:.13;filter:grayscale(1)}
+.eshana-flow .deleted{opacity:.35;filter:grayscale(1)}
+.eshana-flow .new .ln{stroke:#E7157B;stroke-width:2.4}
+.eshana-flow .new .ant{opacity:1;stroke:#E7157B;animation:eshana-flow-ants 1.1s linear infinite}
+.eshana-flow .new .bdg circle{fill:#E7157B}
+.eshana-flow .nd.new .halo{opacity:1;animation:eshana-flow-pulse 1.6s ease-in-out infinite}
+.eshana-flow .nd .halo{opacity:0;fill:none;stroke:#E7157B;stroke-width:3}
+.eshana-flow .lg.new text{fill:#E7157B}
+.eshana-flow .lg.future{opacity:.25}
+.eshana-flow .cap text{fill:#fff}
+@keyframes eshana-flow-ants{to{stroke-dashoffset:-36}}
+@keyframes eshana-flow-pulse{0%,100%{stroke-opacity:.25}50%{stroke-opacity:1}}
+@media (prefers-reduced-motion:reduce){.eshana-flow *{animation:none!important}}
+.eshana-flow .fl .ant{animation:eshana-flow-ants 1.1s linear infinite}</style>
+<g class="eshana-flow">
+<rect x="0" y="0" width="1899" height="716" fill="#FFFFFF"/>
+<text x="36" y="44" font-size="22" font-weight="700">How ESHANA answers a question</text>
+<text x="36" y="68" font-size="13" fill="#5F6B7A">One Rust engine behind every surface. Calculated, derived and interpretive stay apart in the data, and every result says how it was made.</text>
+<g class="cap"><rect x="36" y="82" width="1366" height="32" rx="7" fill="#232F3E"/>
+<rect x="36" y="110" width="0" height="4" rx="2" fill="#FF9900"><animate attributeName="width" values="0;1366" dur="14.40s" repeatCount="indefinite"/></rect>
+<text x="48" y="103" font-size="13" font-weight="700" style="fill:#FF9900">▶ NOW</text>
+<text x="108" y="103" font-size="13.5" opacity="0">1 · A birth or event in local civil time is resolved to UTC first, or refused with a stable code<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">2 · The engine receives an exact instant and place<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">3 · Positions come from a measured provider: the calculated layer<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">4 · Nakshatras, vargas, daśās, muhūrta, KP: each from a named, versioned rule<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">5 · Everything returns in one envelope, with every assumption recorded<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></text>
+<text x="108" y="103" font-size="13.5" opacity="0">6 · Surfaces only render: the studio, files and images never compute a factor of their own<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0067;0.1600;0.1667;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></text>
+</g>
+<g class="fl f1 built " data-n="1" data-stage="0">
+<path class="ln" d="M279.6,340.4 L279.6,498.4" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M279.6,340.4 L279.6,498.4" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="279.6" cy="375.2" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></circle><text x="279.6" y="379.2" text-anchor="middle">1</text></g></g>
+<g class="fl f2 built " data-n="2" data-stage="0">
+<path class="ln" d="M425.8,539.4 L485.4,539.4 L485.4,411.4 L545.0,411.4" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M425.8,539.4 L485.4,539.4 L485.4,411.4 L545.0,411.4" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="480.2" cy="539.4" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></circle><text x="480.2" y="543.4" text-anchor="middle">2</text></g></g>
+<g class="fl f3 built " data-n="3" data-stage="0">
+<path class="ln" d="M691.2,366.4 L691.2,287.6" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M691.2,366.4 L691.2,287.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="691.2" cy="349.1" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></circle><text x="691.2" y="353.1" text-anchor="middle">3</text></g></g>
+<g class="fl f4 built " data-n="4" data-stage="0">
+<path class="ln" d="M691.2,456.4 L691.2,549.6" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M691.2,456.4 L691.2,549.6" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="691.2" cy="476.9" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></circle><text x="691.2" y="480.9" text-anchor="middle">4</text></g></g>
+<g class="fl f5 built " data-n="5" data-stage="0">
+<path class="ln" d="M837.4,411.4 L897.0,411.4 L897.0,309.0 L956.6,309.0" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M837.4,411.4 L897.0,411.4 L897.0,309.0 L956.6,309.0" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="886.2" cy="411.4" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></circle><text x="886.2" y="415.4" text-anchor="middle">5</text></g></g>
+<g class="fl f6 built " data-n="6" data-stage="0">
+<path class="ln" d="M1119.6,366.0 L1119.6,516.0" marker-end="url(#eshana-flow-ma)"/>
+<path class="ant" d="M1119.6,366.0 L1119.6,516.0" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></path>
+<g class="bdg"><circle cx="1119.6" cy="399.0" r="11"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></circle><text x="1119.6" y="403.0" text-anchor="middle">6</text></g></g>
+<g class="nd built" data-id="ask" data-stage="0">
+<rect class="halo" x="131.4" y="224.4" width="296.4" height="118.0" rx="12"/>
+<rect x="137.4" y="230.4" width="284.4" height="106.0" rx="9" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M137.4,258.4 V239.4 Q137.4,230.4 146.4,230.4 H412.8 Q421.8,230.4 421.8,239.4 V258.4 Z" fill="#6D28D9"/>
+<text x="147.4" y="249.4" font-size="13" font-weight="700" style="fill:#FFFFFF">Your question</text>
+<text x="147.4" y="276.4" font-size="12.3">CLI · Python · Studio (WebAssembly)</text>
+<text x="147.4" y="292.4" font-size="12.3">eshana-report new (a local form)</text>
+<text x="147.4" y="308.4" font-size="12.3">one JSON request, unknown fields</text>
+<text x="147.4" y="324.4" font-size="12.3">refused</text>
+</g>
+<g class="nd built" data-id="time" data-stage="0">
+<rect class="halo" x="131.4" y="496.4" width="296.4" height="86.0" rx="12"/>
+<rect x="137.4" y="502.4" width="284.4" height="74.0" rx="9" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M137.4,530.4 V511.4 Q137.4,502.4 146.4,502.4 H412.8 Q421.8,502.4 421.8,511.4 V530.4 Z" fill="#0E7490"/>
+<text x="147.4" y="521.4" font-size="13" font-weight="700" style="fill:#FFFFFF">Civil time</text>
+<text x="147.4" y="548.4" font-size="12.3">IANA zones with historic offsets</text>
+<text x="147.4" y="564.4" font-size="12.3">DST gaps and folds: errors, not guesses</text>
+</g>
+<g class="nd built" data-id="eng" data-stage="0">
+<rect class="halo" x="543.0" y="364.4" width="296.4" height="94.0" rx="12"/>
+<rect x="549.0" y="370.4" width="284.4" height="82.0" rx="9" fill="#FFFFFF" stroke="#0F1B2D" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M549.0,398.4 V379.4 Q549.0,370.4 558.0,370.4 H824.4 Q833.4,370.4 833.4,379.4 V398.4 Z" fill="#0F1B2D"/>
+<text x="559.0" y="389.4" font-size="13" font-weight="700" style="fill:#FFFFFF">Engine::execute_json</text>
+<text x="559.0" y="416.4" font-size="12.3">Rust · deterministic</text>
+<text x="559.0" y="432.4" font-size="12.3">same answer on every surface</text>
+<text x="825.4" y="444.4" font-size="10.5" font-weight="700" text-anchor="end" fill="#0F1B2D">one entry point</text>
+</g>
+<g class="nd built" data-id="eph" data-stage="0">
+<rect class="halo" x="543.0" y="187.6" width="296.4" height="102.0" rx="12"/>
+<rect x="549.0" y="193.6" width="284.4" height="90.0" rx="9" fill="#FFFFFF" stroke="#334155" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M549.0,221.6 V202.6 Q549.0,193.6 558.0,193.6 H824.4 Q833.4,193.6 833.4,202.6 V221.6 Z" fill="#334155"/>
+<text x="559.0" y="212.6" font-size="13" font-weight="700" style="fill:#FFFFFF">Ephemeris</text>
+<text x="559.0" y="239.6" font-size="12.3">analytic (no files) or JPL SPK</text>
+<text x="559.0" y="255.6" font-size="12.3">checked against DE440s and Swiss</text>
+<text x="559.0" y="271.6" font-size="12.3">Ephemeris</text>
+</g>
+<g class="nd built" data-id="rules" data-stage="0">
+<rect class="halo" x="543.0" y="547.6" width="296.4" height="86.0" rx="12"/>
+<rect x="549.0" y="553.6" width="284.4" height="74.0" rx="9" fill="#FFFFFF" stroke="#B7791F" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M549.0,581.6 V562.6 Q549.0,553.6 558.0,553.6 H824.4 Q833.4,553.6 833.4,562.6 V581.6 Z" fill="#B7791F"/>
+<text x="559.0" y="572.6" font-size="13" font-weight="700" style="fill:#FFFFFF">Rule packs (YAML)</text>
+<text x="559.0" y="599.6" font-size="12.3">versioned, named methods</text>
+<text x="559.0" y="615.6" font-size="12.3">unknown method = ESH-METHOD</text>
+</g>
+<g class="nd built" data-id="env" data-stage="0">
+<rect class="halo" x="954.6" y="250.0" width="330.0" height="118.0" rx="12"/>
+<rect x="960.6" y="256.0" width="318.0" height="106.0" rx="9" fill="#FFFFFF" stroke="#0B8A6F" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M960.6,284.0 V265.0 Q960.6,256.0 969.6,256.0 H1269.6 Q1278.6,256.0 1278.6,265.0 V284.0 Z" fill="#0B8A6F"/>
+<text x="970.6" y="275.0" font-size="13" font-weight="700" style="fill:#FFFFFF">Result envelope</text>
+<text x="970.6" y="302.0" font-size="12.3">calculated: positions, cusps</text>
+<text x="970.6" y="318.0" font-size="12.3">derived: tradition_rule + method id</text>
+<text x="970.6" y="334.0" font-size="12.3">interpretations: always empty</text>
+<text x="970.6" y="350.0" font-size="12.3">provenance + config_hash</text>
+</g>
+<g class="nd built" data-id="out" data-stage="0">
+<rect class="halo" x="954.6" y="514.0" width="330.0" height="102.0" rx="12"/>
+<rect x="960.6" y="520.0" width="318.0" height="90.0" rx="9" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#eshana-flow-shadow)"/>
+<path d="M960.6,548.0 V529.0 Q960.6,520.0 969.6,520.0 H1269.6 Q1278.6,520.0 1278.6,529.0 V548.0 Z" fill="#6D28D9"/>
+<text x="970.6" y="539.0" font-size="13" font-weight="700" style="fill:#FFFFFF">What you get</text>
+<text x="970.6" y="566.0" font-size="12.3">Studio app · PNG / SVG</text>
+<text x="970.6" y="582.0" font-size="12.3">calendar CSV / ICS · graphs</text>
+<text x="970.6" y="598.0" font-size="12.3">golden-tested, arc-second checks</text>
+</g>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-24.5" y="-27" width="49.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">local</text><animateMotion path="M279.6,340.4 L279.6,498.4" dur="14.40s" begin="0.00s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></g>
+<circle cx="279.6" cy="498.4" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-17.5" y="-27" width="35.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">UTC</text><animateMotion path="M425.8,539.4 L485.4,539.4 L485.4,411.4 L545.0,411.4" dur="14.40s" begin="2.40s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></g>
+<circle cx="545.0" cy="411.4" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">λ, β</text><animateMotion path="M691.2,366.4 L691.2,287.6" dur="14.40s" begin="4.80s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></g>
+<circle cx="691.2" cy="287.6" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">rule</text><animateMotion path="M691.2,456.4 L691.2,549.6" dur="14.40s" begin="7.20s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></g>
+<circle cx="691.2" cy="549.6" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-21.0" y="-27" width="42.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">JSON</text><animateMotion path="M837.4,411.4 L897.0,411.4 L897.0,309.0 L956.6,309.0" dur="14.40s" begin="9.60s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></g>
+<circle cx="956.6" cy="309.0" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></circle>
+<g opacity="0"><circle r="7.5" fill="#FF9900" stroke="#FFFFFF" stroke-width="2.5" filter="url(#eshana-flow-glow)"/><rect x="-28.0" y="-27" width="56.0" height="17" rx="8.5" fill="#232F3E"/><text x="0" y="-14.5" font-size="10.5" font-weight="700" text-anchor="middle" style="fill:#FFFFFF">render</text><animateMotion path="M1119.6,366.0 L1119.6,516.0" dur="14.40s" begin="12.00s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.1367;1"/><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.0001;0.1367;0.1369;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></g>
+<circle cx="1119.6" cy="516.0" r="10" fill="none" stroke="#FF9900" stroke-width="3" opacity="0"><animate attributeName="r" values="10;10;34;34" keyTimes="0;0.1326;0.1982;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.9;0;0" keyTimes="0;0.1325;0.1326;0.1982;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></circle>
+<rect x="1425.6" y="0" width="473.4000000000001" height="716" fill="#F2F3F3"/>
+<text x="1437.6" y="44" font-size="15" font-weight="700">How it flows</text>
+<g class="lg l1 built" data-n="1"><g class="lb"><circle cx="1448.6" cy="72" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="0.00s" repeatCount="indefinite"/></circle><text x="1448.6" y="76" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">1</text></g>
+<text x="1467.6" y="76" font-size="12.5">A birth or event in local civil time is resolved to UTC</text>
+<text x="1467.6" y="91" font-size="12.5">first, or refused with a stable code</text>
+</g>
+<g class="lg l2 built" data-n="2"><g class="lb"><circle cx="1448.6" cy="111" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="2.40s" repeatCount="indefinite"/></circle><text x="1448.6" y="115" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">2</text></g>
+<text x="1467.6" y="115" font-size="12.5">The engine receives an exact instant and place</text>
+</g>
+<g class="lg l3 built" data-n="3"><g class="lb"><circle cx="1448.6" cy="135" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="4.80s" repeatCount="indefinite"/></circle><text x="1448.6" y="139" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">3</text></g>
+<text x="1467.6" y="139" font-size="12.5">Positions come from a measured provider: the calculated</text>
+<text x="1467.6" y="154" font-size="12.5">layer</text>
+</g>
+<g class="lg l4 built" data-n="4"><g class="lb"><circle cx="1448.6" cy="174" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="7.20s" repeatCount="indefinite"/></circle><text x="1448.6" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">4</text></g>
+<text x="1467.6" y="178" font-size="12.5">Nakshatras, vargas, daśās, muhūrta, KP: each from a named,</text>
+<text x="1467.6" y="193" font-size="12.5">versioned rule</text>
+</g>
+<g class="lg l5 built" data-n="5"><g class="lb"><circle cx="1448.6" cy="213" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="9.60s" repeatCount="indefinite"/></circle><text x="1448.6" y="217" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">5</text></g>
+<text x="1467.6" y="217" font-size="12.5">Everything returns in one envelope, with every assumption</text>
+<text x="1467.6" y="232" font-size="12.5">recorded</text>
+</g>
+<g class="lg l6 built" data-n="6"><g class="lb"><circle cx="1448.6" cy="252" r="11" fill="#232F3E"><animate attributeName="fill" values="#FF9900;#FF9900;#232F3E;#232F3E" keyTimes="0;0.1617;0.1667;1" dur="14.40s" begin="12.00s" repeatCount="indefinite"/></circle><text x="1448.6" y="256" font-size="12" font-weight="700" text-anchor="middle" fill="#fff" style="fill:#fff">6</text></g>
+<text x="1467.6" y="256" font-size="12.5">Surfaces only render: the studio, files and images never</text>
+<text x="1467.6" y="271" font-size="12.5">compute a factor of their own</text>
+</g>
+</g></svg>

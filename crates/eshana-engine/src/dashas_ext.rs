@@ -33,6 +33,24 @@ struct Pack {
     shoola_years: f64,
     kalachakra_years: [f64; 12],
     kalachakra: Kala,
+    conditional: Vec<Conditional>,
+}
+
+#[derive(Debug, Deserialize)]
+struct Conditional {
+    id: String,
+    cycle_years: f64,
+    lords: Vec<StarLord>,
+    start: Start,
+    condition: String,
+    applicability: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct Start {
+    mode: String,
+    #[serde(default)]
+    nakshatra: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -383,6 +401,101 @@ fn shodashottari(x: &AnalysisCtx, moon: f64, yd: f64) -> Value {
     });
     if let Some(c) = cur {
         v["current"] = c;
+    }
+    v
+}
+
+// ── conditional nakṣatra daśās ───────────────────────────────────────────────────────────────────────────────────
+/// Whether a conditional daśā's condition holds; `None` when it needs what the chart lacks (no lagna, no sunrise).
+fn condition_holds(x: &AnalysisCtx, cond: &str) -> Option<bool> {
+    let vc = x.vc;
+    let asc = vc.asc;
+    let lagna = asc.map(sign_of);
+    let sign_of_g = |g: &str| vc.lon.get(g).map(|l| sign_of(*l));
+    let house_of_g = |g: &str| Some(house_from(lagna?, sign_of_g(g)?));
+    match cond {
+        "lagna_in_venus_navamsha" => asc
+            .and_then(|a| vedic::divisional_sign(a, 9).ok())
+            .map(|s| s == 1 || s == 6),
+        "lagna_cancer_in_cancer_dvadashamsha" => asc.and_then(|a| {
+            vedic::divisional_sign(a, 12)
+                .ok()
+                .map(|d| sign_of(a) == 3 && d == 3)
+        }),
+        "vargottama_lagna" => asc.and_then(|a| vedic::divisional_sign(a, 9).ok().map(|d| d == sign_of(a))),
+        "tenth_lord_in_tenth" => {
+            let l = lagna?;
+            house_of_g(lord_of((l + 9) % 12)).map(|h| h == 10)
+        }
+        "lagna_lord_in_seventh_or_seventh_lord_in_lagna" => {
+            let l = lagna?;
+            Some(house_of_g(lord_of(l))? == 7 || house_of_g(lord_of((l + 6) % 12))? == 1)
+        }
+        "sun_in_lagna" => house_of_g("sun").map(|h| h == 1),
+        "day_sun_hora_or_night_moon_hora" => {
+            let a = asc?;
+            let s = sign_of(a);
+            let first_half = norm360(a) - 30.0 * (s as f64) < 15.0;
+            let sun_hora = (s % 2 == 0) == first_half;
+            let (_, day) = paksha_and_day(x);
+            day.map(|d| (d && sun_hora) || (!d && !sun_hora))
+        }
+        _ => None,
+    }
+}
+
+fn conditional(x: &AnalysisCtx, c: &Conditional, moon: f64, yd: f64) -> Value {
+    let seq: Vec<(String, f64)> = c.lords.iter().map(|l| (l.lord.clone(), l.years)).collect();
+    let n = seq.len();
+    let (first, elapsed, nk_name) = if c.start.mode == "groups" {
+        let (nk28, frac) = nakshatra28(moon);
+        let (gi, pos) = c
+            .lords
+            .iter()
+            .enumerate()
+            .find_map(|(i, l)| l.nakshatras.iter().position(|&k| k == nk28).map(|p| (i, p)))
+            .unwrap_or((0, 0));
+        let g = &c.lords[gi];
+        let el = (pos as f64 + frac) / g.nakshatras.len() as f64 * g.years;
+        (gi, el, if nk28 == 27 { "Abhijit" } else { NAKSHATRAS[nk28] })
+    } else {
+        let nk = nakshatra_of(moon);
+        let count = if c.start.mode == "count_to" {
+            (c.start.nakshatra + 27 - nk.index) % 27 + 1
+        } else {
+            (nk.index + 27 - c.start.nakshatra) % 27 + 1
+        };
+        let first = (count + n - 1) % n; // remainder 1 → first lord, 0 → last
+        (first, nk.elapsed * seq[first].1, nk.name)
+    };
+    let birth = x.inst.jd_ut;
+    let (mahas, cur) = graha_system(&seq, first, elapsed, birth, x.reference_jd, yd);
+    let applies = condition_holds(x, &c.condition);
+    let start_rule = match c.start.mode.as_str() {
+        "count_from" => format!(
+            "count from {} to the janma nakṣatra; the remainder by {n} picks the lord",
+            NAKSHATRAS[c.start.nakshatra]
+        ),
+        "count_to" => format!(
+            "count from the janma nakṣatra to {}; the remainder by {n} picks the lord",
+            NAKSHATRAS[c.start.nakshatra]
+        ),
+        _ => "each lord rules a group of nakṣatras (28-nakṣatra scheme with Abhijit)".to_string(),
+    };
+    let mut v = json!({
+        "system": c.id, "kind": "graha", "cycle_years": c.cycle_years, "year_days": yd,
+        "moon_nakshatra": nk_name, "starting_lord": seq[first].0,
+        "balance_at_birth_years": seq[first].1 - elapsed,
+        "applicability": {"applies": applies, "condition": c.condition, "rule": c.applicability,
+            "note": "computed for every chart; applies says whether the condition holds (null when the chart cannot tell)"},
+        "conventions": {"start": start_rule,
+            "balance": "the part of the janma nakṣatra (or the lord's group) not yet traversed, times the lord's years",
+            "antardasha": format!("the {n} lords from the mahādaśā lord, each share its years out of {}", c.cycle_years),
+            "year": format!("{yd}-day year")},
+        "mahadashas": mahas.iter().map(|p| p.to_json(birth)).collect::<Vec<_>>(),
+    });
+    if let Some(cu) = cur {
+        v["current"] = cu;
     }
     v
 }
@@ -885,6 +998,13 @@ pub fn compute(x: &AnalysisCtx) -> Result<Vec<Derived>> {
             &["moon"],
         ),
     ];
+    for c in &pack().conditional {
+        out.push(d(
+            &c.id,
+            conditional(x, c, moon, yd),
+            &["moon", "positions", "houses"],
+        ));
+    }
     if let Some(asc) = x.vc.asc {
         let lagna = sign_of(asc);
         let all = &["positions", "houses"];

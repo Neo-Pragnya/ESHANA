@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "eshana"
-version = "0.3.3"
+version = "0.4.2"
 description = "ESHANA - Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations. A Rust-first computation layer for celestial positions, traditions and traceable derived knowledge."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -40,6 +40,8 @@ module-name = "eshana._native"
 # Tests drive the CLI and block the network to prove privacy; they are not part of the library, so they stay in the
 # repository and out of the sdist (dist scan, GuardDog heuristics).
 exclude = [{ path = "tests/**/*", format = "sdist" }]
+# the browser engine is built by `make wasm` and git-ignored; ship it in both the wheel and the sdist
+include = [{ path = "python/eshana/data/eshana_engine.wasm", format = ["sdist", "wheel"] }]
 features = []
 
 [tool.pytest.ini_options]

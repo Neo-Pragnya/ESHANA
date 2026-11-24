@@ -38,7 +38,7 @@ guessed.
 | `--lat`, `--lon` | none | place; needed for the Ascendant and houses |
 | `--name`, `--place`, `--title` | none | display only; `--name` also feeds name numerology |
 | `--gender male\|female` | none | shown with the name in the header; picks the person's own Kua number (both are still listed) |
-| `--ayanamsha` | `lahiri` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley` |
+| `--ayanamsha` | `lahiri` | `lahiri`, `raman`, `krishnamurti`, `fagan_bradley`, `yukteshwar`, `jn_bhasin`, `ushashashi`, `sassanian`, `deluce`, `djwhal_khul` |
 | `--houses` | `whole_sign` | Vedic houses: `whole_sign`, `equal`, `placidus` |
 | `--western-houses` | `placidus` | Western houses |
 | `--node` | `mean` | `mean` or `true` lunar node |
@@ -54,10 +54,50 @@ guessed.
 | `--transit-days`, `--progression-years` | none, `90` | centre a transit span of N days on the reference instead (0 = no transits); span of progressions |
 | `--sunrise` | `upper_limb_refracted` | sunrise convention for the pañcāṅga |
 | `--partner` | none | second birth (`date,time,tz,lat,lon`) for compatibility |
+| `--live` | off | embed the engine as WebAssembly (~4 MB): the compare workspace and the playground recompute offline (ADR-013) |
+| `--locale` | `en` | the file's default interface language: `en` or `hi`. Readers can switch it under **Settings → Interface language**; their choice is kept in their browser. Labels only; values, numbers and dates are identical |
+| `--calendar-days N` | none | a personal calendar of N days (≤ 62) from the reference date; `--calendar-profile`, `--event-lat`, `--event-lon`, `--event-tz` |
+| `--kp-number N` | none | a KP horary page for number N (1–249) judged at `--kp-at` (default the reference instant) |
 | `--icons`, `--chart-style`, `--centre` | `sphere`, `south`, `south` | default planet icons, chart style and chakra centre (viewers can change them) |
 | `--sections` | all | any of `overview,chakra,charts,vargas,planets,planet,houses,house,aspects,strength,ashtakavarga,dasha,panchanga,special,yogas,kp,nadi,energetics,transits,progressions,western,human-design,numerology,matching,data` |
 | `--theme` | `auto` | `light`, `dark` or follow the reader's system |
 | `-o` | stdout | output file |
+
+### A new chart from a form: `eshana-report new`
+
+When you would rather type the birth details than write options, `eshana-report new` opens a form in your browser and
+waits:
+
+```bash
+eshana-report new                      # writes ./<name>-<date>.html
+eshana-report new -o charts/ --library ~/eshana-profiles.json
+```
+
+1. The command starts a small web server on `127.0.0.1` (this machine only) at a free port, opens the form, and waits.
+   Every URL carries a random token; requests from other sites or another host name are refused.
+2. You enter the name, date, local time (or *time unknown*), time zone, place and settings. The form fills in your
+   browser's time zone; the zone you give is the birth place's, and its historic offset is applied.
+3. On **Create chart** the engine checks the moment first. A missing field, or a time the clock skipped or repeated
+   (for example 02:30 on a spring-forward night, `ESH-TIME-NONEXISTENT`), sends you back to the form with the reason and
+   everything you typed. The command keeps waiting.
+4. A valid entry is written to a new file (an existing file is never overwritten: `-2`, `-3` … are added), shown in the
+   browser, and saved as a profile revision when `--library` is given and the box is ticked.
+5. The server then shuts down and the command prints the file's path on standard output and exits 0. With no
+   submission it stops after `--timeout` seconds (exit 3); Ctrl-C stops it at once (exit 130). Nothing is written in
+   either case.
+
+| Option | Default | Meaning |
+|---|---|---|
+| `-o`, `--output` | `.` | a directory (the file is named from the name and date) or an `.html` path |
+| `--library FILE` | none | offer to save the birth in a profile library (`eshana.profiles`) as a new revision |
+| `--no-browser` | off | print the form's URL instead of opening a browser (another browser on this machine can open it) |
+| `--port N` | any free | the local port |
+| `--timeout S` | `1800` | seconds to wait for a valid submission |
+| `--ayanamsha`, `--houses`, `--locale`, `--live` | as `eshana-report` | pre-selected settings on the form |
+| `--transit-days`, `--progression-years` | as `eshana-report` | passed to the report |
+
+The command's last line on standard output is the path, so a script can use it:
+`open "$(eshana-report new --timeout 600)"`.
 
 ### From JSON saved by the Rust CLI
 
@@ -170,6 +210,42 @@ are the alternatives. They are drawn in the browser, with no image files.
 
 Pushkara navāṃśa, vargottama and gaṇḍānta follow the fixed rules printed in the Panchang Chakra template. They are the
 only values the page computes itself, and they are labelled `report.markers@0.1`.
+
+### Download a chart as an image
+
+Every chart drawing (the South and North Indian charts, every varga, the Jyotish Chakra, the Nadi matrix, the Western
+wheel, the BodyGraph, the timelines and the others) has **⤓ PNG** and **⤓ SVG** buttons in its top-right corner. The
+file is a snapshot of the drawing as it is on screen: the layers and filters you have switched on, the varga, the
+wheel's rotation and transit date, the theme and the interface language.
+
+- **PNG**: at least 1600 px wide, on the page's background, with a caption under it: the name, the chart, the birth
+  date, time and place, and the ESHANA version.
+- **SVG**: the drawing alone, with every colour and style written into the file, so it opens the same in any viewer or
+  editor.
+
+The images are made in your browser; nothing is uploaded. They contain the birth data shown on screen, so check them
+before you share one.
+
+### Text in the charts
+
+Grahas are the main text in every chart cell, in bold and at the largest size. Ārūḍha padas, graha aspects and rāśi
+aspects (◇) are secondary, always at most about two thirds of the graha size, and lighter. Flags sit as raised
+superscripts after the abbreviation (Mo<sup>V</sup> vargottama, Ma<sup>◎</sup> own sign, Ne<sup>R</sup> retrograde) everywhere,
+including the Nadi quadrants. When a sign is crowded, the chart first shrinks everything a little, then puts the
+grahas in two columns, then shrinks further, and leaves out the degrees only as a last resort; the marks never grow
+larger than the grahas.
+
+### Compare workspace and playground
+
+**Compare** puts the natal, progressed and transit positions side by side under one date. Every change redraws all
+three panels from that one date, and an answer computed for an older choice is dropped, so a panel never shows a
+stale result. A report-only file reads the transits embedded at generation and says when a date is outside them;
+a `--live` file computes any date in the page.
+
+**Playground** (live files only) starts from the birth positions. ↑/↓ choose a graha, ←/→ move it a degree, Shift
+moves 30°, Ctrl/⌘+Z undoes, and a note can be kept per graha. Every value shown comes from the engine's
+`synthetic_chart` operation, labelled synthetic; daśās, pañcāṅga and other factors that need a moment are listed as
+unavailable.
 
 ## Privacy
 

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 534" width="1200" height="534" role="img" aria-labelledby="t d">
+<title id="t">How muhūrta windows are composed</title>
+<desc id="d">A real run: Chennai, 06:00 on 2026-12-01 to the next sunrise, profile general_auspicious. Each rule removes its spans; what remains, cut at every boundary, are the windows.</desc>
+<style>text{font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif}@keyframes k1{0%,6.25%{opacity:0;transform:translateY(-6px)}10.00%,100%{opacity:1;transform:none}}@keyframes k2{0%,12.50%{opacity:0;transform:translateY(-6px)}16.25%,100%{opacity:1;transform:none}}@keyframes k3{0%,18.75%{opacity:0;transform:translateY(-6px)}22.50%,100%{opacity:1;transform:none}}@keyframes k4{0%,25.00%{opacity:0;transform:translateY(-6px)}28.75%,100%{opacity:1;transform:none}}@keyframes k5{0%,31.25%{opacity:0;transform:translateY(-6px)}35.00%,100%{opacity:1;transform:none}}@keyframes k6{0%,37.50%{opacity:0;transform:translateY(-6px)}41.25%,100%{opacity:1;transform:none}}@keyframes k7{0%,43.75%{opacity:0;transform:translateY(-6px)}47.50%,100%{opacity:1;transform:none}}@keyframes k8{0%,52.50%{opacity:0;transform:translateY(-6px)}53.75%,100%{opacity:1;transform:none}}@keyframes k9{0%,58.75%{opacity:0;transform:translateY(-6px)}62.50%,100%{opacity:1;transform:none}}@keyframes k10{0%,61.56%{opacity:0;transform:translateY(-6px)}65.31%,100%{opacity:1;transform:none}}@keyframes k11{0%,64.38%{opacity:0;transform:translateY(-6px)}68.12%,100%{opacity:1;transform:none}}@keyframes k12{0%,67.19%{opacity:0;transform:translateY(-6px)}70.94%,100%{opacity:1;transform:none}}@keyframes k13{0%,70.00%{opacity:0;transform:translateY(-6px)}73.75%,100%{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<rect width="1200" height="534" rx="20" fill="#0b0f2e"/>
+<text x="40" y="48" font-size="24" font-weight="800" fill="#eef0ff">🪔 How muhūrta windows are composed</text>
+<text x="40" y="76" font-size="14" fill="#9aa1c7">A real run: Chennai, 2026-12-01, profile <tspan fill="#f5c451" font-weight="700">general_auspicious</tspan> (v0.1, experimental). Every rule removes its spans; what remains, cut at every boundary, are the windows.</text>
+<line x1="190.0" y1="98" x2="190.0" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="190.0" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">06:00</text>
+<line x1="311.2" y1="98" x2="311.2" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="311.2" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">09:00</text>
+<line x1="432.5" y1="98" x2="432.5" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="432.5" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">12:00</text>
+<line x1="553.8" y1="98" x2="553.8" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="553.8" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">15:00</text>
+<line x1="675.0" y1="98" x2="675.0" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="675.0" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">18:00</text>
+<line x1="796.2" y1="98" x2="796.2" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="796.2" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">21:00</text>
+<line x1="917.5" y1="98" x2="917.5" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="917.5" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">00:00</text>
+<line x1="1038.8" y1="98" x2="1038.8" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="1038.8" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">03:00</text>
+<line x1="1160.0" y1="98" x2="1160.0" y2="384" stroke="#2a3170" stroke-dasharray="2 5"/>
+<text x="1160.0" y="92" font-size="11.5" fill="#9aa1c7" text-anchor="middle">06:00</text>
+<text x="176" y="133" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Rāhu kālam</text>
+<rect x="190" y="118" width="970" height="22" rx="5" fill="#141a45"/>
+<g style="animation:k1 16.0s ease-out infinite"><rect x="546.4" y="118" width="57.7" height="22" rx="5" fill="#ef5350" fill-opacity=".82"/><text x="610.0" y="133" font-size="11" font-weight="700" fill="#ef5350">14:49–16:14</text></g>
+<text style="animation:k1 16.0s ease-out infinite" x="176" y="145" font-size="10" fill="#ef5350" text-anchor="end">−86 min</text>
+<text x="176" y="167" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Yamagaṇḍam</text>
+<rect x="190" y="152" width="970" height="22" rx="5" fill="#141a45"/>
+<g style="animation:k2 16.0s ease-out infinite"><rect x="315.7" y="152" width="57.7" height="22" rx="5" fill="#ef5350" fill-opacity=".82"/><text x="379.3" y="167" font-size="11" font-weight="700" fill="#ef5350">09:06–10:32</text></g>
+<text style="animation:k2 16.0s ease-out infinite" x="176" y="179" font-size="10" fill="#ef5350" text-anchor="end">−86 min</text>
+<text x="176" y="201" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Gulika kālam</text>
+<rect x="190" y="186" width="970" height="22" rx="5" fill="#141a45"/>
+<g style="animation:k3 16.0s ease-out infinite"><rect x="431.0" y="186" width="57.7" height="22" rx="5" fill="#ef5350" fill-opacity=".82"/><text x="494.7" y="201" font-size="11" font-weight="700" fill="#ef5350">11:57–13:23</text></g>
+<text style="animation:k3 16.0s ease-out infinite" x="176" y="213" font-size="10" fill="#ef5350" text-anchor="end">−86 min</text>
+<text x="176" y="235" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Rikta tithi</text>
+<rect x="190" y="220" width="970" height="22" rx="5" fill="#141a45"/>
+<g style="animation:k4 16.0s ease-out infinite"><rect x="886.7" y="220" width="273.3" height="22" rx="5" fill="#ef5350" fill-opacity=".82"/><text x="1023.4" y="235" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">23:14–06:00</text></g>
+<text style="animation:k4 16.0s ease-out infinite" x="176" y="247" font-size="10" fill="#ef5350" text-anchor="end">−406 min</text>
+<text x="176" y="269" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Amāvāsyā</text>
+<rect x="190" y="254" width="970" height="22" rx="5" fill="#141a45"/>
+<text style="animation:k5 16.0s ease-out infinite" x="202" y="269" font-size="12" fill="#9aa1c7" font-style="italic">none in this range</text>
+<text x="176" y="303" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Pañcaka</text>
+<rect x="190" y="288" width="970" height="22" rx="5" fill="#141a45"/>
+<text style="animation:k6 16.0s ease-out infinite" x="202" y="303" font-size="12" fill="#9aa1c7" font-style="italic">none in this range</text>
+<text x="176" y="337" font-size="14" font-weight="600" fill="#eef0ff" text-anchor="end">Viṣṭi karaṇa</text>
+<rect x="190" y="322" width="970" height="22" rx="5" fill="#141a45"/>
+<text style="animation:k7 16.0s ease-out infinite" x="202" y="337" font-size="12" fill="#9aa1c7" font-style="italic">none in this range</text>
+<g style="animation:k8 16.0s linear infinite">
+<line x1="315.7" y1="106" x2="315.7" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="373.3" y1="106" x2="373.3" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="418.1" y1="106" x2="418.1" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="431.0" y1="106" x2="431.0" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="488.7" y1="106" x2="488.7" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="546.4" y1="106" x2="546.4" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="604.0" y1="106" x2="604.0" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+<line x1="886.7" y1="106" x2="886.7" y2="384" stroke="#f5c451" stroke-width="1.4" stroke-dasharray="4 3"/>
+</g>
+<text x="176" y="381" font-size="15" font-weight="800" fill="#4cd18b" text-anchor="end">✨ Windows</text>
+<rect x="190" y="364" width="970" height="28" rx="6" fill="#10301f" fill-opacity=".6"/>
+<g style="animation:k9 16.0s ease-out infinite"><rect x="191.0" y="364" width="123.7" height="28" rx="6" fill="#4cd18b"/><text x="252.8" y="383" font-size="11" font-weight="800" fill="#062a17" text-anchor="middle">187m</text></g>
+<g style="animation:k10 16.0s ease-out infinite"><rect x="374.3" y="364" width="42.7" height="28" rx="6" fill="#4cd18b"/><text x="395.7" y="383" font-size="11" font-weight="800" fill="#062a17" text-anchor="middle">66m</text></g>
+<g style="animation:k11 16.0s ease-out infinite"><rect x="419.1" y="364" width="10.9" height="28" rx="6" fill="#4cd18b"/></g>
+<g style="animation:k12 16.0s ease-out infinite"><rect x="489.7" y="364" width="55.7" height="28" rx="6" fill="#4cd18b"/><text x="517.5" y="383" font-size="11" font-weight="800" fill="#062a17" text-anchor="middle">86m</text></g>
+<g style="animation:k13 16.0s ease-out infinite"><rect x="605.0" y="364" width="280.7" height="28" rx="6" fill="#4cd18b"/><text x="745.4" y="383" font-size="11" font-weight="800" fill="#062a17" text-anchor="middle">420m</text></g>
+<text x="40" y="426" font-size="14" fill="#eef0ff">🧮 9 pieces after cutting at every boundary</text>
+<text x="600" y="426" font-size="14" fill="#eef0ff">✅ 5 windows · 13.0 h pass</text>
+<text x="40" y="452" font-size="14" fill="#eef0ff">🚫 11.0 h removed, each by a named rule</text>
+<text x="600" y="452" font-size="14" fill="#eef0ff">🔁 intervals are [start, end) in UTC; local times are presentation</text>
+<text x="40" y="516" font-size="11.5" fill="#9aa1c7">Generated by assets/readme/src/muhurta_svg.py from `eshana muhurta --lat 13.08 --lon 80.27 --tz Asia/Kolkata --start 2026-12-01T00:30:00Z --end 2026-12-02T00:30:00Z --profile general_auspicious`</text>
+</svg>

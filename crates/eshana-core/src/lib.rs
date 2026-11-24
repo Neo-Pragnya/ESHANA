@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Version of the output contract (the JSON envelope). Bumped independently of the engine version.
-pub const SCHEMA_VERSION: &str = "0.3.3";
+pub const SCHEMA_VERSION: &str = "0.4.0";
 
 /// Canonical expansion of the acronym. One expansion everywhere; never vary it between manifests and docs.
 pub const EXPANSION: &str =
@@ -108,6 +108,15 @@ pub enum EshanaError {
     /// Rule-pack or numerology policy problem.
     #[error("rules error: {0}")]
     Rules(String),
+    /// The method id is not one the engine implements (see the `methods` operation).
+    #[error("unsupported method: {0}")]
+    MethodUnsupported(String),
+    /// A range is empty or reversed (end not after start).
+    #[error("invalid range: {0}")]
+    RangeInvalid(String),
+    /// The request would exceed a documented work limit (span, rows, results).
+    #[error("work limit exceeded: {0}")]
+    WorkLimit(String),
 }
 
 impl EshanaError {
@@ -126,6 +135,9 @@ impl EshanaError {
             Self::LatitudeUnsupported(_) => "ESH-LATITUDE",
             Self::Provider(_) => "ESH-PROVIDER",
             Self::Rules(_) => "ESH-RULES",
+            Self::MethodUnsupported(_) => "ESH-METHOD",
+            Self::RangeInvalid(_) => "ESH-RANGE-INVALID",
+            Self::WorkLimit(_) => "ESH-LIMIT",
         }
     }
 
@@ -147,6 +159,12 @@ impl EshanaError {
             ("ESH-LATITUDE", "Houses undefined at this latitude"),
             ("ESH-PROVIDER", "Ephemeris provider failure"),
             ("ESH-RULES", "Rule-pack or numerology policy problem"),
+            (
+                "ESH-METHOD",
+                "Method id not implemented; list them with the methods operation",
+            ),
+            ("ESH-RANGE-INVALID", "Range end is not after its start"),
+            ("ESH-LIMIT", "Request exceeds a documented work limit"),
         ]
     }
 }
@@ -283,15 +301,33 @@ pub enum Ayanamsha {
     Krishnamurti,
     /// Fagan–Bradley (Western sidereal).
     FaganBradley,
+    /// Sri Yukteshwar (The Holy Science).
+    Yukteshwar,
+    /// J. N. Bhasin.
+    JnBhasin,
+    /// Ushā–Shashi (Revatī-based).
+    Ushashashi,
+    /// Sassanian (zero point in AD 564).
+    Sassanian,
+    /// De Luce.
+    Deluce,
+    /// Djwhal Khul.
+    DjwhalKhul,
 }
 
 impl Ayanamsha {
     /// Every supported model.
-    pub const ALL: [Ayanamsha; 4] = [
+    pub const ALL: [Ayanamsha; 10] = [
         Ayanamsha::Lahiri,
         Ayanamsha::Raman,
         Ayanamsha::Krishnamurti,
         Ayanamsha::FaganBradley,
+        Ayanamsha::Yukteshwar,
+        Ayanamsha::JnBhasin,
+        Ayanamsha::Ushashashi,
+        Ayanamsha::Sassanian,
+        Ayanamsha::Deluce,
+        Ayanamsha::DjwhalKhul,
     ];
 
     /// Stable id.
@@ -302,6 +338,12 @@ impl Ayanamsha {
             Ayanamsha::Raman => "raman",
             Ayanamsha::Krishnamurti => "krishnamurti",
             Ayanamsha::FaganBradley => "fagan_bradley",
+            Ayanamsha::Yukteshwar => "yukteshwar",
+            Ayanamsha::JnBhasin => "jn_bhasin",
+            Ayanamsha::Ushashashi => "ushashashi",
+            Ayanamsha::Sassanian => "sassanian",
+            Ayanamsha::Deluce => "deluce",
+            Ayanamsha::DjwhalKhul => "djwhal_khul",
         }
     }
 
@@ -436,7 +478,7 @@ impl CalculationConfig {
     pub fn validate(&self) -> Result<()> {
         match (self.zodiac, self.ayanamsha) {
             (ZodiacSystem::Sidereal, None) => Err(EshanaError::Config(
-                "sidereal zodiac requires an explicit ayanamsha (lahiri, raman, krishnamurti, fagan_bradley); \
+                "sidereal zodiac requires an explicit ayanamsha (lahiri, raman, krishnamurti, fagan_bradley, …; see `eshana methods`); \
                  ESHANA never picks one silently"
                     .into(),
             )),

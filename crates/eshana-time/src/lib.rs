@@ -18,6 +18,19 @@ use serde::Serialize;
 /// Julian day of the J2000.0 epoch.
 pub const JD_J2000: f64 = 2_451_545.0;
 
+/// UTC offset (seconds east) of an IANA zone at a UTC Julian day: historical offsets and DST included.
+///
+/// # Errors
+/// `ESH-TZ-UNKNOWN` for an unknown zone; `ESH-INPUT` for an instant jiff cannot represent.
+pub fn zone_offset_seconds(zone: &str, jd_utc: f64) -> Result<i32> {
+    let tz = TimeZone::get(zone)
+        .map_err(|_| EshanaError::TimeZoneUnknown(format!("'{zone}' is not an IANA zone")))?;
+    let secs = ((jd_utc - 2_440_587.5) * 86_400.0).round() as i64;
+    let ts = jiff::Timestamp::from_second(secs)
+        .map_err(|e| EshanaError::Input(format!("instant out of range: {e}")))?;
+    Ok(tz.to_offset(ts).seconds())
+}
+
 /// Version of the tz database bundled into this build.
 #[must_use]
 pub fn tzdb_version() -> &'static str {
@@ -560,5 +573,24 @@ mod properties {
             let _ = Instant::parse_utc(&s);
             let _ = Instant::from_local_str(&s, &s, &s, FoldPolicy::Reject);
         }
+    }
+}
+
+#[cfg(test)]
+mod zone_offset_tests {
+    use super::*;
+
+    #[test]
+    fn offsets_follow_dst_and_half_hour_zones() {
+        let jan = jd_from_gregorian(2025, 1, 15.5);
+        let jul = jd_from_gregorian(2025, 7, 15.5);
+        assert_eq!(zone_offset_seconds("Europe/London", jan).unwrap(), 0);
+        assert_eq!(zone_offset_seconds("Europe/London", jul).unwrap(), 3600);
+        assert_eq!(zone_offset_seconds("Asia/Kolkata", jan).unwrap(), 19_800);
+        assert_eq!(zone_offset_seconds("Asia/Kathmandu", jan).unwrap(), 20_700);
+        assert_eq!(
+            zone_offset_seconds("Nope/Zone", jan).unwrap_err().code(),
+            "ESH-TZ-UNKNOWN"
+        );
     }
 }

@@ -46,7 +46,7 @@ function markBlock(parent, items, x, y, anchor, size, cls, title, maxW, down) {
   const lines = wrapMarks(items, size, maxW);
   const lh = size * 1.2, t = s('text', { x, y: down ? y : y - (lines.length - 1) * lh, 'text-anchor': anchor, 'font-size': size, class: cls }, parent);
   lines.forEach((ln, li) => ln.forEach((it, k) => {
-    const a = { fill: it.fill, 'font-weight': it.weight || 600 }; if (it.italic) a['font-style'] = 'italic'; if (it.cls) a.class = it.cls; if (k === 0 && li > 0) { a.x = x; a.dy = lh; }
+    const a = { fill: it.fill, 'font-weight': it.weight || 500 }; if (it.italic) a['font-style'] = 'italic'; if (it.cls) a.class = it.cls; if (k === 0 && li > 0) { a.x = x; a.dy = lh; }
     const ts = s('tspan', a, t); ts.textContent = (k && !ln[k - 1].lead ? ' ' : '') + it.text;
   }));
   const tt = s('title', {}, t); tt.textContent = title;
@@ -72,7 +72,7 @@ function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, 
   const ex = exchangesIn(sign);
   if (!list.length && !extra.length && !ex.length) return 0;
   const items = ex.map(d => ({ text: G[d.from].abbr + '⇄', fill: G[d.from].dot, weight: 800, cls: 'exchmark' }))
-    .concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 800 : 600 })),
+    .concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 700 : 500 })),
       extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis], fill: G[d.from].dot, cls: 'extramark' })));
   const parts = ex.map(d => `${G[d.from].en} is here by exchange (parivartana with ${G[d.partner] ? G[d.partner].en : d.partner})`)
     .concat(list.length ? ['Aspected by ' + list.map(d => `${G[d.from].en} (${nth(d.house_from_graha)}${d.kind === 'special' ? ', special' : ''})`).join(', ')] : [],
@@ -494,14 +494,47 @@ function grahaLine(parent, id, x, y, d, opts) {
   const deg = vargaDeg(id, d), lon = d === 1 ? lonOf(id) : null;
   const t = s('text', { x: x + (opts.compact ? 0 : 19), y, 'font-size': opts.fs || 12.5, 'font-weight': 800, fill: (G[id] || G.lagna).dot === '#E6E9F0' ? 'var(--ink)' : (G[id] || G.lagna).dot, class: 'gtxt' }, g);
   t.textContent = (G[id] || G.lagna).abbr;
-  const f = flags(id, d); if (f) { const fs = s('tspan', { 'font-size': (opts.fs || 12.5) * .72, dy: -4, fill: 'var(--accent)' }, t); fs.textContent = f; }
-  const t2 = s('tspan', { 'font-size': (opts.fs || 12.5) * .8, 'font-weight': 500, fill: 'var(--muted)', dy: f ? 4 : 0 }, t);
-  t2.textContent = ' ' + (deg != null ? dm(deg) : '') + (lon != null && !opts.compact ? ' ' + NAK_AB[nakOf(lon)] : '');
+  const F = opts.fs || 12.5, f = flags(id, d), up = +(F * .34).toFixed(2);
+  if (f) { const fs = s('tspan', { 'font-size': F * .7, dy: -up, fill: 'var(--accent)', class: 'gflag' }, t); fs.textContent = f; }
+  if (opts.noDeg) { if (f) { const z = s('tspan', { dy: up }, t); z.textContent = '\u200b'; } }
+  else {
+    const t2 = s('tspan', { 'font-size': F * .8, 'font-weight': 600, fill: 'var(--muted)', dy: f ? up : 0, class: 'gdeg' }, t);
+    t2.textContent = ' ' + (deg != null ? dm(deg) : '') + (lon != null && !opts.compact ? ' ' + NAK_AB[nakOf(lon)] : '');
+  }
   g.addEventListener('mousemove', ev => placeTip(ev, id, d));
   if (d === 1 && GR[id]) { g.addEventListener('mouseenter', () => aspectFlow(id, g.ownerSVGElement)); g.addEventListener('mouseleave', () => { untip(); aspectFlow(null, g.ownerSVGElement); }); }
   else g.addEventListener('mouseleave', untip);
   if (GR[id]) g.addEventListener('click', ev => { ev.stopPropagation(); go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id); });
   return g;
+}
+/* Type hierarchy inside a chart cell: grahas are the primary text (bold, largest); ārūḍha padas and aspect marks are
+   secondary and always at most SECONDARY × the graha size. A crowded cell first shrinks everything together a little,
+   then moves the grahas into two columns, then shrinks further, and only last leaves out the degrees; it never lets the
+   marks outgrow the grahas. The choice is recorded on the cell (data-fit) so the browser tests can check it. */
+const SECONDARY = .64;
+function southCellLayout({ list, pada, aItems, rItems, compact, W, H, y, headB, maxW }) {
+  const base = compact ? Math.max(10.5, Math.min(18, W * .15)) : 15;
+  const n = list.length;
+  const marksH = (sec) => [aItems, rItems].reduce((a, it) => a + (it.length ? wrapMarks(it, sec, maxW).length * sec * 1.2 : 0), 0);
+  // estimated width of one graha line: icon, abbreviation, raised flags, degree and nakshatra
+  const lineW = (fs, cmp, noDeg) => (cmp ? 0 : 19) + fs * 1.3 + fs * .45 + (noDeg ? 0 : fs * .8 * .58 * (cmp ? 7 : 11));
+  const tryOne = (k, cols, noDeg) => {
+    const fs = base * k, sec = Math.min(fs * SECONDARY, compact ? 99 : 9.5), cmp = compact || cols === 2 || k < .9;
+    if (cols === 2 && 2 * lineW(fs, true, noDeg) + 4 > maxW) return null;
+    if (cols === 1 && lineW(fs, cmp, noDeg) > maxW + 6) return null;
+    const rows = Math.max(1, Math.ceil(n / cols)), lineH = fs * (cmp ? 1.2 : 1.36);
+    const padaY = headB + sec * 1.25, top = (pada ? padaY + sec * .3 : headB + 2) + fs * 1.3, bottom = y + H - 5 - marksH(sec) - fs * .25;
+    if (n && top + (rows - 1) * lineH > bottom) return null;
+    return { fs, sec, cols, rows, lineH, top, padaY, compact: cmp, noDeg, tag: `${k}${cols === 2 ? ' cols2' : ''}${noDeg ? ' nodeg' : ''}` };
+  };
+  const plan = [];
+  for (const k of [1, .92, .85, .78]) plan.push([k, 1, false]);
+  for (const k of [1, .92, .85, .78, .72]) plan.push([k, 2, false]);
+  for (const k of [.72, .66, .6]) plan.push([k, 1, false]);
+  for (const k of [.92, .8, .7, .6]) plan.push([k, 2, true]);
+  for (const [k, c, nd] of plan) { const r = tryOne(k, c, nd); if (r) return r; }
+  const fs = base * .55, sec = fs * SECONDARY;
+  return { fs, sec, cols: 1, rows: n, lineH: fs * 1.15, top: (pada ? headB + sec * 1.55 : headB + 2) + fs * 1.3, padaY: headB + sec * 1.25, compact: true, noDeg: false, tag: '.55 unfitted' };
 }
 function southGrid(svg, d, x0, y0, W, opts = {}) {
   const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = (d === 1 || d === 9) && opts.lagSign == null ? arudhaMarks(d) : {};
@@ -512,21 +545,18 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
     const nm = s('text', { x: x + W - 5, y: y + small + 2, 'text-anchor': 'end', 'font-size': small, fill: 'var(--muted)' }, g); nm.textContent = opts.compact ? SIGN_AB[sign] : SIGN_SKT[sign];
     if (lag != null) { const hs = s('text', { x: x + 5, y: y + small + 2, 'font-size': small, 'font-weight': 700, fill: 'var(--accent2)' }, g); hs.textContent = (sign - lag + 12) % 12 + 1; }
     if (lag === sign) s('path', { d: `M${x} ${y + 20}L${x + 20} ${y}`, stroke: 'var(--accent)', 'stroke-width': 2 }, g);
-    const list = cellList(sign, d, pl);
-    // ārūḍha padas sit at the top, under the house number and sign name
-    const ps = opts.compact ? Math.max(9, small * .9) : 9.5, padaY = y + small + 2 + ps * 1.25;
-    if (ar[sign]) { const at = s('text', { x: x + 6, y: padaY, 'font-size': ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); at.textContent = ar[sign].join(' ');
+    const list = cellList(sign, d, pl), maxW = W - 12, headB = y + small + 2;
+    const L = southCellLayout({ list, pada: ar[sign], aItems: d === 1 ? aspectItems(sign) : [], rItems: d === 1 ? rashiItems(sign) : [],
+      compact: !!opts.compact, W, H, y, headB, maxW });
+    g.dataset.fit = L.tag;
+    // ārūḍha padas: secondary text at the top, under the house number and sign name
+    if (ar[sign]) { const at = s('text', { x: x + 6, y: L.padaY, 'font-size': L.sec, fill: '#a78bfa', 'font-weight': 600, class: 'arudha' }, g); at.textContent = ar[sign].join(' ');
       const tt = s('title', {}, at); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
-    // aspect marks at the bottom, wrapped to the cell: graha drishti lowest, rāśi drishti (◇) above it
-    const am = opts.compact ? Math.max(9, W * .1) : 10.5, maxW = W - 12;
-    let bottom = y + H - 6;
-    if (d === 1) { const ah = aspectMarks(g, sign, x + 6, bottom, 'start', am, maxW); bottom -= ah; const rh = rashiMarks(g, sign, x + 6, bottom, 'start', am * .95, maxW); bottom -= rh; }
-    // grahas fill the space between: shrink the line height (and drop the icon) when a sign is crowded
-    let fs = opts.compact ? Math.max(10.5, Math.min(18, W * .15 * (list.length > 4 ? .8 : 1))) : 14.5, lineH = opts.compact ? fs * 1.22 : 20;
-    const top = ar[sign] ? padaY + (opts.compact ? fs * 1.3 : 23) : y + (opts.compact ? small * 2.4 : 34), room = bottom - fs * .9 - top;
-    let compact = opts.compact;
-    if (list.length > 1 && (list.length - 1) * lineH > room) { lineH = Math.max(9, room / (list.length - 1)); if (lineH < 20) { compact = true; fs = Math.min(fs, lineH * .8); } }
-    list.forEach((gid, k) => grahaLine(g, gid, x + 6, top + k * lineH, d, { compact, fs }));
+    // aspect marks at the bottom, wrapped to the cell: graha drishti lowest, rāśi drishti (◇) above it; secondary size
+    if (d === 1) { let bottom = y + H - 5; bottom -= aspectMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW); rashiMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW); }
+    // grahas: the primary text, in one or two columns
+    list.forEach((gid, k) => { const c = L.cols === 2 ? Math.floor(k / L.rows) : 0, r = L.cols === 2 ? k % L.rows : k;
+      grahaLine(g, gid, x + 6 + c * (maxW / 2 + 2), L.top + r * L.lineH, d, { compact: L.compact, fs: L.fs, noDeg: L.noDeg }); });
     g.addEventListener('click', () => { const hh = houseOf(sign); if (hh && d === 1) go('#/house/' + hh); });
   }
   if (!opts.noMid) s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
@@ -558,8 +588,8 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     // height, so the side triangles use their full width instead of being centred on the centroid near the edge
     const layout = (k, mw = maxW) => {
       // a graha row's raised flags (ᴿ, ◎) sit a fixed 4 px up, so rows keep that allowance when the stack shrinks
-      const nfs = (opts.compact ? 10 : 12.5) * k, fs = (opts.compact ? 9.5 : 13) * k, lineH = fs * 1.05 + 4, ps = 9.5 * k;
-      const as = (opts.compact ? 8.5 : 10) * k, rs = (opts.compact ? 8 : 9.5) * k;
+      const nfs = (opts.compact ? 10 : 12.5) * k, fs = (opts.compact ? 10.5 : 14) * k, lineH = fs * 1.05 + 4, ps = fs * SECONDARY;
+      const as = fs * SECONDARY, rs = fs * SECONDARY;
       const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, mw) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, mw) : [[]];
       const rLines = rl[0].length ? rl.length : 0, aLines = al[0].length ? al.length : 0;
       const wOf = (items, size) => items.reduce((a, it) => a + (it.text.length + 1) * size * .62, 0);
@@ -590,7 +620,7 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     if (!L) { L = layout(.6); top = Math.max(minY + 4, Math.min(cy - L.h / 2, maxY - 4 - L.h)); }
     g.dataset.fit = L.k + (L.mw !== maxW ? ' wide' : '') + (fits(L, top) ? '' : ' unfitted');
     const n = s('text', { x: midOf(L, top, L.at.numB), y: top + L.at.num, 'text-anchor': 'middle', 'font-size': L.nfs, 'font-weight': 800, fill: 'var(--accent)' }, g); n.textContent = sign + 1;
-    if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 700, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
+    if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 600, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
       const tt = s('title', {}, t); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
     list.forEach((gid, k) => grahaLine(g, gid, midOf(L, top, L.at.gB[k]) - L.at.gW / 2, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
     if (d === 1) {
@@ -745,18 +775,28 @@ function nadiCentre(box, side, cx = 0, cy = 0) {
     const q = NADI_Q[el], [dx, dy] = q.d, x0 = cx + (dx > 0 ? 0 : -half), y0 = cy + (dy > 0 ? 0 : -half);
     const g = s('g', { class: 'nadi-q', 'data-dir': q.dir.toLowerCase() }, box);
     s('rect', { x: x0 + 1.5, y: y0 + 1.5, width: half - 3, height: half - 3, rx: half * .05, fill: q.c, 'fill-opacity': .16, stroke: q.c, 'stroke-opacity': .55, 'stroke-width': 1.2 }, g);
-    const hx = dx > 0 ? x0 + half - pad : x0 + pad, anchor = dx > 0 ? 'end' : 'start', hs = half * .11;
+    const hx = dx > 0 ? x0 + half - pad : x0 + pad, hx0 = hx, anchor = dx > 0 ? 'end' : 'start', hs = half * .11;
     const t = s('text', { x: hx, y: y0 + pad + hs * .85, 'text-anchor': anchor, 'font-size': hs, 'font-weight': 800, 'letter-spacing': 1, fill: q.c, class: 'nadi-dir' }, g); t.textContent = q.dir.toUpperCase();
     const tt = s('title', {}, t); tt.textContent = `${q.dir}: ${q.trikona} trikoṇa, ${el.toLowerCase()} signs, bhāvas ${q.houses} of the natural zodiac`;
     const here = ids.filter(id => ELEMENT[signOf(lonOfId(id)) % 4] === el).sort((a, b) => (signOf(lonOfId(a)) - signOf(lonOfId(b))) || (norm(lonOfId(b)) - norm(lonOfId(a))));
     const top = y0 + pad + hs * 1.35, avail = half - (top - y0) - pad * .6, rows = Math.max(1, here.length);
-    const lh = Math.min(half * .14, avail / rows), fs = Math.min(half * .12, lh * .86);
+    // one column, or two when that gives larger text; the sign is dropped only when two columns could not hold it
+    const colW = (half - 2 * pad) / 2, perChar = .8 * .58;
+    const one = (() => { const lh = Math.min(half * .14, avail / rows); return { cols: 1, lh, fs: Math.min(half * .12, lh * .86), sign: true }; })();
+    const two = (() => { const r2 = Math.ceil(rows / 2), lh = Math.min(half * .14, avail / r2); let fs = Math.min(half * .12, lh * .86);
+      const w = (sg) => fs * (1.3 + .45 + perChar * (sg ? 10 : 7));
+      if (w(true) <= colW - 3) return { cols: 2, r2, lh, fs, sign: true };
+      fs = Math.min(fs, (colW - 3) / (1.3 + .45 + perChar * 7)); return { cols: 2, r2, lh, fs, sign: false }; })();
+    const lay = here.length > 4 && two.fs > one.fs * 1.12 ? two : one, { lh, fs } = lay;
+    g.dataset.fit = lay.cols === 2 ? 'cols2' + (lay.sign ? '' : ' nosign') : 'cols1';
     here.forEach((id, k) => {
-      const lon = lonOfId(id), meta = G[id] || G.lagna, y = top + fs * .9 + k * lh;
+      const c = lay.cols === 2 ? Math.floor(k / lay.r2) : 0, r = lay.cols === 2 ? k % lay.r2 : k;
+      const lon = lonOfId(id), meta = G[id] || G.lagna, y = top + fs * .9 + r * lh, hx = hx0 + (anchor === 'end' ? -1 : 1) * c * colW;
       const row = s('g', { class: 'nadi-g', 'data-body': id, style: 'cursor:pointer' }, g);
       const tx = s('text', { x: hx, y, 'text-anchor': anchor, 'font-size': fs, 'font-weight': 800, fill: meta.dot === '#E6E9F0' ? 'var(--ink)' : meta.dot, class: 'gtxt' }, row);
-      tx.textContent = meta.abbr + (flags(id) ? ' ' + flags(id) : '');
-      const d2 = s('tspan', { 'font-size': fs * .8, 'font-weight': 500, fill: 'var(--muted)' }, tx); d2.textContent = ` ${inSignDM(lon)} ${SIGN_AB[signOf(lon)]}`;
+      tx.textContent = meta.abbr; const fl = id === 'lagna' ? '' : flags(id), up = +(fs * .34).toFixed(2);
+      if (fl) { const sup = s('tspan', { 'font-size': fs * .7, dy: -up, fill: 'var(--accent)', class: 'gflag' }, tx); sup.textContent = fl; }
+      const d2 = s('tspan', { 'font-size': fs * .8, 'font-weight': 600, fill: 'var(--muted)', dy: fl ? up : 0, class: 'gdeg' }, tx); d2.textContent = ` ${inSignDM(lon)}` + (lay.sign ? ` ${SIGN_AB[signOf(lon)]}` : '');
       row.addEventListener('mousemove', ev => placeTip(ev, id));
       row.addEventListener('mouseleave', untip);
       if (id !== 'lagna') row.addEventListener('click', ev => { ev.stopPropagation(); go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id); });

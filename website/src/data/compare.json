@@ -3,6 +3,7 @@
   "a": {
    "ayanamsha": "lahiri",
    "ayanamsha_deg": 23.751007457126555,
+   "config_hash": "fnv1a64:fcac5b6976a5f6f2",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -13,6 +14,7 @@
   "b": {
    "ayanamsha": "fagan_bradley",
    "ayanamsha_deg": 24.634215097126557,
+   "config_hash": "fnv1a64:3a63088c5d1950aa",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -450,7 +452,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -470,7 +472,7 @@
     "civil time resolved with IANA tzdb 2026f",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -482,7 +484,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": "2026f"
   },
-  "schema_version": "0.3.3",
+  "schema_version": "0.4.0",
   "summary": {
    "changes": 29,
    "sign_changes": 0
@@ -492,6 +494,7 @@
   "a": {
    "ayanamsha": null,
    "ayanamsha_deg": null,
+   "config_hash": "fnv1a64:9f9a61097dba6b5f",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -502,6 +505,7 @@
   "b": {
    "ayanamsha": null,
    "ayanamsha_deg": null,
+   "config_hash": "fnv1a64:c8afe561e1fbcd12",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "true",
@@ -575,7 +579,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -592,7 +596,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -603,7 +607,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": null
   },
-  "schema_version": "0.3.3",
+  "schema_version": "0.4.0",
   "summary": {
    "changes": 6,
    "sign_changes": 0
@@ -613,6 +617,7 @@
   "a": {
    "ayanamsha": null,
    "ayanamsha_deg": null,
+   "config_hash": "fnv1a64:9f9a61097dba6b5f",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -623,6 +628,7 @@
   "b": {
    "ayanamsha": "lahiri",
    "ayanamsha_deg": 23.85709238241086,
+   "config_hash": "fnv1a64:fcac5b6976a5f6f2",
    "frame": "geocentric_apparent_ecliptic_true_equinox_of_date",
    "house_system": "whole_sign",
    "node_model": "mean",
@@ -968,7 +974,7 @@
     "UTC is used as UT1 (differs by under 0.9 s)",
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -987,7 +993,7 @@
     "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date",
     "western system with a sidereal zodiac: a Western sidereal variant"
    ],
-   "engine_version": "0.3.3",
+   "engine_version": "0.4.2",
    "provider": "analytic",
    "provider_accuracy": "Low precision: see benchmarks/golden/accuracy.md for the measured error against JPL DE440s (arc-minutes for planets, about 0.01 degree for the Moon). Not for sub-arc-minute work.",
    "provider_data": "JPL approximate Keplerian elements (Standish, Table 1, 1800-2050) + Meeus ch. 47 lunar series; no data files",
@@ -999,7 +1005,7 @@
    "time_model": "leap-seconds-1972-2017+37s-to-2027",
    "tzdb_version": null
   },
-  "schema_version": "0.3.3",
+  "schema_version": "0.4.0",
   "summary": {
    "changes": 24,
    "sign_changes": 10

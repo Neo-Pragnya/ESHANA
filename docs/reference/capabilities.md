@@ -45,7 +45,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 |---|---|
 | Ten planets and the node (mean or true), speed, retrograde | verified |
 | Ayanāṃśas: Lahiri, Raman, Krishnamurti, Fagan–Bradley | verified |
-| Yukteshwar, true Chitrapakṣa, true Revatī and other star-based ayanāṃśas | planned (`AYA-02`) |
+| Yukteshwar, J. N. Bhasin, Ushā–Shashi, Sassanian, De Luce, Djwhal Khul (opt in), each with epoch, frame and source | verified (Swiss Ephemeris mean ayanāṃśa at eight epochs 1800–2100, within 0.05″) |
+| True Chitrapakṣa, true Revatī and other star-based ayanāṃśas | planned (`AYA-02`) |
 | Whole-sign, equal and Placidus houses (Placidus refused in the polar circles) | verified |
 | Sripati (bhāva chalit) and Porphyry houses | verified (Swiss within 0.2″) |
 | Declination and right ascension for every body | verified (published reference chart) |
@@ -61,7 +62,8 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | D150 (nāḍyāṃśa) and other non-Parāśara vargas | planned (`VED-09`) |
 | Vimśottarī daśā to five levels with the current chain | verified |
 | Yoginī daśā | verified |
-| Chara daśā, Nārāyaṇa daśā, other conditional daśās | planned (`VED-10`) |
+| Chara daśā, Nārāyaṇa daśā | verified (see below) |
+| Conditional daśās: Dvādaśottarī, Pañcottarī, Śatābdikā, Caturaśīti-sama, Dvisaptati-sama, Ṣaṣṭihāyanī, Ṣaṭtriṃśat-sama, each reporting its condition | implemented (hand-worked starts; a published worked example per system is pending, `DASH-01`) |
 | Pañcāṅga: tithi, vāra, nakshatra, yoga, karaṇa with end times; sunrise, sunset, moonrise, moonset | verified |
 | Horā, choghaḍiyā, Rāhu kālam, Yamagaṇḍam, Gulika kālam | verified |
 | Tārā bala, Candra bala | verified |
@@ -80,7 +82,9 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 | Aṣṭakavarga transit strength by date | planned (`VED-12`) |
 | Chara kārakas (7 and 8), kārakāṃśa, ārūḍha padas A1–A12 | verified |
 | KP: sub and sub-sub lords, cusps, significators (house and planet view), ruling planets | verified |
-| KP horary (praśna by number) | planned (`KP-02`) |
+| KP horary (praśna by number): the 1–249 table, cusps from the number at the moment and place of judgement | verified (independent table construction; cusps vs Swiss Ephemeris `houses_armc` within 0.07″) |
+| KP cusp occupancy as a named method: `cusp_start` (default) or `cusp_midpoint` (opt in) | verified |
+| Method registry (`eshana methods`) and the `ESH-METHOD`, `ESH-RANGE-INVALID`, `ESH-LIMIT` codes | verified |
 | Yogas (18) and doshas (Manglik, Kāla Sarpa, Grahaṇa, Shrapit) from a YAML pack | verified |
 | Sāḍe Sātī windows with phases | verified (Saturn ingresses vs Swiss) |
 | Aṣṭakūṭa matching with Manglik flags | verified |
@@ -104,9 +108,20 @@ description: "Everything ESHANA computes and shows today, and what is planned, a
 |---|---|
 | Western wheel, Placidus houses, Ptolemaic aspects with orb and phase, aspect grid | verified |
 | Secondary progressions (a day for a year) | verified |
+| Secondary progressions as an engine operation: explicit fractional age and year length, angles by solar arc, Naibod or quotidian | verified (method identities) |
+| Further vargas by method id: cyclic D2, D3, D81, D108 and D144 (D12 of D12) | verified (every boundary) |
 | Solar arc and other progressions, returns | planned (`WES-05`) |
 | Human Design: design instant, gates and lines, channels, centres, type, authority, profile; detailed or schematic BodyGraph | verified |
 | Numerology: Pythagorean and Chaldean, extended numbers, Indian (mulank, bhagyank), Lo Shu | verified |
 | Numerology: Kua by gender, Chaldean compounds 10–52, growth, intensity, letter transits and essence by year | verified (engine tests, studio journeys) |
 | Ephemeris tables at any step; sign ingresses including retrograde re-entries | verified |
-| Stations, eclipses, returns | planned (`AST-06`) |
+| Stations and retrograde intervals (clipped at the range), crossings of a point or aspect with retrograde loops and touches | verified (Swiss Ephemeris oracle, [accuracy](accuracy.md)) |
+| Transit Aṣṭakavarga as dated `[start, end)` segments, each naming the natal BAV and SAV cell read; nodes unavailable | verified (hand-computed cells, ingress boundaries) |
+| Muhūrta windows: factor timelines composed by partition, evaluation and merging, versioned profiles, empty results explained | verified (profiles: stable definitions; purpose presets experimental pending review) |
+| Personal calendar: tārā and candra bala, birth and event places apart, DST and polar days, JSON, CSV and ICS, keyboard day grid in the studio | verified |
+| Supplementary matching beside the 36 points: Rajju, Vedha, Mahendra, Strī-dīrgha, Maṅgala doṣa with a cancellation trace, pair Aṣṭakavarga, cross-chart aspects | verified (36-point output unchanged byte-for-byte) |
+| Pair calendar: windows that suit both people and the event, explained per window | verified |
+| Studio as a local application: live engine (WebAssembly), compare workspace, keyboard playground, profile library, interface catalogues | verified (ADR-013 accepted; Hindi catalogue reviewed; language is a reader setting, English by default) |
+| Guided chart creation: `eshana-report new` opens a local form, waits, refuses invalid details with the engine's code, writes the chart and stops | verified (Python tests, browser journey) |
+| Download any chart drawing as PNG (captioned, ≥ 1600 px) or standalone SVG, as currently shown | verified (browser journeys) |
+| Eclipses, returns as a search | planned (`AST-06`) |

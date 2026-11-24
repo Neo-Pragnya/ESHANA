@@ -166,7 +166,7 @@ fn next_event_raw(
 }
 
 /// UT Julian day of local midnight starting the civil date that contains `jd_ut`.
-fn local_midnight(jd_ut: f64, site: Site) -> f64 {
+pub(crate) fn local_midnight(jd_ut: f64, site: Site) -> f64 {
     let local = jd_ut + site.offset_s / 86_400.0;
     (local - 0.5).floor() + 0.5 - site.offset_s / 86_400.0
 }
@@ -177,7 +177,7 @@ fn weekday(jd_ut: f64, site: Site) -> usize {
     ((local + 1.5).floor() as i64).rem_euclid(7) as usize
 }
 
-fn stamp(jd: f64, site: Site) -> Value {
+pub(crate) fn stamp(jd: f64, site: Site) -> Value {
     let utc = Instant::from_jd_utc(jd).utc;
     let local = Instant::from_jd_utc(jd + site.offset_s / 86_400.0)
         .utc
@@ -188,7 +188,7 @@ fn stamp(jd: f64, site: Site) -> Value {
     json!({"utc": utc, "local": format!("{local}{sign}{:02}:{:02}", off.abs() / 3600, (off.abs() % 3600) / 60), "jd_ut": jd})
 }
 
-fn sidereal(p: &dyn EphemerisProvider, body: Body, jd_ut: f64, ayan: Ayanamsha) -> Result<f64> {
+pub(crate) fn sidereal(p: &dyn EphemerisProvider, body: Body, jd_ut: f64, ayan: Ayanamsha) -> Result<f64> {
     let inst = Instant::from_jd_utc(jd_ut);
     let (lam, _, _) = p.apparent(inst.jd_tt, body)?;
     Ok(astro::to_sidereal(lam, ayan, inst.t_tt()))
@@ -220,14 +220,14 @@ fn next_boundary(f: &dyn Fn(f64) -> Result<f64>, jd: f64, width: f64, span: f64)
 }
 
 /// The Vedic day containing an instant: sunrise before it, sunset, and the next sunrise.
-struct Day {
-    sunrise: f64,
-    sunset: f64,
-    next_sunrise: f64,
-    weekday: usize,
+pub(crate) struct Day {
+    pub(crate) sunrise: f64,
+    pub(crate) sunset: f64,
+    pub(crate) next_sunrise: f64,
+    pub(crate) weekday: usize,
 }
 
-fn vedic_day(p: &dyn EphemerisProvider, jd: f64, site: Site) -> Result<Option<Day>> {
+pub(crate) fn vedic_day(p: &dyn EphemerisProvider, jd: f64, site: Site) -> Result<Option<Day>> {
     let mid = local_midnight(jd, site);
     let today = next_event(p, Body::Sun, mid - 0.1, 1.2, true, site)?;
     let start = match today {

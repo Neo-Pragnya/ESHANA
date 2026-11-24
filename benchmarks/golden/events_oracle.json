@@ -1,0 +1,528 @@
+{
+ "tool": "pyswisseph 2.10.03 (Swiss Ephemeris, AGPL, FLG_MOSEPH) used only as an offline oracle; numbers only, nothing shipped",
+ "range_utc": [
+  "2024-01-01T00:00:00.0Z",
+  "2027-01-01T00:00:00.0Z"
+ ],
+ "stations": {
+  "tropical": {
+   "mercury": [
+    {
+     "jd_ut": 2460311.630302906,
+     "utc": "2024-01-02T03:07:38.2Z",
+     "station": "direct",
+     "longitude_deg": 262.181074841416
+    },
+    {
+     "jd_ut": 2460402.426782131,
+     "utc": "2024-04-01T22:14:34.0Z",
+     "station": "retrograde",
+     "longitude_deg": 27.218617833030574
+    },
+    {
+     "jd_ut": 2460426.037633419,
+     "utc": "2024-04-25T12:54:11.5Z",
+     "station": "direct",
+     "longitude_deg": 15.981209923247263
+    },
+    {
+     "jd_ut": 2460527.7056746483,
+     "utc": "2024-08-05T04:56:10.3Z",
+     "station": "retrograde",
+     "longitude_deg": 154.1046095201587
+    },
+    {
+     "jd_ut": 2460551.384759426,
+     "utc": "2024-08-28T21:14:03.2Z",
+     "station": "direct",
+     "longitude_deg": 141.4087920695819
+    },
+    {
+     "jd_ut": 2460640.6128335,
+     "utc": "2024-11-26T02:42:28.8Z",
+     "station": "retrograde",
+     "longitude_deg": 262.6717595018256
+    },
+    {
+     "jd_ut": 2460660.372478962,
+     "utc": "2024-12-15T20:56:22.2Z",
+     "station": "direct",
+     "longitude_deg": 246.39601593471443
+    },
+    {
+     "jd_ut": 2460749.7820706367,
+     "utc": "2025-03-15T06:46:10.9Z",
+     "station": "retrograde",
+     "longitude_deg": 9.588927088778087
+    },
+    {
+     "jd_ut": 2460772.963660717,
+     "utc": "2025-04-07T11:07:40.3Z",
+     "station": "direct",
+     "longitude_deg": 356.8263520366056
+    },
+    {
+     "jd_ut": 2460874.697973728,
+     "utc": "2025-07-18T04:45:04.9Z",
+     "station": "retrograde",
+     "longitude_deg": 135.57518672528872
+    },
+    {
+     "jd_ut": 2460898.812464237,
+     "utc": "2025-08-11T07:29:56.9Z",
+     "station": "direct",
+     "longitude_deg": 124.24943686425007
+    },
+    {
+     "jd_ut": 2460989.2928948402,
+     "utc": "2025-11-09T19:01:46.1Z",
+     "station": "retrograde",
+     "longitude_deg": 246.86189091711972
+    },
+    {
+     "jd_ut": 2461009.235095501,
+     "utc": "2025-11-29T17:38:32.3Z",
+     "station": "direct",
+     "longitude_deg": 230.7068618347283
+    },
+    {
+     "jd_ut": 2461097.783490658,
+     "utc": "2026-02-26T06:48:13.6Z",
+     "station": "retrograde",
+     "longitude_deg": 352.56530905249065
+    },
+    {
+     "jd_ut": 2461120.314517498,
+     "utc": "2026-03-20T19:32:54.3Z",
+     "station": "direct",
+     "longitude_deg": 338.49074224272465
+    },
+    {
+     "jd_ut": 2461221.233326435,
+     "utc": "2026-06-29T17:35:59.4Z",
+     "station": "retrograde",
+     "longitude_deg": 116.25735302985835
+    },
+    {
+     "jd_ut": 2461245.4568915367,
+     "utc": "2026-07-23T22:57:55.4Z",
+     "station": "direct",
+     "longitude_deg": 106.31653479777823
+    },
+    {
+     "jd_ut": 2461337.8005537987,
+     "utc": "2026-10-24T07:12:47.8Z",
+     "station": "retrograde",
+     "longitude_deg": 230.97899398218408
+    },
+    {
+     "jd_ut": 2461358.1624646187,
+     "utc": "2026-11-13T15:53:56.9Z",
+     "station": "direct",
+     "longitude_deg": 215.0334926920839
+    }
+   ],
+   "venus": [
+    {
+     "jd_ut": 2460736.525018215,
+     "utc": "2025-03-02T00:36:01.6Z",
+     "station": "retrograde",
+     "longitude_deg": 10.835662031180956
+    },
+    {
+     "jd_ut": 2460778.543340206,
+     "utc": "2025-04-13T01:02:24.6Z",
+     "station": "direct",
+     "longitude_deg": 354.62488687523796
+    },
+    {
+     "jd_ut": 2461316.802672863,
+     "utc": "2026-10-03T07:15:50.9Z",
+     "station": "retrograde",
+     "longitude_deg": 218.4911328757359
+    },
+    {
+     "jd_ut": 2461358.5191016197,
+     "utc": "2026-11-14T00:27:30.4Z",
+     "station": "direct",
+     "longitude_deg": 202.86366612768205
+    }
+   ],
+   "mars": [
+    {
+     "jd_ut": 2460651.48139143,
+     "utc": "2024-12-06T23:33:12.2Z",
+     "station": "retrograde",
+     "longitude_deg": 126.17101655221789
+    },
+    {
+     "jd_ut": 2460730.58329916,
+     "utc": "2025-02-24T01:59:57.0Z",
+     "station": "direct",
+     "longitude_deg": 107.0151885422889
+    }
+   ],
+   "jupiter": [
+    {
+     "jd_ut": 2460592.7952723503,
+     "utc": "2024-10-09T07:05:11.5Z",
+     "station": "retrograde",
+     "longitude_deg": 81.33781972112504
+    },
+    {
+     "jd_ut": 2460710.9032969475,
+     "utc": "2025-02-04T09:40:44.9Z",
+     "station": "direct",
+     "longitude_deg": 71.27842700228655
+    },
+    {
+     "jd_ut": 2460991.1956210136,
+     "utc": "2025-11-11T16:41:41.7Z",
+     "station": "retrograde",
+     "longitude_deg": 115.15260195282471
+    },
+    {
+     "jd_ut": 2461110.6459288597,
+     "utc": "2026-03-11T03:30:08.3Z",
+     "station": "direct",
+     "longitude_deg": 105.0873739844691
+    },
+    {
+     "jd_ut": 2461387.5393099785,
+     "utc": "2026-12-13T00:56:36.4Z",
+     "station": "retrograde",
+     "longitude_deg": 147.0246524340957
+    }
+   ],
+   "saturn": [
+    {
+     "jd_ut": 2460491.2961039543,
+     "utc": "2024-06-29T19:06:23.4Z",
+     "station": "retrograde",
+     "longitude_deg": 349.4280775490654
+    },
+    {
+     "jd_ut": 2460630.098109722,
+     "utc": "2024-11-15T14:21:16.7Z",
+     "station": "direct",
+     "longitude_deg": 342.6926610067719
+    },
+    {
+     "jd_ut": 2460869.671547413,
+     "utc": "2025-07-13T04:07:01.7Z",
+     "station": "retrograde",
+     "longitude_deg": 1.9344404712033587
+    },
+    {
+     "jd_ut": 2461007.6607642174,
+     "utc": "2025-11-28T03:51:30.0Z",
+     "station": "direct",
+     "longitude_deg": 355.1575830087309
+    },
+    {
+     "jd_ut": 2461248.3311038017,
+     "utc": "2026-07-26T19:56:47.4Z",
+     "station": "retrograde",
+     "longitude_deg": 14.749954289110828
+    },
+    {
+     "jd_ut": 2461385.4798903465,
+     "utc": "2026-12-10T23:31:02.5Z",
+     "station": "direct",
+     "longitude_deg": 7.931022525681931
+    }
+   ]
+  },
+  "sidereal_lahiri": {
+   "mercury": [
+    {
+     "jd_ut": 2460311.6304621696,
+     "utc": "2024-01-02T03:07:51.9Z",
+     "station": "direct",
+     "longitude_deg": 237.99018767003707
+    },
+    {
+     "jd_ut": 2460402.4262280464,
+     "utc": "2024-04-01T22:13:46.1Z",
+     "station": "retrograde",
+     "longitude_deg": 3.0241571330401666
+    },
+    {
+     "jd_ut": 2460426.038152218,
+     "utc": "2024-04-25T12:54:56.4Z",
+     "station": "direct",
+     "longitude_deg": 351.78602293632525
+    },
+    {
+     "jd_ut": 2460527.705312252,
+     "utc": "2024-08-05T04:55:39.0Z",
+     "station": "retrograde",
+     "longitude_deg": 129.90430379290632
+    },
+    {
+     "jd_ut": 2460551.385237217,
+     "utc": "2024-08-28T21:14:44.5Z",
+     "station": "direct",
+     "longitude_deg": 117.20762602245442
+    },
+    {
+     "jd_ut": 2460640.612719059,
+     "utc": "2024-11-26T02:42:18.9Z",
+     "station": "retrograde",
+     "longitude_deg": 238.46738431643766
+    },
+    {
+     "jd_ut": 2460660.3730578423,
+     "utc": "2024-12-15T20:57:12.2Z",
+     "station": "direct",
+     "longitude_deg": 222.19054474140594
+    },
+    {
+     "jd_ut": 2460749.7820897102,
+     "utc": "2025-03-15T06:46:12.6Z",
+     "station": "retrograde",
+     "longitude_deg": 345.37948780400035
+    },
+    {
+     "jd_ut": 2460772.963977337,
+     "utc": "2025-04-07T11:08:07.6Z",
+     "station": "direct",
+     "longitude_deg": 332.6160959670778
+    },
+    {
+     "jd_ut": 2460874.6975693703,
+     "utc": "2025-07-18T04:44:30.0Z",
+     "station": "retrograde",
+     "longitude_deg": 111.36033408770086
+    },
+    {
+     "jd_ut": 2460898.8125576973,
+     "utc": "2025-08-11T07:30:05.0Z",
+     "station": "direct",
+     "longitude_deg": 100.03340480309227
+    },
+    {
+     "jd_ut": 2460989.2923560143,
+     "utc": "2025-11-09T19:00:59.6Z",
+     "station": "retrograde",
+     "longitude_deg": 222.6427023845223
+    },
+    {
+     "jd_ut": 2461009.235197544,
+     "utc": "2025-11-29T17:38:41.1Z",
+     "station": "direct",
+     "longitude_deg": 206.48679483589487
+    },
+    {
+     "jd_ut": 2461097.783035755,
+     "utc": "2026-02-26T06:47:34.3Z",
+     "station": "retrograde",
+     "longitude_deg": 328.3408850248711
+    },
+    {
+     "jd_ut": 2461120.314610958,
+     "utc": "2026-03-20T19:33:02.4Z",
+     "station": "direct",
+     "longitude_deg": 314.26570127142094
+    },
+    {
+     "jd_ut": 2461221.232346058,
+     "utc": "2026-06-29T17:34:34.7Z",
+     "station": "retrograde",
+     "longitude_deg": 92.02791150858451
+    },
+    {
+     "jd_ut": 2461245.4575018883,
+     "utc": "2026-07-23T22:58:48.2Z",
+     "station": "direct",
+     "longitude_deg": 82.08592921716519
+    },
+    {
+     "jd_ut": 2461337.800523281,
+     "utc": "2026-10-24T07:12:45.2Z",
+     "station": "retrograde",
+     "longitude_deg": 206.74517856475947
+    },
+    {
+     "jd_ut": 2461358.162820339,
+     "utc": "2026-11-13T15:54:27.7Z",
+     "station": "direct",
+     "longitude_deg": 190.79878724083363
+    }
+   ],
+   "venus": [
+    {
+     "jd_ut": 2460736.525016308,
+     "utc": "2025-03-02T00:36:01.4Z",
+     "station": "retrograde",
+     "longitude_deg": 346.62665617962296
+    },
+    {
+     "jd_ut": 2460778.543612957,
+     "utc": "2025-04-13T01:02:48.2Z",
+     "station": "direct",
+     "longitude_deg": 330.4145903361184
+    },
+    {
+     "jd_ut": 2461316.800871372,
+     "utc": "2026-10-03T07:13:15.3Z",
+     "station": "retrograde",
+     "longitude_deg": 194.25793320083926
+    },
+    {
+     "jd_ut": 2461358.5207076073,
+     "utc": "2026-11-14T00:29:49.1Z",
+     "station": "direct",
+     "longitude_deg": 178.62893730852878
+    }
+   ],
+   "mars": [
+    {
+     "jd_ut": 2460651.4779658318,
+     "utc": "2024-12-06T23:28:16.2Z",
+     "station": "retrograde",
+     "longitude_deg": 101.96600242573632
+    },
+    {
+     "jd_ut": 2460730.5884957314,
+     "utc": "2025-02-24T02:07:26.0Z",
+     "station": "direct",
+     "longitude_deg": 82.80634025682939
+    }
+   ],
+   "jupiter": [
+    {
+     "jd_ut": 2460592.7767033577,
+     "utc": "2024-10-09T06:38:27.2Z",
+     "station": "retrograde",
+     "longitude_deg": 57.13543130138278
+    },
+    {
+     "jd_ut": 2460710.9126725197,
+     "utc": "2025-02-04T09:54:14.9Z",
+     "station": "direct",
+     "longitude_deg": 47.07041360745952
+    },
+    {
+     "jd_ut": 2460991.181563854,
+     "utc": "2025-11-11T16:21:27.1Z",
+     "station": "retrograde",
+     "longitude_deg": 90.93329266065616
+    },
+    {
+     "jd_ut": 2461110.6621193886,
+     "utc": "2026-03-11T03:53:27.1Z",
+     "station": "direct",
+     "longitude_deg": 80.86258093558617
+    },
+    {
+     "jd_ut": 2461387.521449566,
+     "utc": "2026-12-13T00:30:53.2Z",
+     "station": "retrograde",
+     "longitude_deg": 122.7884258471398
+    }
+   ],
+   "saturn": [
+    {
+     "jd_ut": 2460491.280066967,
+     "utc": "2024-06-29T18:43:17.8Z",
+     "station": "retrograde",
+     "longitude_deg": 325.2296666562515
+    },
+    {
+     "jd_ut": 2460630.131571293,
+     "utc": "2024-11-15T15:09:27.8Z",
+     "station": "direct",
+     "longitude_deg": 318.48886373057235
+    },
+    {
+     "jd_ut": 2460869.6439652443,
+     "utc": "2025-07-13T03:27:18.6Z",
+     "station": "retrograde",
+     "longitude_deg": 337.71971124351955
+    },
+    {
+     "jd_ut": 2461007.6774191856,
+     "utc": "2025-11-28T04:15:29.0Z",
+     "station": "direct",
+     "longitude_deg": 330.93755168740637
+    },
+    {
+     "jd_ut": 2461248.290184498,
+     "utc": "2026-07-26T18:57:51.9Z",
+     "station": "retrograde",
+     "longitude_deg": 350.5191595769594
+    },
+    {
+     "jd_ut": 2461385.5208306313,
+     "utc": "2026-12-11T00:29:59.8Z",
+     "station": "direct",
+     "longitude_deg": 343.69493354126615
+    }
+   ]
+  }
+ },
+ "crossings": [
+  {
+   "body": "jupiter",
+   "frame": "tropical",
+   "point_deg": 105.0,
+   "events": [
+    {
+     "jd_ut": 2460904.376660824,
+     "utc": "2025-08-16T21:02:23.5Z",
+     "direction": "direct"
+    }
+   ]
+  },
+  {
+   "body": "saturn",
+   "frame": "sidereal_lahiri",
+   "point_deg": 335.0,
+   "events": [
+    {
+     "jd_ut": 2460810.9465317726,
+     "utc": "2025-05-15T10:43:00.3Z",
+     "direction": "direct"
+    },
+    {
+     "jd_ut": 2460930.5561709404,
+     "utc": "2025-09-12T01:20:53.2Z",
+     "direction": "retrograde"
+    },
+    {
+     "jd_ut": 2461078.258108616,
+     "utc": "2026-02-06T18:11:40.6Z",
+     "direction": "direct"
+    }
+   ]
+  },
+  {
+   "body": "mars",
+   "frame": "tropical",
+   "point_deg": 125.0,
+   "events": [
+    {
+     "jd_ut": 2460637.910996914,
+     "utc": "2024-11-23T09:51:50.1Z",
+     "direction": "direct"
+    },
+    {
+     "jd_ut": 2460664.5534062386,
+     "utc": "2024-12-20T01:16:54.3Z",
+     "direction": "retrograde"
+    },
+    {
+     "jd_ut": 2460795.2009158134,
+     "utc": "2025-04-29T16:49:19.1Z",
+     "direction": "direct"
+    },
+    {
+     "jd_ut": 2461320.2394566536,
+     "utc": "2026-10-06T17:44:49.1Z",
+     "direction": "direct"
+    }
+   ]
+  }
+ ]
+}

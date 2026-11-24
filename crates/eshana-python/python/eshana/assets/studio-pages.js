@@ -736,6 +736,53 @@ page('kp', () => 'KP', 'Systems', (b) => {
   }
 }, { blurb: 'sub-lords and significators' });
 
+/* ── KP horary (a kp_horary envelope: the number fixes the Ascendant; the moment and place are those of judgement) ── */
+page('horary', () => 'KP horary', 'Systems', (b) => {
+  const k = ENV.kp_horary; if (!k) return put(b, missing('KP horary', 'Give a horary number (1–249) when the report is made: eshana-report --kp-number N [--kp-at UTC].'));
+  const n = k.number, kp = k.kp;
+  const cusps = Object.entries(kp.cusps).map(([hh, c]) => [hh, `${SIGN_SKT[signOf(c.cusp)]} ${inSign(c.cusp)}`, c.lords.sign_lord, c.lords.star_lord, c.lords.sub_lord, c.lords.sub_sub_lord, c.B_occupants.join(', ') || '—']);
+  const pl = Object.entries(kp.planets).sort((a, bb) => GRAHA_ORDER.indexOf(a[0]) - GRAHA_ORDER.indexOf(bb[0])).map(([g, l]) => [g, l.star_lord, l.sub_lord, l.sub_sub_lord, kp.significators_planet_view[g].B_house_occupied]);
+  put(b, pageHead('kp', 'KP horary', k.calculation.rule),
+    card('Number and moment', facts([['Number', `${n.number} · ${n.sign} ${n.start_in_sign}–${n.end_in_sign}`], ['Star · sub', `${n.star_lord} · ${n.sub_lord}`],
+      ['Judgement (UTC)', k.input.judgement_utc], ['Place', `${fix(k.input.place.latitude_deg, 4)}°, ${fix(k.input.place.longitude_deg, 4)}°`],
+      ['Ayanāṃśa', k.calculation.ayanamsha], ['Cusp occupancy', `${k.calculation.method.id} (${kp.occupancy})`]])),
+    card('Horary cusps', table(['Cusp', 'Position', 'Sign', 'Star', 'Sub', 'Sub-sub', 'Occupants'], cusps)),
+    card('Planets at judgement', table(['Graha', 'Star', 'Sub', 'Sub-sub', 'House'], pl)),
+    kp.ruling_planets_at_judgement ? card('Ruling planets at judgement', facts(Object.entries(kp.ruling_planets_at_judgement).map(([kk, v]) => [kk.replaceAll('_', ' '), typeof v === 'object' ? JSON.stringify(v) : v]))) : null,
+    (k.notes || []).length ? note(k.notes.join(' ')) : null);
+}, { blurb: 'number, cusps and sub-lords at judgement' });
+
+/* ── Personal calendar (a personal_calendar envelope): a day grid of real buttons; arrows move, Enter or Space opens the day ── */
+let CAL_DAY = 0;
+page('calendar', () => 'Calendar', 'Time', (b) => {
+  const c = ENV.personal_calendar; if (!c) return put(b, missing('The personal calendar', 'Ask for it when the report is made: eshana-report --calendar-days N [--calendar-profile ID] [--event-lat φ --event-lon λ --event-tz ZONE].'));
+  const days = c.days || [], NA = v => v && v.status === 'unavailable';
+  const fmtT = t => (t || '').slice(11, 16), dayLabel = d => d.date.slice(5);
+  const detail = h('div', { class: 'card cal-detail', role: 'region', 'aria-live': 'polite', 'aria-label': 'Day detail' });
+  const show = (i) => {
+    CAL_DAY = i; const d = days[i]; if (!d) return;
+    const bind = Object.entries(d.transit_bindus || {}).map(([g, v]) => [g, NA(v) ? `unavailable: ${v.reason}` : `${SIGN_SKT[v.transit_sign]} · BAV ${v.bav} · SAV ${v.sav}`]);
+    put(detail, h('h3', {}, `${d.date}`),
+      facts([['Sunrise', NA(d.sunrise_local) ? `unavailable: ${d.sunrise_local.reason}` : fmtT(d.sunrise_local)], ...bind]),
+      d.windows.length ? table(['From', 'To', 'Minutes'], d.windows.map(w => [fmtT(w.start_local), fmtT(w.end_local), Math.round(w.duration_minutes)]))
+        : note('No window passes on this day.'));
+    grid.querySelectorAll('button').forEach((x, k) => { x.setAttribute('aria-pressed', k === i ? 'true' : 'false'); x.tabIndex = k === i ? 0 : -1; });
+  };
+  const grid = h('div', { class: 'cal-grid', role: 'group', 'aria-label': 'Days; use the arrow keys, Enter opens a day' },
+    days.map((d, i) => h('button', { type: 'button', class: 'cal-day' + (d.windows.length ? ' has' : ''), 'data-i': i,
+      'aria-label': `${d.date}: ${d.windows.length} window${d.windows.length === 1 ? '' : 's'}`, onclick: () => show(i),
+      onkeydown: (ev) => {
+        const step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 7, ArrowUp: -7 }[ev.key];
+        if (step) { ev.preventDefault(); const j = Math.max(0, Math.min(days.length - 1, i + step)); show(j); grid.children[j].focus(); }
+        else if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); show(i); detail.focus && detail.setAttribute('tabindex', '-1'); }
+      } }, h('b', {}, dayLabel(d)), h('span', {}, d.windows.length ? `${d.windows.length}` : '·'))));
+  const prof = c.profile || {};
+  put(b, pageHead('panchanga', 'Personal calendar', `${prof.title || 'constraints'}${prof.status === 'experimental' ? ' (experimental)' : ''}. Event place ${fix(c.input.event_place.latitude_deg, 2)}°, ${fix(c.input.event_place.longitude_deg, 2)}°; birth place kept apart.`),
+    card('Days', grid, note('Numbers are passing windows starting that day. Times are local to the event place.')), detail,
+    (prof.missing || []).length ? note('Not covered by this profile: ' + prof.missing.join('; ') + '.') : null);
+  show(Math.min(CAL_DAY, Math.max(0, days.length - 1)));
+}, { blurb: 'windows by day, with tārā and candra bala' });
+
 /* ── Nadi ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
 let NADI_SEL = null;
 page('nadi', () => 'Nadi', 'Systems', (b) => {
@@ -1070,6 +1117,10 @@ function drawer() {
       h('label', {}, h('input', { type: 'checkbox', checked: S.showUpa !== false, onchange: e => { S.showUpa = e.target.checked; save(); applyVisibility(); route(); } }), 'Upagrahas (Dhūma … Māndi)')),
     h('fieldset', {}, h('legend', {}, 'Motion'), h('label', {}, h('input', { type: 'checkbox', checked: S.animate, onchange: e => { S.animate = e.target.checked; save(); route(); } }), 'Animate charts'),
       h('label', {}, h('input', { type: 'checkbox', checked: S.sky, onchange: e => { S.sky = e.target.checked; save(); location.reload(); } }), 'Living sky background')),
-    h('button', { class: 'btn', onclick: () => { S = JSON.parse(JSON.stringify(DEFAULTS)); save(); route(); drawer(); } }, 'Reset to defaults'), ' ',
+    h('fieldset', {}, h('legend', {}, 'Interface language'),
+      ...Object.values(D.locales || {}).map(c => h('label', {}, h('input', { type: 'radio', name: 'lang', checked: S.lang === c.lang,
+        onchange: () => { S.lang = c.lang; save(); location.reload(); } }), c.name + (c.status === 'draft' ? ' (draft)' : ''))),
+      note('Labels only; values, numbers and dates are the same in every language.')),
+    h('button', { class: 'btn', onclick: () => { const lang = S.lang; S = JSON.parse(JSON.stringify(DEFAULTS)); save(); if (S.lang !== lang) return location.reload(); route(); drawer(); } }, 'Reset to defaults'), ' ',
     h('button', { class: 'btn primary', onclick: () => dr.classList.remove('open') }, 'Done'));
 }

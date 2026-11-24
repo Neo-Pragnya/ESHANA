@@ -152,6 +152,38 @@
       "image": "gallery/numerology.webp",
       "link": "reports/example-birth-chart.html#/numerology",
       "chart": "Example Person, 15 May 1990"
+    },
+    {
+      "name": "calendar",
+      "title": "Personal calendar",
+      "caption": "Muhūrta windows for 31 days with tārā and candra bala from the birth chart; export as CSV or ICS.",
+      "image": "gallery/calendar.webp",
+      "link": "reports/example-studio-app.html#/calendar",
+      "chart": "Example Person, 15 May 1990"
+    },
+    {
+      "name": "kp-horary",
+      "title": "KP horary",
+      "caption": "Number 100 fixes the Ascendant; Placidus cusps, sub-lords and significators at the moment of judgement.",
+      "image": "gallery/kp-horary.webp",
+      "link": "reports/example-studio-app.html#/horary",
+      "chart": "Example Person, 15 May 1990"
+    },
+    {
+      "name": "compare",
+      "title": "Compare workspace",
+      "caption": "Natal, progressed and transit positions side by side, recomputed offline by the embedded engine.",
+      "image": "gallery/compare.webp",
+      "link": "reports/example-studio-app.html#/compare",
+      "chart": "Example Person, 15 May 1990"
+    },
+    {
+      "name": "playground",
+      "title": "Playground",
+      "caption": "Place grahas by keyboard and see what follows; factors that need a real moment are listed as unavailable.",
+      "image": "gallery/playground.webp",
+      "link": "reports/example-studio-app.html#/playground",
+      "chart": "Example Person, 15 May 1990"
     }
   ]
 }
