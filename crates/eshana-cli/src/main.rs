@@ -66,7 +66,7 @@ struct Settings {
     /// tropical or sidereal
     #[arg(long)]
     zodiac: Option<String>,
-    /// lahiri, raman, krishnamurti, fagan_bradley. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
+    /// lahiri, raman, krishnamurti, fagan_bradley, yukteshwar, jn_bhasin, ushashashi, sassanian, deluce, djwhal_khul. Required with --zodiac sidereal; only `chart vedic` defaults to lahiri, and says so
     #[arg(long)]
     ayanamsha: Option<String>,
     /// whole_sign (default), equal, placidus
@@ -116,6 +116,55 @@ struct ChartOpts {
     /// Sunrise: upper_limb_refracted (default), centre_refracted, centre_unrefracted
     #[arg(long)]
     sunrise: Option<String>,
+    /// KP cusp occupancy: cusp_start (default) or cusp_midpoint
+    #[arg(long)]
+    kp_occupancy: Option<String>,
+    /// Further vargas by method id, e.g. d81_navanavamsha,d144_dvadasha_dvadashamsha (see `eshana methods`)
+    #[arg(long, value_delimiter = ',')]
+    varga_methods: Vec<String>,
+}
+
+#[derive(Args, Clone, Default)]
+struct MuhurtaOpts {
+    /// Event place: degrees north
+    #[arg(long, allow_hyphen_values = true)]
+    lat: f64,
+    /// Event place: degrees east
+    #[arg(long, allow_hyphen_values = true)]
+    lon: f64,
+    /// IANA zone of the event place (local times follow its DST)
+    #[arg(long = "tz")]
+    timezone: Option<String>,
+    /// Range start, UTC (included)
+    #[arg(long)]
+    start: String,
+    /// Range end, UTC (excluded); at most 62 days
+    #[arg(long)]
+    end: String,
+    /// Profile id (see `eshana methods`, family muhurta_profile); calendar defaults to personal_general
+    #[arg(long)]
+    profile: Option<String>,
+    /// Profile constraints to switch off, comma separated
+    #[arg(long, value_delimiter = ',')]
+    disable: Vec<String>,
+    /// Extra constraints by id, comma separated
+    #[arg(long = "constraint", value_delimiter = ',')]
+    constraints: Vec<String>,
+    /// Factors to report on every window, comma separated
+    #[arg(long, value_delimiter = ',')]
+    show: Vec<String>,
+    /// Ayanamsha (default lahiri, recorded)
+    #[arg(long, default_value = "lahiri")]
+    ayanamsha: String,
+    /// Sunrise convention
+    #[arg(long)]
+    sunrise: Option<String>,
+}
+
+fn muhurta_json(m: &MuhurtaOpts) -> Value {
+    json!({"place": {"latitude": m.lat, "longitude": m.lon}, "timezone": m.timezone, "start_utc": m.start,
+           "end_utc": m.end, "profile": m.profile, "disable": m.disable, "constraints": m.constraints, "show": m.show,
+           "sunrise": m.sunrise, "config": {"zodiac": "sidereal", "ayanamsha": m.ayanamsha}})
 }
 
 #[derive(Args, Clone, Default)]
@@ -208,6 +257,76 @@ enum Cmd {
         #[arg(long)]
         natal_moon: Option<f64>,
     },
+    /// Transit Ashtakavarga: the natal BAV/SAV cells each graha reads, as segments between ingresses
+    AshtakavargaTransits {
+        /// Range start, UTC (included)
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC (excluded)
+        #[arg(long)]
+        end: String,
+        /// Transiting bodies (default Sun to Saturn); a node is answered as unavailable
+        #[arg(long = "transit-bodies", value_delimiter = ',')]
+        transit_bodies: Option<Vec<String>>,
+        /// The natal chart
+        #[command(flatten)]
+        o: ChartOpts,
+    },
+    /// Muhurta windows: factor timelines over a range composed under a profile and constraints
+    Muhurta {
+        #[command(flatten)]
+        m: MuhurtaOpts,
+    },
+    /// Personal calendar: muhurta windows with tara and chandra bala from a birth, day summaries; json, csv or ics
+    Calendar {
+        /// The birth as date,time,tz,lat,lon (its place is the birth place, not the event place)
+        #[arg(long)]
+        birth: String,
+        /// json (default), csv or ics; csv and ics print the file itself
+        #[arg(long, default_value = "json")]
+        format: String,
+        #[command(flatten)]
+        m: MuhurtaOpts,
+    },
+    /// Pair calendar: windows that suit both people and the event; each window explained by both and the event
+    PairCalendar {
+        /// First person as date,time,tz,lat,lon (the role classical tables give the groom)
+        #[arg(long)]
+        a: String,
+        /// Second person, same format
+        #[arg(long)]
+        b: String,
+        /// json (default), csv or ics; csv and ics print the file itself
+        #[arg(long, default_value = "json")]
+        format: String,
+        #[command(flatten)]
+        m: MuhurtaOpts,
+    },
+    /// Secondary progressions: a day for a year, fractional age, angles under a named method
+    Progress {
+        /// The moment of life to progress to, UTC
+        #[arg(long)]
+        at: String,
+        /// Angle method: solar_arc_longitude, naibod_ra or quotidian (without one, angles are unavailable)
+        #[arg(long)]
+        angles: Option<String>,
+        /// Days per year of life (default 365.24219)
+        #[arg(long)]
+        year_days: Option<f64>,
+        /// The birth
+        #[command(flatten)]
+        o: ChartOpts,
+    },
+    /// The KP 1-249 horary number table
+    KpTable,
+    /// KP horary chart: the number fixes the Ascendant; the moment and place are those of judgement
+    KpHorary {
+        /// Horary number 1-249
+        #[arg(long)]
+        number: u32,
+        #[command(flatten)]
+        o: ChartOpts,
+    },
     /// Ashtakoota compatibility of two births: a = the role classical tables give the groom, b = the bride
     Matching {
         /// First partner as date,time,tz,lat,lon (e.g. 1990-05-15,14:30,Asia/Kolkata,28.61,77.21)
@@ -251,8 +370,53 @@ enum Cmd {
         #[command(flatten)]
         set: Settings,
     },
+    /// Stations and retrograde intervals of one body between two instants
+    Stations {
+        /// Body id, e.g. mercury
+        #[arg(long)]
+        body: String,
+        /// Range start, UTC (included)
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC (excluded)
+        #[arg(long)]
+        end: String,
+        /// Solver tolerance in seconds (0.01 to 3600)
+        #[arg(long)]
+        tolerance_seconds: Option<f64>,
+        #[command(flatten)]
+        set: Settings,
+    },
+    /// When a body reaches a longitude, or an aspect to it, between two instants
+    Crossings {
+        /// Body id, e.g. saturn
+        #[arg(long)]
+        body: String,
+        /// The point in degrees of the chosen zodiac, e.g. a natal Moon
+        #[arg(long, allow_hyphen_values = true)]
+        point: f64,
+        /// Aspect angles in degrees, comma separated (default 0)
+        #[arg(long, value_delimiter = ',')]
+        aspects: Option<Vec<f64>>,
+        /// Range start, UTC (included)
+        #[arg(long)]
+        start: String,
+        /// Range end, UTC (excluded)
+        #[arg(long)]
+        end: String,
+        /// Report a closest approach that stops within this orb without crossing (default 0.1, 0 = off)
+        #[arg(long)]
+        touch_orb: Option<f64>,
+        /// Solver tolerance in seconds (0.01 to 3600)
+        #[arg(long)]
+        tolerance_seconds: Option<f64>,
+        #[command(flatten)]
+        set: Settings,
+    },
     /// Print the built-in YAML rule packs
     Rulesets,
+    /// List every method family and method id the engine implements
+    Methods,
     /// Send a raw JSON request from a file, or `-` for stdin
     Request {
         /// File path or -
@@ -297,6 +461,7 @@ fn chart_json(o: &ChartOpts, system: Option<&str>, assume: bool) -> Value {
         "year_convention": o.year_convention, "aspects": o.aspects, "orb_scale": o.orb_scale,
         "assume_defaults": assume, "features": o.features, "dasha_levels": o.dasha_levels,
         "dasha_systems": o.dasha_systems, "reference_utc": o.reference_utc, "sunrise": o.sunrise,
+        "kp_cusp_occupancy": o.kp_occupancy, "varga_methods": o.varga_methods,
     })
 }
 
@@ -372,6 +537,50 @@ fn main() -> ExitCode {
             c["config"]["zodiac"] = json!("sidereal");
             json!({"op": "panchanga", "chart": c, "natal_moon_deg": natal_moon})
         }
+        Cmd::KpTable => json!({"op": "kp_table"}),
+        Cmd::Progress {
+            at,
+            angles,
+            year_days,
+            o,
+        } => json!({"op": "progressions", "natal": chart_json(o, None, false),
+            "at_utc": at, "angle_method": angles, "year_days": year_days}),
+        Cmd::PairCalendar { a, b, format, m } => {
+            json!({"op": "pair_calendar", "a": person_json(a, &m.ayanamsha),
+            "b": person_json(b, &m.ayanamsha), "muhurta": muhurta_json(m), "format": format})
+        }
+        Cmd::Muhurta { m } => {
+            let mut r = muhurta_json(m);
+            r["op"] = json!("muhurta_windows");
+            r
+        }
+        Cmd::Calendar { birth, format, m } => {
+            let mut natal = person_json(birth, &m.ayanamsha);
+            natal["system"] = json!("vedic");
+            let mut mj = muhurta_json(m);
+            if m.profile.is_none() && m.constraints.is_empty() {
+                mj["profile"] = json!("personal_general"); // the same default as ChartEngine.personal_calendar
+            }
+            json!({"op": "personal_calendar", "natal": natal, "muhurta": mj, "format": format})
+        }
+        Cmd::AshtakavargaTransits {
+            start,
+            end,
+            transit_bodies,
+            o,
+        } => {
+            let mut c = chart_json(o, Some("vedic"), true);
+            c["config"]["zodiac"] = json!("sidereal");
+            json!({"op": "ashtakavarga_transits", "natal": c, "start_utc": start, "end_utc": end, "bodies": transit_bodies})
+        }
+        Cmd::KpHorary { number, o } => {
+            let mut c = chart_json(o, Some("vedic"), true);
+            c["config"]["zodiac"] = json!("sidereal");
+            if o.set.ayanamsha.is_none() {
+                c["config"]["ayanamsha"] = json!("krishnamurti");
+            }
+            json!({"op": "kp_horary", "number": number, "chart": c})
+        }
         Cmd::Matching { a, b, ayanamsha } => json!({
             "op": "matching", "a": person_json(a, ayanamsha), "b": person_json(b, ayanamsha),
         }),
@@ -394,7 +603,32 @@ fn main() -> ExitCode {
             "op": "ingresses", "body": body, "start_utc": start, "end_utc": end,
             "config": settings_json(set), "spk_path": set.spk,
         }),
+        Cmd::Stations {
+            body,
+            start,
+            end,
+            tolerance_seconds,
+            set,
+        } => json!({
+            "op": "stations", "body": body, "start_utc": start, "end_utc": end,
+            "tolerance_seconds": tolerance_seconds, "config": settings_json(set), "spk_path": set.spk,
+        }),
+        Cmd::Crossings {
+            body,
+            point,
+            aspects,
+            start,
+            end,
+            touch_orb,
+            tolerance_seconds,
+            set,
+        } => json!({
+            "op": "crossings", "body": body, "point_deg": point, "aspects": aspects,
+            "start_utc": start, "end_utc": end, "touch_orb_deg": touch_orb,
+            "tolerance_seconds": tolerance_seconds, "config": settings_json(set), "spk_path": set.spk,
+        }),
         Cmd::Rulesets => json!({"op": "rulesets"}),
+        Cmd::Methods => json!({"op": "methods"}),
         Cmd::Request { file } => {
             let mut s = String::new();
             let r = if file == "-" {
@@ -447,7 +681,10 @@ fn main() -> ExitCode {
     let failed = v["kind"] == "error";
     // Graph exports print their content directly so the output pipes into other tools.
     let printable = match (&cli.cmd, v["content"].as_str()) {
-        (Cmd::Graph { format, .. }, Some(c)) if format != "json" => c.to_string(),
+        (
+            Cmd::Graph { format, .. } | Cmd::Calendar { format, .. } | Cmd::PairCalendar { format, .. },
+            Some(c),
+        ) if format != "json" => c.to_string(),
         _ if cli.compact => out.clone(),
         _ => serde_json::to_string_pretty(&v).expect("json"),
     };

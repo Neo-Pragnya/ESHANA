@@ -758,3 +758,21 @@ g.pk-yama{background:none}
 
 /* ── Kua for the given gender ── */
 .kua-mine b{font-size:34px;color:var(--accent)}.kua-mine{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}.kua-sel{font-weight:700;border-bottom:2px solid var(--accent)}
+
+/* personal calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal-day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:8px;border:1px solid var(--line,#8884);background:transparent;color:inherit;font:inherit;cursor:pointer}
+.cal-day.has{border-color:var(--accent,#c9a227)}
+.cal-day[aria-pressed="true"]{background:var(--accent,#c9a227);color:var(--bg,#111)}
+.cal-day:focus-visible{outline:2px solid var(--accent,#c9a227);outline-offset:2px}
+
+/* compare workspace and playground */
+.cmp-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.cmp-panel table{width:100%}
+.na{color:var(--muted,#999)}
+.pg-list{list-style:none;margin:0;padding:0;max-height:420px;overflow:auto;border-radius:8px}
+.pg-list li{padding:6px 8px;border-radius:6px;cursor:pointer}
+.pg-list li.sel{background:var(--accent,#c9a227);color:var(--bg,#111)}
+.pg-list:focus-visible{outline:2px solid var(--accent,#c9a227);outline-offset:2px}
+textarea{width:100%;font:inherit;background:transparent;color:inherit;border:1px solid var(--line,#8884);border-radius:6px;padding:6px}

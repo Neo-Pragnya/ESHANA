@@ -1,8 +1,8 @@
 //! Time series and events: an ephemeris table for animation and progressions, sign ingresses found by search
 //! (including retrograde re-entries), and Sāḍe Sātī windows built from Saturn's ingresses.
 
-use crate::astro;
-use eshana_core::{norm360, Ayanamsha, Body, Result};
+use crate::{astro, search};
+use eshana_core::{angular_diff, norm360, Ayanamsha, Body, Result};
 use eshana_ephemeris::EphemerisProvider;
 use eshana_time::Instant;
 use serde_json::{json, Value};
@@ -68,15 +68,9 @@ pub fn ingresses(
         let b = (a + step).min(jd_b);
         let sb = sign(b)?;
         if sb != sa {
-            let (mut lo, mut hi) = (a, b);
-            for _ in 0..30 {
-                let m = 0.5 * (lo + hi);
-                if sign(m)? == sa {
-                    lo = m;
-                } else {
-                    hi = m;
-                }
-            }
+            // +1 while still in the old sign: the shared bisection, 30 halvings (as before, to well under a second)
+            let mut in_old = |jd: f64| -> Result<f64> { Ok(if sign(jd)? == sa { 1.0 } else { -1.0 }) };
+            let hi = search::bisect(&mut in_old, a, b, 0.0, Some(30))?;
             let forward = (sb + 12 - sa) % 12 == 1;
             out.push(
                 json!({"utc": Instant::from_jd_utc(hi).utc, "jd_ut": hi, "from_sign": sa, "to_sign": sb,
@@ -87,6 +81,178 @@ pub fn ingresses(
         sa = sb;
     }
     Ok(out)
+}
+
+/// Longitudinal speed in degrees per day, in the same frame as [`lon_at`] (a symmetric difference over ±0.01 day).
+///
+/// The frame matters at a station: sidereal speed is tropical speed less the precession rate, which moves a slow
+/// planet's station by up to about an hour.
+///
+/// # Errors
+/// Provider errors.
+pub fn speed_at(p: &dyn EphemerisProvider, body: Body, jd_ut: f64, ayan: Option<Ayanamsha>) -> Result<f64> {
+    const H: f64 = 0.01;
+    Ok(angular_diff(
+        lon_at(p, body, jd_ut + H, ayan)?,
+        lon_at(p, body, jd_ut - H, ayan)?,
+    ) / (2.0 * H))
+}
+
+/// Sampling step for station search: shorter than the shortest time between two stations of the body.
+fn station_step(body: Body) -> f64 {
+    match body {
+        Body::Mercury | Body::Venus | Body::TrueNode => 1.0,
+        Body::Mars => 2.0,
+        _ => 4.0,
+    }
+}
+
+/// Sampling step for crossing search: a body moves well under 90° in one step.
+fn crossing_step(body: Body) -> f64 {
+    match body {
+        Body::Moon => 0.25,
+        Body::Sun | Body::Mercury | Body::Venus | Body::Mars => 0.5,
+        _ => 2.0,
+    }
+}
+
+/// Bodies whose longitude never reverses (the mean node always moves backwards), so they have no stations.
+#[must_use]
+pub fn never_stations(body: Body) -> bool {
+    matches!(body, Body::Sun | Body::Moon | Body::MeanNode)
+}
+
+/// Stations of a body in `[jd_a, jd_b)` and the retrograde intervals they bound.
+///
+/// A station is a root of longitudinal speed: `retrograde` when speed turns negative, `direct` when it turns
+/// positive. An interval already retrograde at `jd_a` or still retrograde at `jd_b` is clipped there and says so.
+///
+/// # Errors
+/// Provider errors.
+pub fn stations(
+    p: &dyn EphemerisProvider,
+    body: Body,
+    jd_a: f64,
+    jd_b: f64,
+    ayan: Option<Ayanamsha>,
+    tol_days: f64,
+) -> Result<Value> {
+    if never_stations(body) {
+        return Ok(json!({"stations": [], "retrograde_intervals": []}));
+    }
+    let mut speed = |jd: f64| speed_at(p, body, jd, ayan);
+    let found = search::find_roots(
+        &mut speed,
+        jd_a,
+        jd_b,
+        station_step(body),
+        tol_days,
+        0.0,
+        f64::INFINITY,
+    )?;
+    let mut rows = vec![];
+    for r in &found.roots {
+        rows.push(json!({
+            "utc": Instant::from_jd_utc(r.jd).utc, "jd_ut": r.jd,
+            "station": if r.rising { "direct" } else { "retrograde" },
+            "longitude_deg": lon_at(p, body, r.jd, ayan)?,
+            "residual_deg_per_day": r.residual,
+        }));
+    }
+    let mut intervals = vec![];
+    let mut open: Option<(f64, bool)> = if speed_at(p, body, jd_a, ayan)? < 0.0 {
+        Some((jd_a, true))
+    } else {
+        None
+    };
+    for r in &found.roots {
+        if r.rising {
+            if let Some((start, clipped)) = open.take() {
+                intervals.push(interval(start, r.jd, clipped, false));
+            }
+        } else {
+            open = Some((r.jd, false));
+        }
+    }
+    if let Some((start, clipped)) = open {
+        intervals.push(interval(start, jd_b, clipped, true));
+    }
+    Ok(json!({"stations": rows, "retrograde_intervals": intervals}))
+}
+
+fn interval(start: f64, end: f64, clipped_start: bool, clipped_end: bool) -> Value {
+    json!({
+        "start_utc": Instant::from_jd_utc(start).utc, "end_utc": Instant::from_jd_utc(end).utc,
+        "start_jd_ut": start, "end_jd_ut": end, "days": end - start,
+        "clipped_start": clipped_start, "clipped_end": clipped_end,
+    })
+}
+
+/// When a body reaches `point_deg` plus each aspect angle, in `[jd_a, jd_b)`.
+///
+/// Every aspect other than 0° and 180° has two points (`point ± angle`). A crossing says whether the body was moving
+/// direct or retrograde; a retrograde loop gives three. A touch is a closest approach within `touch_orb_deg` that
+/// did not cross (the body stationed short of the point). At most `max_results` events are returned and
+/// `truncated` says when there were more.
+///
+/// # Errors
+/// Provider errors.
+#[allow(clippy::too_many_arguments)]
+pub fn crossings(
+    p: &dyn EphemerisProvider,
+    body: Body,
+    point_deg: f64,
+    aspects: &[f64],
+    jd_a: f64,
+    jd_b: f64,
+    ayan: Option<Ayanamsha>,
+    tol_days: f64,
+    touch_orb_deg: f64,
+    max_results: usize,
+) -> Result<Value> {
+    let mut events = vec![];
+    for &asp in aspects {
+        let mut targets = vec![norm360(point_deg + asp)];
+        let a = norm360(asp);
+        if a > 1e-9 && (a - 180.0).abs() > 1e-9 {
+            targets.push(norm360(point_deg - asp));
+        }
+        for target in targets {
+            let mut sep = |jd: f64| -> Result<f64> { Ok(angular_diff(lon_at(p, body, jd, ayan)?, target)) };
+            let found = search::find_roots(
+                &mut sep,
+                jd_a,
+                jd_b,
+                crossing_step(body),
+                tol_days,
+                touch_orb_deg,
+                90.0,
+            )?;
+            for r in found.roots {
+                events.push(json!({
+                    "kind": "crossing", "utc": Instant::from_jd_utc(r.jd).utc, "jd_ut": r.jd,
+                    "aspect_deg": asp, "target_deg": target,
+                    "direction": if r.rising { "direct" } else { "retrograde" },
+                    "residual_deg": r.residual,
+                }));
+            }
+            for (jd, gap) in found.touches {
+                events.push(json!({
+                    "kind": "touch", "utc": Instant::from_jd_utc(jd).utc, "jd_ut": jd,
+                    "aspect_deg": asp, "target_deg": target, "separation_deg": gap,
+                }));
+            }
+        }
+    }
+    events.sort_by(|x, y| {
+        x["jd_ut"]
+            .as_f64()
+            .unwrap_or(0.0)
+            .total_cmp(&y["jd_ut"].as_f64().unwrap_or(0.0))
+    });
+    let truncated = events.len() > max_results;
+    events.truncate(max_results);
+    Ok(json!({"events": events, "truncated": truncated}))
 }
 
 /// Sāḍe Sātī: the periods when Saturn transits the 12th, 1st and 2nd signs from the natal Moon, with phases.

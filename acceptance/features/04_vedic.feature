@@ -42,3 +42,14 @@ Feature: Vedic chart
     When I run "eshana chart vedic --utc 2000-01-01T12:00:00Z --zodiac tropical"
     Then the exit code is 2
     And the output contains "ESH-CONFIG"
+
+  Scenario: Further vargas are named by method and an unnamed scheme is refused
+    When I run "eshana chart vedic --utc 1990-05-15T09:00:00Z --lat 28.61 --lon 77.21 --varga-methods d81_navanavamsha,d144_dvadasha_dvadashamsha"
+    Then it succeeds
+    And the output contains ""family": "varga_method""
+    And the output contains "d144_dvadasha_dvadashamsha"
+
+  Scenario: A varga scheme without a method id is refused
+    When I run "eshana chart vedic --utc 1990-05-15T09:00:00Z --varga-methods d2"
+    Then the exit code is 2
+    And the output contains "ESH-METHOD"

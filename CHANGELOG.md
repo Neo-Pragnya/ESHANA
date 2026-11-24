@@ -5,6 +5,79 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+### Added
+- Guided chart creation (`APP-07`): `eshana-report new` opens a form on `127.0.0.1` (random token, host and origin
+  checked, no external assets), waits, refuses invalid details with the engine's error code while keeping what was
+  typed, writes one chart to a new file (never overwriting), optionally saves a profile revision (`--library`), shows
+  the chart, then stops and prints the path. `--timeout` (exit 3) and Ctrl-C (exit 130) write nothing.
+- Event search (`EVT-01`, `EVT-02`): one solver for every event search: samples, bisection to a stated tolerance,
+  angles as signed separations so 359.99° → 0.01° is a crossing, and the extremum between samples searched so a
+  retrograde loop or a touch inside one step is not missed.
+- `stations` (`eshana stations`, `ChartEngine.stations`): stations in the requested frame and the retrograde
+  intervals they bound, flagged when clipped at the range. Checked against the Swiss Ephemeris (offline oracle).
+- `crossings` (`eshana crossings`, `ChartEngine.crossings`): when a body reaches a point or an aspect to it, with
+  direction and residual; touches that stop within an orb are reported apart; `truncated` past `max_results`.
+- Envelope kinds `stations` and `crossings` (schema adds values only).
+- Method registry (`BASE-02`): `methods` (`eshana methods`, `ChartEngine.methods`) lists every method family and id;
+  `info` names the families. Error codes `ESH-METHOD` (unknown method id), `ESH-RANGE-INVALID` (empty or reversed
+  range) and `ESH-LIMIT` (past a documented work limit). Schema `$defs` for the unavailable, interval, method and
+  configuration-hash shapes; `calculation.config_hash` on charts and event searches.
+
+- Dated Aṣṭakavarga (`EVT-03`): `ashtakavarga_transits` (`eshana ashtakavarga-transits`,
+  `ChartEngine.ashtakavarga_transits`): per graha, `[start, end)` segments that change exactly at sign ingresses,
+  each naming the natal BAV and SAV cell it read. Nodes are typed unavailable; no table is invented for them.
+- Muhūrta windows (`MUH-02`, `MUH-03`): `muhurta_windows` (`eshana muhurta`, `ChartEngine.muhurta_windows`) cuts a
+  range at every boundary of the factors named, evaluates each piece and merges neighbours whose values and verdicts
+  are equal; an empty result names the constraints that removed the candidates. Profiles are versioned data
+  (`muhurta-profiles.yaml`); purpose presets are labelled experimental and list what they lack.
+- Personal calendar (`MUH-04`): `personal_calendar` (`eshana calendar`, `ChartEngine.personal_calendar`) adds tārā and
+  candra bala from the natal Moon, day summaries in the event zone, and CSV and ICS exports. The studio gains a
+  keyboard-driven calendar page (`eshana-report --calendar-days N`).
+- `eshana_time::zone_offset_seconds`: a zone's offset at an instant (DST and historic offsets).
+- Supplementary matching (`MAT-03` to `MAT-06`): `matching` gains a `supplementary` section from its own pack
+  (`matching-supplementary.yaml`): Rajju, Vedha, Mahendra and Strī-dīrgha; Maṅgala doṣa per reference point with
+  every cancellation and its scope; each partner's grahas in the other's Aṣṭakavarga; cross-chart sign aspects. The
+  36-point Aṣṭakūṭa and the manglik flags are unchanged byte for byte.
+- Pair calendar (`MAT-07`): `pair_calendar` (`eshana pair-calendar`, `ChartEngine.pair_calendar`).
+- Conditional daśās (`DASH-01`): Dvādaśottarī, Pañcottarī, Śatābdikā, Caturaśīti-sama, Dvisaptati-sama, Ṣaṣṭihāyanī
+  and Ṣaṭtriṃśat-sama as `vedic.dasha.*` (feature `dashas_extended`), each with its condition reported in
+  `applicability` and never applied silently; studio tabs for all sixteen systems.
+- Ayanāṃśas (`METH-01`): Yukteshwar, J. N. Bhasin, Ushā–Shashi, Sassanian, De Luce and Djwhal Khul (opt in), each
+  with its epoch, frame and source in `info.ayanamsha_definitions`; all ten models match the Swiss Ephemeris mean
+  ayanāṃśa (offline oracle) within 0.05″ from 1800 to 2100.
+- Further vargas (`METH-02`): `varga_methods` on Vedic charts (`--varga-methods`), family `varga_method`: cyclic D2,
+  D3, D81, D108 and D144 (D12 of D12); each result names its method and school.
+- Secondary progressions (`METH-03`): `progressions` (`eshana progress`, `ChartEngine.progressions`) with explicit
+  fractional age and year length; angles only under a named `progression_angles` method.
+- `info.operations` lists every operation; `scripts/check_capabilities.py` (`make capabilities-check`, also run by the
+  Python tests) checks the reference docs against the installed wheel in both directions: operations, error codes,
+  CLI commands, and `docs/reference/methods.md`, which it generates from the method registry.
+- Browser engine (`APP-01`, ADR-013, proposed): `crates/eshana-wasm` compiles `execute_json` to WebAssembly (`make wasm`);
+  `eshana-report --live` embeds it so pages recompute offline. `acceptance/studio/wasm_parity.mjs` checks every
+  operation family against the native CLI (equal structure, floats within 1e-9).
+- Profile library (`APP-02`): `eshana.profiles.ProfileLibrary`, revisioned, with lossless export/import and replay
+  that checks the stored birth UTC (local mean time, war time and double summer time tested).
+- Studio: a compare workspace (`APP-03`) and a keyboard playground (`APP-06`) over the new `synthetic_chart`
+  operation (`APP-05`, `ChartEngine.synthetic_chart`: factors from hand-placed positions, no ephemeris, labelled
+  synthetic); interface catalogues (`APP-04`, `--locale en|hi`, Hindi reviewed) that never change a value. Every studio file carries
+  every catalogue; the language is a reader setting in the settings drawer (kept in the browser), English by default.
+- Research models (`RES-01` to `RES-04`): `docs/design/research-models.md` specifies every score before it is built;
+  `research_window_score` (`research.window_score@0.1`, experimental) orders passing muhūrta windows with
+  contributions, sensitivity and coverage; a birth-time evidence evaluator is specified (not built); `eshana.content`
+  keeps attributed text beside envelopes, keyed by the engine's factor ids, with naming adapters.
+- KP horary (`KP-03` to `KP-06`): `kp_table` (`eshana kp-table`) lists the 249 numbers, built in integer arc-seconds
+  and checked against an independent construction; `kp_horary` (`eshana kp-horary`, `ChartEngine.kp_horary`) fixes
+  the Ascendant at the start of the number's arc and takes Placidus cusps for the sidereal time at which it rises at
+  the place of judgement (checked against Swiss Ephemeris `houses_armc`, offline, within 0.07″). The studio gains a
+  KP horary page (`eshana-report --kp-number N --kp-at UTC`).
+- KP cusp occupancy is a named method: `kp_cusp_occupancy` = `cusp_start` (default, unchanged) or `cusp_midpoint`
+  (opt in), on charts (`--kp-occupancy`) and horary. `vedic.kp` names `occupancy_method`.
+
+### Changed
+- `stations` and `crossings` (unreleased) refuse a reversed range with `ESH-RANGE-INVALID` and a span past 200 years
+  with `ESH-LIMIT` instead of `ESH-INPUT`.
+- `ingresses` uses the shared bisection with the same 30 halvings: results are unchanged.
+
 ## [0.3.3] - 2026-11-22
 
 Review round 8. Schema 0.3.3 adds fields only.

@@ -1,0 +1,22 @@
+[package]
+name = "eshana-wasm"
+description = "ESHANA engine for the browser: the same execute_json, compiled to WebAssembly with a three-function ABI"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+eshana-engine.workspace = true
+
+# The only crate allowed `unsafe`: the pointer boundary between JavaScript and Rust memory, nothing else.
+[lints.rust]
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }

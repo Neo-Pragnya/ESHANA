@@ -25,6 +25,20 @@ printed by `eshana schema`. The Python test suite and the acceptance gate valida
 Human Design replaces `positions` by `{personality, design}`, each with `instant_utc`, `jd_ut` and 13 `activations`
 (`body`, `longitude_deg`, `gate`, `line`, `color`, `center`).
 
+## Shared shapes (since the capability expansion)
+
+Newer operations reuse four shapes, defined under `$defs` in the schema:
+
+- **Unavailable** — `{"status": "unavailable", "reason": "…", "missing": ["…"]}`. A factor that cannot be computed (no
+  reliable Ascendant, no sunrise at a polar latitude, a node with no Aṣṭakavarga table) is reported this way, never as
+  zero.
+- **Interval** — `{"start_utc", "end_utc", "bounds": "[start, end)"}`. `end_utc` is `null` when the interval is still
+  open where the searched range ends.
+- **Method** — `{"family", "id"}`. Every family and id is listed by the `methods` operation (`eshana methods`); an id
+  the engine does not implement is refused with `ESH-METHOD`, never replaced by a default.
+- **Configuration hash** — `calculation.config_hash`, `fnv1a64:` and 16 hex digits over the normalised settings (keys
+  sorted). Two results with the same hash were computed under the same settings.
+
 ## Compatibility promise
 
 Within `0.x`, fields may be added without bumping `schema_version`'s minor only when they are optional and ignorable. A

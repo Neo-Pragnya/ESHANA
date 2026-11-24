@@ -211,6 +211,7 @@ class ChartEngine:
         reference_utc: Optional[str] = None,
         sunrise: Optional[str] = None,
         special_lagna_sun: Optional[str] = None,
+        varga_methods: Iterable[str] = (),
     ) -> Chart:
         """Sidereal chart. ``ayanamsha`` is required: ESHANA never picks one silently.
 
@@ -223,6 +224,7 @@ class ChartEngine:
             ctx, "vedic", cfg, divisions=list(divisions), dasha=dasha, year_convention=year_convention,
             features=list(features) or None, dasha_levels=dasha_levels, dasha_systems=list(dasha_systems) or None,
             reference_utc=reference_utc, sunrise=sunrise, special_lagna_sun=special_lagna_sun,
+            varga_methods=list(varga_methods) or None,
         )
         return Chart(execute({"op": "chart", **req}))
 
@@ -255,6 +257,123 @@ class ChartEngine:
         if self.spk_path:
             req["spk_path"] = self.spk_path
         return execute(req)
+
+    def stations(self, body: str, start_utc: str, end_utc: str, zodiac: str = "sidereal",
+                 ayanamsha: Optional[str] = "lahiri", tolerance_seconds: Optional[float] = None) -> Dict[str, Any]:
+        """Stations of a body in [start, end) and the retrograde intervals they bound, clipped at the range."""
+        req = {"op": "stations", "body": body, "start_utc": start_utc, "end_utc": end_utc,
+               "tolerance_seconds": tolerance_seconds,
+               "config": self._cfg(zodiac=zodiac, ayanamsha=ayanamsha if zodiac == "sidereal" else None)}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def crossings(self, body: str, point_deg: float, start_utc: str, end_utc: str,
+                  aspects: Optional[Iterable[float]] = None, zodiac: str = "sidereal",
+                  ayanamsha: Optional[str] = "lahiri", touch_orb_deg: Optional[float] = None,
+                  tolerance_seconds: Optional[float] = None, max_results: Optional[int] = None) -> Dict[str, Any]:
+        """When a body reaches a longitude (or an aspect to it) in [start, end), with direction; touches apart."""
+        req = {"op": "crossings", "body": body, "point_deg": point_deg, "start_utc": start_utc, "end_utc": end_utc,
+               "aspects": list(aspects) if aspects is not None else None, "touch_orb_deg": touch_orb_deg,
+               "tolerance_seconds": tolerance_seconds, "max_results": max_results,
+               "config": self._cfg(zodiac=zodiac, ayanamsha=ayanamsha if zodiac == "sidereal" else None)}
+        if self.spk_path:
+            req["spk_path"] = self.spk_path
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def ashtakavarga_transits(self, natal: Context, start_utc: str, end_utc: str, ayanamsha: str = "lahiri",
+                              bodies: Optional[Iterable[str]] = None) -> Dict[str, Any]:
+        """The natal BAV and SAV cells each transiting graha reads, as [start, end) segments between ingresses.
+        A node is answered as unavailable (no table exists for it)."""
+        chart = self._base(natal, "vedic", self._cfg(zodiac="sidereal", ayanamsha=ayanamsha))
+        req = {"op": "ashtakavarga_transits", "natal": chart, "start_utc": start_utc, "end_utc": end_utc,
+               "bodies": list(bodies) if bodies is not None else None}
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    def muhurta_windows(self, latitude: float, longitude: float, start_utc: str, end_utc: str,
+                        timezone: Optional[str] = None, profile: Optional[str] = None,
+                        disable: Iterable[str] = (), constraints: Iterable[Any] = (), show: Iterable[str] = (),
+                        ayanamsha: str = "lahiri", sunrise: Optional[str] = None) -> Dict[str, Any]:
+        """Muhurta windows at an event place: factor timelines in [start, end) cut at every boundary, evaluated
+        against a profile (``eshana methods``) and/or constraints, and merged where nothing changes."""
+        return execute(self._muhurta(latitude, longitude, start_utc, end_utc, timezone, profile, disable, constraints,
+                                     show, ayanamsha, sunrise) | {"op": "muhurta_windows"})
+
+    def personal_calendar(self, natal: Context, latitude: float, longitude: float, start_utc: str, end_utc: str,
+                          timezone: Optional[str] = None, profile: Optional[str] = "personal_general",
+                          disable: Iterable[str] = (), constraints: Iterable[Any] = (), show: Iterable[str] = (),
+                          ayanamsha: str = "lahiri", sunrise: Optional[str] = None,
+                          format: str = "json") -> Dict[str, Any]:
+        """Muhurta windows with tara and chandra bala from ``natal``, day summaries in the event zone, and an
+        export (``format`` = ``csv`` or ``ics`` puts the file in ``content``). The birth place and the event place
+        (``latitude``, ``longitude``) stay apart."""
+        m = self._muhurta(latitude, longitude, start_utc, end_utc, timezone, profile, disable, constraints, show,
+                          ayanamsha, sunrise)
+        nat = self._base(natal, "vedic", self._cfg(zodiac="sidereal", ayanamsha=ayanamsha))
+        return execute({"op": "personal_calendar", "natal": nat, "muhurta": m, "format": format})
+
+    def pair_calendar(self, a: Context, b: Context, latitude: float, longitude: float, start_utc: str, end_utc: str,
+                      timezone: Optional[str] = None, profile: Optional[str] = None, disable: Iterable[str] = (),
+                      constraints: Iterable[Any] = (), show: Iterable[str] = (), ayanamsha: str = "lahiri",
+                      sunrise: Optional[str] = None, format: str = "json") -> Dict[str, Any]:
+        """Windows that suit both people (each one's tara and chandra bala) and the event constraints (default
+        profile ``pair_general``); each window is explained by both people's factors and the event's."""
+        m = self._muhurta(latitude, longitude, start_utc, end_utc, timezone, profile, disable, constraints, show,
+                          ayanamsha, sunrise)
+        cfg = self._cfg(zodiac="sidereal", ayanamsha=ayanamsha)
+        return execute({"op": "pair_calendar", "a": self._base(a, None, cfg), "b": self._base(b, None, cfg),
+                        "muhurta": m, "format": format})
+
+    def _muhurta(self, lat: float, lon: float, start: str, end: str, tz: Optional[str], profile: Optional[str],
+                 disable: Iterable[str], constraints: Iterable[Any], show: Iterable[str], ayanamsha: str,
+                 sunrise: Optional[str]) -> Dict[str, Any]:
+        m: Dict[str, Any] = {"place": {"latitude": lat, "longitude": lon}, "start_utc": start, "end_utc": end,
+                             "timezone": tz, "profile": profile, "disable": list(disable),
+                             "constraints": list(constraints), "show": list(show), "sunrise": sunrise,
+                             "config": self._cfg(zodiac="sidereal", ayanamsha=ayanamsha)}
+        if self.spk_path:
+            m["spk_path"] = self.spk_path
+        return {k: v for k, v in m.items() if v is not None}
+
+    def progressions(self, natal: Context, at_utc: str, angle_method: Optional[str] = None,
+                     zodiac: str = "tropical", ayanamsha: Optional[str] = None,
+                     year_days: Optional[float] = None) -> Dict[str, Any]:
+        """Secondary progressions to ``at_utc``: fractional age, positions at birth + age days, and angles under
+        ``angle_method`` (``solar_arc_longitude``, ``naibod_ra``, ``quotidian``); without one they are unavailable."""
+        nat = self._base(natal, None, self._cfg(zodiac=zodiac, ayanamsha=ayanamsha))
+        req = {"op": "progressions", "natal": nat, "at_utc": at_utc, "angle_method": angle_method, "year_days": year_days}
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    @staticmethod
+    def synthetic_chart(positions: Iterable[Dict[str, Any]], ascendant_deg: Optional[float] = None) -> Dict[str, Any]:
+        """Vedic factors from hand-placed sidereal positions (``[{"body": "saturn", "longitude_deg": 190}]``); no
+        ephemeris is used, the result is labelled synthetic, and time-dependent factors are unavailable."""
+        req = {"op": "synthetic_chart", "positions": list(positions), "ascendant_deg": ascendant_deg}
+        return execute({k: v for k, v in req.items() if v is not None})
+
+    @staticmethod
+    def research_window_score(windows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
+        """Experimental model ``research.window_score@0.1``: order passing muhurta windows (from muhurta_windows or a
+        calendar). Specified in docs/design/research-models.md; a research hypothesis, not a reading."""
+        return execute({"op": "research_window_score", "windows": list(windows)})
+
+    @staticmethod
+    def kp_table() -> Dict[str, Any]:
+        """The KP 1-249 horary numbers: sign, star lord, sub lord and arc of each."""
+        return execute({"op": "kp_table"})
+
+    def kp_horary(self, number: int, ctx: Context, ayanamsha: str = "krishnamurti",
+                  occupancy: Optional[str] = None) -> Dict[str, Any]:
+        """KP horary chart. ``number`` (1-249) fixes the Ascendant at the start of its arc; ``ctx`` is the moment and
+        place of judgement, kept apart from the number. ``occupancy`` is a ``kp_cusp_occupancy`` method id."""
+        chart = self._base(ctx, "vedic", self._cfg(zodiac="sidereal", ayanamsha=ayanamsha),
+                           kp_cusp_occupancy=occupancy)
+        return execute({"op": "kp_horary", "number": number, "chart": chart})
+
+    @staticmethod
+    def methods() -> Dict[str, Any]:
+        """Every method family and id the engine implements (an unknown id is refused with ESH-METHOD)."""
+        return execute({"op": "methods"})
 
     @staticmethod
     def rulesets() -> Dict[str, Any]:

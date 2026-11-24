@@ -118,7 +118,40 @@ pub struct ChartRequest {
     pub sunrise: Option<String>,
     /// Sun for the special lagnas: `birth` (default) or `sunrise`.
     pub special_lagna_sun: Option<String>,
+    /// KP cusp occupancy (`kp_cusp_occupancy` family): `cusp_start` (default) or `cusp_midpoint`.
+    pub kp_cusp_occupancy: Option<String>,
+    /// Further divisional charts by method id (`varga_method` family, e.g. `d81_navanavamsha`), Vedic only.
+    #[serde(default)]
+    pub varga_methods: Vec<String>,
 }
+
+/// Every operation (`op`) a request may name. A unit test keeps this list and the [`Request`] enum in step.
+pub const OPERATIONS: [&str; 24] = [
+    "positions",
+    "chart",
+    "human_design",
+    "numerology",
+    "compare",
+    "graph",
+    "panchanga",
+    "matching",
+    "ephemeris",
+    "ingresses",
+    "stations",
+    "crossings",
+    "rulesets",
+    "methods",
+    "ashtakavarga_transits",
+    "muhurta_windows",
+    "personal_calendar",
+    "pair_calendar",
+    "progressions",
+    "kp_table",
+    "kp_horary",
+    "synthetic_chart",
+    "research_window_score",
+    "info",
+];
 
 /// Every Vedic feature name accepted in `features`.
 pub const FEATURES: [&str; 21] = [
@@ -207,6 +240,86 @@ pub struct NumerologyRequest {
     pub gender: Option<String>,
 }
 
+/// Stations and retrograde intervals of one body in a range.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StationRequest {
+    /// Body id.
+    pub body: String,
+    /// Range start, UTC ISO (included).
+    pub start_utc: String,
+    /// Range end, UTC ISO (excluded).
+    pub end_utc: String,
+    /// Solver tolerance in seconds (default 1; 0.01 to 3600). Not the ephemeris accuracy.
+    pub tolerance_seconds: Option<f64>,
+    /// Settings: the zodiac picks the frame the speed is measured in.
+    #[serde(default)]
+    pub config: ConfigIn,
+    /// SPK kernel path.
+    pub spk_path: Option<String>,
+}
+
+/// When one body reaches a longitude, or an aspect to it, in a range.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CrossingRequest {
+    /// Body id.
+    pub body: String,
+    /// The point, in degrees of the requested zodiac (for example a natal Moon).
+    pub point_deg: f64,
+    /// Aspect angles in degrees (default `[0]`, the conjunction).
+    pub aspects: Option<Vec<f64>>,
+    /// Range start, UTC ISO (included).
+    pub start_utc: String,
+    /// Range end, UTC ISO (excluded).
+    pub end_utc: String,
+    /// Solver tolerance in seconds (default 1; 0.01 to 3600).
+    pub tolerance_seconds: Option<f64>,
+    /// Report closest approaches that stop within this many degrees without crossing (default 0.1; 0 turns off).
+    pub touch_orb_deg: Option<f64>,
+    /// At most this many events (default 10000); `truncated` says when there were more.
+    pub max_results: Option<usize>,
+    /// Settings.
+    #[serde(default)]
+    pub config: ConfigIn,
+    /// SPK kernel path.
+    pub spk_path: Option<String>,
+}
+
+/// Muhūrta windows: factor timelines over a range composed under a profile and/or constraints.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MuhurtaRequest {
+    /// The event place (where the muhūrta happens), not a birth place.
+    pub place: Place,
+    /// Range start, UTC ISO (included).
+    pub start_utc: String,
+    /// Range end, UTC ISO (excluded); at most 62 days after the start.
+    pub end_utc: String,
+    /// IANA zone of the event place, for local times (DST and historic offsets per instant).
+    pub timezone: Option<String>,
+    /// Fixed offset in minutes east, when no zone is known (otherwise mean solar time at the longitude).
+    pub utc_offset_minutes: Option<i32>,
+    /// A profile id (`muhurta_profile` family).
+    pub profile: Option<String>,
+    /// Profile constraints to switch off, by id.
+    #[serde(default)]
+    pub disable: Vec<String>,
+    /// Extra constraints: ids from the pack, or inline `{factor, include | exclude}`.
+    #[serde(default)]
+    pub constraints: Vec<Value>,
+    /// Factors to report on every window even when no constraint names them.
+    #[serde(default)]
+    pub show: Vec<String>,
+    /// Sunrise convention.
+    pub sunrise: Option<String>,
+    /// Sidereal settings (an ayanāṃśa is required).
+    #[serde(default)]
+    pub config: ConfigIn,
+    /// SPK kernel path.
+    pub spk_path: Option<String>,
+}
+
 /// A request, tagged by `op`.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case")]
@@ -254,8 +367,79 @@ pub enum Request {
     Ephemeris(EphemerisRequest),
     /// Sign ingresses of one body in a range.
     Ingresses(IngressRequest),
+    /// Stations and retrograde intervals of one body in a range.
+    Stations(StationRequest),
+    /// Crossings of a longitude (and aspects to it) by one body in a range.
+    Crossings(CrossingRequest),
     /// The built-in YAML rule packs.
     Rulesets,
+    /// The method registry: every family and method id the engine implements.
+    Methods,
+    /// Transit Aṣṭakavarga: the natal BAV/SAV cells each graha reads, as `[start, end)` segments over a range.
+    AshtakavargaTransits {
+        /// The natal chart (exact time and place, sidereal settings); the transits use the same settings.
+        natal: ChartRequest,
+        /// Range start, UTC ISO (included).
+        start_utc: String,
+        /// Range end, UTC ISO (excluded).
+        end_utc: String,
+        /// Body ids (default the seven grahas Sun–Saturn); a node is answered as unavailable.
+        bodies: Option<Vec<String>>,
+    },
+    /// Muhūrta windows: composed factor timelines over a range.
+    MuhurtaWindows(MuhurtaRequest),
+    /// A personal calendar: muhūrta windows with tārā and candra bala from a birth chart, day summaries, exports.
+    PersonalCalendar {
+        /// The birth (its place is the birth place, never the event place).
+        natal: ChartRequest,
+        /// The event place, zone, range and constraints.
+        muhurta: MuhurtaRequest,
+        /// `json` (default), `csv` or `ics`: the export is returned in `content`.
+        format: Option<String>,
+    },
+    /// A pair calendar: windows that suit both people (each one's tārā and candra bala) and the event constraints.
+    PairCalendar {
+        /// First person (the role classical tables give the groom).
+        a: ChartRequest,
+        /// Second person.
+        b: ChartRequest,
+        /// The event place, zone, range and constraints (default profile pair_general when none is given).
+        muhurta: MuhurtaRequest,
+        /// `json`, `csv` or `ics`.
+        format: Option<String>,
+    },
+    /// Secondary progressions: a day after birth for each year of life, with angles under a named method.
+    Progressions {
+        /// The birth (an exact time and a place for angles); its settings pick the zodiac.
+        natal: ChartRequest,
+        /// The moment of life to progress to, UTC ISO.
+        at_utc: String,
+        /// `progression_angles` method id; without it the angles are unavailable.
+        angle_method: Option<String>,
+        /// Days per year of life (default the tropical year, 365.24219).
+        year_days: Option<f64>,
+    },
+    /// Vedic factors derived from hand-placed sidereal positions; no ephemeris is consulted.
+    SyntheticChart {
+        /// The placed bodies.
+        positions: Vec<crate::synthetic::Placed>,
+        /// A placed sidereal Ascendant (optional; whole-sign houses and lagna-based factors need it).
+        ascendant_deg: Option<f64>,
+    },
+    /// Experimental research model `research.window_score@0.1` over muhūrta windows (see docs/design/research-models.md).
+    ResearchWindowScore {
+        /// Windows as a `muhurta_windows`, `personal_calendar` or `pair_calendar` result gives them.
+        windows: Value,
+    },
+    /// The KP 1–249 horary number table.
+    KpTable,
+    /// A KP horary chart from a number (1–249) and the moment and place of judgement.
+    KpHorary {
+        /// The querent's number, 1–249: fixes the Ascendant at the start of its arc.
+        number: u32,
+        /// Moment and place of judgement (not the number), with settings.
+        chart: ChartRequest,
+    },
     /// Environment, providers and error catalogue.
     Info,
 }
@@ -485,10 +669,63 @@ impl Engine {
             Request::Matching { a, b } => self.matching_op(a, b),
             Request::Ephemeris(r) => self.ephemeris_op(r),
             Request::Ingresses(r) => self.ingress_op(r),
+            Request::Stations(r) => self.stations_op(r),
+            Request::Crossings(r) => self.crossings_op(r),
             Request::Rulesets => Ok(json!({
                 "schema_version": SCHEMA_VERSION, "kind": "rulesets",
                 "packs": crate::packs::SOURCES.iter().map(|(n, src)| json!({"file": n, "yaml": src})).collect::<Vec<_>>(),
             })),
+            Request::Methods => Ok(crate::methods::listing()),
+            Request::MuhurtaWindows(r) => self.muhurta_op(r),
+            Request::PersonalCalendar {
+                natal,
+                muhurta,
+                format,
+            } => self.personal_calendar_op(natal, muhurta, format.as_deref()),
+            Request::PairCalendar {
+                a,
+                b,
+                muhurta,
+                format,
+            } => self.pair_calendar_op(a, b, muhurta, format.as_deref()),
+            Request::Progressions {
+                natal,
+                at_utc,
+                angle_method,
+                year_days,
+            } => self.progressions_op(natal, at_utc, angle_method.as_deref(), *year_days),
+            Request::SyntheticChart {
+                positions,
+                ascendant_deg,
+            } => {
+                let v = crate::synthetic::derive(positions, *ascendant_deg)?;
+                Ok(
+                    json!({"schema_version": SCHEMA_VERSION, "kind": "synthetic_chart",
+                    "calculation": {"zodiac": "sidereal", "positions_source": "synthetic", "ephemeris": null},
+                    "synthetic": v, "interpretations": [],
+                    "provenance": {"engine_version": ENGINE_VERSION, "rulesets": [crate::packs::rule_id(&crate::packs::core().id, &crate::packs::core().version)],
+                        "assumptions": ["positions are synthetic: placed by the user, not computed from an ephemeris"],
+                        "positions_source": "synthetic"}}),
+                )
+            }
+            Request::ResearchWindowScore { windows } => Ok(json!({"schema_version": SCHEMA_VERSION,
+                "kind": "research_window_score", "model": crate::research::WINDOW_SCORE, "status": "experimental",
+                "epistemic": "research_hypothesis", "specification": "docs/design/research-models.md",
+                "weights": crate::research::WEIGHTS.iter().map(|(k, w)| json!({"factor": k, "weight": w})).collect::<Vec<_>>(),
+                "ranked": crate::research::rank(windows)?, "interpretations": [],
+                "provenance": {"engine_version": ENGINE_VERSION, "rulesets": [crate::research::WINDOW_SCORE], "assumptions": [
+                    "a research hypothesis: weights are stated, not validated; eligibility is decided by the constraints, not by this score"]}})),
+            Request::KpTable => Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "kp_table",
+                "table": crate::kp::table_json(), "interpretations": [],
+                "provenance": {"engine_version": ENGINE_VERSION, "rulesets": [], "assumptions": [],
+                  "construction": "each nakshatra divided among the nine Vimshottari lords by daśā years from its own lord; subs cut by a sign boundary are two numbers"}})),
+            Request::KpHorary { number, chart } => self.kp_horary_op(*number, chart),
+            Request::AshtakavargaTransits {
+                natal,
+                start_utc,
+                end_utc,
+                bodies,
+            } => self.av_transits_op(natal, start_utc, end_utc, bodies.as_deref()),
             Request::Info => Ok(self.info()),
         }
     }
@@ -505,6 +742,7 @@ impl Engine {
             "frame": FRAME_APPARENT_ECLIPTIC_OF_DATE,
             "providers": eshana_ephemeris::PROVIDER_IDS,
             "ayanamshas": Ayanamsha::ALL.iter().map(|a| a.id()).collect::<Vec<_>>(),
+            "ayanamsha_definitions": Ayanamsha::ALL.iter().map(|a| astro::ayanamsha_definition(*a)).collect::<Vec<_>>(),
             "house_systems": ["whole_sign", "equal", "placidus"],
             "divisional_charts": vedic::DIVISIONS,
             "vedic_features": FEATURES,
@@ -512,6 +750,8 @@ impl Engine {
             "numerology_schools": ["pythagorean", "chaldean"],
             "rulesets": [vedic::RULESET, WESTERN_RULESET, hd::RULESET,
                          numerology::School::Pythagorean.ruleset(), numerology::School::Chaldean.ruleset()],
+            "operations": OPERATIONS,
+            "method_families": crate::methods::registry().iter().map(|(f, _)| *f).collect::<Vec<_>>(),
             "error_codes": eshana_core::EshanaError::catalog().iter()
                 .map(|(c, m)| json!({"code": c, "meaning": m})).collect::<Vec<_>>(),
         })
@@ -896,6 +1136,22 @@ impl Engine {
                         }
                     }
                 }
+                if !r.varga_methods.is_empty() {
+                    let mut lons: Vec<(String, f64)> =
+                        pos_by_body.iter().map(|(k, v)| (k.clone(), v.0)).collect();
+                    if let (Some(a), true) = (asc_lon, hw == 0.0) {
+                        lons.push(("lagna".into(), a));
+                    }
+                    let v = crate::vargas_ext::charts(&r.varga_methods, &lons)?;
+                    derived.push(attr(
+                        "vedic.varga_methods",
+                        "vedic.parashari",
+                        "vargas.extended@0.1",
+                        Epistemic::TraditionRule,
+                        v,
+                        &["positions".to_string(), "houses".to_string()],
+                    ));
+                }
                 let feats = expand_features(&r.features)?;
                 if !feats.is_empty() {
                     self.vedic_features(
@@ -959,6 +1215,7 @@ impl Engine {
                 "ayanamsha_deg": cfg.ayanamsha.map(|a| astro::ayanamsha_deg(a, t)),
                 "house_system": cfg.house_system,
                 "node_model": cfg.node_model,
+                "config_hash": crate::methods::config_hash(&cfg),
             },
             "positions": positions,
             "houses": houses_out,
@@ -1135,7 +1392,8 @@ impl Engine {
                             for c in &mut cusps {
                                 *c = norm360(*c - off);
                             }
-                            let mut v = jyotish::kp(&vc, &cusps);
+                            let occ = crate::kp::Occupancy::parse(r.kp_cusp_occupancy.as_deref())?;
+                            let mut v = jyotish::kp_with(&vc, &cusps, occ);
                             if let Some(dl) = &day_lord {
                                 v["ruling_planets"] = jyotish::ruling_planets(&vc, dl).unwrap_or(Value::Null);
                             }
@@ -1507,11 +1765,527 @@ impl Engine {
                 .unwrap_or(Value::Null)
         };
         let k = crate::matching::ashtakoota(moon(&out[0])?, moon(&out[1])?);
+        let supp = self.matching_supplementary(a, b, &out[0], &out[1], moon(&out[0])?, moon(&out[1])?)?;
         Ok(
             json!({"schema_version": SCHEMA_VERSION, "kind": "matching", "ashtakoota": k,
                   "manglik": {"a": manglik(&out[0]), "b": manglik(&out[1])},
+                  "supplementary": supp,
                   "charts": {"a": out[0], "b": out[1]}, "interpretations": []}),
         )
+    }
+
+    /// Factors beside the 36 points, in their own section; the Aṣṭakūṭa above is computed exactly as before.
+    fn matching_supplementary(
+        &self,
+        a: &ChartRequest,
+        b: &ChartRequest,
+        ea: &Value,
+        eb: &Value,
+        moon_a: f64,
+        moon_b: f64,
+    ) -> Result<Value> {
+        use crate::matching_ext as mx;
+        let av = |side: &ChartRequest| -> Result<Option<Value>> {
+            let mut r = side.clone();
+            r.system = Some("vedic".into());
+            r.features = vec!["ashtakavarga".into()];
+            r.divisions = vec![];
+            r.dasha = false;
+            let env = self.chart(&r, Some("vedic"), "computed_chart")?;
+            Ok(env["derived_attributes"]
+                .as_array()
+                .and_then(|d| d.iter().find(|x| x["id"] == "vedic.ashtakavarga"))
+                .map(|x| x["value"].clone()))
+        };
+        let (sa, sb) = (mx::signs_of(ea), mx::signs_of(eb));
+        let (ma, mb) = (mx::manglik(&sa), mx::manglik(&sb));
+        let pair = mx::manglik_pair(&ma, &mb);
+        let (ava, avb) = (av(a)?, av(b)?);
+        Ok(json!({
+            "rule": mx::rule(),
+            "note": "reported beside the 36-point Aṣṭakūṭa; none of these changes its score",
+            "moon_factors": mx::moon_factors(moon_a, moon_b),
+            "manglik_trace": {"a": ma, "b": mb, "pair": pair,
+                "reference_points": ["lagna", "moon", "venus"]},
+            "pair_ashtakavarga": {"a_in_b": mx::pair_ashtakavarga(&sa, avb.as_ref()), "b_in_a": mx::pair_ashtakavarga(&sb, ava.as_ref())},
+            "cross_aspects": {"a_onto_b": mx::cross_aspects(&sa, &sb), "b_onto_a": mx::cross_aspects(&sb, &sa)},
+        }))
+    }
+
+    fn av_transits_op(
+        &self,
+        natal: &ChartRequest,
+        start: &str,
+        end: &str,
+        bodies: Option<&[String]>,
+    ) -> Result<Value> {
+        let (a, b) = (Instant::parse_utc(start)?, Instant::parse_utc(end)?);
+        check_span(a.jd_ut, b.jd_ut, 50.0)?;
+        let mut r = natal.clone();
+        r.system = Some("vedic".into());
+        r.features = vec!["ashtakavarga".into()];
+        r.divisions = vec![];
+        r.dasha = false;
+        let env = self.chart(&r, Some("vedic"), "computed_chart")?;
+        let mut assumptions = vec![];
+        let cfg = build_config(&r.config, Some("vedic"), r.assume_defaults, &mut assumptions)?;
+        let ayan = cfg
+            .ayanamsha
+            .ok_or_else(|| EshanaError::Config("dated Aṣṭakavarga needs a sidereal ayanamsha".into()))?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let natal_av = env["derived_attributes"]
+            .as_array()
+            .and_then(|d| d.iter().find(|x| x["id"] == "vedic.ashtakavarga"))
+            .map(|x| x["value"].clone());
+        let default: Vec<String> = crate::jyotish::SEVEN.iter().map(|s| (*s).to_string()).collect();
+        let list = bodies.map_or(default, <[String]>::to_vec);
+        let series = crate::dated::series(
+            provider.as_ref(),
+            &list,
+            a.jd_ut,
+            b.jd_ut,
+            ayan,
+            natal_av.as_ref(),
+        )?;
+        Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "ashtakavarga_transits",
+            "input": {"natal_utc": env["input"]["instant_utc"], "start_utc": a.utc, "end_utc": b.utc},
+            "calculation": {"ayanamsha": ayan, "provider": cfg.provider, "config_hash": crate::methods::config_hash(&cfg),
+                "rule": "a transiting graha reads its own natal BAV cell and the SAV cell of the sign it occupies; values change only at sign ingresses",
+                "range": "[start, end)"},
+            "natal_sarvashtakavarga": natal_av.as_ref().map(|v| v["sarvashtakavarga"].clone()),
+            "grahas": series, "interpretations": [],
+            "provenance": {"engine_version": ENGINE_VERSION, "rulesets": env["provenance"]["rulesets"],
+                           "assumptions": env["provenance"]["assumptions"]}}),
+        )
+    }
+
+    fn muhurta_op(&self, r: &MuhurtaRequest) -> Result<Value> {
+        self.muhurta_core(r, None, None)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn pair_calendar_op(
+        &self,
+        a: &ChartRequest,
+        b: &ChartRequest,
+        m: &MuhurtaRequest,
+        format: Option<&str>,
+    ) -> Result<Value> {
+        let moon_of = |side: &ChartRequest| -> Result<(f64, Value)> {
+            let mut r = side.clone();
+            r.system = Some("vedic".into());
+            r.features = vec![];
+            r.divisions = vec![];
+            r.dasha = false;
+            r.config.zodiac = Some("sidereal".into());
+            r.config.ayanamsha = m.config.ayanamsha.clone().or(r.config.ayanamsha);
+            let env = self.chart(&r, Some("vedic"), "computed_chart")?;
+            let moon = env["positions"]
+                .as_array()
+                .and_then(|p| p.iter().find(|x| x["id"] == "moon"))
+                .and_then(|x| x["longitude_deg"].as_f64())
+                .ok_or_else(|| EshanaError::Input("a pair calendar needs both Moons".into()))?;
+            Ok((
+                moon,
+                json!({"instant_utc": env["input"]["instant_utc"], "place": env["input"]["place"], "natal_moon_deg": moon}),
+            ))
+        };
+        let (mb, info_b) = moon_of(b)?;
+        let mut m = m.clone();
+        if m.profile.is_none() && m.constraints.is_empty() {
+            m.profile = Some("pair_general".into());
+        }
+        let mut v = self.personal_calendar_op_inner(a, &m, format, Some(mb))?;
+        v["kind"] = json!("pair_calendar");
+        v["input"]["partner"] = info_b;
+        v["input"]["partner"]["place_role"] = json!("birth");
+        // Explain every window by both people's factors and the event factors.
+        if let Some(ws) = v["windows"].as_array_mut() {
+            for w in ws {
+                let f = w["factors"].clone();
+                let pick = |k: &str| f.get(k).cloned().unwrap_or(Value::Null);
+                w["explained"] = json!({
+                    "a": {"tara_bala": pick("tara_bala"), "chandra_bala": pick("chandra_bala")},
+                    "b": {"tara_bala": pick("tara_bala_b"), "chandra_bala": pick("chandra_bala_b")},
+                    "event": f.as_object().map(|o| o.iter().filter(|(k, _)| !k.starts_with("tara_bala") && !k.starts_with("chandra_bala"))
+                        .map(|(k, x)| (k.clone(), x.clone())).collect::<serde_json::Map<_, _>>()),
+                });
+            }
+        }
+        Ok(v)
+    }
+
+    fn personal_calendar_op(
+        &self,
+        natal: &ChartRequest,
+        m: &MuhurtaRequest,
+        format: Option<&str>,
+    ) -> Result<Value> {
+        self.personal_calendar_op_inner(natal, m, format, None)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn personal_calendar_op_inner(
+        &self,
+        natal: &ChartRequest,
+        m: &MuhurtaRequest,
+        format: Option<&str>,
+        partner_moon: Option<f64>,
+    ) -> Result<Value> {
+        let fmt = format.unwrap_or("json");
+        if !["json", "csv", "ics"].contains(&fmt) {
+            return Err(EshanaError::Input(format!(
+                "format must be json, csv or ics, not '{fmt}'"
+            )));
+        }
+        // The natal Moon in the calendar's own zodiac: the natal chart is computed with the calendar's ayanāṃśa.
+        let mut nr = natal.clone();
+        nr.system = Some("vedic".into());
+        nr.features = vec!["ashtakavarga".into()];
+        nr.divisions = vec![];
+        nr.dasha = false;
+        nr.config.zodiac = Some("sidereal".into());
+        nr.config.ayanamsha = m.config.ayanamsha.clone().or(nr.config.ayanamsha);
+        let env = self.chart(&nr, Some("vedic"), "computed_chart")?;
+        let natal_moon = env["positions"]
+            .as_array()
+            .and_then(|p| p.iter().find(|x| x["id"] == "moon"))
+            .and_then(|x| x["longitude_deg"].as_f64())
+            .ok_or_else(|| EshanaError::Input("the natal chart has no Moon".into()))?;
+        let mut v = self.muhurta_core(m, Some(natal_moon), partner_moon)?;
+        // Day summaries in the event zone: sunrise, windows that start that day, the slow grahas' transit bindus.
+        let (a, b) = (Instant::parse_utc(&m.start_utc)?, Instant::parse_utc(&m.end_utc)?);
+        let ayan = Ayanamsha::ALL
+            .iter()
+            .copied()
+            .find(|x| Some(x.id()) == v["calculation"]["ayanamsha"].as_str())
+            .ok_or_else(|| EshanaError::Config("calendar needs an ayanamsha".into()))?;
+        let provider = self.provider(
+            v["calculation"]["provider"].as_str().unwrap_or("analytic"),
+            m.spk_path.as_deref(),
+        )?;
+        let natal_av = env["derived_attributes"]
+            .as_array()
+            .and_then(|d| d.iter().find(|x| x["id"] == "vedic.ashtakavarga"))
+            .map(|x| x["value"].clone());
+        let transits = crate::dated::series(
+            provider.as_ref(),
+            &["jupiter".to_string(), "saturn".to_string()],
+            a.jd_ut,
+            b.jd_ut,
+            ayan,
+            natal_av.as_ref(),
+        )?;
+        let off_at = |jd: f64| -> Result<f64> {
+            Ok(match (&m.timezone, m.utc_offset_minutes) {
+                (Some(z), _) => f64::from(eshana_time::zone_offset_seconds(z, jd)?),
+                (None, Some(mm)) => f64::from(mm) * 60.0,
+                (None, None) => m.place.longitude / 15.0 * 3600.0,
+            })
+        };
+        let mut days = vec![];
+        let mut d = ((a.jd_ut + off_at(a.jd_ut)? / 86_400.0) - 0.5).floor() + 0.5; // local midnight, local JD
+        while d - off_at(d)? / 86_400.0 < b.jd_ut {
+            let utc0 = d - off_at(d)? / 86_400.0;
+            let utc1 = (d + 1.0) - off_at(d + 1.0)? / 86_400.0;
+            let date = Instant::from_jd_utc(d).utc[..10].to_string();
+            let site = crate::panchanga::Site {
+                lat: m.place.latitude,
+                lon: m.place.longitude,
+                offset_s: off_at(utc0)?,
+                rising: crate::panchanga::Rising::parse(m.sunrise.as_deref())?,
+                lagna_sun_at_birth: true,
+            };
+            let day = crate::panchanga::vedic_day(provider.as_ref(), (utc0 + utc1) / 2.0, site)?;
+            let sunrise = match &day {
+                Some(dd) if dd.sunrise >= utc0 - 0.5 => json!(crate::muhurta::local_text(
+                    dd.sunrise,
+                    site,
+                    m.timezone.as_deref()
+                )?),
+                _ => crate::methods::unavailable(
+                    "the Sun does not rise or set here on this date",
+                    &["sunrise"],
+                ),
+            };
+            let starts: Vec<Value> = v["windows"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter(|w| {
+                    let s = Instant::parse_utc(w["start_utc"].as_str().unwrap_or_default()).map(|i| i.jd_ut).unwrap_or(f64::NAN);
+                    s >= utc0 && s < utc1
+                })
+                .map(|w| json!({"start_local": w["start_local"], "end_local": w["end_local"], "duration_minutes": w["duration_minutes"]}))
+                .collect();
+            let mid = (utc0.max(a.jd_ut) + utc1.min(b.jd_ut)) / 2.0;
+            let mut bindus = serde_json::Map::new();
+            for g in ["jupiter", "saturn"] {
+                let t = &transits[g];
+                let cell = t["segments"].as_array().and_then(|segs| {
+                    segs.iter().find(|s| {
+                        s["start_jd_ut"].as_f64().is_some_and(|x| x <= mid)
+                            && s["end_jd_ut"].as_f64().is_some_and(|x| mid < x)
+                    })
+                });
+                bindus.insert(
+                    g.into(),
+                    cell.map_or_else(
+                        || t.get("availability").cloned().unwrap_or(Value::Null),
+                        |c| json!({"transit_sign": c["transit_sign"], "bav": c["bav"], "sav": c["sav"]}),
+                    ),
+                );
+            }
+            days.push(
+                json!({"date": date, "sunrise_local": sunrise, "windows": starts, "transit_bindus": bindus}),
+            );
+            d += 1.0;
+        }
+        v["kind"] = json!("personal_calendar");
+        v["days"] = json!(days);
+        v["input"]["birth"] = json!({"instant_utc": env["input"]["instant_utc"], "place": env["input"]["place"],
+            "place_role": "birth", "natal_moon_deg": natal_moon});
+        let mut ev = v["input"]["place"].take();
+        ev["place_role"] = json!("event");
+        v["input"]["event_place"] = ev;
+        if let Some(o) = v["input"].as_object_mut() {
+            o.remove("place");
+            o.remove("place_role");
+        }
+        if fmt != "json" {
+            let (content, media) = if fmt == "csv" {
+                (calendar_csv(&v), "text/csv")
+            } else {
+                (calendar_ics(&v), "text/calendar")
+            };
+            v["format"] = json!(fmt);
+            v["media_type"] = json!(media);
+            v["content"] = json!(content);
+        }
+        Ok(v)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn muhurta_core(
+        &self,
+        r: &MuhurtaRequest,
+        natal_moon: Option<f64>,
+        partner_moon: Option<f64>,
+    ) -> Result<Value> {
+        let (a, b) = (Instant::parse_utc(&r.start_utc)?, Instant::parse_utc(&r.end_utc)?);
+        check_span(a.jd_ut, b.jd_ut, 62.0 / 366.0)?;
+        let mut assumptions = vec![];
+        let mut c = r.config.clone();
+        if c.zodiac.is_none() {
+            c.zodiac = Some("sidereal".into());
+        }
+        let cfg = build_config(&c, Some("vedic"), false, &mut assumptions)?;
+        let ayan = cfg
+            .ayanamsha
+            .ok_or_else(|| EshanaError::Config("muhurta needs an ayanamsha".into()))?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let offset_s = match (&r.timezone, r.utc_offset_minutes) {
+            (Some(z), _) => f64::from(eshana_time::zone_offset_seconds(z, a.jd_ut)?),
+            (None, Some(m)) => f64::from(m) * 60.0,
+            (None, None) => {
+                assumptions.push("no civil zone: local dates use mean solar time at the longitude".into());
+                r.place.longitude / 15.0 * 3600.0
+            }
+        };
+        let site = crate::panchanga::Site {
+            lat: r.place.latitude,
+            lon: r.place.longitude,
+            offset_s,
+            rising: crate::panchanga::Rising::parse(r.sunrise.as_deref())?,
+            lagna_sun_at_birth: true,
+        };
+        for f in &r.show {
+            if !crate::muhurta::pack().factors.contains_key(f) {
+                return Err(EshanaError::Input(format!("unknown factor '{f}' in show")));
+            }
+        }
+        let (cons, prof) = crate::muhurta::resolve(r.profile.as_deref(), &r.disable, &r.constraints)?;
+        let mut v = crate::muhurta::windows(
+            provider.as_ref(),
+            a.jd_ut,
+            b.jd_ut,
+            site,
+            ayan,
+            &cons,
+            &r.show,
+            r.timezone.as_deref(),
+            natal_moon,
+            partner_moon,
+        )?;
+        let pk = crate::muhurta::pack();
+        v["schema_version"] = json!(SCHEMA_VERSION);
+        v["kind"] = json!("muhurta_windows");
+        v["input"] = json!({"place": {"latitude_deg": r.place.latitude, "longitude_deg": r.place.longitude},
+            "place_role": "event", "timezone": r.timezone, "start_utc": a.utc, "end_utc": b.utc});
+        v["profile"] = prof.map_or(Value::Null, |p| {
+            json!({"id": p.id, "version": p.version, "status": p.status,
+            "title": p.title, "disabled": r.disable, "missing": p.missing})
+        });
+        v["calculation"] = json!({"ayanamsha": ayan, "provider": cfg.provider, "sunrise": site.rising.id(),
+            "config_hash": crate::methods::config_hash(&cfg), "range": "[start, end)",
+            "composition": "cut at every factor boundary, evaluate each piece, merge neighbours with equal values and verdicts"});
+        v["interpretations"] = json!([]);
+        v["provenance"] = json!({"engine_version": ENGINE_VERSION, "assumptions": assumptions,
+            "rulesets": [crate::packs::rule_id(&pk.id, &pk.version),
+                         crate::packs::rule_id(&crate::packs::panchanga().id, &crate::packs::panchanga().version)]});
+        if prof.is_some_and(|p| p.status == "experimental") {
+            v["warnings"] = json!([{"code": "ESH-RULES", "message": "this profile is experimental: it covers only the factors listed and lacks those under profile.missing"}]);
+        }
+        Ok(v)
+    }
+
+    fn progressions_op(
+        &self,
+        natal: &ChartRequest,
+        at_utc: &str,
+        method: Option<&str>,
+        year_days: Option<f64>,
+    ) -> Result<Value> {
+        use crate::progress as pg;
+        let yd = year_days.unwrap_or(pg::TROPICAL_YEAR_DAYS);
+        if !(360.0..=366.0).contains(&yd) {
+            return Err(EshanaError::Input("year_days must be between 360 and 366".into()));
+        }
+        if let Some(m) = method {
+            crate::methods::require("progression_angles", m)?;
+        }
+        let birth_env = self.chart(natal, None, "positions")?;
+        let mo = resolve_when(&natal.when)?;
+        let birth = mo.center.clone();
+        let at = Instant::parse_utc(at_utc)?;
+        if at.jd_ut < birth.jd_ut {
+            return Err(EshanaError::RangeInvalid("at_utc is before the birth".into()));
+        }
+        let age = (at.jd_ut - birth.jd_ut) / yd;
+        if age > 150.0 {
+            return Err(EshanaError::WorkLimit(
+                "progressions are limited to 150 years of life".into(),
+            ));
+        }
+        let pjd = birth.jd_ut + age;
+        let prog = Instant::from_jd_utc(pjd);
+        let mut pr = natal.clone();
+        pr.when = When {
+            utc: Some(prog.utc.clone()),
+            ..When::default()
+        };
+        let prog_env = self.chart(&pr, None, "positions")?;
+        let lon = |e: &Value, id: &str| -> Option<f64> {
+            e["positions"].as_array()?.iter().find(|p| p["id"] == id)?["tropical_longitude_deg"].as_f64()
+        };
+        let sun_arc = match (lon(&prog_env, "sun"), lon(&birth_env, "sun")) {
+            (Some(p), Some(n)) => norm360(p - n),
+            _ => return Err(EshanaError::Input("progressions need the Sun".into())),
+        };
+        let angles = match (method, natal.place.as_ref(), mo.half_width_days > 0.0) {
+            (None, _, _) => crate::methods::unavailable(
+                "no angle method was named (family progression_angles)",
+                &["angle_method"],
+            ),
+            (Some(_), None, _) => {
+                crate::methods::unavailable("progressed angles need the birth place", &["place"])
+            }
+            (Some(_), _, true) => {
+                crate::methods::unavailable("progressed angles need an exact birth time", &["birth time"])
+            }
+            (Some(m), Some(pl), false) => {
+                let tn = birth.t_tt();
+                let ramc_n = astro::local_apparent_sidereal_deg(birth.gmst_deg(), pl.longitude, tn);
+                let (_, mc_n) = astro::asc_mc(ramc_n, pl.latitude, tn);
+                let tp = prog.t_tt();
+                let lst_p = astro::local_apparent_sidereal_deg(prog.gmst_deg(), pl.longitude, tp);
+                let ramc_p = pg::progressed_ramc(m, ramc_n, mc_n, sun_arc, age, lst_p, tp)?;
+                let (asc, mc) = pg::angles_from_ramc(ramc_p, pl.latitude, tp);
+                let off = prog_env["calculation"]["ayanamsha"]
+                    .as_str()
+                    .and_then(|a| Ayanamsha::parse(a).ok())
+                    .map_or(0.0, |a| frames::nutation_deg(tp).0 + astro::ayanamsha_deg(a, tp));
+                json!({"method": {"family": "progression_angles", "id": m}, "ramc_deg": ramc_p,
+                       "ascendant_deg": norm360(asc - off), "midheaven_deg": norm360(mc - off),
+                       "natal_midheaven_deg": norm360(mc_n - off), "zodiac_offset_deg": off})
+            }
+        };
+        Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "progressions",
+            "input": {"birth_utc": birth.utc, "at_utc": at.utc},
+            "calculation": {"year_days": yd, "age_years": age, "progressed_utc": prog.utc, "progressed_jd_ut": pjd,
+                "rule": "progressed instant = birth + age_years days, age_years = (at − birth) / year_days",
+                "zodiac": prog_env["calculation"]["zodiac"], "ayanamsha": prog_env["calculation"]["ayanamsha"],
+                "config_hash": prog_env["calculation"]["config_hash"]},
+            "solar_arc_deg": sun_arc,
+            "positions": prog_env["positions"], "angles": angles, "interpretations": [],
+            "provenance": prog_env["provenance"]}))
+    }
+
+    fn kp_horary_op(&self, number: u32, chart: &ChartRequest) -> Result<Value> {
+        let entry = crate::kp::entry(number)?;
+        let occ = crate::kp::Occupancy::parse(chart.kp_cusp_occupancy.as_deref())?;
+        let pl = chart
+            .place
+            .as_ref()
+            .ok_or_else(|| EshanaError::Input("KP horary needs the place of judgement".into()))?;
+        let mut r = chart.clone();
+        r.system = Some("vedic".into());
+        r.features = vec!["kp".into()];
+        r.divisions = vec![];
+        r.dasha = false;
+        let env = self.chart(&r, Some("vedic"), "computed_chart")?;
+        let mo = resolve_when(&r.when)?;
+        if mo.half_width_days > 0.0 {
+            return Err(EshanaError::TimeUncertain(
+                "KP horary needs the exact moment of judgement".into(),
+            ));
+        }
+        let inst = &mo.center;
+        let t = inst.t_tt();
+        let ayan = env["calculation"]["ayanamsha"]
+            .as_str()
+            .and_then(|a| Ayanamsha::ALL.iter().copied().find(|x| x.id() == a))
+            .ok_or_else(|| EshanaError::Config("KP horary needs a sidereal ayanamsha".into()))?;
+        let off = frames::nutation_deg(t).0 + astro::ayanamsha_deg(ayan, t);
+        let (lst, cusps) = crate::kp::horary_cusps(number, pl.latitude, t, off)?;
+        let mut pos: BTreeMap<String, (f64, f64)> = BTreeMap::new();
+        for p in env["positions"].as_array().into_iter().flatten() {
+            if let (Some(id), Some(l), Some(sp)) = (
+                p["id"].as_str(),
+                p["longitude_deg"].as_f64(),
+                p["speed_deg_per_day"].as_f64(),
+            ) {
+                pos.insert(id.to_string(), (l, sp));
+            }
+        }
+        let vc = crate::jyotish::VChart::from_positions(&pos, Some(cusps[0]), Some(cusps[9]));
+        let mut kp = crate::jyotish::kp_with(&vc, &cusps, occ);
+        let natal_kp = env["derived_attributes"]
+            .as_array()
+            .and_then(|d| d.iter().find(|x| x["id"] == "vedic.kp"))
+            .map(|x| x["value"].clone());
+        if let Some(rp) = natal_kp.as_ref().map(|v| v["ruling_planets"].clone()) {
+            kp["ruling_planets_at_judgement"] = rp;
+        }
+        let mut notes = vec![];
+        if ayan != Ayanamsha::Krishnamurti {
+            notes.push("KP is normally used with the krishnamurti ayanamsha; this chart uses another one");
+        }
+        Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "kp_horary",
+            "input": {"number": number, "judgement_utc": inst.utc, "place": {"latitude_deg": pl.latitude, "longitude_deg": pl.longitude}},
+            "number": crate::kp::entry_json(&entry),
+            "calculation": {"ayanamsha": ayan, "provider": env["calculation"]["provider"], "house_system": "placidus",
+                "config_hash": env["calculation"]["config_hash"],
+                "local_sidereal_time_deg": lst,
+                "method": {"family": "kp_cusp_occupancy", "id": occ.id()},
+                "rule": "Ascendant fixed at the start of the number's arc; cusps are Placidus for the local sidereal time at which that degree rises at the place of judgement; planets are those of the moment of judgement"},
+            "ascendant": {"longitude_deg": cusps[0], "sign": sign_value(cusps[0], true)},
+            "cusps_deg": cusps,
+            "positions": env["positions"],
+            "kp": kp, "notes": notes, "interpretations": [],
+            "provenance": {"engine_version": ENGINE_VERSION, "rulesets": env["provenance"]["rulesets"],
+                           "assumptions": env["provenance"]["assumptions"]}}))
     }
 
     fn ephemeris_op(&self, r: &EphemerisRequest) -> Result<Value> {
@@ -1548,6 +2322,72 @@ impl Engine {
         Ok(json!({"schema_version": SCHEMA_VERSION, "kind": "ephemeris",
                   "calculation": {"zodiac": cfg.zodiac, "ayanamsha": cfg.ayanamsha, "provider": cfg.provider},
                   "rows": rows, "interpretations": []}))
+    }
+
+    fn stations_op(&self, r: &StationRequest) -> Result<Value> {
+        let mut assumptions = vec![];
+        let cfg = build_config(&r.config, None, false, &mut assumptions)?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let body = Body::parse(&r.body)?;
+        let (a, b, tol) = event_range(&r.start_utc, &r.end_utc, r.tolerance_seconds)?;
+        let ayan = sidereal_of(&cfg);
+        let found = crate::events::stations(provider.as_ref(), body, a, b, ayan, tol / 86_400.0)?;
+        let mut out = json!({"schema_version": SCHEMA_VERSION, "kind": "stations", "body": body.id(),
+              "calculation": event_calculation(&cfg, tol), "interpretations": []});
+        out["stations"] = found["stations"].clone();
+        out["retrograde_intervals"] = found["retrograde_intervals"].clone();
+        if crate::events::never_stations(body) {
+            out["note"] = json!(format!("{} never stations", body.id()));
+        }
+        Ok(out)
+    }
+
+    fn crossings_op(&self, r: &CrossingRequest) -> Result<Value> {
+        let mut assumptions = vec![];
+        let cfg = build_config(&r.config, None, false, &mut assumptions)?;
+        let provider = self.provider(&cfg.provider, r.spk_path.as_deref())?;
+        let body = Body::parse(&r.body)?;
+        let (a, b, tol) = event_range(&r.start_utc, &r.end_utc, r.tolerance_seconds)?;
+        if !r.point_deg.is_finite() {
+            return Err(EshanaError::Input(
+                "point_deg must be a finite number of degrees".into(),
+            ));
+        }
+        let aspects = r.aspects.clone().unwrap_or_else(|| vec![0.0]);
+        if aspects.is_empty() || aspects.len() > 16 || aspects.iter().any(|x| !x.is_finite()) {
+            return Err(EshanaError::Input(
+                "aspects must be 1 to 16 finite angles in degrees".into(),
+            ));
+        }
+        let orb = r.touch_orb_deg.unwrap_or(0.1);
+        if !(0.0..=5.0).contains(&orb) {
+            return Err(EshanaError::Input("touch_orb_deg must be between 0 and 5".into()));
+        }
+        let max = r.max_results.unwrap_or(10_000);
+        if max == 0 || max > 100_000 {
+            return Err(EshanaError::Input(
+                "max_results must be between 1 and 100000".into(),
+            ));
+        }
+        let found = crate::events::crossings(
+            provider.as_ref(),
+            body,
+            r.point_deg,
+            &aspects,
+            a,
+            b,
+            sidereal_of(&cfg),
+            tol / 86_400.0,
+            orb,
+            max,
+        )?;
+        let mut calc = event_calculation(&cfg, tol);
+        calc["touch_orb_deg"] = json!(orb);
+        Ok(
+            json!({"schema_version": SCHEMA_VERSION, "kind": "crossings", "body": body.id(),
+              "point_deg": r.point_deg, "aspects": aspects, "calculation": calc,
+              "events": found["events"], "truncated": found["truncated"], "interpretations": []}),
+        )
     }
 
     fn ingress_op(&self, r: &IngressRequest) -> Result<Value> {
@@ -1953,6 +2793,184 @@ fn chrono_check(y: i32, m: u32, d: u32) -> Result<()> {
             "{y:04}-{m:02}-{d:02} is not a real calendar date"
         )))
     }
+}
+
+/// A search range (UT Julian days, end after start, at most 200 years) and the solver tolerance in seconds.
+fn event_range(start: &str, end: &str, tolerance_seconds: Option<f64>) -> Result<(f64, f64, f64)> {
+    let (a, b) = (Instant::parse_utc(start)?, Instant::parse_utc(end)?);
+    check_span(a.jd_ut, b.jd_ut, 200.0)?;
+    let tol = tolerance_seconds.unwrap_or(1.0);
+    if !(0.01..=3600.0).contains(&tol) {
+        return Err(EshanaError::Input(
+            "tolerance_seconds must be between 0.01 and 3600".into(),
+        ));
+    }
+    Ok((a.jd_ut, b.jd_ut, tol))
+}
+
+/// `ESH-RANGE-INVALID` for an empty or reversed range, `ESH-LIMIT` past `max_years`.
+pub(crate) fn check_span(a: f64, b: f64, max_years: f64) -> Result<()> {
+    if b <= a {
+        return Err(EshanaError::RangeInvalid("end must be after start".into()));
+    }
+    if b - a > max_years * 366.0 {
+        return Err(EshanaError::WorkLimit(format!(
+            "the range may span at most {max_years} years"
+        )));
+    }
+    Ok(())
+}
+
+fn sidereal_of(cfg: &CalculationConfig) -> Option<Ayanamsha> {
+    if cfg.zodiac == ZodiacSystem::Sidereal {
+        cfg.ayanamsha
+    } else {
+        None
+    }
+}
+
+fn event_calculation(cfg: &CalculationConfig, tol: f64) -> Value {
+    json!({"zodiac": cfg.zodiac, "ayanamsha": cfg.ayanamsha, "provider": cfg.provider,
+           "config_hash": crate::methods::config_hash(cfg), "tolerance_seconds": tol, "range": "[start, end)",
+           "note": "the tolerance is the solver's; the provider's position error can move an event by more"})
+}
+
+fn csv_field(s: &str) -> String {
+    if s.contains([',', '"', '\n']) {
+        format!("\"{}\"", s.replace('"', "\"\""))
+    } else {
+        s.to_string()
+    }
+}
+
+fn label_of(v: &Value) -> String {
+    if let Some(a) = v.get("availability") {
+        return format!("unavailable: {}", a["reason"].as_str().unwrap_or(""));
+    }
+    match v {
+        Value::Bool(b) => b.to_string(),
+        Value::Null => String::new(),
+        _ => v
+            .get("name")
+            .or_else(|| v.get("lord"))
+            .or_else(|| v.get("quality"))
+            .or_else(|| v.get("index"))
+            .map_or_else(
+                || v.to_string(),
+                |x| x.as_str().map_or_else(|| x.to_string(), String::from),
+            ),
+    }
+}
+
+/// One row per piece of the timeline: times, verdict, every factor, failed constraints.
+fn calendar_csv(v: &Value) -> String {
+    let tl = v["timeline"].as_array().cloned().unwrap_or_default();
+    let factors: Vec<String> = tl
+        .first()
+        .and_then(|w| w["factors"].as_object())
+        .map(|o| o.keys().cloned().collect())
+        .unwrap_or_default();
+    let mut out = format!(
+        "start_utc,end_utc,start_local,end_local,passes,{},failed\n",
+        factors.join(",")
+    );
+    for w in tl {
+        let mut row = vec![
+            w["start_utc"].as_str().unwrap_or("").to_string(),
+            w["end_utc"].as_str().unwrap_or("").to_string(),
+            w["start_local"].as_str().unwrap_or("").to_string(),
+            w["end_local"].as_str().unwrap_or("").to_string(),
+            w["passes"].to_string(),
+        ];
+        row.extend(factors.iter().map(|f| label_of(&w["factors"][f])));
+        row.push(
+            w["failed"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .map(|x| x["constraint"].as_str().unwrap_or(""))
+                .collect::<Vec<_>>()
+                .join(" "),
+        );
+        out.push_str(&row.iter().map(|x| csv_field(x)).collect::<Vec<_>>().join(","));
+        out.push('\n');
+    }
+    out
+}
+
+fn ics_time(utc: &str) -> String {
+    // 2026-11-24T10:48:24.493Z → 20261124T104824Z (seconds truncated toward the window: start rounds up, see caller)
+    let d: String = utc.chars().filter(char::is_ascii_digit).take(14).collect();
+    format!("{}T{}Z", &d[..8], &d[8..14])
+}
+
+fn ics_fold(line: &str) -> String {
+    let mut out = String::new();
+    let mut n = 0;
+    for ch in line.chars() {
+        let w = ch.len_utf8();
+        if n + w > 74 {
+            out.push_str("\r\n ");
+            n = 1;
+        }
+        out.push(ch);
+        n += w;
+    }
+    out.push_str("\r\n");
+    out
+}
+
+fn ics_text(s: &str) -> String {
+    s.replace('\\', "\\\\")
+        .replace(';', "\\;")
+        .replace(',', "\\,")
+        .replace('\n', "\\n")
+}
+
+/// One VEVENT per passing window, in UTC; deterministic UIDs and DTSTAMP (the range start), so the same request
+/// gives the same bytes.
+fn calendar_ics(v: &Value) -> String {
+    let prof = v["profile"]["id"].as_str().unwrap_or("constraints");
+    let stamp = ics_time(v["input"]["start_utc"].as_str().unwrap_or("1970-01-01T00:00:00Z"));
+    let mut out = String::new();
+    for l in [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//ESHANA//muhurta calendar//EN",
+        "CALSCALE:GREGORIAN",
+    ] {
+        out.push_str(&ics_fold(l));
+    }
+    for w in v["windows"].as_array().into_iter().flatten() {
+        let (s, e) = (
+            w["start_utc"].as_str().unwrap_or(""),
+            w["end_utc"].as_str().unwrap_or(""),
+        );
+        let desc = w["factors"]
+            .as_object()
+            .map(|o| {
+                o.iter()
+                    .map(|(k, x)| format!("{k}: {}", label_of(x)))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            })
+            .unwrap_or_default();
+        let uid = crate::methods::hash_value(&json!([prof, s, e])).replace("fnv1a64:", "");
+        for l in [
+            "BEGIN:VEVENT".to_string(),
+            format!("UID:{uid}@eshana"),
+            format!("DTSTAMP:{stamp}"),
+            format!("DTSTART:{}", ics_time(s)),
+            format!("DTEND:{}", ics_time(e)),
+            format!("SUMMARY:{}", ics_text(&format!("Muhūrta window ({prof})"))),
+            format!("DESCRIPTION:{}", ics_text(&desc)),
+            "END:VEVENT".to_string(),
+        ] {
+            out.push_str(&ics_fold(&l));
+        }
+    }
+    out.push_str(&ics_fold("END:VCALENDAR"));
+    out
 }
 
 /// Error envelope with a stable code.

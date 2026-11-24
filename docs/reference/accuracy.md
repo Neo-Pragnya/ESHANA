@@ -44,6 +44,34 @@ Enforced by `crates/eshana-ephemeris/tests/golden.rs`: analytic within 60″ (in
 | Mean node | 0.01° |
 | True node (osculating) | 0.06° |
 
+## Event times vs the Swiss Ephemeris (offline oracle)
+
+`benchmarks/golden/events_oracle.json` (from `benchmarks/make_event_oracle.py`) holds the stations of Mercury to Saturn
+in 2024-2026, tropical and Lahiri-sidereal, from the Swiss Ephemeris' own analytical speeds, and three longitude
+crossings that include a retrograde loop. `crates/eshana-engine/tests/events_oracle.rs` checks them. Every station
+and crossing is found, with the same direction. The solver refines to 1 s; the differences below come from the
+positions.
+
+| Measured worst, 2024-2026 | spk (JPL DE440s) | analytic |
+|---|---:|---:|
+| Station longitude | 0.35″ | 288″ (Saturn), 51″ (Venus) |
+| Station time, Mercury / Venus / Mars, tropical | 0.003 / 0.006 / 0.013 h | 0.04 / 0.24 / 0.10 h |
+| Station time, Jupiter / Saturn, tropical | 0.054 / 0.122 h | 1.3 / 2.0 h |
+| Station time, any body, Lahiri sidereal | 0.0095 h | 2.0 h |
+| Crossing, as time × speed | 0.2″ | within each body's position error above |
+
+Reading it:
+
+- **Where a planet stations is well determined; when is not.** Speed is flat at a station, so a speed difference of
+  1e-5 °/day moves a slow planet's station by minutes (Δt = Δspeed / acceleration) while its longitude agrees to a
+  fraction of an arc-second. Compare station *longitudes* when it matters.
+- With the kernel, tropical stations are 5-16× further from the oracle than sidereal ones. Tropical speed of date
+  carries the nutation rate, and ESHANA's 4-term nutation series is not the oracle's full one; in the sidereal frame
+  the two largely cancel.
+- The analytic provider's Venus is 51″ from the oracle at its stations, more than the 22.4″ worst case of the nine
+  position instants above. Use `spk` for timing work on any body.
+- Stations are computed in the frame requested: a sidereal station is not the tropical one, by up to an hour for Saturn.
+
 ## What these numbers do and do not say
 
 - They say the *geometry* is right to the stated precision. They say nothing about the tradition applied to it.

@@ -49,3 +49,20 @@ Feature: Errors are clean and carry stable codes
     Then the exit code is 2
     And the output contains "ESH-CONFIG"
     And the output contains "naif.jpl.nasa.gov"
+
+  Scenario: A search past its documented span is a work-limit error, not an input error
+    When I run "eshana crossings --body mars --point 10 --start 1800-01-01T00:00:00Z --end 2090-01-01T00:00:00Z --zodiac tropical"
+    Then the exit code is 2
+    And the output contains "ESH-LIMIT"
+
+  Scenario: An empty search range has its own code
+    When I run "eshana crossings --body mars --point 10 --start 2024-01-01T00:00:00Z --end 2024-01-01T00:00:00Z --zodiac tropical"
+    Then the exit code is 2
+    And the output contains "ESH-RANGE-INVALID"
+
+  Scenario: The method registry lists every family with stable ids
+    When I run "eshana methods"
+    Then it succeeds
+    And the output contains ""kind": "methods""
+    And the output contains "house_system"
+    And the output contains "placidus"

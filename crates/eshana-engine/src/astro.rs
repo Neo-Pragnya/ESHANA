@@ -54,8 +54,55 @@ pub fn ayanamsha_deg(model: Ayanamsha, t: f64) -> f64 {
         Ayanamsha::Raman => 22.410_791_040,
         Ayanamsha::Krishnamurti => 23.760_240_040,
         Ayanamsha::FaganBradley => 24.740_299_994,
+        // Mean values at J2000.0 (TT) from the Swiss Ephemeris tables, as published reference numbers.
+        Ayanamsha::Yukteshwar => 22.478_803_0,
+        Ayanamsha::JnBhasin => 22.762_137_0,
+        Ayanamsha::Ushashashi => 20.057_541_0,
+        Ayanamsha::Sassanian => 19.992_959_4,
+        Ayanamsha::Deluce => 27.815_752_8,
+        Ayanamsha::DjwhalKhul => 28.359_678_6,
     };
     at_j2000 + general_precession_deg(t)
+}
+
+/// How a model is defined: its anchor epoch and value, the frame it is measured in, and where the number comes from.
+#[must_use]
+pub fn ayanamsha_definition(model: Ayanamsha) -> serde_json::Value {
+    let (epoch, src) = match model {
+        Ayanamsha::Lahiri => (
+            "1956-03-21 (23°15′00.658″, Indian Calendar Reform Committee); carried as its J2000.0 value",
+            "Indian Calendar Reform Committee; Swiss Ephemeris SIDM_LAHIRI",
+        ),
+        Ayanamsha::Raman => (
+            "J2000.0 value of B. V. Raman's definition",
+            "Swiss Ephemeris SIDM_RAMAN",
+        ),
+        Ayanamsha::Krishnamurti => (
+            "J2000.0 value of K. S. Krishnamurti's definition",
+            "Swiss Ephemeris SIDM_KRISHNAMURTI",
+        ),
+        Ayanamsha::FaganBradley => (
+            "J2000.0 value of the Fagan–Bradley definition",
+            "Swiss Ephemeris SIDM_FAGAN_BRADLEY",
+        ),
+        Ayanamsha::Yukteshwar => ("J2000.0 (22.478803°)", "Swiss Ephemeris SIDM_YUKTESHWAR"),
+        Ayanamsha::JnBhasin => ("J2000.0 (22.762137°)", "Swiss Ephemeris SIDM_JN_BHASIN"),
+        Ayanamsha::Ushashashi => ("J2000.0 (20.057541°)", "Swiss Ephemeris SIDM_USHASHASHI"),
+        Ayanamsha::Sassanian => (
+            "zero point AD 564; carried as its J2000.0 value",
+            "Swiss Ephemeris SIDM_SASSANIAN",
+        ),
+        Ayanamsha::Deluce => (
+            "zero point at the start of the era; carried as its J2000.0 value",
+            "Swiss Ephemeris SIDM_DELUCE",
+        ),
+        Ayanamsha::DjwhalKhul => ("J2000.0 (28.359679°)", "Swiss Ephemeris SIDM_DJWHAL_KHUL"),
+    };
+    serde_json::json!({
+        "id": model.id(), "epoch": epoch, "value_at_j2000_deg": ayanamsha_deg(model, 0.0),
+        "frame": "mean equinox and ecliptic of date; carried from J2000.0 by the IAU 2006 general precession in longitude; nutation removed from the apparent longitude before it is subtracted",
+        "source": src,
+    })
 }
 
 /// Identifier used in rule provenance for each ayanāṃśa anchor.
@@ -310,7 +357,11 @@ mod tests {
         for row in oracle()["instants"].as_array().unwrap() {
             let inst = Instant::parse_utc(row["utc"].as_str().unwrap()).unwrap();
             for m in Ayanamsha::ALL {
-                let want = row["ayanamsha"][m.id()].as_f64().unwrap();
+                // this file holds the original four; every model is checked at eight epochs in
+                // tests/ayanamsha_oracle.rs
+                let Some(want) = row["ayanamsha"][m.id()].as_f64() else {
+                    continue;
+                };
                 let got = ayanamsha_deg(m, inst.t_tt());
                 assert!(
                     (got - want).abs() < 0.0006,

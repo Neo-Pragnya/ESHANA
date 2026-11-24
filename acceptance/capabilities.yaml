@@ -26,8 +26,10 @@ capabilities:
   - { id: report, title: "eshana-report writes one self-contained HTML file with every chart; unknown inputs are listed as not computed, never guessed", dimension: usability, blocker: true }
   - { id: vedic-features, title: "Vedic features from YAML rule packs: strength, drishti, ashtakavarga, Jaimini, KP, yogas and doshas, Sade Sati, vargas to D60, dasha to five levels, Yogini", dimension: core, blocker: true }
   - { id: panchanga, title: "Panchanga: five limbs with end times, sunrise and moonrise under a stated convention, hora, choghadiya, rahu kalam, special lagnas, tara bala", dimension: core, blocker: true }
-  - { id: matching, title: "Ashtakoota compatibility out of 36 with manglik flags, from a named rule pack", dimension: core, blocker: true }
-  - { id: ephemeris-events, title: "Ephemeris tables for animation and progressions; sign ingresses including retrograde re-entries", dimension: core, blocker: true }
+  - { id: matching, title: "Ashtakoota compatibility out of 36 with manglik flags, from a named rule pack; supplementary factors (rajju, vedha, mahendra, stri-dirgha, manglik trace, pair ashtakavarga) beside it; a pair calendar", dimension: core, blocker: true }
+  - { id: ephemeris-events, title: "Ephemeris tables for animation and progressions; sign ingresses including retrograde re-entries; stations, retrograde intervals and crossings of a point; transit Ashtakavarga as dated segments", dimension: core, blocker: true }
+  - { id: kp-horary, title: "KP horary: the 1-249 table tiles the zodiac; the number fixes the Ascendant and the moment of judgement the rest; cusp occupancy is a named method", dimension: core, blocker: true }
+  - { id: muhurta, title: "Muhurta windows composed from exact factor intervals under versioned profiles; a personal calendar with tara and chandra bala, birth and event places apart, JSON, CSV and ICS", dimension: core, blocker: true }
   - { id: schema, title: "Results validate against the published JSON Schema", dimension: interop, blocker: false }
 
 surface:
@@ -46,5 +48,15 @@ surface:
   - eshana matching
   - eshana ephemeris
   - eshana ingresses
+  - eshana stations
+  - eshana crossings
   - eshana rulesets
+  - eshana methods
+  - eshana kp-table
+  - eshana muhurta
+  - eshana calendar
+  - eshana pair-calendar
+  - eshana progress
+  - eshana ashtakavarga-transits
+  - eshana kp-horary
   - eshana-report

@@ -56,7 +56,17 @@ sends a JSON request through the engine's single entry point; `eshana request` l
 | `eshana matching --a D,T,TZ,LAT,LON --b ... [--ayanamsha A]` | aṣṭakūṭa compatibility with Manglik flags |
 | `eshana ephemeris --start T --step-days N --count N [--bodies ...]` | a longitude table (transits, progressions) |
 | `eshana ingresses --body B --start T --end T` | sign ingresses, retrograde re-entries included |
+| `eshana stations --body B --start T --end T [--tolerance-seconds S]` | stations and the retrograde intervals between them, clipped at the range |
+| `eshana crossings --body B --point DEG --start T --end T [--aspects A,B] [--touch-orb DEG]` | when a body reaches a point or an aspect to it: direction, residual, and touches that stop short |
 | `eshana rulesets` | the built-in YAML rule packs, verbatim |
+| `eshana ashtakavarga-transits --start T --end T [--transit-bodies saturn,jupiter] <natal chart options>` | the natal BAV and SAV cells each transiting graha reads, as segments between ingresses |
+| `eshana muhurta --lat φ --lon λ --tz ZONE --start T --end T [--profile ID] [--disable a,b] [--constraint id,…] [--show f,…]` | muhūrta windows composed from exact factor intervals; an empty result says which constraints removed it |
+| `eshana calendar --birth date,time,tz,lat,lon --lat φ --lon λ --tz ZONE --start T --end T [--format json\|csv\|ics]` | personal calendar: windows with tārā and candra bala, day summaries; CSV and ICS print the file |
+| `eshana pair-calendar --a SPEC --b SPEC --lat φ --lon λ --tz ZONE --start T --end T` | windows that suit both people and the event, each explained |
+| `eshana progress --at T [--angles METHOD] <birth options>` | secondary progressions: fractional age, positions at birth + age days, angles under a named method |
+| `eshana kp-table` | the KP 1–249 horary number table |
+| `eshana kp-horary --number N --utc T --lat φ --lon λ [--kp-occupancy ID]` | KP horary chart: the number fixes the Ascendant; the moment and place are those of judgement (ayanāṃśa defaults to krishnamurti, recorded) |
+| `eshana methods` | every method family and id the engine implements |
 | `eshana request FILE\|-` | send a raw JSON request |
 | `eshana doctor` | versions, tz database, providers, rule packs, error codes |
 | `eshana explain ESH-CODE` | what a code means |

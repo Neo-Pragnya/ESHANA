@@ -830,10 +830,10 @@ await journey("additional aspects (retrograde shadow, parivartana) are off by de
   return `${on.data} additional aspects (${on.kinds}); ${on.marks} marks; table and planet page`;
 });
 
-await journey("daśā systems: tabs for nine systems, sign-based ones zoom with rāśi labels and a running chain", async () => {
+await journey("daśā systems: tabs for sixteen systems (seven conditional), sign-based ones zoom with rāśi labels and a running chain", async () => {
   await go("#/dasha", 1500);
   const tabsTxt = await evaluate(`[...document.querySelectorAll("#dasha .dz-tabs .tab")].map(t => t.textContent)`);
-  expect(tabsTxt.length === 9 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra"), "tabs: " + tabsTxt.join("|"));
+  expect(tabsTxt.length === 16 && tabsTxt[0] === "Vimśottarī" && tabsTxt.includes("Kālachakra") && tabsTxt.includes("Ṣaṭtriṃśat-sama"), "tabs: " + tabsTxt.join("|"));
   await evaluate(`document.querySelector("#dasha .dz-chain .btn").click()`); await sleep(600); // back to the running chain
   expect(await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`) === 5, "Vimśottarī lost its five levels");
   await go("#/dasha/chara", 1500);
@@ -847,7 +847,8 @@ await journey("daśā systems: tabs for nine systems, sign-based ones zoom with 
   const after = await evaluate(`({ chain: document.querySelector("#dasha .dz-chain").innerText, rows: document.querySelectorAll("#dasha .dzoom .dz-row").length, bracket: document.querySelectorAll("#dasha .dz-bracket").length })`);
   expect(after.chain !== before && after.rows === 2 && after.bracket === 1, "clicking a Chara mahādaśā did not open it: " + JSON.stringify(after));
   // every system renders and its antardaśās tile the mahādaśā above
-  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra"], seen = [];
+  const sys = ["yogini", "ashtottari", "shodashottari", "narayana", "navamsha", "shoola", "kalachakra",
+    "dvadashottari", "panchottari", "shatabdika", "chaturashiti_sama", "dvisaptati_sama", "shashtihayani", "shattrimshat_sama"], seen = [];
   for (const id of sys) {
     await go("#/dasha/" + id, 900);
     const x = await evaluate(`(() => { const v = val("vedic.dasha.${id}"); const m = v.mahadashas.find(m => (m.antardashas || []).length);
@@ -860,7 +861,76 @@ await journey("daśā systems: tabs for nine systems, sign-based ones zoom with 
   await go("#/dasha/ashtottari", 900);
   const third = await evaluate(`document.querySelectorAll("#dasha .dzoom .dz-row").length`);
   expect(third === 3, "Aṣṭottarī third level missing: " + third);
-  return `9 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+  return `16 tabs; Chara zooms with rāśi glyphs and a bhāva link; ${seen.join(", ")}`;
+});
+
+await journey("personal calendar: arrow keys move between days and Enter opens the day detail", async () => {
+  const has = await evaluate(`!!JSON.parse(document.getElementById('eshana-data').textContent).envelopes.personal_calendar`);
+  if (!has) return "no calendar in this file";
+  await go("#/calendar", 1200);
+  const n = await evaluate(`document.querySelectorAll('#calendar .cal-day').length`);
+  expect(n >= 28, "days: " + n);
+  await evaluate(`document.querySelector('#calendar .cal-day').focus(); 1`);
+  const key = (k, code, vk) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk });
+  await key("ArrowRight", "ArrowRight", 39); await sleep(200);
+  await key("ArrowDown", "ArrowDown", 40); await sleep(200);
+  await key("Enter", "Enter", 13); await sleep(300);
+  const st = await evaluate(`(() => { const b = [...document.querySelectorAll('#calendar .cal-day')]; const i = b.findIndex(x => x.getAttribute('aria-pressed') === 'true');
+    return { i, focus: document.activeElement === b[8], tab: b.filter(x => x.tabIndex === 0).length, h: document.querySelector('#calendar .cal-detail h3')?.textContent,
+             want: JSON.parse(document.getElementById('eshana-data').textContent).envelopes.personal_calendar.days[8].date }; })()`);
+  expect(st.i === 8 && st.focus && st.tab === 1 && st.h === st.want, JSON.stringify(st));
+  return `${n} days; → ↓ Enter opens ${st.h}`;
+});
+
+await journey("KP horary page shows the number apart from the moment of judgement", async () => {
+  const has = await evaluate(`!!JSON.parse(document.getElementById('eshana-data').textContent).envelopes.kp_horary`);
+  if (!has) return "no horary in this file";
+  await go("#/horary", 1000);
+  const t = await evaluate(`document.querySelector('section.page#horary').innerText`);
+  expect(/Number/.test(t) && /Judgement \(UTC\)/.test(t) && /Horary cusps/.test(t), t.slice(0, 300));
+  return "number, judgement and cusps";
+});
+
+await journey("compare workspace: one date drives every panel, and a changed date never leaves a stale panel", async () => {
+  await go("#/compare", 2500);
+  const live = await evaluate(`!!document.getElementById('eshana-engine')`);
+  const read = () => evaluate(`[...document.querySelectorAll('#compare .cmp-panel')].map(p => ({ id: p.dataset.panel, stamp: p.dataset.stamp, rows: p.querySelectorAll('tbody tr').length, na: !!p.querySelector('.na') }))`);
+  let p = await read();
+  expect(p.length === 3, "panels: " + JSON.stringify(p));
+  for (const d of ["2031-02-14", "2027-07-01"]) {
+    await evaluate(`(() => { const i = document.querySelector('#compare input[type=date]'); i.value = '${d}'; i.dispatchEvent(new Event('change')); })()`);
+    await sleep(900);
+    p = await read();
+    const pr = p.find(x => x.id === "progressed"), tr = p.find(x => x.id === "transit");
+    expect(pr.stamp === d && tr.stamp === d, `stamps after choosing ${d}: ${JSON.stringify(p)}`);
+    if (live) expect(pr.rows >= 9 && tr.rows >= 9 && !pr.na && !tr.na, `live panels empty for ${d}: ${JSON.stringify(p)}`);
+    else expect(pr.na, "report-only progressed panel should say it is unavailable");
+  }
+  await viewport(390, 844); await sleep(600);
+  const fits = await evaluate(`document.documentElement.scrollWidth <= innerWidth + 1`);
+  await viewport(1440, 1000); await sleep(300);
+  expect(fits, "compare page scrolls sideways on a phone");
+  return live ? "live engine; stamps follow the date; phone width fits" : "report-only; stamps follow the date";
+});
+
+await journey("playground: keyboard moves a graha, the engine recomputes, Ctrl+Z undoes, notes stay", async () => {
+  const live = await evaluate(`!!document.getElementById('eshana-engine')`);
+  if (!live) return "report-only file: the playground says it needs the live engine";
+  await go("#/playground", 2500);
+  await evaluate(`document.querySelector('#playground .pg-list').focus(); 1`);
+  const key = (k, code, vk, modifiers = 0) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk, modifiers });
+  const sel = () => evaluate(`document.querySelector('#playground .pg-list li.sel')?.textContent`);
+  const before = await sel();
+  await key("ArrowRight", "ArrowRight", 39, 8); await sleep(500); // Shift: 30°
+  const moved = await sel();
+  expect(moved !== before, "Shift+→ did not move the graha: " + before);
+  await evaluate(`document.querySelector('#playground .pg-list').focus(); 1`);
+  await key("z", "KeyZ", 90, 2); await sleep(500); // Ctrl+Z
+  const undone = await sel();
+  expect(undone === before, `undo did not restore: ${before} → ${moved} → ${undone}`);
+  const na = await evaluate(`/unavailable/.test(document.querySelector('#playground').innerText)`);
+  expect(na, "time-dependent factors should be listed as unavailable");
+  return "Shift+→ moved 30°, Ctrl+Z restored, unavailable factors listed";
 });
 
 // ── journeys: dashas (add new journeys for this workstream above this line) ──
@@ -1321,6 +1391,36 @@ await journey("pañca pakṣī: five yāmas × five birds by day and by night, s
   await setMode(mode0);
   await viewport(390, 844, true);
   return `${desk.cells} cells × 2 widths match the engine; ${desk.boxes} info boxes; current yāma ${desk.curYama + 1} marked; 8 days; ${tl.labels + ticks.labels} timeline labels apart (phone ${phone.cells} cells, no side scroll)`;
+});
+
+await journey("interface language is a reader setting: English by default, Hindi from the drawer, kept after reload, values unchanged", async () => {
+  await viewport(1440, 1000);
+  await evaluate(`(() => { const s = JSON.parse(localStorage.getItem('eshana-studio-v3') || '{}'); delete s.lang; localStorage.setItem('eshana-studio-v3', JSON.stringify(s)); return 1; })()`);
+  await send("Page.reload"); await sleep(2500); await go("#/overview", 900);
+  const en = await evaluate(`({ lang: document.documentElement.lang, title: document.title, langs: Object.keys(JSON.parse(document.getElementById('eshana-data').textContent).locales || {}) })`);
+  expect(en.lang === "en", "default language: " + en.lang);
+  expect(en.langs.includes("en") && en.langs.includes("hi"), "catalogues in the file: " + en.langs);
+  const valuesBefore = await evaluate(`document.querySelector('section.page#overview .body')?.innerText.match(/\\d+°\\s?\\d+′/g)?.slice(0, 5).join('|') || ''`);
+  await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
+  const radios = await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].map(r => r.parentElement.textContent + ':' + r.checked)`);
+  expect(radios.length === 2 && /English:true/.test(radios.join()), "language choices: " + radios);
+  await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /हिन्दी/.test(r.parentElement.textContent)).click(), 1`);
+  await sleep(3000); await go("#/overview", 900);
+  const hi = await evaluate(`({ lang: document.documentElement.lang, draft: !!document.querySelector('.locale-draft'), settings: document.querySelector('#settings .t')?.textContent })`);
+  expect(hi.lang === "hi", "after choosing Hindi: " + hi.lang);
+  expect(!hi.draft, "a reviewed catalogue shows no draft note");
+  const valuesAfter = await evaluate(`document.querySelector('section.page#overview .body')?.innerText.match(/\\d+°\\s?\\d+′/g)?.slice(0, 5).join('|') || ''`);
+  expect(valuesAfter === valuesBefore, "values changed with the language: " + valuesBefore + " vs " + valuesAfter);
+  await send("Page.reload"); await sleep(2500);
+  const kept = await evaluate(`document.documentElement.lang`);
+  expect(kept === "hi", "choice not kept after reload: " + kept);
+  await shot("language-hi");
+  await evaluate(`document.getElementById('settings').click(), 1`); await sleep(400);
+  await evaluate(`[...document.querySelectorAll('#drawer input[name=lang]')].find(r => /English/.test(r.parentElement.textContent)).click(), 1`);
+  await sleep(3000);
+  const back = await evaluate(`document.documentElement.lang`);
+  expect(back === "en", "back to English: " + back);
+  return `toolbar 'settings' in Hindi: ${hi.settings}; ${valuesBefore ? "values identical" : "no degree values on the overview"}`;
 });
 
 // ── journeys: annual (add new journeys for this workstream above this line) ──

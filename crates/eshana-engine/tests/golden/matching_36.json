@@ -1,0 +1,365 @@
+[
+ {
+  "a": "1990-05-15,14:30,Asia/Kolkata,28.61,77.21",
+  "b": "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777",
+  "ashtakoota": {
+   "a_moon": {
+    "nakshatra": "Uttara Ashadha",
+    "pada": 2,
+    "sign": 9
+   },
+   "b_moon": {
+    "nakshatra": "Bharani",
+    "pada": 2,
+    "sign": 0
+   },
+   "bhakoot_dosha": false,
+   "kootas": [
+    {
+     "a": "Vaishya",
+     "b": "Kshatriya",
+     "koota": "varna",
+     "max": 1.0,
+     "note": "1 when a's varna rank is at least b's",
+     "score": 0.0
+    },
+    {
+     "a": "chatushpada",
+     "b": "chatushpada",
+     "koota": "vashya",
+     "max": 2.0,
+     "note": "group table",
+     "score": 2.0
+    },
+    {
+     "a": {
+      "count_from_b": 20
+     },
+     "b": {
+      "count_from_a": 9
+     },
+     "koota": "tara",
+     "max": 3.0,
+     "note": "1.5 per direction when the remainder of 9 is not 3, 5 or 7",
+     "score": 3.0
+    },
+    {
+     "a": "mongoose",
+     "b": "elephant",
+     "koota": "yoni",
+     "max": 4.0,
+     "note": "yoni matrix",
+     "score": 2.0
+    },
+    {
+     "a": "saturn",
+     "b": "mars",
+     "koota": "graha_maitri",
+     "max": 5.0,
+     "note": "relationship of the Moon-sign lords",
+     "score": 0.5
+    },
+    {
+     "a": "manushya",
+     "b": "manushya",
+     "koota": "gana",
+     "max": 6.0,
+     "note": "gana table",
+     "score": 6.0
+    },
+    {
+     "a": 9,
+     "b": 0,
+     "koota": "bhakoot",
+     "max": 7.0,
+     "note": "0 for 2/12, 5/9 and 6/8 sign distances",
+     "score": 7.0
+    },
+    {
+     "a": "antya",
+     "b": "madhya",
+     "koota": "nadi",
+     "max": 8.0,
+     "note": "0 when both share a nadi",
+     "score": 8.0
+    }
+   ],
+   "max": 36,
+   "nadi_dosha": false,
+   "rule_version": "vedic.matching.ashtakoota@0.2",
+   "total": 28.5
+  },
+  "manglik": {
+   "a": [
+    {
+     "id": "manglik_lagna",
+     "present": false
+    },
+    {
+     "id": "manglik_moon",
+     "present": true
+    },
+    {
+     "id": "manglik_venus",
+     "present": true
+    }
+   ],
+   "b": [
+    {
+     "id": "manglik_lagna",
+     "present": false
+    },
+    {
+     "id": "manglik_moon",
+     "present": true
+    },
+    {
+     "id": "manglik_venus",
+     "present": false
+    }
+   ]
+  }
+ },
+ {
+  "a": "1985-01-03,06:10,Asia/Kolkata,13.08,80.27",
+  "b": "1987-11-30,22:45,Asia/Kolkata,12.97,77.59",
+  "ashtakoota": {
+   "a_moon": {
+    "nakshatra": "Krittika",
+    "pada": 2,
+    "sign": 1
+   },
+   "b_moon": {
+    "nakshatra": "Revati",
+    "pada": 1,
+    "sign": 11
+   },
+   "bhakoot_dosha": false,
+   "kootas": [
+    {
+     "a": "Vaishya",
+     "b": "Brahmin",
+     "koota": "varna",
+     "max": 1.0,
+     "note": "1 when a's varna rank is at least b's",
+     "score": 0.0
+    },
+    {
+     "a": "chatushpada",
+     "b": "jalachara",
+     "koota": "vashya",
+     "max": 2.0,
+     "note": "group table",
+     "score": 1.0
+    },
+    {
+     "a": {
+      "count_from_b": 4
+     },
+     "b": {
+      "count_from_a": 25
+     },
+     "koota": "tara",
+     "max": 3.0,
+     "note": "1.5 per direction when the remainder of 9 is not 3, 5 or 7",
+     "score": 1.5
+    },
+    {
+     "a": "sheep",
+     "b": "elephant",
+     "koota": "yoni",
+     "max": 4.0,
+     "note": "yoni matrix",
+     "score": 3.0
+    },
+    {
+     "a": "venus",
+     "b": "jupiter",
+     "koota": "graha_maitri",
+     "max": 5.0,
+     "note": "relationship of the Moon-sign lords",
+     "score": 0.5
+    },
+    {
+     "a": "rakshasa",
+     "b": "deva",
+     "koota": "gana",
+     "max": 6.0,
+     "note": "gana table",
+     "score": 1.0
+    },
+    {
+     "a": 1,
+     "b": 11,
+     "koota": "bhakoot",
+     "max": 7.0,
+     "note": "0 for 2/12, 5/9 and 6/8 sign distances",
+     "score": 7.0
+    },
+    {
+     "a": "antya",
+     "b": "antya",
+     "koota": "nadi",
+     "max": 8.0,
+     "note": "0 when both share a nadi",
+     "score": 0.0
+    }
+   ],
+   "max": 36,
+   "nadi_dosha": true,
+   "rule_version": "vedic.matching.ashtakoota@0.2",
+   "total": 14.0
+  },
+  "manglik": {
+   "a": [
+    {
+     "id": "manglik_lagna",
+     "present": false
+    },
+    {
+     "id": "manglik_moon",
+     "present": false
+    },
+    {
+     "id": "manglik_venus",
+     "present": true
+    }
+   ],
+   "b": [
+    {
+     "id": "manglik_lagna",
+     "present": true
+    },
+    {
+     "id": "manglik_moon",
+     "present": true
+    },
+    {
+     "id": "manglik_venus",
+     "present": false
+    }
+   ]
+  }
+ },
+ {
+  "a": "2000-02-29,12:00,Europe/London,51.5,-0.12",
+  "b": "1999-07-04,03:30,America/New_York,40.71,-74.0",
+  "ashtakoota": {
+   "a_moon": {
+    "nakshatra": "Mula",
+    "pada": 4,
+    "sign": 8
+   },
+   "b_moon": {
+    "nakshatra": "Purva Bhadrapada",
+    "pada": 1,
+    "sign": 10
+   },
+   "bhakoot_dosha": false,
+   "kootas": [
+    {
+     "a": "Kshatriya",
+     "b": "Shudra",
+     "koota": "varna",
+     "max": 1.0,
+     "note": "1 when a's varna rank is at least b's",
+     "score": 1.0
+    },
+    {
+     "a": "manava",
+     "b": "manava",
+     "koota": "vashya",
+     "max": 2.0,
+     "note": "group table",
+     "score": 2.0
+    },
+    {
+     "a": {
+      "count_from_b": 22
+     },
+     "b": {
+      "count_from_a": 7
+     },
+     "koota": "tara",
+     "max": 3.0,
+     "note": "1.5 per direction when the remainder of 9 is not 3, 5 or 7",
+     "score": 1.5
+    },
+    {
+     "a": "dog",
+     "b": "lion",
+     "koota": "yoni",
+     "max": 4.0,
+     "note": "yoni matrix",
+     "score": 1.0
+    },
+    {
+     "a": "jupiter",
+     "b": "saturn",
+     "koota": "graha_maitri",
+     "max": 5.0,
+     "note": "relationship of the Moon-sign lords",
+     "score": 3.0
+    },
+    {
+     "a": "rakshasa",
+     "b": "manushya",
+     "koota": "gana",
+     "max": 6.0,
+     "note": "gana table",
+     "score": 0.0
+    },
+    {
+     "a": 8,
+     "b": 10,
+     "koota": "bhakoot",
+     "max": 7.0,
+     "note": "0 for 2/12, 5/9 and 6/8 sign distances",
+     "score": 7.0
+    },
+    {
+     "a": "adi",
+     "b": "adi",
+     "koota": "nadi",
+     "max": 8.0,
+     "note": "0 when both share a nadi",
+     "score": 0.0
+    }
+   ],
+   "max": 36,
+   "nadi_dosha": true,
+   "rule_version": "vedic.matching.ashtakoota@0.2",
+   "total": 15.5
+  },
+  "manglik": {
+   "a": [
+    {
+     "id": "manglik_lagna",
+     "present": false
+    },
+    {
+     "id": "manglik_moon",
+     "present": true
+    },
+    {
+     "id": "manglik_venus",
+     "present": false
+    }
+   ],
+   "b": [
+    {
+     "id": "manglik_lagna",
+     "present": false
+    },
+    {
+     "id": "manglik_moon",
+     "present": false
+    },
+    {
+     "id": "manglik_venus",
+     "present": false
+    }
+   ]
+  }
+ }
+]

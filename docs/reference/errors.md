@@ -20,6 +20,9 @@ Errors are values: `{"kind": "error", "error": {"code", "message"}}`. The codes 
 | `ESH-BODY` | the provider cannot supply the body | pick a supported body |
 | `ESH-LATITUDE` | houses are undefined at this latitude (Placidus in the polar regions) | use `whole_sign` or `equal` |
 | `ESH-PROVIDER` | the kernel is missing, corrupt, big-endian or not type 2 | re-download `de440s.bsp` |
+| `ESH-METHOD` | a method id the engine does not implement (a cusp-occupancy rule, a muhūrta profile, a varga scheme…) | pick an id that `eshana methods` lists; the message names them |
+| `ESH-RANGE-INVALID` | a search range whose end is not after its start | swap or widen the range |
+| `ESH-LIMIT` | a request past a documented work limit (an event search longer than 200 years, too many rows) | split the request into smaller ranges |
 | `ESH-RULES` | an unimplemented divisional chart, an unknown year convention or school, a name with no Latin letters | choose a supported option |
 
 ## Adding a code

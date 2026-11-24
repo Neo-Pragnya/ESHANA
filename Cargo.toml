@@ -7,6 +7,7 @@ members = [
   "crates/eshana-engine",
   "crates/eshana-cli",
   "crates/eshana-python",
+  "crates/eshana-wasm",
 ]
 
 [workspace.package]

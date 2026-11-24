@@ -48,6 +48,64 @@ shodashottari:
     BPHS: used when the lagna is in the Sun's horā in Kṛṣṇa pakṣa or in the Moon's horā in Śukla pakṣa (horā:
     odd signs Sun then Moon, even signs Moon then Sun, 15° each).
 
+# ── Conditional nakṣatra daśās (BPHS) ────────────────────────────────────────────────────────────────────────
+# Each is computed for every chart and reports whether its condition holds; none is applied silently.
+# start.mode: `count_from` counts from `nakshatra` to the janma nakṣatra (1 = that nakṣatra itself) and the
+# remainder of the count by the number of lords picks the lord (0 = the last); `count_to` counts from the janma
+# nakṣatra to `nakshatra`; `groups` gives each lord its nakṣatras (28-nakṣatra scheme, 27 = Abhijit).
+conditional:
+  - id: dvadashottari
+    cycle_years: 112
+    lords: [{lord: Sun, years: 7}, {lord: Jupiter, years: 9}, {lord: Ketu, years: 11}, {lord: Mercury, years: 13},
+            {lord: Rahu, years: 15}, {lord: Mars, years: 17}, {lord: Saturn, years: 19}, {lord: Moon, years: 21}]
+    start: {mode: count_to, nakshatra: 26}
+    condition: lagna_in_venus_navamsha
+    applicability: "the lagna in a navāṃśa of Venus (Vṛṣabha or Tulā)"
+  - id: panchottari
+    cycle_years: 105
+    lords: [{lord: Sun, years: 12}, {lord: Mercury, years: 13}, {lord: Saturn, years: 14}, {lord: Mars, years: 15},
+            {lord: Venus, years: 16}, {lord: Moon, years: 17}, {lord: Jupiter, years: 18}]
+    start: {mode: count_from, nakshatra: 16}
+    condition: lagna_cancer_in_cancer_dvadashamsha
+    applicability: "the lagna in Karka and in the Karka dvādaśāṃśa"
+  - id: shatabdika
+    cycle_years: 100
+    lords: [{lord: Sun, years: 5}, {lord: Moon, years: 5}, {lord: Venus, years: 10}, {lord: Mercury, years: 10},
+            {lord: Jupiter, years: 20}, {lord: Mars, years: 20}, {lord: Saturn, years: 30}]
+    start: {mode: count_from, nakshatra: 26}
+    condition: vargottama_lagna
+    applicability: "the lagna vargottama (the same sign in the rāśi and the navāṃśa)"
+  - id: chaturashiti_sama
+    cycle_years: 84
+    lords: [{lord: Sun, years: 12}, {lord: Moon, years: 12}, {lord: Mars, years: 12}, {lord: Mercury, years: 12},
+            {lord: Jupiter, years: 12}, {lord: Venus, years: 12}, {lord: Saturn, years: 12}]
+    start: {mode: count_from, nakshatra: 14}
+    condition: tenth_lord_in_tenth
+    applicability: "the lord of the 10th in the 10th"
+  - id: dvisaptati_sama
+    cycle_years: 72
+    lords: [{lord: Sun, years: 9}, {lord: Moon, years: 9}, {lord: Mars, years: 9}, {lord: Mercury, years: 9},
+            {lord: Jupiter, years: 9}, {lord: Venus, years: 9}, {lord: Saturn, years: 9}, {lord: Rahu, years: 9}]
+    start: {mode: count_from, nakshatra: 18}
+    condition: lagna_lord_in_seventh_or_seventh_lord_in_lagna
+    applicability: "the lagna lord in the 7th, or the 7th lord in the lagna"
+  - id: shashtihayani
+    cycle_years: 60
+    lords: [{lord: Jupiter, years: 10, nakshatras: [0, 1, 2]}, {lord: Sun, years: 10, nakshatras: [3, 4, 5, 6]},
+            {lord: Mars, years: 10, nakshatras: [7, 8, 9]}, {lord: Moon, years: 6, nakshatras: [10, 11, 12, 13]},
+            {lord: Mercury, years: 6, nakshatras: [14, 15, 16]}, {lord: Venus, years: 6, nakshatras: [17, 18, 19, 20]},
+            {lord: Saturn, years: 6, nakshatras: [27, 21, 22]}, {lord: Rahu, years: 6, nakshatras: [23, 24, 25, 26]}]
+    start: {mode: groups}
+    condition: sun_in_lagna
+    applicability: "the Sun in the lagna"
+  - id: shattrimshat_sama
+    cycle_years: 36
+    lords: [{lord: Moon, years: 1}, {lord: Sun, years: 2}, {lord: Jupiter, years: 3}, {lord: Mars, years: 4},
+            {lord: Mercury, years: 5}, {lord: Saturn, years: 6}, {lord: Venus, years: 7}, {lord: Rahu, years: 8}]
+    start: {mode: count_from, nakshatra: 21}
+    condition: day_sun_hora_or_night_moon_hora
+    applicability: "birth by day with the lagna in the Sun's horā, or by night with the lagna in the Moon's horā"
+
 # ── Sign-based (Jaimini) systems ───────────────────────────────────────────────────────────────────────────────
 # Savya signs (Meṣa, Vṛṣabha, Mithuna, Tulā, Vṛścika, Dhanu); the others are apasavya.
 savya_signs: [0, 1, 2, 6, 7, 8]

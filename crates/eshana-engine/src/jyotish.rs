@@ -573,15 +573,17 @@ fn split(start: usize, offset: f64, span: f64) -> (usize, f64, f64) {
     unreachable!("nine parts cover the span")
 }
 
-/// House (1–12) containing a longitude for Placidus-style cusps.
-fn kp_house(lon: f64, cusps: &[f64; 12]) -> usize {
-    crate::astro::house_of(lon, cusps)
-}
-
 /// KP tables from sidereal Placidus cusps: cusp lords, planet lords, and four-level significators in both the
-/// house view and the planet view.
+/// house view and the planet view, under the default occupancy convention.
 #[must_use]
 pub fn kp(c: &VChart, cusps: &[f64; 12]) -> Value {
+    kp_with(c, cusps, crate::kp::Occupancy::CuspStart)
+}
+
+/// [`kp`] under a named cusp-occupancy convention.
+#[must_use]
+pub fn kp_with(c: &VChart, cusps: &[f64; 12], occupancy: crate::kp::Occupancy) -> Value {
+    let kp_house = |lon: f64, cusps: &[f64; 12]| occupancy.house_of(lon, cusps);
     let grahas = c.grahas_present();
     let star_lord = |g: &str| -> String {
         DASHA_ORDER[vedic::nakshatra_of(c.lon[g]).index % 9]
@@ -631,7 +633,7 @@ pub fn kp(c: &VChart, cusps: &[f64; 12]) -> Value {
         planets.insert((*g).into(), kp_lords(c.lon[*g]));
     }
     json!({"cusps": house_view, "planets": planets, "significators_planet_view": planet_view,
-           "occupancy": "Placidus cusps; a graha belongs to the house whose cusp precedes it"})
+           "occupancy": occupancy.describe(), "occupancy_method": occupancy.id()})
 }
 
 /// KP ruling planets at the chart's instant: day lord, Moon and lagna sign/star/sub lords.

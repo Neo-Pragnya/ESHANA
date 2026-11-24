@@ -1,0 +1,141 @@
+{
+ "source": "pyswisseph 2.10.03 get_ayanamsa_ex(FLG_NONUT)",
+ "epochs": [
+  {
+   "year": 1800,
+   "jd_tt": 2378497.0,
+   "t_centuries_tt": -1.9999452429842575,
+   "ayanamsha_deg": {
+    "lahiri": 21.064621149179427,
+    "raman": 19.618319462954723,
+    "krishnamurti": 20.967768462954716,
+    "fagan_bradley": 21.947828746489318,
+    "yukteshwar": 19.68633145043641,
+    "jn_bhasin": 19.969665450436434,
+    "ushashashi": 17.265069450436396,
+    "sassanian": 17.200492543887833,
+    "deluce": 25.023296061105953,
+    "djwhal_khul": 25.567207050436433
+   }
+  },
+  {
+   "year": 1850,
+   "jd_tt": 2396759.0,
+   "t_centuries_tt": -1.499958932238193,
+   "ayanamsha_deg": {
+    "lahiri": 21.76250868262581,
+    "raman": 20.316207114300003,
+    "krishnamurti": 21.665656114299995,
+    "fagan_bradley": 22.64571629351311,
+    "yukteshwar": 20.38421910178169,
+    "jn_bhasin": 20.667553101781714,
+    "ushashashi": 17.962957101781676,
+    "sassanian": 17.89837963700637,
+    "deluce": 25.721180890100356,
+    "djwhal_khul": 26.265094701781713
+   }
+  },
+  {
+   "year": 1900,
+   "jd_tt": 2415021.0,
+   "t_centuries_tt": -0.9999726214921287,
+   "ayanamsha_deg": {
+    "lahiri": 22.460549707215343,
+    "raman": 21.014248240416066,
+    "krishnamurti": 22.36369724041606,
+    "fagan_bradley": 23.343757329874357,
+    "yukteshwar": 21.082260227897734,
+    "jn_bhasin": 21.36559422789776,
+    "ushashashi": 18.66099822789772,
+    "sassanian": 18.59641979506506,
+    "deluce": 26.419218607391088,
+    "djwhal_khul": 26.96313582789776
+   }
+  },
+  {
+   "year": 1950,
+   "jd_tt": 2433283.0,
+   "t_centuries_tt": -0.49998631074606437,
+   "ayanamsha_deg": {
+    "lahiri": 23.15874424922234,
+    "raman": 21.712442867442917,
+    "krishnamurti": 23.06189186744291,
+    "fagan_bradley": 24.041951881832063,
+    "yukteshwar": 21.780454854924585,
+    "jn_bhasin": 22.06378885492461,
+    "ushashashi": 19.359192854924572,
+    "sassanian": 19.294613043858703,
+    "deluce": 27.117409240333984,
+    "djwhal_khul": 27.66133045492461
+   }
+  },
+  {
+   "year": 2000,
+   "jd_tt": 2451545.0,
+   "t_centuries_tt": 0.0,
+   "ayanamsha_deg": {
+    "lahiri": 23.8570923254552,
+    "raman": 22.41079101207282,
+    "krishnamurti": 23.760240012072813,
+    "fagan_bradley": 24.740299966181283,
+    "yukteshwar": 22.47880299955449,
+    "jn_bhasin": 22.762136999554514,
+    "ushashashi": 20.057540999554476,
+    "sassanian": 19.992959400184247,
+    "deluce": 27.81575280748109,
+    "djwhal_khul": 28.359678599554513
+   }
+  },
+  {
+   "year": 2025,
+   "jd_tt": 2460677.0,
+   "t_centuries_tt": 0.2500205338809035,
+   "ayanamsha_deg": {
+    "lahiri": 24.206362190493735,
+    "raman": 22.760060905047908,
+    "krishnamurti": 24.1095099050479,
+    "fagan_bradley": 25.089569834586825,
+    "yukteshwar": 22.828072892529576,
+    "jn_bhasin": 23.1114068925296,
+    "ushashashi": 20.406810892529563,
+    "sassanian": 20.34222824526597,
+    "deluce": 28.165020193414932,
+    "djwhal_khul": 28.7089484925296
+   }
+  },
+  {
+   "year": 2050,
+   "jd_tt": 2469808.0,
+   "t_centuries_tt": 0.5000136892539356,
+   "ayanamsha_deg": {
+    "lahiri": 24.555632196418856,
+    "raman": 23.109330934715445,
+    "krishnamurti": 24.458779934715437,
+    "fagan_bradley": 25.438839843416076,
+    "yukteshwar": 23.177342922197113,
+    "jn_bhasin": 23.460676922197138,
+    "ushashashi": 20.7560809221971,
+    "sassanian": 20.6914971248749,
+    "deluce": 28.514287571447255,
+    "djwhal_khul": 29.058218522197137
+   }
+  },
+  {
+   "year": 2100,
+   "jd_tt": 2488070.0,
+   "t_centuries_tt": 1.0,
+   "ayanamsha_deg": {
+    "lahiri": 25.254287362308162,
+    "raman": 23.807986135480462,
+    "krishnamurti": 25.157435135480455,
+    "fagan_bradley": 26.137495013721207,
+    "yukteshwar": 23.87599812296213,
+    "jn_bhasin": 24.159332122962155,
+    "ushashashi": 21.454736122962117,
+    "sassanian": 21.390149719287194,
+    "deluce": 29.21293703605403,
+    "djwhal_khul": 29.756873722962155
+   }
+  }
+ ]
+}
