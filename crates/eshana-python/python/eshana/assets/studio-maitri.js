@@ -26,6 +26,23 @@ function mtGrid(rows, cols, cell, cls, colHead) {
       return td;
     }))))));
 }
+/* the kinds in a grid as chips that filter it: click one to show only those cells, click more to add them, click
+   again (or "Show all") to clear. kinds: [[class, text, count]] */
+function mtFilter(wrap, kinds) {
+  const grid = wrap.querySelector('table'), on = new Set();
+  const apply = () => {
+    grid.classList.toggle('mt-filtering', on.size > 0);
+    grid.querySelectorAll('.mt-c').forEach(td => td.classList.toggle('mt-hit', [...on].some(c => td.classList.contains(c))));
+    btns.forEach(b => b.setAttribute('aria-pressed', String(on.has(b.dataset.k))));
+    clear.hidden = !on.size;
+    shown.textContent = on.size ? `${grid.querySelectorAll('.mt-c.mt-hit').length} shown` : '';
+  };
+  const btns = kinds.map(([cls, text, n]) => h('button', { type: 'button', class: 'mt-fchip', 'data-k': cls, 'aria-pressed': 'false', title: `Show only ${text} (click more to add; click again to clear)`,
+    onclick: () => { if (on.has(cls)) on.delete(cls); else on.add(cls); apply(); } }, h('i', { class: cls }), text + (n != null ? ': ' : ''), n != null ? h('b', {}, n) : null));
+  const clear = h('button', { type: 'button', class: 'mt-fclear', hidden: true, onclick: () => { on.clear(); apply(); } }, 'Show all');
+  const shown = h('small', { class: 'note' });
+  return h('div', { class: 'chips mt-filter', role: 'group', 'aria-label': 'Filter the grid' }, h('b', { class: 'mt-ftitle' }, 'Filter'), ...btns, clear, shown);
+}
 const mtLegend = items => h('div', { class: 'mt-legend' }, items.map(([cls, text]) => h('span', {}, h('i', { class: cls }), text)));
 
 function mtRelationships(rel) {
@@ -39,12 +56,12 @@ function mtRelationships(rel) {
       'natural + temporal = compound (pañcadhā)');
   };
   const count = k => rel.rows.filter(x => x.compound === k).length;
+  const grid = mtGrid(ids, ids, cell, 'mt-rel');
   return card('Compound relationships (pañcadhā)',
-    h('div', { class: 'chips' }, h('span', { class: 'chip' }, label('tradition_rule'), ' vedic.maitri@0.1'),
-      Object.keys(MT_REL).map(k => h('span', { class: 'chip' }, MT_REL[k] + ': ', h('b', {}, count(k))))),
-    note('Row = the graha, column = the graha it regards. Hover a cell for the natural and temporal parts and why.'),
-    mtGrid(ids, ids, cell, 'mt-rel'),
-    mtLegend(Object.keys(MT_REL).map(k => ['rel-' + k, MT_REL[k]])),
+    h('div', { class: 'chips' }, h('span', { class: 'chip' }, label('tradition_rule'), ' vedic.maitri@0.1')),
+    mtFilter(grid, Object.keys(MT_REL).map(k => ['rel-' + k, MT_REL[k], count(k)])),
+    note('Row = the graha, column = the graha it regards. Hover a cell for the natural and temporal parts and why. Click a kind above to show only those pairs.'),
+    grid,
     note(rel.convention + '. The nodes follow the table in rule pack maitri.yaml; BPHS gives none for them.'));
 }
 
@@ -58,13 +75,17 @@ function mtTaras(tm) {
     return mtHover(td, mtName(r) + ' from ' + mtName(c), [['Counted from', nk(c)], ['To', nk(r)], ['Count', nth(x.count)], ['Tārā', x.tara + ' · ' + x.name], ['Nature', x.nature]],
       '((count − 1) mod 9) + 1');
   };
-  const good = tm.rows.filter(x => x.nature === 'auspicious').length, bad = tm.rows.filter(x => x.nature === 'inauspicious').length;
+  const n = k => tm.rows.filter(x => x.nature === k).length;
+  const grid = mtGrid(tm.points, tm.points, cell, 'mt-tara');
+  // each tārā by name, too, so one tārā (say Vadha) can be picked out
+  grid.querySelectorAll('.mt-c').forEach(td => td.classList.add('tn-' + td.textContent.replace(/\W+/g, '-')));
+  const names = [...new Set(tm.rows.map(x => x.name))].sort((a, b2) => (tm.rows.find(x => x.name === a).tara - tm.rows.find(x => x.name === b2).tara));
   return card('Nakshatra spatial matrix (tārās)',
-    h('div', { class: 'chips' }, h('span', { class: 'chip' }, label('tradition_rule'), ' vedic.maitri@0.1'),
-      h('span', { class: 'chip' }, 'Auspicious: ', h('b', {}, good)), h('span', { class: 'chip' }, 'Inauspicious: ', h('b', {}, bad))),
-    note('Each cell is the tārā of the row’s nakshatra counted from the column’s. Hover for the count.'),
-    mtGrid(tm.points, tm.points, cell, 'mt-tara'),
-    mtLegend([['tara-auspicious', 'Sampat, Kṣema, Sādhaka, Mitra, Parama mitra'], ['tara-mixed', 'Janma'], ['tara-inauspicious', 'Vipat, Pratyari, Vadha']]),
+    h('div', { class: 'chips' }, h('span', { class: 'chip' }, label('tradition_rule'), ' vedic.maitri@0.1')),
+    mtFilter(grid, [['tara-auspicious', 'Auspicious (Sampat, Kṣema, Sādhaka, Mitra, Parama mitra)', n('auspicious')], ['tara-mixed', 'Janma', n('mixed')], ['tara-inauspicious', 'Inauspicious (Vipat, Pratyari, Vadha)', n('inauspicious')]]
+      .concat(names.map(nm => ['tn-' + short(nm).replace(/\W+/g, '-'), nm, tm.rows.filter(x => x.name === nm).length]))),
+    note('Each cell is the tārā of the row’s nakshatra counted from the column’s. Hover for the count; click a nature or a tārā above to show only those cells.'),
+    grid,
     note(tm.convention + '.'),
     h('p', { class: 'note' }, label('interpretation'), ' In muhūrta and compatibility practice the 3rd, 5th and 7th tārās (Vipat, Pratyari, Vadha) are read as obstructive and the even ones as supportive; Janma is mixed (paraphrased from Muhūrta Chintāmaṇi and common Parāśari teaching).'));
 }
@@ -90,12 +111,14 @@ function mtDignities(vd) {
   const head = h('tr', {}, h('th', {}, ''), ds.map(d => h('th', { title: name[d] }, 'D' + d)), h('th', {}, 'Summary'));
   const body = ids.map((g, i) => h('tr', {}, h('th', {}, mtHead(g)), ds.map((d, j) => { const td = cell(g, d); td.style.setProperty('--k', i + j); return td; }), sumCell(g)));
   const best = ids.slice().sort((a, b) => vd.summary[b].favourable - vd.summary[a].favourable)[0];
+  const grid = h('div', { class: 'tbl-wrap' }, h('table', { class: 'mt-grid mt-dig' }, h('thead', {}, head), h('tbody', {}, body)));
+  const dn = k => ids.reduce((a, g) => a + vd.grahas[g].filter(c => c.dignity === k).length, 0);
   return card('Dignities in the sixteen divisions',
     h('div', { class: 'chips' }, h('span', { class: 'chip' }, label('tradition_rule'), ' vedic.maitri@0.1'),
       best ? h('span', { class: 'chip' }, 'Most favourable placements: ', h('b', {}, mtName(best)), ' (' + vd.summary[best].favourable + ' / 16)') : null),
-    note('Rows are the grahas, columns the divisions. Hover a cell for the sign, the degree inside the varga, the lord and the reason.'),
-    h('div', { class: 'tbl-wrap' }, h('table', { class: 'mt-grid mt-dig' }, h('thead', {}, head), h('tbody', {}, body))),
-    mtLegend(Object.keys(MT_DIG).map(k => ['dig-' + k, MT_DIG_AB[k] + ' ' + MT_DIG[k]])),
+    mtFilter(grid, Object.keys(MT_DIG).map(k => ['dig-' + k, MT_DIG_AB[k] + ' ' + MT_DIG[k], dn(k)])),
+    note('Rows are the grahas, columns the divisions. Hover a cell for the sign, the degree inside the varga, the lord and the reason. Click a dignity above to show only those cells.'),
+    grid,
     note(vd.convention + '. Viṃśopaka on the Strength page keeps its own scoring convention.'));
 }
 

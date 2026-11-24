@@ -17,6 +17,22 @@ const tabs = (items, cur, onPick) => h('div', { class: 'tabs', role: 'tablist' }
 const visToggle = (key, text) => h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: S[key] !== false, onchange: e => { S[key] = e.target.checked; save(); applyVisibility(); route(); } }), text);
 const visGroup = () => h('div', { class: 'grp' }, h('b', {}, 'Include'), visToggle('showOuter', 'Uranus, Neptune, Pluto'), visToggle('showUpa', 'upagrahas'));
 const toggle = (key, text, after) => h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: !!S.layers[key], onchange: e => { S.layers[key] = e.target.checked; save(); after(); } }), text);
+/* the layers a square chart can show, as on the chakra (rāśi-only ones are offered when the page has the D1) */
+/* the hover animation: graha aspects (solid line, round marker) and rāśi aspects (dotted line, ◇ marker), each on or off */
+const animGroup = (re) => h('div', { class: 'grp anim-grp' }, h('b', {}, 'Hover animation'),
+  h('label', { class: 'tog' }, h('input', { type: 'checkbox', 'data-anim': 'graha', checked: S.layers.anim_graha !== false, onchange: e => { S.layers.anim_graha = e.target.checked; save(); re(); } }), h('i', { class: 'flow-key graha', 'aria-hidden': 'true' }), 'graha aspects'),
+  h('label', { class: 'tog' }, h('input', { type: 'checkbox', 'data-anim': 'rashi', checked: S.layers.anim_rashi !== false, onchange: e => { S.layers.anim_rashi = e.target.checked; save(); re(); } }), h('i', { class: 'flow-key rashi', 'aria-hidden': 'true' }), 'rāśi aspects ◇'));
+const chartLayerGroups = (re, opts = {}) => {
+  const transit = opts.d1 && D.transits && D.transits.rows && D.transits.rows.length;
+  return [
+    h('div', { class: 'grp' }, h('b', {}, 'Show'), toggle('aspect_marks', 'graha aspects', re), toggle('rashi_marks', 'rāśi aspects (◇)', re), toggle('arudha', opts.d1 ? 'ārūḍha padas' : 'ārūḍha padas (D1, D9)', re)),
+    h('div', { class: 'grp' }, h('b', {}, 'Lines'), toggle('chart_drishti', 'drishti arrows', re), toggle('rashi_drishti', 'rāśi drishti lines', re),
+      opts.d1 && WES ? toggle('west_aspects', 'Western aspects', re) : null, transit ? toggle('transits', 'transits', re) : null),
+    h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', re), toggle('extra_rashi', 'additional rāśi aspects', re)),
+    animGroup(re),
+    h('div', { class: 'grp' }, h('b', {}, 'Motion'), h('label', { class: 'tog' }, h('input', { type: 'checkbox', checked: S.animate !== false, onchange: e => { S.animate = e.target.checked; save(); re(); } }), 'animate')),
+  ];
+};
 /* additional aspects shown under the two switches: graha drishti (and exchange marks) and rāśi drishti */
 const extraShown = d => d.drishti === 'rashi' ? !!S.layers.extra_rashi : !!S.layers.extra_aspects;
 const pageHead = (sig, title, sub) => h('header', { class: 'phead' }, h('span', { class: 'phead-sigil', html: sigil(sig, 'big') }), h('div', {}, h('h2', {}, title), sub ? h('p', { class: 'lead' }, sub) : null));
@@ -70,13 +86,14 @@ page('chakra', () => 'Jyotish Chakra', 'Chart', (b) => {
       h('div', { class: 'grp' }, h('b', {}, 'Rings'), toggle('markers', 'markers', redraw), toggle('ticks', 'degrees', redraw), toggle('nak', 'nakshatras', redraw), toggle('pada', 'padas', redraw), toggle('dres', 'dreshkāṇas', redraw), toggle('houses', 'bhāvas', redraw), toggle('sav', 'SAV', redraw)),
       h('div', { class: 'grp' }, h('b', {}, 'Layers'), toggle('needles', 'needles', redraw), toggle('drishti', 'drishti arcs', redraw), toggle('aspect_marks', 'graha aspects', redraw), toggle('rashi_marks', 'rāśi aspects (◇)', redraw), toggle('rashi_drishti', 'rāśi drishti lines', redraw), toggle('arudha', 'ārūḍha padas', redraw), toggle('west_aspects', 'Western aspects', redraw), transit ? toggle('transits', 'transits', redraw) : null),
       h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', redraw), toggle('extra_rashi', 'additional rāśi aspects', redraw)),
+      animGroup(redraw),
       h('div', { class: 'grp' }, h('b', {}, 'Turn'), h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'template'), onclick: () => { S.orientation = 'template'; save(); redraw(); } }, 'Mesha at 11'),
         h('button', { class: 'tab', 'aria-selected': String(S.orientation === 'lagna'), disabled: ASC == null, onclick: () => { S.orientation = 'lagna'; save(); redraw(); } }, 'Lagna at top'),
         h('label', { class: 'tog' }, h('input', { type: 'checkbox', id: 'turn-on-select', checked: S.turnOnSelect !== false, onchange: e => { S.turnOnSelect = e.target.checked; save(); if (FOCUS) focusSeg(FOCUS[0], FOCUS[1], panel); } }), 'turn to selection'))),
     transit && S.layers.transits ? transitControls() : null,
     h('h3', { class: 'mandala-t' }, 'Graha-Nakshatra Mandala'), h('div', { class: 'chakra-layout' }, host, side),
     h('div', { class: 'legend' }, h('span', {}, h('i', { style: 'background:#6FAF1F' }), 'pushkara navāṃśa'), h('span', {}, h('i', { style: 'background:#3ED9E4' }), 'vargottama'), h('span', {}, h('i', { style: 'background:#D7141F' }), 'gaṇḍānta'),
-      h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · △ mūlatrikoṇa · ◎ own · V vargottama')));
+      h('span', {}, 'Ju Sa: translucent marks show which grahas aspect a sign (* special aspect); ◇Ju: rāśi drishti'), h('span', {}, 'hover a graha to watch its aspects: ', h('i', { class: 'flow-key graha' }), ' graha drishti, ', h('i', { class: 'flow-key rashi' }), ' rāśi drishti ◇'), h('span', {}, 'flags: R retrograde · C combust · ↑ exalted · ↓ debilitated · △ mūlatrikoṇa · ◎ own · V vargottama')));
   b.append(grahaLegend());
   renderWheel(host, panel); resetFocus(panel);
 }, { blurb: 'nakshatras, padas, navāṃśa and every point' });
@@ -107,28 +124,40 @@ page('charts', () => 'Charts', 'Chart', (b) => {
     grid.append(card('Bhāva chalit (Śrīpati)', table(['Graha', 'Position', 'Rāśi bhāva', 'Chalit bhāva', ''], rows), note('Bhāva madhyas and sandhis from Porphyry trisection (matches the Swiss Ephemeris Śrīpati houses within 0.2″).')));
   }
   grid.append(card('Sudarshana chakra', h('div', { class: 'figure narrow' }, sudarshana())));
+  const transitOn = S.layers.transits && D.transits && D.transits.rows && D.transits.rows.length;
+  if (transitOn) wide.append(card('Gochara: transits over the rāśi chart', transitSquare(), note('Inner boxes: the natal grahas. Outer band: where each graha is on the date shown. Move the slider or press play.')));
   put(b, pageHead('charts', 'Charts', 'Rāśi, navāṃśa, bhāva chalit and Sudarshana. Click a house for its page, a graha for its own.'),
     h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian'), style('both', 'Both')),
       h('div', { class: 'grp' }, h('b', {}, 'Icons'), icons('sphere', 'Spheres'), icons('glyph', 'Glyphs'), icons('badge', 'Badges')), visGroup(),
       h('div', { class: 'grp' }, h('b', {}, 'Bhāva chalit'), ...[['none', 'Off'], ['square', 'Concentric squares'], ['circle', 'Circle']].map(([v, t]) => h('button', { class: 'tab', 'aria-selected': String((S.chalit || 'none') === v), onclick: () => { S.chalit = v; save(); re(); } }, t))),
-      h('div', { class: 'grp' }, h('b', {}, 'Show'), toggle('aspect_marks', 'graha aspects', re), toggle('rashi_marks', 'rāśi aspects (◇)', re), toggle('arudha', 'ārūḍha padas', re)),
-      h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects', re), toggle('extra_rashi', 'additional rāśi aspects', re))),
-    wide, grid, grahaLegend(), note('In each house: graha (higher degree higher), degree, nakshatra; small marks R retrograde, C combust, ↑ exalted, ↓ debilitated, △ mūlatrikoṇa, ◎ own sign, V vargottama. Translucent letters along the bottom of a house are the grahas aspecting it (graha drishti; * special); ◇ letters above them are rāśi drishti. Hover a graha to light up the houses it aspects.'));
+      ...chartLayerGroups(re, { d1: true })),
+    transitOn ? transitControls() : null,
+    wide, grid, grahaLegend(), note('In each house: graha (higher degree higher), degree, nakshatra; small marks R retrograde, C combust, ↑ exalted, ↓ debilitated, △ mūlatrikoṇa, ◎ own sign, V vargottama. Translucent letters along the bottom of a house are the grahas aspecting it (graha drishti; * special); ◇ letters above them are rāśi drishti. Hover a graha to watch its aspects flow to the houses it sees; switch on drishti arrows, rāśi drishti lines or Western aspects to draw them all.'));
 }, { blurb: 'rāśi, navāṃśa, bhāva chalit, Sudarshana' });
 
 /* ── vargas ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 page('vargas', () => 'Vargas', 'Chart', (b) => {
   if (!VED || DIVS.length < 2) return put(b, missing('Divisional charts', 'Ask for divisions.'));
-  const kind = S.chart === 'north' ? 'north' : 'south';
-  const gallery = h('div', { class: 'gallery' }, DIVS.map(d => h('a', { class: 'card mini-chart', href: `#/vargas/${d}`, onclick: e => { e.preventDefault(); S.varga = d; save(); route(); } },
-    h('h3', {}, `D${d} ${DIV_NAME[d] || ''}`, h('small', {}, DIV_AREA[d] || '')), h('div', { class: 'figure' }, chartSVG(kind, d, { compact: true, noTitle: true })))));
+  const kind = S.chart === 'north' ? 'north' : 'south', re = () => route();
+  const style = (v, t) => h('button', { class: 'tab', 'aria-selected': String((S.chart === 'north' ? 'north' : 'south') === v), onclick: () => { S.chart = v; save(); re(); } }, t);
+  const icons = (v, t) => h('button', { class: 'tab', 'aria-selected': String(S.icons === v), onclick: () => { S.icons = v; save(); re(); } }, t);
+  const gallery = h('div', { class: 'gallery' }, DIVS.map(d => h('a', { class: 'card mini-chart' + (d === (DIVS.includes(S.varga) ? S.varga : 9) ? ' on' : ''), href: `#/vargas/${d}`, onclick: e => { e.preventDefault(); S.varga = d; save(); route(); } },
+    h('h3', {}, `D${d} ${DIV_NAME[d] || ''}`, h('small', {}, DIV_AREA[d] || '')), h('div', { class: 'figure' }, chartSVG(kind, d, { compact: true, noTitle: true, noMarks: true })))));
   const d = DIVS.includes(S.varga) ? S.varga : 9;
   const ids = (ASC != null ? ['lagna'] : []).concat(GRAHA_ORDER.filter(g => GR[g]));
   const grid = table(['Body', ...DIVS.map(x => 'D' + x)], ids.map(id => [id === 'lagna' ? 'Lagna' : glink(id), ...DIVS.map(x => { const sg = vargaSign(id, x), d1 = vargaSign(id, 1);
     return sg == null ? '—' : { td: { class: x > 1 && sg === d1 ? 'same' : '', title: vargaDeg(id, x) != null ? dm(vargaDeg(id, x)) : '' }, v: SIGN_AB[sg] }; })]));
-  put(b, pageHead('vargas', 'Divisional charts', `${DIVS.length} vargas. Pick one to see it large; the grid shows every body in every varga (highlight: same sign as D1).`),
-    h('div', { class: 'grid2' }, card(`D${d} · ${DIV_NAME[d] || ''} (${DIV_AREA[d] || ''})`, h('div', { class: 'figure' }, chartSVG(kind, d))), card('Every body, every varga', grid)),
-    gallery);
+  const pick = h('select', { 'aria-label': 'Varga', onchange: e => { S.varga = +e.target.value; save(); re(); } }, DIVS.map(x => h('option', { value: x, selected: x === d }, `D${x} · ${DIV_NAME[x] || ''}`)));
+  const hasAsp = !!aspectSet(d);
+  put(b, pageHead('vargas', 'Divisional charts', `${DIVS.length} vargas. Pick one to see it large with its aspects; the grid shows every body in every varga (highlight: same sign as D1).`),
+    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Varga'), pick),
+      h('div', { class: 'grp' }, h('b', {}, 'Style'), style('south', 'South Indian'), style('north', 'North Indian')),
+      h('div', { class: 'grp' }, h('b', {}, 'Icons'), icons('sphere', 'Spheres'), icons('glyph', 'Glyphs'), icons('badge', 'Badges')), visGroup(),
+      ...chartLayerGroups(re, { d1: d === 1 })),
+    h('div', { class: 'wide-charts' }, card(`D${d} · ${DIV_NAME[d] || ''} (${DIV_AREA[d] || ''})`, h('div', { class: 'figure wide' }, chartSVG(kind, d)),
+      note(hasAsp ? (d === 1 ? 'Aspects of the rāśi chart.' : `Aspects in D${d} are cast by the same rules as in the rāśi chart, between the signs the grahas occupy in D${d} (engine: vedic.drishti.vargas). Hover a graha to watch them.`)
+        : 'This file has no aspects for this varga. Make the report with the drishti feature to see them.'))),
+    gallery, card('Every body, every varga', grid), grahaLegend());
 }, { blurb: 'D1 to D60 side by side' });
 
 /* ── planets and the planet page ──────────────────────────────────────────────────────────────────────────────── */
@@ -400,7 +429,20 @@ page('house', (n) => `Bhāva ${n || 1}`, 'Grahas & bhāvas', (b, n) => {
 
 /* ── aspects ──────────────────────────────────────────────────────────────────────────────────────────────────── */
 /* ── aspects: on houses, house + lord, on and from grahas, to Śrīpati cusps, for D1 and D9 ─────────────────────── */
-let ASP_VIEW = 'matrix', ASP_VARGA = 'd1';
+let ASP_VIEW = 'matrix';
+/* a dropdown of check boxes: several choices at once. options: [[key, text, sub]]; chosen: the keys (kept in order) */
+function multiSelect(label, options, chosen, onChange) {
+  const order = options.map(o => o[0]), sum = h('summary', {});
+  const upd = () => { sum.textContent = `${label}: ${chosen.length ? chosen.map(k => k.toUpperCase()).join(', ') : 'none'} ▾`; };
+  const set = keys => { chosen.splice(0, chosen.length, ...order.filter(k => keys.includes(k))); boxes.forEach(b => { b.firstChild.checked = chosen.includes(b.dataset.k); }); upd(); onChange(chosen); };
+  const boxes = options.map(([k, t, sub]) => h('label', { class: 'msel-opt', 'data-k': k }, h('input', { type: 'checkbox', checked: chosen.includes(k),
+    onchange: e => set(e.target.checked ? chosen.concat([k]) : chosen.filter(x => x !== k)) }), h('span', {}, t, sub ? h('small', {}, ' ' + sub) : null)));
+  const det = h('details', { class: 'msel' }, sum, h('div', { class: 'msel-pop' },
+    h('div', { class: 'msel-acts' }, h('button', { type: 'button', class: 'tab', onclick: () => set(order.slice()) }, 'All'), h('button', { type: 'button', class: 'tab', onclick: () => set([order[0]]) }, order[0].toUpperCase() + ' only')),
+    ...boxes));
+  upd(); return det;
+}
+document.addEventListener('click', e => { for (const d of document.querySelectorAll('details.msel[open]')) if (!d.contains(e.target)) d.open = false; });
 /* a small bar chart: one bar per label, values in virūpas (0–60) shown as percent of a full aspect */
 function barChart(title, labels, values, opts = {}) {
   const W = 300, H = 150, left = 30, bottom = 22, top = 10, w = (W - left - 6) / labels.length;
@@ -432,41 +474,48 @@ function extraTable(list) {
 const EXTRA_NOTE = 'Additional aspects (vedic.drishti.additional): a retrograde graha, other than Rāhu and Ketu, also casts its graha and rāśi drishti from the sign before it (its shadow, ʳ); two grahas in parivartana, each in the other’s sign, also cast their aspects as if exchanged (⇄). They are conventions some practitioners use; ESHANA shows them only when this layer is on.';
 page('aspects', () => 'Aspects', 'Grahas & bhāvas', (b) => {
   const a = val('vedic.aspects'); if (!a) return put(b, missing('Aspects', 'Ask for the aspects feature.'));
-  const vg = a.houses && a.houses[ASP_VARGA] ? ASP_VARGA : 'd1', m = a[vg] || {}, hs = (a.houses || {})[vg], hl = (a.house_and_lord || {})[vg];
-  const from9 = NINE.filter(g => m[g] || GR[g]), colour = i => G[from9[i]].dot, abbr = from9.map(g => G[g].abbr);
-  const onHouse = k => from9.map(g => hs && hs[g] && hs[g][String(k)] ? hs[g][String(k)].virupa : null);
-  const onLagna = () => from9.map(g => hs && hs[g] && hs[g].lagna ? hs[g].lagna.virupa : null);
-  const onGraha = t => from9.map(g => g === t ? null : (m[g] && m[g][t] ? m[g][t].virupa : null));
-  const fromGraha = f => from9.map(t => t === f ? null : (m[f] && m[f][t] ? m[f][t].virupa : null));
-  const toHouses = f => Array.from({ length: 12 }, (_, k) => hs && hs[f] && hs[f][String(k + 1)] ? hs[f][String(k + 1)].virupa : null);
-  const lagnaSign = vg === 'd9' ? vargaSign('lagna', 9) : LAGNA_SIGN;
-  const hname = k => lagnaSign == null ? `House ${k}` : `House ${k} · ${SIGN_SKT[(lagnaSign + k - 1) % 12]}`;
+  const avail = (a.divisions || [1, 9]).map(d => 'd' + d).filter(k => a[k]);
+  if (!Array.isArray(S.aspVargas)) S.aspVargas = ['d1'];
+  const chosen = S.aspVargas.filter(k => avail.includes(k)); if (!chosen.length) chosen.push('d1');
   const views = [['matrix', 'Graha × graha matrix'], ['houses', 'On houses'], ['houselord', 'On house + lord'], ['planets', 'On and from grahas'], ['from', 'From each graha to houses'], ['cusps', 'To Śrīpati cusps (table)']];
-  let body;
-  const needHouses = note('Aspects on houses need an exact birth time and place.');
-  if (ASP_VIEW === 'houses') body = hs ? h('div', { class: 'minis' }, [barChart('Aspects on the lagna', abbr, onLagna(), { colour })].concat(Array.from({ length: 12 }, (_, k) => barChart(hname(k + 1), abbr, onHouse(k + 1), { colour })))) : needHouses;
-  else if (ASP_VIEW === 'houselord') body = hl ? h('div', { class: 'minis' }, Array.from({ length: 12 }, (_, k) => barChart(hname(k + 1) + ' + its lord', abbr, from9.map(g => hl[g] ? hl[g][String(k + 1)] : null), { colour }))) : needHouses;
-  else if (ASP_VIEW === 'planets') body = h('div', { class: 'minis' }, (hs ? [barChart('Aspects on the lagna', abbr, onLagna(), { colour }), barChart('Aspects from the lagna', abbr, from9.map(() => null), {})] : [])
-    .concat(...from9.filter(g => GR[g]).map(g => [barChart(`Aspects on ${G[g].en}`, abbr, onGraha(g), { colour }), barChart(`Aspects from ${G[g].en}`, abbr, fromGraha(g), { colour: () => G[g].dot })])));
-  else if (ASP_VIEW === 'from') body = hs ? h('div', { class: 'minis' }, from9.filter(g => GR[g]).map(g => barChart(`From ${G[g].en} to the houses`, Array.from({ length: 12 }, (_, k) => String(k + 1)), toHouses(g), { colour: () => G[g].dot, tipFrom: i => hname(i + 1) }))) : needHouses;
-  else if (ASP_VIEW === 'cusps') body = hs ? table(['House', 'Madhya', ...abbr], Array.from({ length: 12 }, (_, k) => {
-    const md = ((a.house_madhya || {})[vg] || [])[k];
-    return [String(k + 1), md != null ? `${SIGN_AB[signOf(md)]} ${inSignDM(md)}` : '—', ...from9.map(g => { const v = hs[g] && hs[g][String(k + 1)] ? hs[g][String(k + 1)].virupa : null; return v ? { td: { class: 'asp-cell', style: `--v:${Math.min(1, v / 60)}` }, v: String(Math.round(v)) } : '–'; })];
-  })) : needHouses;
-  else {
-    const mat = (mm) => { const ids = NINE.filter(g => mm[g] || GR[g]); return table(['', ...ids.map(g => G[g].abbr)], ids.map(from => [glink(from), ...ids.map(to => {
-      const x = (mm[from] || {})[to]; if (from === to || !x) return ''; return { td: { class: 'asp-cell', style: `--v:${Math.min(1, x.virupa / 60)}`, title: `${G[from].en} → ${G[to].en}: ${nth(x.house)} house, ${x.fraction || 'no graha drishti'}, ${fix(x.virupa, 1)} virūpa` }, v: `${x.fraction || '·'} (${Math.round(x.virupa)})` }; })])); };
-    body = mat(m);
-  }
-  put(b, pageHead('aspects', 'Aspects', 'Sputa drishti as a percent of a full aspect (60 virūpas), for the rāśi chart and the navāṃśa, from every perspective.'),
-    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Chart'), tabs([['d1', 'D1 · rāśi'], ['d9', 'D9 · navāṃśa']], vg, k => { ASP_VARGA = k; route(); })),
+  const bodyFor = (vg) => {
+    const dv = +vg.slice(1), m = a[vg] || {}, hs = (a.houses || {})[vg], hl = (a.house_and_lord || {})[vg];
+    const from9 = NINE.filter(g => m[g] || GR[g]), colour = i => G[from9[i]].dot, abbr = from9.map(g => G[g].abbr);
+    const onHouse = k => from9.map(g => hs && hs[g] && hs[g][String(k)] ? hs[g][String(k)].virupa : null);
+    const onLagna = () => from9.map(g => hs && hs[g] && hs[g].lagna ? hs[g].lagna.virupa : null);
+    const onGraha = t => from9.map(g => g === t ? null : (m[g] && m[g][t] ? m[g][t].virupa : null));
+    const fromGraha = f => from9.map(t => t === f ? null : (m[f] && m[f][t] ? m[f][t].virupa : null));
+    const toHouses = f => Array.from({ length: 12 }, (_, k) => hs && hs[f] && hs[f][String(k + 1)] ? hs[f][String(k + 1)].virupa : null);
+    const lagnaSign = dv === 1 ? LAGNA_SIGN : vargaSign('lagna', dv);
+    const hname = k => lagnaSign == null ? `House ${k}` : `House ${k} · ${SIGN_SKT[(lagnaSign + k - 1) % 12]}`;
+    const needHouses = note('Aspects on houses need an exact birth time and place.');
+    if (ASP_VIEW === 'houses') return hs ? h('div', { class: 'minis' }, [barChart('Aspects on the lagna', abbr, onLagna(), { colour })].concat(Array.from({ length: 12 }, (_, k) => barChart(hname(k + 1), abbr, onHouse(k + 1), { colour })))) : needHouses;
+    if (ASP_VIEW === 'houselord') return hl ? h('div', { class: 'minis' }, Array.from({ length: 12 }, (_, k) => barChart(hname(k + 1) + ' + its lord', abbr, from9.map(g => hl[g] ? hl[g][String(k + 1)] : null), { colour }))) : needHouses;
+    if (ASP_VIEW === 'planets') return h('div', { class: 'minis' }, (hs ? [barChart('Aspects on the lagna', abbr, onLagna(), { colour }), barChart('Aspects from the lagna', abbr, from9.map(() => null), {})] : [])
+      .concat(...from9.filter(g => GR[g]).map(g => [barChart(`Aspects on ${G[g].en}`, abbr, onGraha(g), { colour }), barChart(`Aspects from ${G[g].en}`, abbr, fromGraha(g), { colour: () => G[g].dot })])));
+    if (ASP_VIEW === 'from') return hs ? h('div', { class: 'minis' }, from9.filter(g => GR[g]).map(g => barChart(`From ${G[g].en} to the houses`, Array.from({ length: 12 }, (_, k) => String(k + 1)), toHouses(g), { colour: () => G[g].dot, tipFrom: i => hname(i + 1) }))) : needHouses;
+    if (ASP_VIEW === 'cusps') return hs ? table(['House', 'Madhya', ...abbr], Array.from({ length: 12 }, (_, k) => {
+      const md = ((a.house_madhya || {})[vg] || [])[k];
+      return [String(k + 1), md != null ? `${SIGN_AB[signOf(md)]} ${inSignDM(md)}` : '—', ...from9.map(g => { const v = hs[g] && hs[g][String(k + 1)] ? hs[g][String(k + 1)].virupa : null; return v ? { td: { class: 'asp-cell', style: `--v:${Math.min(1, v / 60)}` }, v: String(Math.round(v)) } : '–'; })];
+    })) : needHouses;
+    const ids = NINE.filter(g => m[g] || GR[g]);
+    return table(['', ...ids.map(g => G[g].abbr)], ids.map(from => [glink(from), ...ids.map(to => {
+      const x = (m[from] || {})[to]; if (from === to || !x) return ''; return { td: { class: 'asp-cell', style: `--v:${Math.min(1, x.virupa / 60)}`, title: `${G[from].en} → ${G[to].en}: ${nth(x.house)} house, ${x.fraction || 'no graha drishti'}, ${fix(x.virupa, 1)} virūpa` }, v: `${x.fraction || '·'} (${Math.round(x.virupa)})` }; })]));
+  };
+  const title = vg => { const dv = +vg.slice(1); return `D${dv} · ${DIV_NAME[dv] || ''}${DIV_AREA[dv] ? ' (' + DIV_AREA[dv] + ')' : ''}`; };
+  const out = h('div', { class: 'asp-sections' });
+  const draw = () => out.replaceChildren(...chosen.map(vg => card(title(vg), bodyFor(vg))));
+  const pick = multiSelect('Charts', avail.map(k => { const dv = +k.slice(1); return [k, `D${dv} · ${DIV_NAME[dv] || ''}`, DIV_AREA[dv] || '']; }), chosen, ks => { S.aspVargas = ks.slice(); save(); draw(); });
+  draw();
+  put(b, pageHead('aspects', 'Aspects', `Sputa drishti as a percent of a full aspect (60 virūpas), from every perspective, for the rāśi chart and ${avail.length - 1} varga${avail.length === 2 ? '' : 's'}. Choose several charts to see them one under another.`),
+    h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Charts'), pick),
       h('div', { class: 'grp' }, h('b', {}, 'View'), tabs(views, ASP_VIEW, k => { ASP_VIEW = k; route(); }))),
-    card(null, body),
+    out,
     h('div', { class: 'toolbar' }, h('div', { class: 'grp' }, h('b', {}, 'Additional'), toggle('extra_aspects', 'additional graha aspects (retrograde shadow, parivartana)', () => route()), toggle('extra_rashi', 'additional rāśi aspects', () => route()))),
     S.layers.extra_aspects || S.layers.extra_rashi ? card('Additional aspects', extraTable(ADDITIONAL.filter(extraShown)), note(EXTRA_NOTE)) : null,
     note(a.note), a.house_conventions ? note(a.house_conventions) : null,
     note('Rāhu and Ketu have no sputa drishti in Bṛhat Parāśara Horā Śāstra, so their bars are empty; some programs assign them aspects by other conventions.'));
-}, { blurb: 'every aspect, D1 and D9, as charts' });
+}, { blurb: 'every aspect, D1 and any varga, as charts' });
 
 /* ── strength ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 /* ṣaḍbala ratio bars with a dotted cut-off at 1.0: below it a graha is short of its required strength */

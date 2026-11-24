@@ -18,7 +18,8 @@ eshana chart vedic --date 1879-12-30 --time 01:00 --offset-minutes 321 --lat 9.9
 | `vedic.drishti.graha` | graha drishti: which signs each graha aspects, by whole-sign house count | `vedic.core` |
 | `vedic.drishti.rashi` | rāśi (Jaimini) drishti: which signs each sign aspects, with the grahas in them | `vedic.core` |
 | `vedic.drishti.additional` | optional extra aspects: retrograde shadow and parivartana (below) | `vedic.core` |
-| `vedic.aspects` | sputa drishti in virūpas: graha × graha (D1 and D9), on houses, on house + lord | `vedic.bala` |
+| `vedic.drishti.vargas` | the same three (graha, rāśi, additional) inside each requested varga, cast between the signs the grahas occupy in that varga | `vedic.core` |
+| `vedic.aspects` | sputa drishti in virūpas: graha × graha for D1, D9 and every requested varga, on houses, on house + lord | `vedic.bala` |
 
 ## Graha drishti
 
@@ -53,10 +54,19 @@ aspects add Mars +15 at 90–120° and 210–240°, Jupiter +30 at 120–150° a
 270–300°, capped at 60. The nodes and the outer planets have no sputa drishti.
 
 `vedic.aspects` holds:
-- the graha × graha matrix for D1, and for D9 using navāṃśa degrees;
-- `houses`: aspects on the lagna and on each house madhya, for D1 (Śrīpati madhyas) and D9 (equal houses from the
-  navāṃśa lagna degree);
+- `divisions`: the charts it covers (1, 9 and every other requested division);
+- the graha × graha matrix for D1 (`d1`), and for each varga (`d9`, `d10`, …) using varga longitudes: the varga sign
+  plus the degree within the sign times the division, the same rule as the navāṃśa;
+- `houses`: aspects on the lagna and on each house madhya, for D1 (Śrīpati madhyas) and each varga (equal houses from
+  the varga lagna degree);
 - `house_and_lord`: the mean of the virūpas on a house madhya and on that house's sign lord.
+
+## Aspects inside a varga
+
+`vedic.drishti.vargas` applies the rāśi-chart rules to each requested varga: a graha in Makara in the D9 aspects Karka
+(its 7th) in the D9, Mars adds its 4th and 8th from its D9 sign, rāśi drishti runs between the D9 signs, and the
+additional aspects follow a graha's D9 sign. The studio draws them on the Vargas page (marks, arrows, rāśi drishti
+lines and the hover animation) for the varga you pick.
 
 ## Additional aspects (optional)
 

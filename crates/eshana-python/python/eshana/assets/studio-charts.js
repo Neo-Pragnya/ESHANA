@@ -25,17 +25,36 @@ function flags(id, d = 1) {
 }
 /* which grahas aspect each sign (graha drishti, from the engine) */
 const ASPECTED = {};
-function rebuildAspected() { for (const k of Object.keys(ASPECTED)) delete ASPECTED[k]; for (const d of DRISHTI) (ASPECTED[d.sign] = ASPECTED[d.sign] || []).push(d); }
+function rebuildAspected() { for (const k of Object.keys(ASPECTED)) delete ASPECTED[k]; for (const d of DRISHTI) (ASPECTED[d.sign] = ASPECTED[d.sign] || []).push(d);
+  for (const k of Object.keys(ASPECT_SETS)) delete ASPECT_SETS[k]; }
+/* the drishti of one division: D1 from vedic.drishti.*, any other varga from vedic.drishti.vargas (the same rules
+   cast between the signs the grahas occupy in that varga). null when the file has none for that division. */
+const ASPECT_SETS = {};
+const VARGA_DRISHTI = (() => { const m = {}; for (const v of ((val('vedic.drishti.vargas') || {}).vargas || [])) m[v.division] = v; return m; })();
+function aspectSet(d = 1) {
+  if (ASPECT_SETS[d]) return ASPECT_SETS[d];
+  let graha, additional, rashi;
+  if (d === 1) { graha = DRISHTI; additional = ADDITIONAL; rashi = (val('vedic.drishti.rashi') || {}).aspects || []; }
+  else { const v = VARGA_DRISHTI[d]; if (!v) return null; graha = v.graha.filter(x => GR[x.from]); additional = v.additional.filter(x => GR[x.from]); rashi = v.rashi; }
+  const aspected = {}, rashiAspected = {};
+  for (const x of graha) (aspected[x.sign] = aspected[x.sign] || []).push(x);
+  for (const r of rashi) for (const t of r.aspects_signs) (rashiAspected[t] = rashiAspected[t] || []).push(r);
+  return (ASPECT_SETS[d] = { graha, additional, rashi, aspected, rashiAspected });
+}
+const NO_SET = { graha: [], additional: [], rashi: [], aspected: {}, rashiAspected: {} };
+const setOf = d => aspectSet(d) || NO_SET;
+/* where a graha sits in a division (D1: its rāśi) */
 rebuildAspected();
+const signIn = (id, d) => d === 1 ? (id === 'lagna' ? LAGNA_SIGN : GR[id] ? signOf(GR[id].lon) : null) : vargaSign(id, d);
 /* a block of marks inside a chart cell: wrapped to maxW (when given) and anchored at the baseline of its last line,
    so it grows upwards from the bottom of the cell (or at the baseline of its first line when down is set, so it grows
    downwards). Returns the height it takes (0 when there is nothing to show). */
 /* parivartana: each graha of an exchange is also read as standing in its partner's sign; shown (with the
    additional aspects) as the graha's abbreviation with ⇄ among that sign's marks */
-function exchangesIn(sign) {
+function exchangesIn(sign, d = 1) {
   if (!S.layers.extra_aspects) return [];
   const seen = new Set();
-  return ADDITIONAL.filter(d => d.basis === 'parivartana' && d.from_sign === sign && G[d.from] && !seen.has(d.from) && seen.add(d.from));
+  return setOf(d).additional.filter(d => d.basis === 'parivartana' && d.from_sign === sign && G[d.from] && !seen.has(d.from) && seen.add(d.from));
 }
 function wrapMarks(items, size, maxW) {
   const cw = size * .62, lines = [[]]; let w = 0;
@@ -52,24 +71,24 @@ function markBlock(parent, items, x, y, anchor, size, cls, title, maxW, down) {
   const tt = s('title', {}, t); tt.textContent = title;
   return lines.length * lh;
 }
-function aspectItems(sign) {
+function aspectItems(sign, dv = 1) {
   if (!S.layers.aspect_marks) return [];
-  const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
-  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
-  return exchangesIn(sign).map(d => ({ text: G[d.from].abbr + '⇄' })).concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : '') })),
+  const st = setOf(dv), list = (st.aspected[sign] || []).filter(d => G[d.from]);
+  const extra = S.layers.extra_aspects ? st.additional.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
+  return exchangesIn(sign, dv).map(d => ({ text: G[d.from].abbr + '⇄' })).concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : '') })),
     extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] })));
 }
-function rashiItems(sign) {
+function rashiItems(sign, dv = 1) {
   if (!S.layers.rashi_marks) return [];
-  const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
-  const extra = S.layers.extra_rashi ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
+  const st = setOf(dv), list = (st.rashiAspected[sign] || []).filter(r => G[r.from] && GR[r.from]);
+  const extra = S.layers.extra_rashi ? st.additional.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
   return list.length || extra.length ? [{ text: '◇', lead: true }].concat(list.map(r => ({ text: G[r.from].abbr })), extra.map(d => ({ text: G[d.from].abbr + EXTRA_MARK[d.basis] }))) : [];
 }
-function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
+function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false, dv = 1) {
   if (!S.layers.aspect_marks) return 0;
-  const list = (ASPECTED[sign] || []).filter(d => G[d.from]);
-  const extra = S.layers.extra_aspects ? ADDITIONAL.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
-  const ex = exchangesIn(sign);
+  const st = setOf(dv), list = (st.aspected[sign] || []).filter(d => G[d.from]);
+  const extra = S.layers.extra_aspects ? st.additional.filter(d => d.drishti === 'graha' && d.sign === sign && G[d.from]) : [];
+  const ex = exchangesIn(sign, dv);
   if (!list.length && !extra.length && !ex.length) return 0;
   const items = ex.map(d => ({ text: G[d.from].abbr + '⇄', fill: G[d.from].dot, weight: 800, cls: 'exchmark' }))
     .concat(list.map(d => ({ text: G[d.from].abbr + (d.kind === 'special' ? '*' : ''), fill: G[d.from].dot, weight: d.kind === 'special' ? 700 : 500 })),
@@ -82,10 +101,10 @@ function aspectMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, 
 
 /* which grahas see each sign by rāśi drishti (sign aspect, from the engine), shown as ◇ marks */
 const RASHI_ASPECTED = (() => { const m = {}; for (const r of ((val('vedic.drishti.rashi') || {}).aspects || [])) for (const t of r.aspects_signs) (m[t] = m[t] || []).push(r); return m; })();
-function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false) {
+function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, down = false, dv = 1) {
   if (!S.layers.rashi_marks) return 0;
-  const list = (RASHI_ASPECTED[sign] || []).filter(r => G[r.from] && GR[r.from]);
-  const extra = S.layers.extra_rashi ? ADDITIONAL.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
+  const st = setOf(dv), list = (st.rashiAspected[sign] || []).filter(r => G[r.from] && GR[r.from]);
+  const extra = S.layers.extra_rashi ? st.additional.filter(d => d.drishti === 'rashi' && d.sign === sign && G[d.from]) : [];
   if (!list.length && !extra.length) return 0;
   const items = [{ text: '◇', fill: 'var(--muted)', lead: true }]
     .concat(list.map(r => ({ text: G[r.from].abbr, fill: G[r.from].dot, italic: true })))
@@ -93,22 +112,34 @@ function rashiMarks(parent, sign, x, y, anchor = 'start', size = 10, maxW = 0, d
   return markBlock(parent, items, x, y, anchor, size, 'aspmark rashimark', 'Rāśi drishti from ' + list.map(r => `${G[r.from].en} in ${SIGN_SKT[r.sign]}`).join(', '), maxW, down);
 }
 /* what a graha sees: graha drishti (with the house counted from it) and rāśi drishti */
-function aspectTargets(id) {
-  const out = DRISHTI.filter(d => d.from === id).map(d => ({ sign: d.sign, kind: d.kind === 'special' ? 'special' : 'graha', label: nth(d.house_from_graha) }));
-  for (const r of ((val('vedic.drishti.rashi') || {}).aspects || [])) if (r.from === id) for (const t of r.aspects_signs) out.push({ sign: t, kind: 'rashi', label: 'rāśi' });
-  for (const d of ADDITIONAL) if (d.from === id && (d.drishti === 'rashi' ? S.layers.extra_rashi : S.layers.extra_aspects)) out.push({ sign: d.sign, kind: 'extra', label: (d.drishti === 'rashi' ? 'rāśi' : nth(d.house_from_graha)) + EXTRA_MARK[d.basis] });
+function aspectTargets(id, dv = 1) {
+  const st = setOf(dv);
+  const out = st.graha.filter(d => d.from === id).map(d => ({ sign: d.sign, kind: d.kind === 'special' ? 'special' : 'graha', via: 'graha', label: nth(d.house_from_graha) }));
+  for (const r of st.rashi) if (r.from === id) for (const t of r.aspects_signs) out.push({ sign: t, kind: 'rashi', via: 'rashi', label: '◇ rāśi' });
+  for (const d of st.additional) if (d.from === id && (d.drishti === 'rashi' ? S.layers.extra_rashi : S.layers.extra_aspects)) out.push({ sign: d.sign, kind: 'extra', via: d.drishti === 'rashi' ? 'rashi' : 'graha', label: (d.drishti === 'rashi' ? '◇ rāśi' : nth(d.house_from_graha)) + EXTRA_MARK[d.basis] });
   return out;
 }
+/* what the hover animation shows: graha aspects and rāśi aspects are switched on and off separately
+   (S.layers.anim_graha, S.layers.anim_rashi); with both off a hovered graha animates nothing */
+const flowTargets = (id, dv = 1) => aspectTargets(id, dv).filter(t => t.via === 'rashi' ? S.layers.anim_rashi !== false : S.layers.anim_graha !== false);
+const flowOff = () => S.layers.anim_rashi === false && S.layers.anim_graha === false;
+/* the moving marker: a dot for a graha aspect, a diamond for a rāśi aspect */
+function flowMarker(g, t, col, d, k, size) {
+  const m = t.via === 'rashi'
+    ? s('path', { d: `M0 ${-size}L${size} 0L0 ${size}L${-size} 0Z`, fill: col, class: 'af-dot rashi' }, g)
+    : s('circle', { r: size, fill: col, class: 'af-dot' }, g);
+  s('animateMotion', { dur: ((t.via === 'rashi' ? 1.7 : 1.1) + k * .15).toFixed(2) + 's', repeatCount: 'indefinite', path: d }, m);
+}
 /* hovering a graha animates its aspects: flowing curves to every sign it sees, the signs lit, the boxes outlined */
-function aspectFlow(id, svg) {
+function aspectFlow(id, svg, dv = 1) {
   svg = svg || (WHEEL && WHEEL.svg); if (!svg) return;
   const old = svg.querySelector(':scope > .aflow'); if (old) old.remove();
   $$('.cell.aspected, .cell.aspect-src', svg).forEach(c => c.classList.remove('aspected', 'aspected-rashi', 'aspected-graha', 'aspect-src'));
-  if (!id || !GR[id]) { if (WHEEL && svg === WHEEL.svg) hot(FOCUS ? [FOCUS] : []); return; }
-  const tg = aspectTargets(id), src = signOf(GR[id].lon);
-  for (const t of tg) $$(`.cell[data-sign="${t.sign}"]`, svg).forEach(c => c.classList.add('aspected', t.kind === 'rashi' ? 'aspected-rashi' : 'aspected-graha'));
+  if (!id || !GR[id] || flowOff()) { if (WHEEL && svg === WHEEL.svg) hot(FOCUS ? [FOCUS] : []); return; }
+  const tg = flowTargets(id, dv), src = signIn(id, dv);
+  for (const t of tg) $$(`.cell[data-sign="${t.sign}"]`, svg).forEach(c => c.classList.add('aspected', t.via === 'rashi' ? 'aspected-rashi' : 'aspected-graha'));
   $$(`.cell[data-sign="${src}"]`, svg).forEach(c => c.classList.add('aspect-src'));
-  if (!(WHEEL && svg === WHEEL.svg && WHEEL.innerR)) return; // a plain chart: the outlined boxes are the animation
+  if (!(WHEEL && svg === WHEEL.svg && WHEEL.innerR)) { squareFlow(svg, id, src, tg); return; }
   hot(tg.map(t => ['rashi', t.sign]).concat([['rashi', src]]));
   const g = s('g', { class: 'aflow' }, svg);
   g.style.transform = WHEEL.rot.style.transform; g.style.transformOrigin = '0 0';
@@ -116,13 +147,90 @@ function aspectFlow(id, svg) {
   tg.forEach((t, k) => {
     const ta = angOf(t.sign * 30 + 15), [x1, y1] = pt(WHEEL.innerR + 18, ta), [cx, cy] = pt(WHEEL.innerR * .22, (a0 + ta) / 2 + (k % 2 ? 8 : -8));
     const d = `M${x0.toFixed(1)} ${y0.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`;
-    s('path', { d, class: 'af ' + t.kind, stroke: G[id].dot }, g);
-    const dot = s('circle', { r: t.kind === 'rashi' ? 5 : 7, fill: G[id].dot, class: 'af-dot' }, g);
-    s('animateMotion', { dur: (1.1 + k * .15).toFixed(2) + 's', repeatCount: 'indefinite', path: d }, dot);
-    s('path', { d: arc(WHEEL.innerR + 2, WHEEL.innerR + 34, angOf(t.sign * 30) + 1, angOf(t.sign * 30) + 29), class: 'af-target ' + t.kind, fill: G[id].dot }, g);
-    const [lx, ly] = pt(WHEEL.innerR + 18, ta); const lt = s('text', { x: lx, y: ly, class: 'lbl af-lbl' }, g); lt.textContent = t.label;
+    s('path', { d, class: `af ${t.kind} via-${t.via}`, stroke: G[id].dot }, g);
+    flowMarker(g, t, G[id].dot, d, k, 7);
+    s('path', { d: arc(WHEEL.innerR + 2, WHEEL.innerR + 34, angOf(t.sign * 30) + 1, angOf(t.sign * 30) + 29), class: `af-target ${t.kind} via-${t.via}`, fill: G[id].dot }, g);
+    const [lx, ly] = pt(WHEEL.innerR + 18, ta); const lt = s('text', { x: lx, y: ly, class: `lbl af-lbl via-${t.via}` }, g); lt.textContent = t.label;
   });
   s('circle', { cx: x0, cy: y0, r: 11, class: 'af-src', stroke: G[id].dot }, g);
+}
+
+/* ── square charts: the same aspect animation and line layers as the chakra ────────────────────────────────────
+   southGrid and northGrid record each sign's box centre on the svg (_cells) and the chart's centre (_centre); the
+   curves bend towards the middle of the chart, and grahas sharing a sign get their own lane so lines stay apart. */
+function cellCurve(a, b, k, centre) {
+  const [mx, my] = centre, hx = (a.cx + b.cx) / 2, hy = (a.cy + b.cy) / 2, dx = b.cx - a.cx, dy = b.cy - a.cy, len = Math.hypot(dx, dy) || 1;
+  const bend = .4, off = (k % 2 ? 1 : -1) * (10 + (k >> 1) * 7);
+  const cx = hx + (mx - hx) * bend - dy / len * off, cy = hy + (my - hy) * bend + dx / len * off;
+  const sh = (p, q, t) => [p.cx + (q[0] - p.cx) * t, p.cy + (q[1] - p.cy) * t];
+  const [x0, y0] = sh(a, [cx, cy], .16), [x1, y1] = sh(b, [cx, cy], .2);
+  return `M${x0.toFixed(1)} ${y0.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+}
+const inkOf = id => (G[id] || G.lagna).dot === '#E6E9F0' ? 'var(--ink)' : (G[id] || G.lagna).dot;
+function squareFlow(svg, id, src, tg) {
+  const cells = svg._cells, from = cells && cells[src]; if (!from) return;
+  const g = s('g', { class: 'aflow' }, svg), col = inkOf(id);
+  tg.forEach((t, k) => {
+    const to = cells[t.sign]; if (!to) return;
+    const d = cellCurve(from, to, k, svg._centre);
+    s('path', { d, class: `af ${t.kind} via-${t.via}`, stroke: col }, g);
+    flowMarker(g, t, col, d, k, t.via === 'rashi' ? 6 : 5.5);
+    // a box seen both ways gets both labels, the rāśi one a line lower
+    const lower = t.via === 'rashi' && tg.some(o => o.sign === t.sign && o.via === 'graha');
+    const lt = s('text', { x: to.cx, y: to.cy + 5 + (lower ? 15 : 0), class: `lbl af-lbl sq via-${t.via}` }, g); lt.textContent = t.label;
+  });
+  s('circle', { cx: from.cx, cy: from.cy, r: Math.min(from.w, from.h) * .3, class: 'af-src', stroke: col }, g);
+}
+let CHART_SEQ = 0;
+/* the line layers a square chart can show, as on the chakra: drishti arrows (drawn in when animation is on), rāśi
+   drishti lines and, for the rāśi chart, Western aspects. Each line has its details on hover. */
+function chartLayers(svg, d) {
+  const cells = svg._cells, L = S.layers, st = aspectSet(d); if (!cells || !svg._centre) return;
+  const seq = ++CHART_SEQ, defs = s('defs', {}, svg);
+  const m = s('marker', { id: `carw-${seq}`, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto-start-reverse' }, defs);
+  s('path', { d: 'M0 0L10 5L0 10z', fill: 'context-stroke' }, m);
+  const lane = {}; const laneOf = (sign, g) => { const l = (lane[sign] = lane[sign] || []); if (!l.includes(g)) l.push(g); return l.indexOf(g); };
+  if (L.rashi_drishti && st) {
+    const rg = s('g', { class: 'drishti rd-lines' + (S.animate ? ' drawn' : '') }, svg), seen = new Set();
+    for (const r of st.rashi) for (const t of r.aspects_signs) {
+      const key = Math.min(r.sign, t) + '-' + Math.max(r.sign, t); if (seen.has(key) || !cells[r.sign] || !cells[t]) continue; seen.add(key);
+      const a = cells[r.sign], b = cells[t], p = s('path', { d: `M${a.cx.toFixed(1)} ${a.cy.toFixed(1)}L${b.cx.toFixed(1)} ${b.cy.toFixed(1)}`, stroke: inkOf(r.from) }, rg);
+      p.style.setProperty('--len', 900);
+      p.addEventListener('mousemove', ev => tip(ev, `Rāśi drishti: ${SIGN_SKT[r.sign]} ↔ ${SIGN_SKT[t]}`, [['Grahas in ' + SIGN_SKT[r.sign], st.rashi.filter(x => x.sign === r.sign).map(x => G[x.from] ? G[x.from].en : x.from).join(', ')], ['Rule', 'movable ↔ fixed (not adjacent), dual ↔ dual']]));
+      p.addEventListener('mouseleave', untip);
+    }
+  }
+  if (L.chart_drishti && st) {
+    const dg = s('g', { class: 'drishti chart-drishti' + (S.animate ? ' drawn' : '') }, svg);
+    st.graha.forEach(x => {
+      const from = cells[signIn(x.from, d)], to = cells[x.sign]; if (!from || !to || !G[x.from]) return;
+      const p = s('path', { d: cellCurve(from, to, laneOf(signIn(x.from, d), x.from), svg._centre), stroke: inkOf(x.from), class: x.kind === 'special' ? 'special' : '', 'marker-end': `url(#carw-${seq})` }, dg);
+      p.style.setProperty('--len', 900);
+      p.addEventListener('mousemove', ev => tip(ev, `${G[x.from].en} aspects the ${nth(x.house_from_graha)}${d > 1 ? ' in D' + d : ''}`, [['Sign', SIGN_SKT[x.sign]], ['Bhāva', x.aspects_bhava], ['Grahas there', (x.aspects_grahas || []).map(y => G[y] ? G[y].en : y).join(', ') || '—'], ['Kind', x.kind]]));
+      p.addEventListener('mouseleave', untip);
+    });
+  }
+  if (L.west_aspects && WES && d === 1) {
+    const wg = s('g', { class: 'asp sq-asp' }, svg), wgr = grahasOf(WES), pos = {};
+    const at = id => { if (pos[id]) return pos[id]; const sg = signIn(id, 1), c = cells[sg]; if (!c) return null; const i = laneOf('w' + sg, id);
+      return (pos[id] = [c.cx + ((i % 3) - 1) * c.w * .22, c.cy + (Math.floor(i / 3) - .5) * c.h * .22]); };
+    for (const a of WES.derived_attributes.filter(x => x.id.includes('.aspect.'))) {
+      const [b1, b2] = a.derived_from.map(engineId); if (!wgr[b1] || !wgr[b2] || !GR[b1] || !GR[b2]) continue;
+      const p1 = at(b1), p2 = at(b2); if (!p1 || !p2) continue;
+      const ln = s('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], stroke: ASPECT_COLOUR[a.value.aspect] || '#999' }, wg);
+      ln.addEventListener('mousemove', ev => tip(ev, `${G[b1].en} ${a.value.aspect} ${G[b2].en}`, [['Orb', a.value.orb_deg.toFixed(2) + '°'], ['Phase', a.value.applying ? 'applying' : 'separating']]));
+      ln.addEventListener('mouseleave', untip);
+    }
+  }
+}
+/* charts animate their grahas in when a page is opened (not again when a switch on the same page redraws it) */
+const CHART_ANIM = { hash: null, t: 0 };
+function animateChart(svg) {
+  const now = performance.now();
+  if (!(S.animate && (CHART_ANIM.hash !== location.hash || now - CHART_ANIM.t < 80))) return;
+  if (CHART_ANIM.hash !== location.hash) CHART_ANIM.t = now;
+  CHART_ANIM.hash = location.hash;
+  svg.classList.add('anim-in'); $$('.gl', svg).forEach((e, i) => e.style.setProperty('--i', i));
 }
 
 /* ── detail strings shared by charts and pages ───────────────────────────────────────────────────────────────── */
@@ -311,7 +419,7 @@ function renderWheel(host, panel) {
       const mk = marker(pg, it.g, x, y, 21, { retro: gr.retro && !['rahu', 'ketu'].includes(it.g) });
       mk.dataset.a = p.a; mk.dataset.r = p.r;
       mk.addEventListener('mousemove', ev => placeTip(ev, it.g)); mk.addEventListener('mouseleave', () => { untip(); aspectFlow(null); });
-      mk.addEventListener('mouseenter', () => { aspectFlow(it.g); hot([['nak', nakOf(gr.lon)], ['pada', Math.floor(norm(gr.lon) / NAV)], ['rashi', signOf(gr.lon)], ['dres', Math.floor(norm(gr.lon) / 10)]].concat(aspectTargets(it.g).map(t => ['rashi', t.sign]))); });
+      mk.addEventListener('mouseenter', () => { aspectFlow(it.g); hot([['nak', nakOf(gr.lon)], ['pada', Math.floor(norm(gr.lon) / NAV)], ['rashi', signOf(gr.lon)], ['dres', Math.floor(norm(gr.lon) / 10)]].concat(flowOff() ? [] : flowTargets(it.g).map(t => ['rashi', t.sign]))); });
     }
     if (S.animate) animateIn(pg);
     const c1 = s('text', { class: 'lbl', y: -10, 'font-size': 24, 'font-weight': 800, fill: 'var(--ink)' }, svg); c1.textContent = 'Rāśi chakra';
@@ -398,10 +506,15 @@ function resetFocus(panel) {
   if (panel) put(panel, h('p', { class: 'note' }, 'Hover any ring to see what falls there. Click a rāśi, nakshatra or pada to turn the wheel to it and drill in; click a graha to open its page. Esc returns.'));
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && FOCUS) resetFocus($('#chakra .panel')); });
+/* other drawings that follow the transit slider (the transit chart on the Charts page); each removes itself when gone */
+const TRANSIT_HOOKS = new Set();
 function drawTransit() {
-  const rows = D.transits.rows; if (!WHEEL || !WHEEL.tg) return;
+  const rows = D.transits.rows;
   transitIdx = Math.max(0, Math.min(rows.length - 1, transitIdx));
-  const row = rows[transitIdx]; WHEEL.tg.replaceChildren();
+  const row = rows[transitIdx];
+  for (const f of [...TRANSIT_HOOKS]) f(row);
+  if (!WHEEL || !WHEEL.tg || !WHEEL.svg.isConnected) { transitLabels(row); return; }
+  WHEEL.tg.replaceChildren();
   // hovering a transit graha draws a highlighted line from it to the centre at the degree where it is now, and lights
   // the rāśi, nakshatra and pada it is passing through
   const rays = s('g', { class: 'transit-rays' }, WHEEL.tg);
@@ -421,9 +534,27 @@ function drawTransit() {
     });
     mk.addEventListener('mouseleave', () => { untip(); rays.replaceChildren(); hot([]); });
   }
+  transitLabels(row);
+}
+function transitLabels(row) {
   const lab = $('#transit-date'); if (lab) lab.textContent = dateOnly(row.utc);
   const sl = $('#transit-slider'); if (sl) sl.value = transitIdx;
   const dp = $('#transit-pick'); if (dp && document.activeElement !== dp) dp.value = dateOnly(row.utc);
+}
+/* transits over the rāśi chart as concentric South Indian squares: natal grahas in the inner boxes, the transiting
+   grahas in the outer band; it follows the slider and the play button */
+function transitSquare() {
+  const rows = D.transits.rows, host = h('div', { class: 'figure transit-square' });
+  const build = () => {
+    const row = rows[Math.max(0, Math.min(rows.length - 1, transitIdx))], by = {};
+    for (const k in row.longitudes) { const id = engineId(k); if (!G[id] || (!GR_ALL[id] && !['rahu', 'ketu'].includes(id)) || (GR_ALL[id] && !GR[id])) continue; const lon = row.longitudes[k];
+      (by[signOf(lon)] = by[signOf(lon)] || []).push({ text: G[id].abbr, colour: inkOf(id), strong: true, title: `Transit ${G[id].en}: ${SIGN_SKT[signOf(lon)]} ${inSignDM(lon)}, ${NAKSHATRA[nakOf(lon)]} pada ${padaOf(lon)}` }); }
+    return concentricSouth(natalItems, sign => by[sign] || [], { label: 'Transits over the rāśi chart', title: 'Gochara', sub: dateOnly(row.utc) });
+  };
+  const svg = build(); host.append(svg);
+  const hook = () => { if (!host.isConnected) { TRANSIT_HOOKS.delete(hook); return; } const n = build(); svg.replaceChildren(...n.childNodes); };
+  TRANSIT_HOOKS.add(hook);
+  return host;
 }
 /* transit rows by date: the series is evenly spaced, so a date maps to the nearest row */
 function transitIndexOf(dateStr) {
@@ -502,7 +633,7 @@ function grahaLine(parent, id, x, y, d, opts) {
     t2.textContent = ' ' + (deg != null ? dm(deg) : '') + (lon != null && !opts.compact ? ' ' + NAK_AB[nakOf(lon)] : '');
   }
   g.addEventListener('mousemove', ev => placeTip(ev, id, d));
-  if (d === 1 && GR[id]) { g.addEventListener('mouseenter', () => aspectFlow(id, g.ownerSVGElement)); g.addEventListener('mouseleave', () => { untip(); aspectFlow(null, g.ownerSVGElement); }); }
+  if (GR[id] && aspectSet(d)) { g.addEventListener('mouseenter', () => aspectFlow(id, g.ownerSVGElement, d)); g.addEventListener('mouseleave', () => { untip(); aspectFlow(null, g.ownerSVGElement); }); }
   else g.addEventListener('mouseleave', untip);
   if (GR[id]) g.addEventListener('click', ev => { ev.stopPropagation(); go(UPAGRAHA.includes(id) ? '#/point/upagrahas' : '#/planet/' + id); });
   return g;
@@ -540,25 +671,27 @@ function southGrid(svg, d, x0, y0, W, opts = {}) {
   const H = W * (opts.compact ? 1 : .86), pl = placements(d), lag = opts.lagSign != null ? opts.lagSign : vargaSign('lagna', d), ar = (d === 1 || d === 9) && opts.lagSign == null ? arudhaMarks(d) : {};
   for (const [sg, [c, r]] of Object.entries(SOUTH_CELL)) {
     const sign = +sg, x = x0 + c * W, y = y0 + r * H, g = s('g', { class: 'cell', 'data-sign': sign }, svg);
+    (svg._cells = svg._cells || {})[sign] = { cx: x + W / 2, cy: y + H / 2, w: W, h: H };
     s('rect', { x, y, width: W, height: H, class: 'cellbg' }, g);
     const small = opts.compact ? Math.max(10, W * .11) : 11;
     const nm = s('text', { x: x + W - 5, y: y + small + 2, 'text-anchor': 'end', 'font-size': small, fill: 'var(--muted)' }, g); nm.textContent = opts.compact ? SIGN_AB[sign] : SIGN_SKT[sign];
     if (lag != null) { const hs = s('text', { x: x + 5, y: y + small + 2, 'font-size': small, 'font-weight': 700, fill: 'var(--accent2)' }, g); hs.textContent = (sign - lag + 12) % 12 + 1; }
     if (lag === sign) s('path', { d: `M${x} ${y + 20}L${x + 20} ${y}`, stroke: 'var(--accent)', 'stroke-width': 2 }, g);
     const list = cellList(sign, d, pl), maxW = W - 12, headB = y + small + 2;
-    const L = southCellLayout({ list, pada: ar[sign], aItems: d === 1 ? aspectItems(sign) : [], rItems: d === 1 ? rashiItems(sign) : [],
+    const L = southCellLayout({ list, pada: ar[sign], aItems: opts.noMarks ? [] : aspectItems(sign, d), rItems: opts.noMarks ? [] : rashiItems(sign, d),
       compact: !!opts.compact, W, H, y, headB, maxW });
     g.dataset.fit = L.tag;
     // ārūḍha padas: secondary text at the top, under the house number and sign name
     if (ar[sign]) { const at = s('text', { x: x + 6, y: L.padaY, 'font-size': L.sec, fill: '#a78bfa', 'font-weight': 600, class: 'arudha' }, g); at.textContent = ar[sign].join(' ');
       const tt = s('title', {}, at); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
     // aspect marks at the bottom, wrapped to the cell: graha drishti lowest, rāśi drishti (◇) above it; secondary size
-    if (d === 1) { let bottom = y + H - 5; bottom -= aspectMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW); rashiMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW); }
+    if (!opts.noMarks) { let bottom = y + H - 5; bottom -= aspectMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW, false, d); rashiMarks(g, sign, x + 6, bottom, 'start', L.sec, maxW, false, d); }
     // grahas: the primary text, in one or two columns
     list.forEach((gid, k) => { const c = L.cols === 2 ? Math.floor(k / L.rows) : 0, r = L.cols === 2 ? k % L.rows : k;
       grahaLine(g, gid, x + 6 + c * (maxW / 2 + 2), L.top + r * L.lineH, d, { compact: L.compact, fs: L.fs, noDeg: L.noDeg }); });
     g.addEventListener('click', () => { const hh = houseOf(sign); if (hh && d === 1) go('#/house/' + hh); });
   }
+  svg._centre = [x0 + 2 * W, y0 + 2 * H];
   if (!opts.noMid) s('rect', { x: x0 + W, y: y0 + H, width: 2 * W, height: 2 * H, class: 'cellmid' }, svg);
   if (!opts.noTitle) {
     const t = s('text', { x: x0 + 2 * W, y: y0 + 2 * H - 4, 'text-anchor': 'middle', 'font-size': opts.compact ? Math.max(15, W * .17) : 18, 'font-weight': 800, fill: 'var(--ink)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''}`;
@@ -572,10 +705,12 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
   const A = P(0, 0), B = P(1, 0), C = P(1, 1), Dd = P(0, 1), T = P(.5, 0), R = P(1, .5), Bm = P(.5, 1), L = P(0, .5), O = P(.5, .5), P1 = P(.25, .25), P2 = P(.75, .25), P3 = P(.75, .75), P4 = P(.25, .75);
   const HS = [[T, P2, O, P1], [A, T, P1], [A, P1, L], [L, P1, O, P4], [L, P4, Dd], [Dd, P4, Bm], [Bm, P4, O, P3], [Bm, P3, C], [C, P3, R], [R, P3, O, P2], [R, P2, B], [B, P2, T]];
   const pl = placements(d), ar = d === 1 || d === 9 ? arudhaMarks(d) : {};
+  svg._centre = [x0 + S0 / 2, y0 + S0 / 2];
   s('rect', { x: x0, y: y0, width: S0, height: S0, class: 'cellbg' }, svg);
   HS.forEach((poly, hIdx) => {
     const sign = (lag + hIdx) % 12, cx = poly.reduce((a, p) => a + p[0], 0) / poly.length, cy = poly.reduce((a, p) => a + p[1], 0) / poly.length, big = poly.length === 4;
     const g = s('g', { class: 'cell', 'data-sign': sign, 'data-house': hIdx + 1 }, svg);
+    (svg._cells = svg._cells || {})[sign] = { cx, cy, w: big ? S0 * .36 : S0 * .24, h: big ? S0 * .36 : S0 * .18 };
     s('polygon', { points: poly.map(p => p.join(',')).join(' '), class: hIdx === 0 ? 'cellbg lagna' : 'cellbg', 'stroke-width': 1.3 }, g);
     // one stack, top to bottom: ārūḍha padas, sign number, grahas, rāśi drishti (◇), graha drishti. It is measured first,
     // centred on the house, kept inside its polygon, and shrunk in steps when a crowded house cannot hold it.
@@ -590,7 +725,7 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
       // a graha row's raised flags (ᴿ, ◎) sit a fixed 4 px up, so rows keep that allowance when the stack shrinks
       const nfs = (opts.compact ? 10 : 12.5) * k, fs = (opts.compact ? 10.5 : 14) * k, lineH = fs * 1.05 + 4, ps = fs * SECONDARY;
       const as = fs * SECONDARY, rs = fs * SECONDARY;
-      const rl = d === 1 ? wrapMarks(rashiItems(sign), rs, mw) : [[]], al = d === 1 ? wrapMarks(aspectItems(sign), as, mw) : [[]];
+      const rl = !opts.noMarks ? wrapMarks(rashiItems(sign, d), rs, mw) : [[]], al = !opts.noMarks ? wrapMarks(aspectItems(sign, d), as, mw) : [[]];
       const rLines = rl[0].length ? rl.length : 0, aLines = al[0].length ? al.length : 0;
       const wOf = (items, size) => items.reduce((a, it) => a + (it.text.length + 1) * size * .62, 0);
       // rows: [baseline, size, width, block]; blocks: [first baseline, last baseline, size]
@@ -623,9 +758,9 @@ function northGrid(svg, d, x0, y0, S0, opts = {}) {
     if (ar[sign]) { const t = s('text', { x: midOf(L, top, L.at.padaB), y: top + L.at.pada, 'text-anchor': 'middle', 'font-size': L.ps, fill: '#a78bfa', 'font-weight': 600, class: 'arudha' }, g); t.textContent = ar[sign].join(' ');
       const tt = s('title', {}, t); tt.textContent = 'Ārūḍha padas in this sign: ' + ar[sign].join(', '); }
     list.forEach((gid, k) => grahaLine(g, gid, midOf(L, top, L.at.gB[k]) - L.at.gW / 2, top + L.at.g0 + k * L.lineH, d, { compact: true, fs: L.fs }));
-    if (d === 1) {
-      if (L.at.r != null) rashiMarks(g, sign, midOf(L, top, L.at.rB), top + L.at.r, 'middle', L.rs, L.mw, true);
-      if (L.at.a != null) aspectMarks(g, sign, midOf(L, top, L.at.aB), top + L.at.a, 'middle', L.as, L.mw, true);
+    if (!opts.noMarks) {
+      if (L.at.r != null) rashiMarks(g, sign, midOf(L, top, L.at.rB), top + L.at.r, 'middle', L.rs, L.mw, true, d);
+      if (L.at.a != null) aspectMarks(g, sign, midOf(L, top, L.at.aB), top + L.at.a, 'middle', L.as, L.mw, true, d);
     }
     g.addEventListener('click', () => { if (d === 1) go('#/house/' + (hIdx + 1)); });
   });
@@ -636,6 +771,8 @@ function chartSVG(kind, d, opts = {}) {
   const svg = s('svg', { viewBox: kind === 'north' ? '-4 -4 528 528' : `-4 -4 ${4 * SOUTH_W + 8} ${(4 * SOUTH_W * .86 + 11).toFixed(0)}`, role: 'img', 'aria-label': `D${d} ${kind === 'north' ? 'North' : 'South'} Indian chart`, class: 'chart ' + kind });
   if (kind === 'north') { northGrid(svg, d, 0, 0, 520, opts); const t = s('text', { x: 260, y: 516, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--muted)' }, svg); t.textContent = `D${d} · ${DIV_NAME[d] || ''} · North Indian`; }
   else southGrid(svg, d, 0, 0, SOUTH_W, opts);
+  if (!opts.compact && !opts.noMarks) chartLayers(svg, d);
+  if (!opts.compact) animateChart(svg);
   return svg;
 }
 

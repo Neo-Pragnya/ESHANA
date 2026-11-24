@@ -1300,6 +1300,25 @@ impl Engine {
                 "aspects": jyotish::rashi_drishti(&vc)}),
                 &["positions"],
             );
+            // the same three kinds of drishti inside each requested varga, cast between the varga's signs
+            let vargas: Vec<Value> = r
+                .divisions
+                .iter()
+                .filter(|d| **d > 1)
+                .map(|&d| {
+                    let v = jyotish::varga_chart(&vc, d);
+                    json!({"division": d, "graha": jyotish::graha_drishti(&v),
+                        "additional": jyotish::additional_drishti(&v), "rashi": jyotish::rashi_drishti(&v)})
+                })
+                .collect();
+            if !vargas.is_empty() {
+                push(
+                    "vedic.drishti.vargas",
+                    &core_rule,
+                    json!({"rule": "graha, rashi and additional drishti by the same rules as the rasi chart, between the signs each graha occupies in the varga", "vargas": vargas}),
+                    &["positions"],
+                );
+            }
         }
         if feats.contains("ashtakavarga") {
             let pk = packs::ashtakavarga();
@@ -1566,20 +1585,35 @@ impl Engine {
                 );
             }
             if feats.contains("aspects") {
-                // D9 positions are navamsa longitudes: the D9 sign plus the degree within it (deg_in_sign x 9)
-                let nav = |l: f64| -> Option<f64> {
-                    vedic::divisional_sign(l, 9)
+                // a varga's positions are varga longitudes: the varga sign plus the degree within it (deg_in_sign x d),
+                // as for the navamsa; D9 always, and every other requested division
+                let varga_lon = |l: f64, d: u32| -> Option<f64> {
+                    vedic::divisional_sign(l, d)
                         .ok()
-                        .map(|s| s as f64 * 30.0 + (l.rem_euclid(30.0) * 9.0) % 30.0)
+                        .map(|s| s as f64 * 30.0 + (l.rem_euclid(30.0) * f64::from(d)) % 30.0)
                 };
-                let mut d9 = vc.clone();
-                for (g, l) in &vc.lon {
-                    if let Some(x) = nav(*l) {
-                        d9.lon.insert(g.clone(), x);
-                    }
+                let mut divs: Vec<u32> = r.divisions.iter().copied().filter(|d| *d > 1).collect();
+                divs.push(9);
+                divs.sort_unstable();
+                divs.dedup();
+                let vcharts: Vec<(u32, jyotish::VChart)> = divs
+                    .iter()
+                    .map(|&d| {
+                        let mut c = vc.clone();
+                        c.lon = vc
+                            .lon
+                            .iter()
+                            .filter_map(|(g, l)| varga_lon(*l, d).map(|x| (g.clone(), x)))
+                            .collect();
+                        (d, c)
+                    })
+                    .collect();
+                let mut v = json!({"d1": bala::aspect_matrix(&vc),
+                    "divisions": std::iter::once(1).chain(divs.iter().copied()).collect::<Vec<u32>>(),
+                    "note": "fraction: whole-sign graha drishti (3rd/10th 1/4, 5th/9th 1/2, 4th/8th 3/4, 7th and special aspects full); virupa: sputa drishti (0-60) of D1 longitudes, and of varga longitudes (varga sign plus the degree in the sign times the division) for each varga; the nodes have no sputa drishti"});
+                for (d, c) in &vcharts {
+                    v[format!("d{d}")] = bala::aspect_matrix(c);
                 }
-                let mut v = json!({"d1": bala::aspect_matrix(&vc), "d9": bala::aspect_matrix(&d9),
-                    "note": "fraction: whole-sign graha drishti (3rd/10th 1/4, 5th/9th 1/2, 4th/8th 3/4, 7th and special aspects full); virupa: sputa drishti (0-60) of D1 longitudes, and of navamsa longitudes for D9; the nodes have no sputa drishti"});
                 if let (Some(a), Some(m)) = (asc, mc) {
                     if hw == 0.0 {
                         let madhya = bala::bhava_madhyas(a, m);
@@ -1588,18 +1622,20 @@ impl Engine {
                         v["houses"] = json!({"d1": bala::aspects_on_points(&vc, &pts)});
                         v["house_and_lord"] = json!({"d1": bala::aspects_house_and_lord(&vc, &madhya)});
                         v["house_madhya"] = json!({"d1": madhya.to_vec()});
-                        if let Some(a9) = nav(a) {
-                            let mut m9 = [0.0; 12];
-                            for (k, x) in m9.iter_mut().enumerate() {
-                                *x = norm360(a9 + 30.0 * k as f64);
+                        for (d, c) in &vcharts {
+                            let Some(ad) = varga_lon(a, *d) else { continue };
+                            let mut md = [0.0; 12];
+                            for (k, x) in md.iter_mut().enumerate() {
+                                *x = norm360(ad + 30.0 * k as f64);
                             }
-                            let mut p9: Vec<(String, f64)> = vec![("lagna".into(), a9)];
-                            p9.extend(m9.iter().enumerate().map(|(k, x)| ((k + 1).to_string(), *x)));
-                            v["houses"]["d9"] = bala::aspects_on_points(&d9, &p9);
-                            v["house_and_lord"]["d9"] = bala::aspects_house_and_lord(&d9, &m9);
-                            v["house_madhya"]["d9"] = json!(m9.to_vec());
+                            let mut pd: Vec<(String, f64)> = vec![("lagna".into(), ad)];
+                            pd.extend(md.iter().enumerate().map(|(k, x)| ((k + 1).to_string(), *x)));
+                            let key = format!("d{d}");
+                            v["houses"][&key] = bala::aspects_on_points(c, &pd);
+                            v["house_and_lord"][&key] = bala::aspects_house_and_lord(c, &md);
+                            v["house_madhya"][&key] = json!(md.to_vec());
                         }
-                        v["house_conventions"] = json!("D1 houses: Sripati bhava madhyas (Porphyry trisection); D9 houses: equal houses from the navamsa lagna degree; house + lord: mean of the virupas on the madhya and on the house's sign lord (the madhya alone when the aspecting graha is that lord)");
+                        v["house_conventions"] = json!("D1 houses: Sripati bhava madhyas (Porphyry trisection); varga houses (D9 and the others): equal houses from the varga lagna degree; house + lord: mean of the virupas on the madhya and on the house's sign lord (the madhya alone when the aspecting graha is that lord)");
                     }
                 }
                 push("vedic.aspects", &bala_rule, v, &["positions", "houses"]);

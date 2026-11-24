@@ -5,6 +5,29 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-11-24
+
+### Added
+- Charts page: the chakra's layers on the South and North Indian charts. Drishti arrows (drawn in), rāśi drishti
+  lines, Western aspects, transits as a Gochara chart that follows the date slider and play, the hover animation of a
+  graha's aspects between boxes, and grahas that animate in (switch: Motion).
+- Vargas page: pick any varga (menu or gallery) to see it full width with its own aspects: graha and rāśi marks,
+  arrows, lines, additional aspects and the hover animation, from the new engine attribute `vedic.drishti.vargas`
+  (the rāśi-chart rules cast between the signs the grahas occupy in that varga). Same style, icon and layer switches
+  as Charts.
+- Aspects page: a multi-select of D1 and every varga in the file; the chosen charts are shown one under another.
+  The engine's `vedic.aspects` now covers every requested division (`divisions`, `dN`), with houses from each varga's
+  lagna.
+- Hover animation on the Jyotish Chakra, Charts and Vargas: graha drishti (bold dashed line, round marker, the
+  house count) and rāśi drishti (dotted line, ◇ marker) are drawn differently, and the **Hover animation** switches
+  turn each off on its own, or both for no animation.
+- Maitri and dignities: the count chips (Great friend, each tārā, Exalted, Own…) filter their grid; several can be on
+  at once, and Show all clears them.
+- The example reports carry a 14-day personal calendar, so the Calendar page is filled in the docs.
+
+### Changed
+- The PNG and SVG download buttons sit above a chart, outside the drawing (round wheels keep the corner).
+
 ## [0.4.3] - 2026-11-24
 
 ### Added

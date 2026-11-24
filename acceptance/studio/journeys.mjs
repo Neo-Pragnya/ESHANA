@@ -627,11 +627,13 @@ await journey("chakra: markers ring, curved names, graha legend", async () => {
 });
 
 await journey("aspects: every view draws for D1 and D9", async () => {
+  await evaluate(`(() => { S.aspVargas = ['d1']; save(); return 1; })()`);
   await go("#/aspects", 1400);
   const views = ["On houses", "On house + lord", "On and from grahas", "From each graha to houses", "To Śrīpati cusps (table)", "Graha × graha matrix"];
   const bad = [];
-  for (const vg of ["D1 · rāśi", "D9 · navāṃśa"]) {
-    await evaluate(`[...document.querySelectorAll('#aspects .tab')].find(b => b.textContent === ${JSON.stringify(vg)}).click()`); await sleep(500);
+  // each chart alone, chosen in the Charts multi-select
+  for (const vg of ["d1", "d9"]) {
+    await evaluate(`(() => { S.aspVargas = [${JSON.stringify(vg)}]; save(); route(); return 1; })()`); await sleep(500);
     for (const v of views) {
       await evaluate(`[...document.querySelectorAll('#aspects .tab')].find(b => b.textContent === ${JSON.stringify(v)}).click()`); await sleep(500);
       const n = await evaluate(`document.querySelectorAll('#aspects .mini-bars, #aspects table').length`);
@@ -639,7 +641,7 @@ await journey("aspects: every view draws for D1 and D9", async () => {
     }
   }
   expect(!bad.length, "empty views: " + bad.join(", "));
-  const bars = await evaluate(`(() => { [...document.querySelectorAll('#aspects .tab')].find(b => b.textContent === 'D1 · rāśi').click(); [...document.querySelectorAll('#aspects .tab')].find(b => b.textContent === 'On houses').click(); return document.querySelectorAll('#aspects .mb-bar').length; })()`);
+  const bars = await evaluate(`(() => { S.aspVargas = ['d1']; save(); route(); [...document.querySelectorAll('#aspects .tab')].find(b => b.textContent === 'On houses').click(); return document.querySelectorAll('#aspects .mb-bar').length; })()`);
   expect(bars > 30, `${bars} bars on the houses view`);
   return `12 views, ${bars} bars on houses`;
 });
@@ -788,7 +790,7 @@ await journey("concentric squares are even: inner birth chart, outer band of twe
 await journey("maitri page: relationship, tārā and dignity grids fill in; hover explains a cell; a graha head links to its page", async () => {
   await go("#/maitri", 1500);
   const r = await evaluate(`({ rel: document.querySelectorAll('#maitri .mt-rel td.mt-c').length, tara: document.querySelectorAll('#maitri .mt-tara td.mt-c').length,
-    dig: document.querySelectorAll('#maitri .mt-dig td.mt-c').length, sums: document.querySelectorAll('#maitri .mt-sum').length, legends: document.querySelectorAll('#maitri .mt-legend').length,
+    dig: document.querySelectorAll('#maitri .mt-dig td.mt-c').length, sums: document.querySelectorAll('#maitri .mt-sum').length, legends: document.querySelectorAll('#maitri .mt-filter').length,
     data: (val('vedic.maitri.relationships') || {}).rows?.length || 0 })`);
   expect(r.rel === r.data && r.rel === 72 && r.tara === 90 && r.dig === 144 && r.sums === 9 && r.legends === 3, JSON.stringify(r));
   const pos = await evaluate(`(() => { const c = document.querySelector('#maitri .mt-rel td[data-from=sun][data-to=jupiter]'); c.scrollIntoView({block:'center'}); const b = c.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; })()`);
@@ -869,7 +871,7 @@ await journey("personal calendar: arrow keys move between days and Enter opens t
   if (!has) return "no calendar in this file";
   await go("#/calendar", 1200);
   const n = await evaluate(`document.querySelectorAll('#calendar .cal-day').length`);
-  expect(n >= 28, "days: " + n);
+  expect(n >= 9, "days: " + n); // the walk below goes to the ninth day
   await evaluate(`document.querySelector('#calendar .cal-day').focus(); 1`);
   const key = (k, code, vk) => send("Input.dispatchKeyEvent", { type: "keyDown", key: k, code, windowsVirtualKeyCode: vk });
   await key("ArrowRight", "ArrowRight", 39); await sleep(200);
@@ -1477,7 +1479,7 @@ await journey("every chart drawing can be downloaded as PNG and SVG, exactly as 
   const missing = [], counts = {};
   for (const p of model.pages.filter((p) => !["planet", "house", "yoga", "point"].includes(p))) {
     await go("#/" + p, 900);
-    const r = await evaluate(`(() => { const svgs = [...document.querySelectorAll('section.page:not([hidden]) svg[role=img]')].filter(s => s.getBoundingClientRect().width >= 160 && !/pcard-icon|hero-icon|bird/.test(s.getAttribute('class') || ''));
+    const r = await evaluate(`(() => { const svgs = [...document.querySelectorAll('section.page:not([hidden]) svg[role=img]')].filter(s => s.getBoundingClientRect().width >= 160 && !/pcard-icon|hero-icon|bird/.test(s.getAttribute('class') || '') && !s.closest('.mini-chart'));
       return { svgs: svgs.length, bars: svgs.filter(s => s._imgbar && s._imgbar.isConnected && s._imgbar.querySelectorAll('button.imgbtn').length === 2).length }; })()`);
     if (r.svgs) counts[p] = r.svgs;
     if (r.bars !== r.svgs) missing.push(`${p}: ${r.bars}/${r.svgs}`);
@@ -1525,6 +1527,147 @@ await journey("form controls are readable in both themes (date pickers, selects 
   }
   await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode0)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode0)}); 1`);
   expect(!bad.length, "low-contrast controls: " + bad.slice(0, 6).join("; "));
+});
+
+await journey("download buttons sit above square charts, outside the drawing; the chakra keeps them in its empty corner", async () => {
+  await viewport(1440, 1000);
+  const bad = [];
+  for (const p of ["charts", "vargas"]) {
+    await go("#/" + p, 1500);
+    const r = await evaluate(`[...document.querySelectorAll('section.page:not([hidden]) svg.chart')].filter(s => s._imgbar).map(s => { const b = s._imgbar.getBoundingClientRect(), r = s.getBoundingClientRect();
+      return { strip: s._imgbar.classList.contains('imgstrip'), above: b.bottom <= r.top + 1, inside: b.left >= r.left - 1 && b.right <= r.right + 1 }; })`);
+    expect(r.length > 0, `no chart with a bar on ${p}`);
+    r.forEach((x, i) => { if (!x.strip || !x.above) bad.push(`${p} chart ${i}: ${JSON.stringify(x)}`); });
+  }
+  await go("#/chakra", 1500);
+  const wheel = await evaluate(`(() => { const s = document.querySelector('section.page:not([hidden]) svg.wheel'); return s && s._imgbar ? s._imgbar.classList.contains('imgstrip') : null; })()`);
+  expect(wheel === false, "the chakra bar should stay in its corner: " + wheel);
+  expect(!bad.length, bad.join("; "));
+});
+
+await journey("charts and vargas: the chakra's layers (drishti arrows, rāśi drishti lines, Western aspects) and aspects inside every varga", async () => {
+  await viewport(1440, 1000);
+  const set = (k, v) => evaluate(`(() => { S.layers[${JSON.stringify(k)}] = ${v}; save(); route(); return 1; })()`);
+  for (const k of ["chart_drishti", "rashi_drishti", "west_aspects"]) await set(k, true);
+  await go("#/charts", 1600);
+  const d1 = await evaluate(`(() => { const svg = document.querySelector('section.page:not([hidden]) svg.chart');
+    return { arrows: svg.querySelectorAll('.chart-drishti path').length, expected: aspectSet(1).graha.filter(x => svg._cells[signIn(x.from, 1)] && G[x.from]).length,
+      rd: svg.querySelectorAll('.rd-lines path').length, west: svg.querySelectorAll('.sq-asp line').length, wes: !!WES }; })()`);
+  expect(d1.arrows > 0 && d1.arrows === d1.expected, "D1 drishti arrows: " + JSON.stringify(d1));
+  expect(d1.rd > 0, "rāśi drishti lines: " + JSON.stringify(d1));
+  expect(!d1.wes || d1.west > 0, "Western aspects: " + JSON.stringify(d1));
+  await shot("charts-layers");
+  // every varga the file has drishti for: the arrows and the marks follow the varga's own signs
+  const divs = await evaluate(`Object.keys(VARGA_DRISHTI).map(Number)`);
+  expect(divs.length > 0, "the file has no varga drishti (vedic.drishti.vargas)");
+  const wrong = [];
+  for (const d of divs) {
+    await evaluate(`(() => { S.varga = ${d}; save(); return 1; })()`); await go("#/vargas", 900); await evaluate(`route(); 1`); await sleep(700);
+    const r = await evaluate(`(() => { const svg = document.querySelector('section.page:not([hidden]) .wide-charts svg.chart'); const st = aspectSet(${d});
+      const arrows = svg.querySelectorAll('.chart-drishti path').length, expected = st.graha.filter(x => svg._cells[signIn(x.from, ${d})] && G[x.from]).length;
+      // each graha's 7th: the sign opposite its D${d} sign, and the target box carries its mark
+      const bad = st.graha.filter(x => x.house_from_graha === 7 && GR[x.from] && x.sign !== (vargaSign(x.from, ${d}) + 6) % 12).map(x => x.from);
+      const marked = st.graha.filter(x => GR[x.from]).every(x => [...svg.querySelectorAll('.cell[data-sign="' + x.sign + '"] .aspmark tspan')].some(t => t.textContent.includes(G[x.from].abbr)));
+      return { arrows, expected, bad, marked }; })()`);
+    if (r.arrows !== r.expected || r.bad.length || !r.marked) wrong.push(`D${d} ${JSON.stringify(r)}`);
+  }
+  expect(!wrong.length, wrong.slice(0, 3).join("; "));
+  // hovering a graha in a varga animates its aspects there
+  await evaluate(`(() => { S.varga = 9; save(); route(); return 1; })()`); await sleep(900);
+  const flow = await evaluate(`(() => { const svg = document.querySelector('section.page:not([hidden]) .wide-charts svg.chart'), g = svg.querySelector('.gl[data-body="moon"]');
+    g.dispatchEvent(new MouseEvent('mouseenter')); const n = svg.querySelectorAll('.aflow path.af').length, want = aspectTargets('moon', 9).length;
+    g.dispatchEvent(new MouseEvent('mouseleave')); return { n, want, after: svg.querySelectorAll('.aflow').length }; })()`);
+  expect(flow.n > 0 && flow.n === flow.want && flow.after === 0, "D9 hover flow: " + JSON.stringify(flow));
+  await shot("varga-d9-layers");
+  for (const k of ["chart_drishti", "rashi_drishti", "west_aspects"]) await set(k, false);
+  return `D1 ${d1.arrows} arrows; ${divs.length} vargas checked`;
+});
+
+await journey("transits on the Charts page follow the slider and play", async () => {
+  const has = await evaluate(`!!(D.transits && D.transits.rows && D.transits.rows.length > 1)`);
+  if (!has) return "no transit series in this file";
+  await evaluate(`(() => { S.layers.transits = true; save(); return 1; })()`); await go("#/charts", 900); await evaluate(`route(); 1`); await sleep(900);
+  const r = await evaluate(`(async () => { const svg = document.querySelector('section.page:not([hidden]) .transit-square svg'); if (!svg) return null;
+    const before = svg.textContent, sl = document.getElementById('transit-slider'); sl.value = sl.max; sl.dispatchEvent(new Event('input'));
+    await new Promise(r => setTimeout(r, 200)); const same = document.querySelector('section.page:not([hidden]) .transit-square svg') === svg;
+    return { changed: svg.textContent !== before, same, bar: !!(svg._imgbar && svg._imgbar.isConnected) }; })()`);
+  await evaluate(`(() => { S.layers.transits = false; save(); route(); return 1; })()`);
+  expect(r && r.changed && r.same, "transit chart did not follow the slider: " + JSON.stringify(r));
+});
+
+await journey("aspects: every varga can be chosen in a multi-select, several at once", async () => {
+  await evaluate(`(() => { S.aspVargas = ['d1']; save(); return 1; })()`);
+  await go("#/aspects", 1200);
+  const r = await evaluate(`(async () => { const sec = document.querySelector('section.page:not([hidden])'), want = (val('vedic.aspects').divisions || []).length;
+    const opts = [...sec.querySelectorAll('details.msel .msel-opt input')]; sec.querySelector('details.msel').open = true;
+    const pick = k => { const i = sec.querySelector('.msel-opt[data-k="' + k + '"] input'); i.checked = true; i.dispatchEvent(new Event('change')); };
+    pick('d9'); pick('d10'); await new Promise(r => setTimeout(r, 300));
+    const titles = [...sec.querySelectorAll('.asp-sections > .card > h3')].map(h => h.textContent);
+    const stillOpen = sec.querySelector('details.msel').open; return { opts: opts.length, want, titles, stillOpen, saved: S.aspVargas }; })()`);
+  expect(r.opts === r.want && r.opts >= 3, "options: " + JSON.stringify(r));
+  expect(r.titles.length === 3 && /^D1/.test(r.titles[0]) && /^D9/.test(r.titles[1]) && /^D10/.test(r.titles[2]), "sections: " + JSON.stringify(r.titles));
+  expect(r.stillOpen, "the dropdown should stay open while choosing");
+  await shot("aspects-multi");
+  await evaluate(`(() => { S.aspVargas = ['d1']; save(); return 1; })()`);
+  return `${r.opts} charts offered`;
+});
+
+await journey("maitri and dignities: the count chips filter their grid, several at once", async () => {
+  await go("#/maitri", 1500);
+  const r = await evaluate(`(async () => { const out = []; for (const card of document.querySelectorAll('section.page:not([hidden]) .card')) {
+    const chips = [...card.querySelectorAll('.mt-fchip')], grid = card.querySelector('table.mt-grid'); if (!chips.length || !grid) continue;
+    const withN = chips.filter(c => +(c.querySelector('b') || {}).textContent > 0); if (withN.length < 2) continue;
+    withN[0].click(); await new Promise(r => setTimeout(r, 50)); const one = grid.querySelectorAll('.mt-c.mt-hit').length;
+    withN[1].click(); await new Promise(r => setTimeout(r, 50)); const two = grid.querySelectorAll('.mt-c.mt-hit').length;
+    const filtering = grid.classList.contains('mt-filtering'), n0 = +withN[0].querySelector('b').textContent, n1 = +withN[1].querySelector('b').textContent;
+    card.querySelector('.mt-fclear').click(); await new Promise(r => setTimeout(r, 50));
+    out.push({ title: card.querySelector('h3').textContent, one, two, n0, n1, filtering, cleared: !grid.classList.contains('mt-filtering') }); } return out; })()`);
+  expect(r.length >= 2, "filterable grids: " + r.length);
+  const bad = r.filter((x) => !(x.filtering && x.cleared && x.one === x.n0 && x.two >= x.n0 && x.two <= x.n0 + x.n1 && x.two > x.one));
+  expect(!bad.length, "filters: " + JSON.stringify(bad));
+  return r.map((x) => x.title.split(" (")[0]).join(", ");
+});
+
+await journey("the personal calendar shows when the file has one", async () => {
+  const has = await evaluate(`!!ENV.personal_calendar`);
+  await go("#/calendar", 1200);
+  const missing = await evaluate(`/is not available for this chart/.test(document.querySelector('section.page:not([hidden])').innerText)`);
+  expect(has ? !missing : missing, `calendar data ${has}, page says not available ${missing}`);
+  return has ? "calendar shown" : "no calendar in this file";
+});
+
+await journey("hover animation: graha and rāśi aspects drawn differently and switched off separately (chakra, charts, vargas)", async () => {
+  await viewport(1440, 1000);
+  const setAnim = (g, r) => evaluate(`(() => { S.layers.anim_graha = ${g}; S.layers.anim_rashi = ${r}; save(); route(); return 1; })()`);
+  // hover the first graha that has both kinds of aspect, and count what is drawn
+  const hover = (sel, dv) => evaluate(`(() => { const svg = document.querySelector(${JSON.stringify(sel)}); if (!svg) return null;
+    const ids = GRAHA_ORDER.filter(g => GR[g] && aspectTargets(g, ${dv}).some(t => t.via === 'rashi') && aspectTargets(g, ${dv}).some(t => t.via === 'graha'));
+    const id = ids[0], el = svg.querySelector('.gl[data-body="' + id + '"]') || svg.querySelector('.pl[data-body="' + id + '"]') || svg.querySelector('.pt-hit[data-body="' + id + '"]'); if (!el) return { id, missing: true };
+    el.dispatchEvent(new MouseEvent('mouseenter')); const f = svg.querySelector(':scope > .aflow');
+    const r = { id, graha: f ? f.querySelectorAll('path.af.via-graha').length : 0, rashi: f ? f.querySelectorAll('path.af.via-rashi').length : 0,
+      diamonds: f ? f.querySelectorAll('path.af-dot.rashi').length : 0, dots: f ? f.querySelectorAll('circle.af-dot').length : 0,
+      lit: svg.querySelectorAll('.cell.aspected').length };
+    el.dispatchEvent(new MouseEvent('mouseleave')); return r; })()`);
+  const pages = [["#/charts", "section.page:not([hidden]) svg.chart", 1], ["#/chakra", "section.page:not([hidden]) svg.wheel", 1]];
+  const out = [];
+  for (const [hash, sel, dv] of pages.concat([["#/vargas", "section.page:not([hidden]) .wide-charts svg.chart", 9]])) {
+    if (hash === "#/vargas") await evaluate(`(() => { S.varga = 9; save(); return 1; })()`);
+    if (hash === "#/chakra") await evaluate(`(() => { S.centre = 'lanes'; save(); return 1; })()`);
+    await go(hash, 1200);
+    await setAnim(true, true); await sleep(500); const both = await hover(sel, dv);
+    await setAnim(true, false); await sleep(500); const graha = await hover(sel, dv);
+    await setAnim(false, false); await sleep(500); const none = await hover(sel, dv);
+    expect(both && !both.missing, `${hash}: no graha to hover ${JSON.stringify(both)}`);
+    expect(both.graha > 0 && both.rashi > 0 && both.diamonds === both.rashi && both.dots === both.graha, `${hash} both on: ${JSON.stringify(both)}`);
+    expect(graha.graha === both.graha && graha.rashi === 0 && graha.diamonds === 0, `${hash} rāśi off: ${JSON.stringify(graha)}`);
+    expect(none.graha === 0 && none.rashi === 0 && none.lit === 0, `${hash} both off: ${JSON.stringify(none)}`);
+    // the switches are on the page itself
+    const sw = await evaluate(`document.querySelectorAll('section.page:not([hidden]) input[data-anim]').length`);
+    expect(sw === 2, `${hash}: ${sw} animation switches`);
+    out.push(`${hash.slice(2)} ${both.graha}+${both.rashi}`);
+  }
+  await setAnim(true, true); await evaluate(`(() => { S.centre = 'south'; save(); return 1; })()`);
+  return out.join(", ");
 });
 
 // ── journeys: annual (add new journeys for this workstream above this line) ──

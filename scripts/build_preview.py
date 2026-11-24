@@ -27,7 +27,7 @@ CHARTS = [
      "sunrise), so the two can be compared page by page.",
      ["--date", "1879-12-30", "--time", "01:00", "--offset-minutes", "321", "--lat", "9.9333", "--lon", "78.1167",
       "--name", "Sri Ramana Maharishi", "--gender", "male", "--place", "Madurai, India", "--node", "true", "--sunrise", "centre_unrefracted",
-      "--reference", REF]),
+      "--reference", REF, "--calendar-days", "14"]),
     ("studio-example.html", "Example Person · 15 May 1990 14:30, New Delhi (with a partner)",
      "The example used throughout the docs, with a partner for compatibility, the embedded engine (Compare and "
      "Playground recompute offline), a 31-day personal calendar and a KP horary page for number 100.",
@@ -36,7 +36,7 @@ CHARTS = [
       "--partner", "1992-08-20,09:15,Asia/Kolkata,19.076,72.8777", "--live", "--calendar-days", "31", "--kp-number", "100"]),
     ("studio-unknown-time.html", "Unknown birth time · 15 May 1990, New Delhi",
      "What the studio does when the time is not known: values that need it are listed as not computed.",
-     ["--date", "1990-05-15", "--tz", "Asia/Kolkata", "--lat", "28.6139", "--lon", "77.2090", "--reference", REF]),
+     ["--date", "1990-05-15", "--tz", "Asia/Kolkata", "--lat", "28.6139", "--lon", "77.2090", "--reference", REF, "--calendar-days", "14"]),
 ]
 
 
@@ -76,8 +76,19 @@ main{{max-width:980px;margin:0 auto;padding:40px 16px}}h1{{font-size:30px;margin
 <ul style="color:var(--muted)">
 <li><b>Interface language</b>: in any chart, open <i>Show and style</i> (top right) and pick <i>Interface language</i>.
 English is the default; your choice is kept in this browser.</li>
-<li><b>Download a chart as an image</b>: every chart has <i>⤓ PNG</i> and <i>⤓ SVG</i> buttons in its top-right corner;
-the file shows the chart as it is on screen (layers, filters, theme, language).</li>
+<li><b>Download a chart as an image</b>: every chart has <i>⤓ PNG</i> and <i>⤓ SVG</i> buttons above it, outside the
+drawing (the round chakra keeps them in its corner); the file shows the chart as it is on screen (layers, filters, theme,
+language).</li>
+<li><b>Charts</b>: under <i>Lines</i> switch on <i>drishti arrows</i>, <i>rāśi drishti lines</i>, <i>Western aspects</i> or
+<i>transits</i> (a Gochara chart with date, range and play); hover a graha to watch its aspects flow between the boxes.</li>
+<li><b>Vargas</b>: pick any varga from the menu or the gallery; it is drawn full width with its own aspects (marks, arrows,
+lines, hover animation), cast between the signs the grahas occupy in that varga.</li>
+<li><b>Hover animation</b> (Chakra, Charts, Vargas): hover a graha; graha drishti is a bold dashed line with a round marker,
+rāśi drishti a dotted line with a ◇ marker. Untick either under <i>Hover animation</i>, or both for none.</li>
+<li><b>Aspects</b>: open the <i>Charts</i> dropdown and tick several vargas; each is shown one under another.</li>
+<li><b>Maitri and dignities</b>: click <i>Grt. friend</i>, a tārā or a dignity above a grid to show only those cells;
+click more to add them, <i>Show all</i> to clear.</li>
+<li><b>Calendar</b>: every example now carries a personal calendar.</li>
 <li><b>Chart text</b>: in <code>studio-ramana-maharishi.html</code> (a crowded chart), open <i>Charts</i> and <i>Jyotish
 Chakra</i>: grahas stay the largest bold text; ārūḍha padas and aspect marks are smaller; flags such as Mo<sup>V</sup> are
 superscripts, also in the Nadi quadrants.</li>

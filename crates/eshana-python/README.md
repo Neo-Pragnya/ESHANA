@@ -110,7 +110,7 @@ belong to one school, and readings someone wrote. ESHANA pulls them apart so eac
   "derived_attributes": [{ "id": "vedic.moon.nakshatra", "epistemic": "tradition_rule", "value": { "name": "Punarvasu", "pada": 3 } }],
   "interpretations": [],
   "calculation": { "ayanamsha": "lahiri", "house_system": "whole_sign", "config_hash": "fnv1a64:…" },
-  "provenance": { "engine_version": "0.4.3", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
+  "provenance": { "engine_version": "0.4.4", "tzdb_version": "2026f", "assumptions": ["house_system not given; whole_sign used", "…"] }
 }
 ```
 

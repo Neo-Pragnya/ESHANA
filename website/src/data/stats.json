@@ -26,15 +26,15 @@
   "numerology.pythagorean@0.1",
   "numerology.chaldean@0.1"
  ],
- "rust_tests": 251,
+ "rust_tests": 252,
  "scenarios": 122,
- "tasks": 250,
+ "tasks": 257,
  "tasks_by_status": {
   "implemented": 11,
   "proposed": 53,
   "released": 1,
-  "verified": 185
+  "verified": 192
  },
  "tzdb_version": "2026f",
- "version": "0.4.3"
+ "version": "0.4.4"
 }

@@ -495,8 +495,10 @@ pub fn varga_chart(c: &VChart, d: u32) -> VChart {
             .map(|sg| sg as f64 * 30.0 + 15.0)
             .ok()
     };
+    // speeds are kept: a retrograde graha's additional aspects (retrograde shadow) apply in a varga too
     let mut v = VChart {
         asc: c.asc.and_then(at),
+        speed: c.speed.clone(),
         ..Default::default()
     };
     for (g, l) in &c.lon {

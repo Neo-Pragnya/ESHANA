@@ -167,7 +167,7 @@ const DEFAULTS = Object.assign({
   lang: (D.locale && D.locale.lang) || 'en', // interface language: the file's default (English unless --locale); a reader's choice is kept
   icons: 'sphere', chart: 'south', varga: 1, orientation: 'template', centre: 'south', hd: 'standard', animate: true, sky: true, turnOnSelect: true, showOuter: true, showUpa: true,
   layers: { markers: true, nak: true, pada: true, dres: false, houses: true, ticks: true, needles: true, drishti: true, aspect_marks: true, rashi_marks: true, extra_aspects: false, extra_rashi: false, rashi_drishti: false,
-    west_aspects: false, transits: false, sav: false, arudha: true, chart_drishti: false },
+    west_aspects: false, transits: false, sav: false, arudha: true, chart_drishti: false, anim_graha: true, anim_rashi: true },
 }, D.defaults || {});
 let S = JSON.parse(JSON.stringify(DEFAULTS));
 try { const saved = JSON.parse(localStorage.getItem('eshana-studio-v3') || 'null'); if (saved) S = Object.assign(S, saved, { layers: Object.assign(S.layers, saved.layers || {}) }); } catch (e) { /* private mode */ }

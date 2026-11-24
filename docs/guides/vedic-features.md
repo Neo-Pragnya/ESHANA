@@ -26,7 +26,7 @@ chart.attribute("vedic.ashtakavarga")["sarvashtakavarga"]["total"]   # 337
 |---|---|---|---|
 | `strength` | `vedic.strength` | dignity (exalted, debilitated, moolatrikoṇa, own, friend, neutral, enemy), bālādi avasthā, retrograde, combust, dig bala, naisargika bala | time and place for dig bala |
 | `relationships` | `vedic.relationships` | pañcadhā maitrī for every pair of the seven grahas: natural, temporary, combined | — |
-| `drishti` | `vedic.drishti.graha`, `vedic.drishti.rashi` | graha drishti (7th for all; Mars 4, 8; Jupiter 5, 9; Saturn 3, 10; nodes 5, 9) with aspected signs, bhāvas and grahas; rāśi drishti | — |
+| `drishti` | `vedic.drishti.graha`, `vedic.drishti.rashi`, `vedic.drishti.additional`, `vedic.drishti.vargas` | graha drishti (7th for all; Mars 4, 8; Jupiter 5, 9; Saturn 3, 10; nodes 5, 9) with aspected signs, bhāvas and grahas; rāśi drishti | — |
 | `ashtakavarga` | `vedic.ashtakavarga` | bhinnāṣṭakavarga per graha with each contributor's bindus; sarvāṣṭakavarga by sign | lagna |
 | `jaimini` | `vedic.jaimini.chara_karakas`, `…arudha_padas`, `…rashi_drishti` | chara kārakas (7 and 8 schemes), kārakāṃśa, ārūḍha padas A1 (AL) to A12 (UL) | lagna for ārūḍhas |
 | `kp` | `vedic.kp` | Placidus cusps with sign, star, sub and sub-sub lords; planets' lords; significators in house view (A, B, C, D) and planet view; ruling planets | time and place |
