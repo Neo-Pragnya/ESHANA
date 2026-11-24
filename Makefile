@@ -80,6 +80,10 @@ reports: build-release
 	.venv/bin/eshana-report --date 1985-11-03 --time 06:45 --tz Europe/London --lat 51.5074 --lon=-0.1278 \
 	  --systems western,numerology --name "Sample Western" --place "London, UK" --theme light \
 	  -o examples/reports/example-western.html
+	.venv/bin/eshana-report --date 1990-05-15 --time 14:30 --tz Asia/Kolkata --lat 28.6139 --lon 77.2090 \
+	  --name "Example Person" --place "New Delhi, India" --reference 2026-11-21T00:00:00Z \
+	  --partner 1992-08-20,09:15,Asia/Kolkata,19.076,72.8777 --calendar-days 31 --kp-number 100 --live \
+	  --title "The studio as an app" -o examples/reports/example-studio-app.html
 	./target/release/eshana chart vedic --date 1996-12-07 --time 10:34 --tz Asia/Kolkata --lat 13.0878 --lon 80.2785 \
 	  --divisions 9 --dasha > dist/vedic-chennai.json
 	.venv/bin/eshana-report --from-json dist/vedic-chennai.json --title "From the CLI" --place "Chennai" \
@@ -95,6 +99,7 @@ gallery: reports
 # ── release (docs/guides/publishing.md) ───────────────────────────────────────────────────────────────────────
 # Files are versioned, so publish uploads only this version's files from dist/.
 dist: build-release wasm
+	python3 scripts/pypi_readme.py
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin sdist --out ../../dist
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin build --release --out ../../dist
 dist-linux: wasm
@@ -168,6 +173,7 @@ demo: build-release
 	python3 scripts/build_demo.py website/src/data
 docs-check:
 	python3 scripts/check_docs.py
+	python3 scripts/pypi_readme.py --check
 # reference docs vs the installed wheel (operations, error codes, CLI commands, methods); --write regenerates methods.md
 capabilities-check: build-release
 	cd crates/eshana-python && VIRTUAL_ENV=$(CURDIR)/.venv $(CURDIR)/.venv/bin/maturin develop -q --uv

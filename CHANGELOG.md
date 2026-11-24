@@ -5,6 +5,22 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-24
+
+### Changed
+- README rewritten: an animated hero, animated terminal walkthroughs made from real output, an animated "how it works"
+  flow, a gallery linking to the live studio, measured accuracy and guarantees. The PyPI description is generated from
+  it (`scripts/pypi_readme.py`, checked by `make docs-check`) with images served from the docs site.
+- The website publishes the README images and a new example, "The studio as an app" (live engine, calendar, KP
+  horary, partner), with gallery views of the calendar, KP horary, compare workspace and playground.
+- The docs-site workflow also runs on release tags and on demand, and the publishing guide ends with checking the
+  site deploy.
+
+### Fixed
+- Form controls follow the theme: in the dark theme the date pickers and selects on the Compare and Progressions
+  pages had pale text on a white field (contrast 1.1:1). A browser journey now checks every control on every page in
+  both themes.
+
 ## [0.4.0] - 2026-11-24
 
 ### Added

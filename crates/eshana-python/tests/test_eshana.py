@@ -27,7 +27,7 @@ def cli(*args):
 
 
 def test_version_matches_the_crate():
-    assert eshana.__version__ == "0.4.0"
+    assert eshana.__version__ == "0.4.1"
     assert eshana.EXPANSION.startswith("Extensible Spatiotemporal Hypersystem")
 
 

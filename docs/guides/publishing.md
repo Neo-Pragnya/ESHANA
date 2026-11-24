@@ -59,7 +59,19 @@ uv run --no-project --with eshana==<version> -- eshana-report --date 2000-01-01 
 
 Then record the release in `planning/backlog.json` (`BIND-06` → `released`) and regenerate `TRACKING.md`.
 
-## 5. In CI (next)
+## 5. Update the website
+
+The docs site (GitHub Pages) is built by `.github/workflows/docs-site.yml` from `main`. A release is not finished until
+it is on `main` and the site has redeployed:
+
+1. Merge the release branch into `main` (a pull request). The push to `main` starts the docs-site workflow.
+2. Check the run: Actions → docs-site, or the *Docs site* badge in the README. It fails on demo drift
+   (`build_demo.py --check`), docs checks and `astro check`, so run `make demo docs-check` locally first.
+3. Open <https://neo-pragnya.github.io/ESHANA/> and the README images under `/readme/`.
+
+To redeploy without a code change: Actions → docs-site → *Run workflow*.
+
+## 6. In CI (next)
 
 `.github/workflows/release.yml` builds wheels for Linux, macOS and Windows with `maturin-action` on a version tag and
 publishes with PyPI **trusted publishing**, so no token lives in GitHub. Enable it once on PyPI (project → Publishing

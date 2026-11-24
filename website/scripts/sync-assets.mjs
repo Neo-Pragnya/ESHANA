@@ -26,4 +26,7 @@ const reports = path.join(repo, "examples", "reports");
 if (existsSync(reports)) copyTree(reports, path.join(pub, "reports"), (n) => n.endsWith(".html"));
 const gallery = path.join(repo, "examples", "gallery");
 if (existsSync(gallery)) copyTree(gallery, path.join(pub, "gallery"), (n) => n.endsWith(".webp"));
-console.log("synced docs assets and example reports");
+// the README's animated SVGs, so the PyPI page (which cannot use relative paths or raw GitHub SVGs) can load them
+const readme = path.join(repo, "assets", "readme");
+if (existsSync(readme)) copyTree(readme, path.join(pub, "readme"), (n) => n.endsWith(".svg"));
+console.log("synced docs assets, example reports, gallery and README images");

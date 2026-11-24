@@ -1,105 +1,289 @@
+<div align="center">
+
+<img src="assets/readme/hero.svg" alt="ESHANA: a turning zodiac wheel with the 27 nakshatras and the grahas on their orbits" width="100%" />
+
 # ESHANA
 
-**Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations**
-*From celestial positions to connected meaning.*
+**E**xtensible **S**patiotemporal **H**ypersystem for **A**stroinformatics, **N**atural Cycles & **A**ssociations
 
-A Rust-first computation layer for celestial positions, civil time, and the symbolic traditions built on them. It
-keeps three things apart, in the data and not just in the docs:
+### *From celestial positions to connected meaning.*
+
+A Rust engine for celestial positions, civil time and the traditions built on them (Jyotiṣa, Western astrology,
+Human Design and numerology), with an offline **chart studio**, a Python API and a CLI. Every number is computed,
+every rule is named, and **no interpretation is ever invented**.
+
+[![PyPI](https://img.shields.io/pypi/v/eshana?label=PyPI&color=f5c451&labelColor=1b2156)](https://pypi.org/project/eshana/)
+[![Python](https://img.shields.io/badge/python-3.9%2B-8f7bff?labelColor=1b2156)](https://pypi.org/project/eshana/)
+[![Rust](https://img.shields.io/badge/engine-Rust-e8744f?labelColor=1b2156)](crates/eshana-engine)
+[![WebAssembly](https://img.shields.io/badge/studio-WebAssembly-5dade2?labelColor=1b2156)](docs/adr/013-local-engine-adapter.md)
+[![License](https://img.shields.io/badge/license-Apache--2.0-58d68d?labelColor=1b2156)](LICENSE)
+[![CI](https://github.com/Neo-Pragnya/ESHANA/actions/workflows/ci.yml/badge.svg)](https://github.com/Neo-Pragnya/ESHANA/actions/workflows/ci.yml)
+[![Docs site](https://github.com/Neo-Pragnya/ESHANA/actions/workflows/docs-site.yml/badge.svg)](https://neo-pragnya.github.io/ESHANA/)
+[![Acceptance](https://img.shields.io/badge/release%20gate-122%20scenarios%20·%20PROMOTE-58d68d?labelColor=1b2156)](acceptance/README.md)
+
+[**📖 Docs**](https://neo-pragnya.github.io/ESHANA/) ·
+[**🖼️ Gallery**](https://neo-pragnya.github.io/ESHANA/gallery/) ·
+[**🪐 Live studio**](https://neo-pragnya.github.io/ESHANA/reports/example-studio-app.html) ·
+[**📝 Changelog**](CHANGELOG.md) ·
+[**🗺️ Roadmap**](docs/next-steps.md)
+
+</div>
+
+---
+
+## 📚 Contents
+
+- [✨ Why ESHANA?](#-why-eshana)
+- [🧭 Three layers, kept apart](#-three-layers-kept-apart)
+- [⚡ Quick start](#-quick-start)
+- [🪐 ESHANA Studio](#-eshana-studio)
+- [🔭 What it computes](#-what-it-computes)
+- [⚙️ How it works](#️-how-it-works)
+- [🧪 One engine, every question](#-one-engine-every-question)
+- [🛡️ Guarantees](#️-guarantees)
+- [📏 Accuracy, measured](#-accuracy-measured)
+- [🧩 Ways to use it](#-ways-to-use-it)
+- [🛠️ Development](#️-development)
+- [🗺️ Repository map](#️-repository-map)
+- [🤝 Status and honesty](#-status-and-honesty)
+
+---
+
+## ✨ Why ESHANA?
+
+Astrology software usually mixes three very different things on one screen: astronomy you can verify, rules that
+belong to one school, and readings someone wrote. ESHANA pulls them apart so each can be checked on its own terms.
+
+| | 😕 The usual way | 🌟 With ESHANA |
+|---|---|---|
+| 🕰️ **Birth time** | A local time is quietly turned into UTC; a time that the clocks skipped becomes *something* | IANA zones with historic offsets; a skipped or repeated time is an **error with a code**, never a guess |
+| 📐 **Methods** | Ayanāṃśa, houses and daśā variants are buried in settings | Every method has an **id**; an unknown one is refused (`ESH-METHOD`); the choice travels with the result |
+| 🧾 **Results** | Numbers without a trail | **Provenance** on every envelope: engine, provider, tz database, rule versions, assumptions and a `config_hash` |
+| 🔮 **Meaning** | Readings presented as facts | `interpretations` is **always empty**; rules are labelled `tradition_rule`; research scores are labelled *experimental* |
+| 🌍 **Surfaces** | The web app and the API drift apart | One `Engine::execute_json` behind the CLI, Python and the studio (compiled to WebAssembly) |
+| 🔒 **Privacy** | Birth data uploaded to a server | Everything runs on your machine; the studio is one offline HTML file |
+
+---
+
+## 🧭 Three layers, kept apart
 
 | Layer | Example | Produced by |
 |---|---|---|
-| **Calculated** | ecliptic longitude, speed, Ascendant | verifiable code, tested against JPL DE440s and the Swiss Ephemeris |
-| **Derived by a named system** | nakshatra and pada, aspect, divisional sign, Human Design gate, name number | a versioned **rule pack**, labelled `tradition_rule` |
-| **Interpretive** | character, meaning, compatibility | **never the engine**: `interpretations` is always empty |
+| 🧮 **Calculated** | ecliptic longitude, speed, Ascendant, sunrise | verifiable code, tested against JPL DE440s and the Swiss Ephemeris |
+| 📜 **Derived by a named system** | nakshatra and pada, varga sign, daśā period, muhūrta window, Human Design gate, name number | a versioned **rule pack** with a method id, labelled `tradition_rule` |
+| 🔮 **Interpretive** | character, meaning, compatibility | **never the engine**: `interpretations` is always empty |
 
-Every result carries **provenance**: engine, provider, tz-database and rule versions, and every assumption made on your
-behalf. ESHANA does not claim astrology, numerology or Human Design have predictive validity; it makes their rules
-computable and auditable.
+ESHANA does not claim that astrology, numerology or Human Design predict anything. It makes their rules
+**computable and auditable**.
 
-```console
-$ eshana chart vedic --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 --divisions 9 --dasha
+---
+
+## ⚡ Quick start
+
+<img src="assets/readme/walkthrough-studio.svg" alt="Terminal walkthrough: pip install eshana; eshana-report writes ramana.html; eshana-report new waits for birth details in a local form and writes charts/asha-rao-1990-05-15.html" width="100%" />
+
+```bash
+pip install eshana
+
+# 🪐 a full chart studio in one offline HTML file
+eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 -o chart.html
+
+# 📝 or let a form ask for the details: it opens in your browser, writes the chart, and stops
+eshana-report new -o charts/
 ```
+
 ```python
 from eshana import ChartEngine, Context
 
 ctx = Context.from_local_birth(date="1992-05-28", time="20:05:00", timezone="Asia/Kolkata",
                                latitude=17.385, longitude=78.487)
 chart = ChartEngine().vedic_chart(ctx, ayanamsha="lahiri", divisions=[1, 9], dasha=True)
-chart.position("moon")["sign"]["name"]          # 'Meena'
-chart.attribute("vedic.moon.nakshatra")["name"] # 'Revati'
-chart.provenance["assumptions"]                 # everything chosen for you
-chart.to_html("chart.html")                     # one self-contained HTML report
-```
-```console
-$ pip install eshana
-$ eshana-report --date 1992-05-28 --time 20:05 --tz Asia/Kolkata --lat 17.385 --lon 78.487 -o chart.html
+
+chart.position("moon")["sign"]["name"]           # 'Meena'
+chart.attribute("vedic.moon.nakshatra")["name"]  # 'Revati'
+chart.provenance["assumptions"]                  # everything that was chosen for you
+chart.to_html("chart.html")                      # the studio, from Python
 ```
 
-![ESHANA system overview](docs/architecture/svg/01-system-overview.svg)
+---
 
-## What works in 0.1 (everything below is tested; see `planning/TRACKING.md`)
+## 🪐 ESHANA Studio
 
-- **Civil time**: IANA zones with historical offsets; DST folds and gaps are *errors with distinct codes*, never guesses.
-- **Positions**: ten bodies and the lunar node (mean or osculating true), apparent geocentric, speed and retrograde.
-  Two providers: `analytic` (no data files; arc-minute class) and `spk` (reads a JPL kernel you supply; **0.3″** against an
-  independent pipeline). Measured, not promised: [`benchmarks/golden/accuracy.md`](benchmarks/golden/accuracy.md).
-- **Vedic**: rāśi, nakshatra/pada, whole-sign bhāva, D1/D3/D4/D7/D9/D10/D12, Vimśottarī daśā, four ayanāṃśas.
-- **Western**: tropical, whole-sign/equal/Placidus houses (refused where undefined), Ptolemaic aspects, applying state.
-- **Human Design**: the design instant by solving the **88° solar arc** (not "88 days"), gates, lines, channels, centres, type,
-  authority, profile.
-- **Numerology**: Pythagorean and Chaldean as separate schemas; explicit normalisation; life path.
-- **Uncertain birth time**: intervals and stability flags; the Ascendant and houses are never invented.
-- **Method comparison** (`eshana compare`) and a **symbolic graph** (JSON, Mermaid, GraphML) with no causal edges.
-- **Vedic features from YAML rule packs**: vargas D1–D60, Vimśottarī to five levels and Yoginī daśā, strength and
-  dignity, graha and rāśi drishti, aṣṭakavarga, Jaimini kārakas and ārūḍhas, KP sub-lords and significators, 22 yogas (with parivartana)
-  and 6 doshas, Sāḍe Sātī ([guide](docs/guides/vedic-features.md)); **pañcāṅga** with rise/set, horā, choghaḍiyā and
-  special lagnas ([guide](docs/guides/panchanga.md)); **aṣṭakūṭa matching** ([guide](docs/guides/matching.md)).
-- **ESHANA Studio** (`eshana-report`, `Chart.to_html()`): one offline HTML file that works as a multi-page app. It
-  has the Panchang Chakra with a South or North Indian chart in its centre, a page per graha and per bhāva, aspects
-  in virūpas, ṣaḍbala and viṃśopaka, 19 vargas with degrees, a Nadi direction matrix, daśā timelines and a BodyGraph
-  ([guide](docs/guides/html-report.md), [example](examples/reports/example-birth-chart.html)).
-- **Birth-chart accuracy suite**: 44 reference charts against the Swiss Ephemeris, the Lahiri definition and a recorded
-  ProKerala chart, PyJHora special lagnas, Swiss rise/set and ingresses, plus an independent re-derivation of every
-  rule; about 1,300 checks
-  ([guide](docs/guides/accuracy-suite.md), [results](benchmarks/accuracy/birth-chart-accuracy.md)).
+`eshana-report` writes **one self-contained HTML file** that works as a multi-page app: no server, no network,
+prints cleanly. With `--live` it carries the engine itself, compiled to WebAssembly, so the compare workspace and the
+playground recompute offline with exactly the same rules as Python and the CLI.
 
-## Guarantees you can rely on
+<table>
+<tr>
+<td width="33%"><a href="https://neo-pragnya.github.io/ESHANA/reports/reference-ramana.html#/chakra"><img src="examples/gallery/jyotish-chakra.webp" alt="Jyotish Chakra"/></a><br/><b>🌀 Jyotish Chakra</b><br/><sub>Every graha by exact degree on the nakshatra, pada and rāśi rings, with the D1 chart and the Nadi directions in the centre.</sub></td>
+<td width="33%"><a href="https://neo-pragnya.github.io/ESHANA/reports/reference-ramana.html#/charts"><img src="examples/gallery/charts.webp" alt="South and North Indian charts"/></a><br/><b>🔲 South and North Indian charts</b><br/><sub>Grahas bold and first; ārūḍha padas and aspect marks smaller; crowded signs reflow.</sub></td>
+<td width="33%"><a href="https://neo-pragnya.github.io/ESHANA/reports/reference-ramana.html#/vargas"><img src="examples/gallery/vargas.webp" alt="Vargas"/></a><br/><b>🧩 Vargas</b><br/><sub>D1 to D60, plus parivṛtti D2/D3, D81, D108 and D144 as named methods.</sub></td>
+</tr>
+<tr>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/example-studio-app.html#/calendar"><img src="examples/gallery/calendar.webp" alt="Personal calendar"/></a><br/><b>📅 Personal calendar</b><br/><sub>Muhūrta windows with tārā and candra bala; export CSV or ICS.</sub></td>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/example-studio-app.html#/horary"><img src="examples/gallery/kp-horary.webp" alt="KP horary"/></a><br/><b>🎯 KP horary</b><br/><sub>Numbers 1–249; cusps within 0.07″ of an independent reference.</sub></td>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/example-studio-app.html#/compare"><img src="examples/gallery/compare.webp" alt="Compare workspace"/></a><br/><b>🔁 Compare</b><br/><sub>Natal, progressed and transit side by side, recomputed in the page.</sub></td>
+</tr>
+<tr>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/reference-ramana.html#/dasha/chara"><img src="examples/gallery/dasha.webp" alt="Daśā"/></a><br/><b>⏳ Daśās</b><br/><sub>Sixteen systems, including seven conditional daśās that say whether their condition holds.</sub></td>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/reference-ramana.html#/strength"><img src="examples/gallery/strength.webp" alt="Strength"/></a><br/><b>💪 Strength</b><br/><sub>Ṣaḍbala against the required minimum, bhāva bala and viṃśopaka.</sub></td>
+<td><a href="https://neo-pragnya.github.io/ESHANA/reports/example-birth-chart.html#/human-design"><img src="examples/gallery/human-design.webp" alt="Human Design"/></a><br/><b>🧬 Human Design</b><br/><sub>The design instant by the 88° solar arc, gates, channels and properties.</sub></td>
+</tr>
+</table>
 
-Sidereal without an ayanāṃśa is refused. A repeated local time is refused. Placidus beyond the polar circle is refused. An
-unknown birth time gets intervals, not noon. The same request returns the same bytes. A chart writes nothing to disk. Each is
-a scenario in the release gate (`make acceptance`: 98 scenarios, 22 capabilities).
+**Also in the studio:**
+- 🖼️ **Download any chart as PNG or SVG**, exactly as shown: your layers, filters, rotation, theme and language. The PNG
+  is print-sized with a caption, and the SVG opens in any editor.
+- 🌐 **Interface language** as a reader setting: English by default, Hindi included. Labels only, never values.
+- ⌨️ **Keyboard first**: ⌘K palette, a playground driven by the arrow keys with undo, focus rings everywhere.
+- 🌗 **Light and dark themes**, checked for contrast by tests on every page.
 
-## Install
+👉 [**See all 23 views in the gallery**](https://neo-pragnya.github.io/ESHANA/gallery/) ·
+[**Open the live studio**](https://neo-pragnya.github.io/ESHANA/reports/example-studio-app.html) ·
+[Studio guide](docs/guides/html-report.md)
+
+---
+
+## 🔭 What it computes
+
+| Area | Highlights |
+|---|---|
+| 🕰️ **Time and positions** | IANA zones with historic offsets (war time, double summer time, local mean time); ten bodies plus the nodes, apparent geocentric; an `analytic` provider with no data files and an `spk` provider for JPL kernels |
+| 🌙 **Jyotiṣa** | rāśi, nakshatra and pada; vargas D1–D60 plus D81, D108 and D144; **ten ayanāṃśas**; graha and rāśi drishti; aṣṭakavarga; ṣaḍbala; Jaimini kārakas and ārūḍhas; yogas and doshas; sahams; Sarvatobhadra and Kota chakras; varṣaphala; pañca pakṣī |
+| ⏳ **Daśās** | Vimśottarī to five levels, Yoginī, Chara and more, **sixteen systems** in all, including seven conditional daśās that report whether their condition holds |
+| 🗓️ **Timing** | stations and retrograde intervals; exact crossings and aspects; **dated aṣṭakavarga**; pañcāṅga with horā, choghaḍiyā and the kālams |
+| 🪔 **Muhūrta** | windows as exact `[start, end)` intervals under versioned profiles; an empty result says which rule removed every window; **personal and pair calendars** (JSON, CSV, ICS) |
+| 🎯 **KP** | sub-lords and significators; **horary numbers 1–249** with Placidus cusps; cusp-occupancy methods named, the natal default unchanged |
+| 💞 **Matching** | the 36-point aṣṭakūṭa, unchanged byte for byte; rajju, vedha, mahendra, strī-dīrgha and Maṅgala doṣa with every cancellation listed; cross-chart factors |
+| ♈ **Western** | tropical; whole-sign, equal and Placidus (refused where undefined); aspects with the applying state; **secondary progressions** with named angle methods |
+| 🧬 **Human Design** | the design instant by solving the 88° solar arc (not "88 days"), gates, lines, channels, centres, type, authority and profile |
+| 🔢 **Numerology** | Pythagorean and Chaldean as separate schemas, Lo Shu and Kua, compound numbers, letter transits |
+| 🧪 **Research (experimental)** | each score is written up first (factors, weights, worked examples); one window-ranking model, labelled experimental |
+
+Every method family and id the engine knows: `eshana methods`, or [docs/reference/methods.md](docs/reference/methods.md).
+
+---
+
+## ⚙️ How it works
+
+<img src="assets/readme/eshana-flow.svg" alt="Animated flow: your question is resolved to UTC by civil time, the engine computes positions from an ephemeris and rules from versioned rule packs, and returns one envelope with provenance that the surfaces only render" width="100%" />
+
+- **One entry point.** `Engine::execute_json` takes a JSON request (with an `op`) and returns a JSON envelope. The CLI,
+  the Python package and the studio's WebAssembly build are thin shells around it.
+- **Rule packs are data.** YAML files with versions and method ids, printed by `eshana rulesets`. A changed formula is
+  a new rule version, with golden fixtures that show the difference.
+- **Surfaces never compute.** The studio renders envelopes; it never works out a factor of its own.
+
+---
+
+## 🧪 One engine, every question
+
+<img src="assets/readme/walkthrough-engine.svg" alt="Terminal walkthrough: a Vedic chart's positions, the Moon's nakshatra and pada, muhūrta windows that skip Wednesday for Abhijit, a KP horary Ascendant and sub-lord, and an ESH-TIME-NONEXISTENT error for a skipped clock time" width="100%" />
+
+Every line in these walkthroughs is real output from eshana 0.4 (regenerate them from
+[`assets/readme/src/`](assets/readme/src)).
+
+---
+
+## 🛡️ Guarantees
+
+Each of these is a scenario in the release gate (`make acceptance`: **122 scenarios**, all passing):
+
+- 🚫 **Sidereal without an ayanāṃśa is refused**, unless you ask for defaults, in which case the default is recorded.
+- ⏰ **A skipped or repeated local time is refused** with its own code; pick `--fold earliest|latest` to resolve a repeat.
+- 🧊 **Placidus beyond the polar circle is refused**, not approximated.
+- ❓ **An unknown birth time gets intervals, not noon.** The Ascendant and houses are never invented.
+- 🔁 **The same request returns the same bytes**, with a `config_hash` naming the settings.
+- 🙈 **A chart writes nothing to disk** and sends nothing anywhere.
+- 🧷 **Unavailable is not zero.** A factor that cannot be computed (a polar sunrise, a node without a table) says so,
+  and says what is missing.
+
+---
+
+## 📏 Accuracy, measured
+
+Not promised: measured against independent references and written down.
+
+| What | Against | Result |
+|---|---|---|
+| 🌍 Positions, `spk` provider | an independent JPL DE440s pipeline | **0.3″** |
+| 🌍 Positions, `analytic` provider (40 charts) | Swiss Ephemeris (offline oracle) | Moon 6″ worst, Sun 18″; outer planets arc-minute class |
+| 🧭 Ascendant and cusps | Swiss Ephemeris | **3.2″** worst |
+| 🎯 KP horary cusps | Swiss Ephemeris `houses_armc` | **0.07″** |
+| 📐 Ten ayanāṃśas, 1800–2100 | Swiss Ephemeris | **0.05″** worst (De Luce) |
+| ⏱️ Stations and crossings | Swiss Ephemeris event search | within the stated solver tolerance |
+| 📚 Published charts | printed reference values | see the accuracy report |
+
+The Swiss Ephemeris (AGPL) is used **only** as an offline test oracle and is never bundled. Details:
+[accuracy report](benchmarks/accuracy/birth-chart-accuracy.md) · [provider accuracy](benchmarks/golden/accuracy.md) ·
+[accuracy guide](docs/guides/accuracy-suite.md).
+
+---
+
+## 🧩 Ways to use it
+
+| You want… | Use | Example |
+|---|---|---|
+| 🪐 a chart to read, offline | `eshana-report` | `eshana-report --date … --tz … --lat … --lon … --live -o chart.html` |
+| 📝 to type details, not flags | `eshana-report new` | a local form on 127.0.0.1 that writes the chart and stops |
+| 🐍 numbers in Python | `eshana` | `eshana.execute({"op": "muhurta_windows", …})` or `ChartEngine()` |
+| 🧰 JSON from a shell | the Rust CLI | `eshana chart vedic …`, `eshana muhurta …`, `eshana kp-horary …` |
+| 🗓️ a calendar file | `personal_calendar` | `format: "ics"` for any calendar app |
+| 🕸️ the engine in a browser | `eshana-wasm` | three C functions, no bindings generator ([ADR-013](docs/adr/013-local-engine-adapter.md)) |
 
 ```bash
-pip install eshana                                        # Python package + eshana-report (wheels: macOS, Linux)
-make install && cargo build --release -p eshana-cli       # the Rust CLI, from source
+pip install eshana                                    # Python package + eshana-report
+cargo build --release -p eshana-cli                   # the Rust CLI, from source
 ```
 
-Other platforms install from the sdist, which needs a Rust toolchain. See [ways to use ESHANA](docs/guides/ways-to-use.md).
+The prebuilt wheel is for macOS on Apple silicon (abi3, CPython 3.9 and later); other platforms build from the sdist,
+which needs a Rust toolchain. More in [ways to use ESHANA](docs/guides/ways-to-use.md).
 
-Docs: <https://neo-pragnya.github.io/ESHANA/> · Start with [`docs/index.md`](docs/index.md) and
-[`docs/concepts/epistemic-model.md`](docs/concepts/epistemic-model.md).
+---
 
-## Repository map
+## 🛠️ Development
+
+```bash
+make verify            # fmt, clippy -D warnings, every Rust test, Python tests, tracker freshness, accuracy suite
+make acceptance        # the Gherkin release gate (must say PROMOTE)
+make studio-journeys   # real Chrome: every studio page, text hierarchy, downloads, contrast, the new-chart form
+make preview           # local preview of the studio and the website
+```
+
+Work is tracked in [`planning/backlog.json`](planning/backlog.json), rendered as
+[`planning/TRACKING.md`](planning/TRACKING.md), with exact status words: *proposed*, *implemented*, *verified*
+(evidence required) and *released*. Publishing: [docs/guides/publishing.md](docs/guides/publishing.md).
+
+---
+
+## 🗺️ Repository map
 
 | Path | What |
 |---|---|
-| `crates/` | `eshana-core`, `-time`, `-ephemeris`, `-engine`, `-cli`, `-python` |
-| `docs/` | concepts, guides, reference, ADRs; also the source of the website |
-| `website/` | Astro site (interactive landing, demos); built from `docs/` |
-| `acceptance/` | Gherkin capability scenarios and the release gate |
-| `benchmarks/` | golden fixtures, measured provider accuracy and the birth-chart accuracy report |
-| `accuracy/` | the birth-chart accuracy suite and its reference data (Swiss oracle, published values) |
-| `examples/reports/` | example HTML chart reports generated by the real engine |
-| `diagrams/` | architecture diagrams as code (`make diagrams`) |
-| `schemas/` | the JSON Schema of the result envelope |
-| `planning/` | `backlog.json` and the generated `TRACKING.md`; `NEXT-STEPS.md` |
-| `ESHANA_Project_Vision_and_Master_Plan.md` | the original design record |
+| `crates/` | `eshana-core`, `-time`, `-ephemeris`, `-engine` (rules and rule packs), `-cli`, `-python`, `-wasm` |
+| `docs/` | concepts, guides, reference and ADRs; also the source of the website |
+| `website/` | the Astro site: landing page, live demos, gallery |
+| `acceptance/` | Gherkin capability scenarios, the release gate, and the browser journeys |
+| `accuracy/`, `benchmarks/` | the birth-chart accuracy suite, golden fixtures and offline oracle data |
+| `examples/` | example studio reports and the gallery screenshots, all generated by the real engine |
+| `assets/readme/` | the animated SVGs on this page, with their sources |
+| `planning/` | the backlog, the tracker and the capability-expansion plan |
 
-## Status and honesty
+---
 
-Version 0.2.0. ESHANA is an open-source tool stack published as libraries
-([ADR-011](docs/adr/011-open-source-distribution.md)), licensed Apache-2.0. The `analytic` provider is arc-minute class
-for Jupiter and Saturn; use `spk` when that matters. The Swiss Ephemeris (AGPL) is used only as an offline test oracle and
-is never bundled; an optional, separately licensed adapter is planned. Next steps: [`docs/next-steps.md`](docs/next-steps.md).
+## 🤝 Status and honesty
+
+- 📦 **Version 0.4**, on [PyPI](https://pypi.org/project/eshana/). Open source under Apache-2.0
+  ([ADR-011](docs/adr/011-open-source-distribution.md)).
+- 🧪 **Experimental pieces are labelled.** Muhūrta purpose presets and the research window score wait for a
+  practitioner's review. The conditional daśās wait for published worked examples.
+- 🔭 **Know the provider.** `analytic` is arc-minute class for Jupiter and Saturn; use `spk` with a JPL kernel when
+  that matters.
+- 🧭 Next steps: [docs/next-steps.md](docs/next-steps.md) · changes: [CHANGELOG.md](CHANGELOG.md) ·
+  design record: [ESHANA_Project_Vision_and_Master_Plan.md](ESHANA_Project_Vision_and_Master_Plan.md).
+
+<div align="center">
+
+**Calculated · Derived by a named system · Never interpreted for you** 🌌
+
+</div>

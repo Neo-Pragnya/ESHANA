@@ -16,7 +16,7 @@ if (!CHROME) { console.error("Chrome not found; set CHROME=/path/to/chrome"); pr
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // [report file, hash, image name, title, caption, setup script run before the capture]
-const R = "reference-ramana.html", E = "example-birth-chart.html";
+const R = "reference-ramana.html", E = "example-birth-chart.html", A = "example-studio-app.html";
 const SHOTS = [
   [R, "#/chakra", "jyotish-chakra", "Jyotish Chakra", "The Graha-Nakshatra Mandala: rāśis, nakshatras, padas and every graha, with the D1 chart in the centre. Hover details sit beside the wheel."],
   [R, "#/charts", "charts", "South and North Indian charts", "Ārūḍha padas at the top of each rāśi, aspect marks at the bottom; crowded North Indian houses fit their shape.", "S.layers.extra_aspects = true; S.chart = 'both';"],
@@ -37,6 +37,10 @@ const SHOTS = [
   [R, "#/panchanga", "panchanga", "Pañcāṅga", "Tithi, vāra, nakshatra, yoga and karaṇa at birth."],
   [E, "#/human-design", "human-design", "Human Design", "The standard BodyGraph with gates, channels and properties."],
   [E, "#/numerology", "numerology", "Numerology", "Every school's numbers, the Lo Shu grid and the Kua number."],
+  [A, "#/calendar", "calendar", "Personal calendar", "Muhūrta windows for 31 days with tārā and candra bala from the birth chart; export as CSV or ICS."],
+  [A, "#/horary", "kp-horary", "KP horary", "Number 100 fixes the Ascendant; Placidus cusps, sub-lords and significators at the moment of judgement."],
+  [A, "#/compare", "compare", "Compare workspace", "Natal, progressed and transit positions side by side, recomputed offline by the embedded engine."],
+  [A, "#/playground", "playground", "Playground", "Place grahas by keyboard and see what follows; factors that need a real moment are listed as unavailable."],
 ];
 
 const reports = join(repo, "examples", "reports");

@@ -1,9 +1,12 @@
 name: docs-site
 
 # Builds the Astro site in website/ and deploys it to GitHub Pages. The demos are regenerated from real runs.
+# Runs on every push to main (docs, README images, examples), on a release tag, and on demand (Actions → docs-site →
+# Run workflow), so the site always matches what is released.
 on:
   push:
     branches: ["main"]
+    tags: ["v*"]
   workflow_dispatch:
 
 permissions:

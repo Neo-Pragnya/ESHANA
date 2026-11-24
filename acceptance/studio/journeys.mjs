@@ -1506,6 +1506,27 @@ await journey("every chart drawing can be downloaded as PNG and SVG, exactly as 
   return `${Object.values(counts).reduce((a, b) => a + b, 0)} drawings on ${Object.keys(counts).length} pages; PNG ${exp.w}×${exp.h}; ${exp.name}`;
 });
 
+await journey("form controls are readable in both themes (date pickers, selects and number fields on every page)", async () => {
+  await viewport(1440, 1000);
+  const mode0 = await evaluate(`document.documentElement.dataset.mode`);
+  const bad = [];
+  for (const mode of ["dark", "light"]) {
+    await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode)}); 1`);
+    for (const p of model.pages.filter((p) => !["planet", "house", "yoga", "point"].includes(p))) {
+      await go("#/" + p, 500);
+      const r = await evaluate(`(() => { const rgb = (c) => (c.match(/[\\d.]+/g) || []).map(Number);
+        const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+        const solid = (el) => { for (let e = el; e; e = e.parentElement) { const c = rgb(getComputedStyle(e).backgroundColor); if (c.length === 3 || (c.length === 4 && c[3] > .9)) return c.slice(0, 3); } return ${JSON.stringify(mode)} === 'dark' ? [7, 10, 28] : [246, 241, 231]; };
+        return [...document.querySelectorAll('section.page:not([hidden]) input[type=date], section.page:not([hidden]) input[type=number], section.page:not([hidden]) select')]
+          .filter(e => e.getBoundingClientRect().width > 0).map(e => { const a = lum(rgb(getComputedStyle(e).color)), b = lum(solid(e)); return { id: e.id || e.getAttribute('aria-label') || e.tagName, ratio: (Math.max(a, b) + .05) / (Math.min(a, b) + .05) }; })
+          .filter(x => x.ratio < 4.5).map(x => x.id + ' ' + x.ratio.toFixed(1)); })()`);
+      for (const x of r) bad.push(`${mode} ${p}: ${x}`);
+    }
+  }
+  await evaluate(`document.documentElement.dataset.mode = ${JSON.stringify(mode0)}; document.documentElement.setAttribute('data-theme', ${JSON.stringify(mode0)}); 1`);
+  expect(!bad.length, "low-contrast controls: " + bad.slice(0, 6).join("; "));
+});
+
 // ── journeys: annual (add new journeys for this workstream above this line) ──
 
 ws.close(); chrome.kill(); server.close();
