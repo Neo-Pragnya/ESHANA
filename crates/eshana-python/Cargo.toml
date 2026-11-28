@@ -14,6 +14,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 eshana-engine.workspace = true
+# the full command line, for the package's `eshana` command
+eshana-cli = { path = "../eshana-cli" }
 pyo3 = { version = "0.30", features = ["extension-module", "abi3-py39"] }
 serde_json.workspace = true
 

@@ -10,6 +10,10 @@ homepage.workspace = true
 keywords.workspace = true
 categories.workspace = true
 
+[lib]
+name = "eshana_cli"
+path = "src/lib.rs"
+
 [[bin]]
 name = "eshana"
 path = "src/main.rs"

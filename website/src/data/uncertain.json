@@ -208,7 +208,7 @@
    "birth time quality is date_only: positions are evaluated over a window of ±720.0 minutes and given as intervals",
    "coordinate frame: geocentric_apparent_ecliptic_true_equinox_of_date"
   ],
-  "engine_version": "0.5.0",
+  "engine_version": "0.5.1",
   "provider": "analytic",
   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",

@@ -5,6 +5,18 @@ result envelope is versioned separately (see `docs/concepts/provenance.md`).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-28
+
+### Added
+- `pip install eshana` now provides the `eshana` command, the full CLI (`eshana --version`, `eshana chart …`,
+  every subcommand), compiled into the wheel; `python -m eshana` runs the same. Before, only `eshana-report` and
+  `eshana-mcp` came with the package and `eshana` needed `cargo install`. The Rust CLI is now a library function
+  (`eshana_cli::run`) shared by the binary and the package, so the two print the same bytes and exit codes.
+
+### Changed
+- The wheel acceptance gate runs against the wheel's own `eshana` command in a fresh environment.
+- Install docs: `uv tool install eshana` puts the three commands on the PATH for every shell.
+
 ## [0.5.0] - 2026-11-24
 
 The roadmap waves (planning/WAVES.md): time and ephemeris foundations, events and asteroids, rule packs and

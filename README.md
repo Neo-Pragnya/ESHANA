@@ -587,17 +587,19 @@ Codes are stable across versions: [docs/reference/errors.md](docs/reference/erro
 | 🪐 a chart to read, offline | `eshana-report` | `eshana-report --date … --tz … --lat … --lon … --live -o chart.html` |
 | 📝 to type details, not flags | `eshana-report new` | a local form on 127.0.0.1 that writes the chart and stops |
 | 🐍 numbers in Python | `eshana` | `eshana.execute({"op": "muhurta_windows", …})` or `ChartEngine()` |
-| 🧰 JSON from a shell | the Rust CLI | `eshana chart vedic …`, `eshana muhurta …`, `eshana kp-horary …` |
+| 🧰 JSON from a shell | `eshana` (installed with the package) | `eshana chart vedic …`, `eshana muhurta …`, `eshana kp-horary …` |
 | 🗓️ a calendar file | `personal_calendar` | `format: "ics"` for any calendar app |
 | 🕸️ the engine in a browser | `eshana-wasm` | three C functions, no bindings generator ([ADR-013](docs/adr/013-local-engine-adapter.md)) |
 
 ```bash
-pip install eshana                                    # Python package + eshana-report
-cargo build --release -p eshana-cli                   # the Rust CLI, from source
+pip install eshana              # Python package + the eshana, eshana-report and eshana-mcp commands
+uv tool install eshana          # or: the three commands on your PATH, in their own environment
+eshana --version
 ```
 
-The prebuilt wheel is for macOS on Apple silicon (abi3, CPython 3.9 and later); other platforms build from the sdist,
-which needs a Rust toolchain. More in [ways to use ESHANA](docs/guides/ways-to-use.md).
+`eshana` from the package is the full Rust CLI, compiled into the wheel (`python -m eshana` works too).
+Prebuilt wheels cover macOS on Apple silicon and Linux x86_64 and aarch64 (abi3, CPython 3.9 and later); other
+platforms build from the sdist, which needs a Rust toolchain. More in [ways to use ESHANA](docs/guides/ways-to-use.md).
 
 ---
 

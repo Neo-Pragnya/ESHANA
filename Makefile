@@ -140,9 +140,9 @@ acceptance: build-release wasm
 # The same against the built wheel in a fresh venv (what ships)
 ACCEPTANCE_VENV := .acceptance-venv
 acceptance-wheel: build-release wheel
-	uv venv -q --allow-existing --python 3.12 $(ACCEPTANCE_VENV)
-	uv pip install -q --python $(ACCEPTANCE_VENV)/bin/python --force-reinstall "$$(ls -t dist/*.whl | head -1)" pytest pytest-bdd pytest-xdist pyyaml
-	ln -sf $(CURDIR)/target/release/eshana $(ACCEPTANCE_VENV)/bin/eshana
+	# a fresh venv each time; the wheel's own `eshana` command is what users get, so that is what is tested
+	uv venv -q --clear --python 3.12 $(ACCEPTANCE_VENV)
+	uv pip install -q --python $(ACCEPTANCE_VENV)/bin/python "$$(ls -t dist/*.whl | head -1)" pytest pytest-bdd pytest-xdist pyyaml
 	ACCEPTANCE_BIN_DIR=$(CURDIR)/$(ACCEPTANCE_VENV)/bin $(ACCEPTANCE_VENV)/bin/python -m pytest acceptance -n auto -p no:cacheprovider $(ACCEPTANCE_ARGS)
 
 # Real-Chrome journeys (Node 22+, Chrome; CHROME=/path overrides). Studio: the generated chart app. Site: website/dist.

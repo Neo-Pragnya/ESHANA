@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "eshana"
-version = "0.5.0"
+version = "0.5.1"
 description = "ESHANA - Extensible Spatiotemporal Hypersystem for Astroinformatics, Natural Cycles & Associations. A Rust-first computation layer for celestial positions, traditions and traceable derived knowledge."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -24,6 +24,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
+eshana = "eshana.cli:main"
 eshana-report = "eshana.report:main"
 eshana-mcp = "eshana.mcp:main"
 
