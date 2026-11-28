@@ -27,7 +27,9 @@ def cli(*args):
 
 
 def test_version_matches_the_crate():
-    assert eshana.__version__ == "0.5.0"
+    import re
+    pyproject = (pathlib.Path(__file__).resolve().parents[1] / "pyproject.toml").read_text(encoding="utf-8")
+    assert eshana.__version__ == re.search(r'^version = "([^"]+)"', pyproject, re.M).group(1)
     assert eshana.EXPANSION.startswith("Extensible Spatiotemporal Hypersystem")
 
 

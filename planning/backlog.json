@@ -830,6 +830,22 @@
       "evidence": "Wheels on PyPI since 0.4.3: macOS arm64 and Linux x86_64 and aarch64 (manylinux2014, zig), each smoke-tested in Docker and installed from PyPI. Windows and Intel macOS need release.yml (CI runners), which waits on the PyPI trusted-publisher setup (SEC-05)."
     },
     {
+      "id": "BIND-09",
+      "area": "bind",
+      "title": "The eshana command in the Python package (pip install gives eshana --version and every subcommand)",
+      "status": "verified",
+      "track": "primary",
+      "source": "owner report 2026-11-28: eshana not available as a command after pip install",
+      "evidence": "eshana-cli is a library (eshana_cli::run) used by the binary and by the extension (_native.cli); the wheel's console script eshana = eshana.cli:main and python -m eshana run it. test_cli_command.py: version, exit codes 0/2, byte-identical output to the binary; acceptance-wheel now runs every CLI scenario against the wheel's own command in a fresh venv.",
+      "evidence_paths": [
+        "crates/eshana-cli/src/lib.rs",
+        "crates/eshana-python/src/lib.rs",
+        "crates/eshana-python/python/eshana/cli.py",
+        "crates/eshana-python/tests/test_cli_command.py",
+        "Makefile"
+      ]
+    },
+    {
       "id": "RULE-01",
       "area": "bind",
       "title": "Data-driven rule packs with validator and mandatory source",

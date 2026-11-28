@@ -5,7 +5,19 @@ description: "Install, make a first chart, and read the result. About five minut
 
 # Getting started
 
-ESHANA is not published to a registry yet ([Roadmap](../roadmap.md)). Build from source:
+Install the package; it brings three commands: `eshana` (JSON from the engine), `eshana-report` (the HTML studio)
+and `eshana-mcp` (the MCP server).
+
+```bash
+pip install eshana            # into the current environment
+uv tool install eshana        # or: on your PATH for every shell, in an environment of its own
+eshana --version
+```
+
+`python -m eshana …` runs the same command when the scripts directory is not on your PATH. Prebuilt wheels cover
+macOS on Apple silicon and Linux x86_64 and aarch64; elsewhere pip builds from the sdist, which needs Rust.
+
+From source:
 
 ```bash
 git clone https://github.com/Neo-Pragnya/ESHANA && cd ESHANA

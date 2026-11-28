@@ -382,7 +382,7 @@
    "UTC is used as UT1 (differs by under 0.9 s)",
    "Human Design gate numbering and the centre/channel structure are implemented from public structure only; branded terminology, text and diagrams are not included; legal review pending (ADR-009)"
   ],
-  "engine_version": "0.5.0",
+  "engine_version": "0.5.1",
   "provider": "analytic",
   "provider_accuracy": "Arc-second level for the Sun and planets (VSOP87), about 10 arc-seconds for the Moon; Pluto arc-minutes. Measured against JPL DE440s in benchmarks/golden/accuracy.md.",
   "provider_data": "VSOP87B (IMCCE, truncated at 1e-7) for the Sun and Mercury to Neptune; JPL approximate Keplerian elements (Standish, Table 1) for Pluto; Meeus ch. 47 lunar series; no data files",

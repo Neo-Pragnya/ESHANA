@@ -12,7 +12,7 @@ numbers are identical whichever one you use.
 
 | You want to… | Use | Install |
 |---|---|---|
-| look at one chart quickly | `eshana chart vedic …` (JSON) or `eshana-report … -o chart.html` | `cargo install --path crates/eshana-cli`; `pip install eshana` |
+| look at one chart quickly | `eshana chart vedic …` (JSON) or `eshana-report … -o chart.html` | `pip install eshana` (or `uv tool install eshana`) |
 | read or share a complete chart | [HTML report](html-report.md) | `pip install eshana` |
 | compute from code | Python: `ChartEngine`, `Context`, `Chart` | `pip install eshana` |
 | explore in a notebook | a `Chart` renders inline in Jupyter; [cookbook notebooks](cookbook.md) | `pip install eshana` |

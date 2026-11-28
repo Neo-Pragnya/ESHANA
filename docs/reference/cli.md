@@ -9,6 +9,9 @@ description: "Every eshana command and flag. Output is always one JSON envelope;
 eshana [--compact] <command> [options]
 ```
 
+`pip install eshana` installs this command (the Rust CLI, compiled into the wheel; `python -m eshana` is the same);
+`cargo build --release -p eshana-cli` builds it from source.
+
 `--compact` prints one line of JSON (the bytes the engine returned). Without it the JSON is indented. Every command
 sends a JSON request through the engine's single entry point; `eshana request` lets you send one yourself.
 

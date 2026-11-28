@@ -23,9 +23,17 @@ fn engine_version() -> &'static str {
     eshana_engine::ENGINE_VERSION
 }
 
+/// Run the `eshana` command line with these arguments (the first is the program name); returns the exit status.
+/// Output goes to the process's stdout and stderr, exactly as the `eshana` binary writes it.
+#[pyfunction]
+fn cli(py: Python<'_>, args: Vec<String>) -> u8 {
+    py.detach(|| eshana_cli::run(args))
+}
+
 #[pymodule]
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(execute, m)?)?;
     m.add_function(wrap_pyfunction!(engine_version, m)?)?;
+    m.add_function(wrap_pyfunction!(cli, m)?)?;
     Ok(())
 }

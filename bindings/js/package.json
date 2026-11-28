@@ -1,6 +1,6 @@
 {
   "name": "eshana",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "ESHANA astronomical and astrological calculation engine for JavaScript: the Rust engine as WebAssembly, for browsers and Node. One JSON entry point; every rule named; no interpretation invented.",
   "type": "module",
   "main": "index.mjs",
